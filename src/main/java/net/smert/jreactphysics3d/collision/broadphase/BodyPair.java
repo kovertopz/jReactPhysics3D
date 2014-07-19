@@ -4,8 +4,7 @@ import net.smert.jreactphysics3d.body.BodyIndexPair;
 import net.smert.jreactphysics3d.body.CollisionBody;
 
 /**
- * This structure represents a pair of bodies during the broad-phase collision
- * detection.
+ * This structure represents a pair of bodies during the broad-phase collision detection.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

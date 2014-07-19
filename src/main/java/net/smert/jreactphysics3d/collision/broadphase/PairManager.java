@@ -4,9 +4,8 @@ import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.collision.CollisionDetection;
 
 /**
- * This class is a data-structure contains the pairs of bodies that are
- * overlapping during the broad-phase collision detection. This class implements
- * the pair manager described by Pierre Terdiman in www.codercorner.com/SAP.pdf.
+ * This class is a data-structure contains the pairs of bodies that are overlapping during the broad-phase collision
+ * detection. This class implements the pair manager described by Pierre Terdiman in www.codercorner.com/SAP.pdf.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

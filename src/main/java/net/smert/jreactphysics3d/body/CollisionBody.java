@@ -7,8 +7,7 @@ import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
- * This class represents a body that is able to collide with others bodies. This
- * class inherits from the Body class.
+ * This class represents a body that is able to collide with others bodies. This class inherits from the Body class.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

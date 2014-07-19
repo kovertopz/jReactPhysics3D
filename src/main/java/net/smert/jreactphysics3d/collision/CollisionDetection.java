@@ -14,10 +14,8 @@ import net.smert.jreactphysics3d.engine.CollisionWorld;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
- * This class computes the collision detection algorithms. We first perform a
- * broad-phase algorithm to know which pairs of bodies can collide and then we
- * run a narrow-phase algorithm to compute the collision contacts between
- * bodies.
+ * This class computes the collision detection algorithms. We first perform a broad-phase algorithm to know which pairs
+ * of bodies can collide and then we run a narrow-phase algorithm to compute the collision contacts between bodies.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */
@@ -60,8 +58,7 @@ public class CollisionDetection {
 
         // Notify the broad-phase algorithm about the bodies that have moved since last frame
         //for (set<CollisionBody*>::iterator it = mWorld.getBodiesBeginIterator();
-        for (int it = mWorld.getBodiesBeginIterator();
-                it != mWorld.getBodiesEndIterator(); it++) {
+        for (int it = mWorld.getBodiesBeginIterator(); it != mWorld.getBodiesEndIterator(); it++) {
 
             // If the body has moved
             if (it.mHasMoved) {
@@ -101,8 +98,7 @@ public class CollisionDetection {
 
             // Select the narrow phase algorithm to use according to the two collision shapes
             NarrowPhaseAlgorithm narrowPhaseAlgorithm = SelectNarrowPhaseAlgorithm(
-                    body1.getCollisionShape(),
-                    body2.getCollisionShape());
+                    body1.getCollisionShape(), body2.getCollisionShape());
 
             // Notify the narrow-phase algorithm about the overlapping pair we are going to test
             narrowPhaseAlgorithm.setCurrentOverlappingPair(pair);

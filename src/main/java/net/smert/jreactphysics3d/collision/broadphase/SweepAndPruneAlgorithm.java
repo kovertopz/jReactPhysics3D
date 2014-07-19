@@ -8,9 +8,8 @@ import net.smert.jreactphysics3d.collision.CollisionDetection;
 import net.smert.jreactphysics3d.collision.shapes.AABB;
 
 /**
- * This class implements the Sweep-And-Prune (SAP) broad-phase collision
- * detection algorithm. This class implements an array-based implementation of
- * the algorithm from Pierre Terdiman that is described here :
+ * This class implements the Sweep-And-Prune (SAP) broad-phase collision detection algorithm. This class implements an
+ * array-based implementation of the algorithm from Pierre Terdiman that is described here :
  * www.codercorner.com/SAP.pdf.
  *
  * @author Jason Sorensen <sorensenj@smert.net>

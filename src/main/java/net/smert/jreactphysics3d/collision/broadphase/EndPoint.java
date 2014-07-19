@@ -1,8 +1,7 @@
 package net.smert.jreactphysics3d.collision.broadphase;
 
 /**
- * EndPoint structure that represent an end-point of an AABB on one of the three
- * x,y or z axis.
+ * EndPoint structure that represent an end-point of an AABB on one of the three x,y or z axis.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

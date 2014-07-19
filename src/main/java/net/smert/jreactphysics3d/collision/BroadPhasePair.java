@@ -5,8 +5,7 @@ import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 
 /**
- * This structure represents a pair of bodies during the broad-phase collision
- * detection.
+ * This structure represents a pair of bodies during the broad-phase collision detection.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

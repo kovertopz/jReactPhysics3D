@@ -7,8 +7,7 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
- * This class is used to compute the narrow-phase collision detection between
- * two sphere collision shapes.
+ * This class is used to compute the narrow-phase collision detection between two sphere collision shapes.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

@@ -10,9 +10,8 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
- * This class represents a rigid body of the physics engine. A rigid body is a
- * non-deformable body that has a constant mass. This class inherits from the
- * CollisionBody class.
+ * This class represents a rigid body of the physics engine. A rigid body is a non-deformable body that has a constant
+ * mass. This class inherits from the CollisionBody class.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

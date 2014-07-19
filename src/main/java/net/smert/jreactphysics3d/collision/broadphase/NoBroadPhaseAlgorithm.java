@@ -6,8 +6,8 @@ import net.smert.jreactphysics3d.collision.CollisionDetection;
 import net.smert.jreactphysics3d.collision.shapes.AABB;
 
 /**
- * This class implements a broad-phase algorithm that does nothing. It should be
- * use if we don't want to perform a broad-phase for the collision detection.
+ * This class implements a broad-phase algorithm that does nothing. It should be use if we don't want to perform a
+ * broad-phase for the collision detection.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

@@ -3,14 +3,11 @@ package net.smert.jreactphysics3d.collision.broadphase;
 import net.smert.jreactphysics3d.collision.CollisionDetection;
 
 /**
- * This class is an abstract class that represents an algorithm used to perform
- * the broad-phase of a collision detection. The goal of the broad-phase
- * algorithm is to compute the pair of bodies that can collide. But it's
- * important to understand that the broad-phase doesn't compute only body pairs
- * that can collide but could also pairs of body that doesn't collide but are
- * very close. The goal of the broad-phase is to remove pairs of body that
- * cannot collide in order to avoid to much bodies to be tested in the
- * narrow-phase.
+ * This class is an abstract class that represents an algorithm used to perform the broad-phase of a collision
+ * detection. The goal of the broad-phase algorithm is to compute the pair of bodies that can collide. But it's
+ * important to understand that the broad-phase doesn't compute only body pairs that can collide but could also pairs of
+ * body that doesn't collide but are very close. The goal of the broad-phase is to remove pairs of body that cannot
+ * collide in order to avoid to much bodies to be tested in the narrow-phase.
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */

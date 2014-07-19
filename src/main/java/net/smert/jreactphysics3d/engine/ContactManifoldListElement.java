@@ -1,8 +1,7 @@
 package net.smert.jreactphysics3d.engine;
 
 /**
- * This structure represents a single element of a linked list of contact
- * manifolds
+ * This structure represents a single element of a linked list of contact manifolds
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */
