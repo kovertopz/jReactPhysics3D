@@ -10,6 +10,7 @@ import net.smert.jreactphysics3d.collision.narrowphase.GJK.GJKAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.NarrowPhaseAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.SphereVsSphereAlgorithm;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
+import net.smert.jreactphysics3d.collision.shapes.CollisionShapeType;
 import net.smert.jreactphysics3d.engine.CollisionWorld;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
@@ -131,7 +132,7 @@ public class CollisionDetection {
     private NarrowPhaseAlgorithm SelectNarrowPhaseAlgorithm(CollisionShape collisionShape1, CollisionShape collisionShape2) {
 
         // Sphere vs Sphere algorithm
-        if (collisionShape1.getType() == SPHERE && collisionShape2.getType() == SPHERE) {
+        if (collisionShape1.getType() == CollisionShapeType.SPHERE && collisionShape2.getType() == CollisionShapeType.SPHERE) {
             return mNarrowPhaseSphereVsSphereAlgorithm;
         } else {   // GJK algorithm
             return mNarrowPhaseGJKAlgorithm;
