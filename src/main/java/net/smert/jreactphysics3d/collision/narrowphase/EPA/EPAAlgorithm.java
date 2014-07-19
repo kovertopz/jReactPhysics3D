@@ -1,5 +1,6 @@
 package net.smert.jreactphysics3d.collision.narrowphase.EPA;
 
+import net.smert.jreactphysics3d.collision.narrowphase.GJK.Simplex;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.configuration.Defaults;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
