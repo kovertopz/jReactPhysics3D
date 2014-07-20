@@ -1,5 +1,7 @@
 package net.smert.jreactphysics3d.mathematics;
 
+import net.smert.jreactphysics3d.configuration.Defaults;
+
 /**
  * This class represents a 2x2 matrix.
  *
@@ -36,7 +38,7 @@ public class Matrix2x2 {
     }
 
     // Method to set all the values in the matrix
-    public void setAllValues(float a1, float a2,
+    public final void setAllValues(float a1, float a2,
             float b1, float b2) {
         m[0][0] = a1;
         m[0][1] = a2;
@@ -201,6 +203,23 @@ public class Matrix2x2 {
     /// matrix[row][col].
     public Vector2 operatorSquareBrackets(int row) {
         return new Vector2(m[row][0], m[row][1]);
+    }
+
+    // Return the inverse matrix
+    public Matrix2x2 getInverse() {
+
+        // Compute the determinant of the matrix
+        float determinant = getDeterminant();
+
+        // Check if the determinant is equal to zero
+        assert (Math.abs(determinant) > Defaults.MACHINE_EPSILON);
+
+        float invDeterminant = 1.0f / determinant;
+
+        Matrix2x2 tempMatrix = new Matrix2x2(m[1][1], -m[0][1], -m[1][0], m[0][0]);
+
+        // Return the inverse matrix
+        return Matrix2x2.operatorMultiply(invDeterminant, tempMatrix);
     }
 
 }

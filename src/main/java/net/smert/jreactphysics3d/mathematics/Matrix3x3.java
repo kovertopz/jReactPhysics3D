@@ -1,5 +1,7 @@
 package net.smert.jreactphysics3d.mathematics;
 
+import net.smert.jreactphysics3d.configuration.Defaults;
+
 /**
  * This class represents a 3x3 matrix.
  *
@@ -37,7 +39,7 @@ public class Matrix3x3 {
     }
 
     // Method to set all the values in the matrix
-    public void setAllValues(float a1, float a2, float a3,
+    public final void setAllValues(float a1, float a2, float a3,
             float b1, float b2, float b3,
             float c1, float c2, float c3) {
         m[0][0] = a1;
@@ -267,6 +269,31 @@ public class Matrix3x3 {
     /// matrix[row][col].
     public Vector3 operatorSquareBrackets(int row) {
         return new Vector3(m[row][0], m[row][1], m[row][2]);
+    }
+
+    // Return the inverse matrix
+    public Matrix3x3 getInverse() {
+
+        // Compute the determinant of the matrix
+        float determinant = getDeterminant();
+
+        // Check if the determinant is equal to zero
+        assert (Math.abs(determinant) > Defaults.MACHINE_EPSILON);
+
+        float invDeterminant = 1.0f / determinant;
+
+        Matrix3x3 tempMatrix = new Matrix3x3((m[1][1] * m[2][2] - m[2][1] * m[1][2]),
+                -(m[0][1] * m[2][2] - m[2][1] * m[0][2]),
+                (m[0][1] * m[1][2] - m[0][2] * m[1][1]),
+                -(m[1][0] * m[2][2] - m[2][0] * m[1][2]),
+                (m[0][0] * m[2][2] - m[2][0] * m[0][2]),
+                -(m[0][0] * m[1][2] - m[1][0] * m[0][2]),
+                (m[1][0] * m[2][1] - m[2][0] * m[1][1]),
+                -(m[0][0] * m[2][1] - m[2][0] * m[0][1]),
+                (m[0][0] * m[1][1] - m[0][1] * m[1][0]));
+
+        // Return the inverse matrix
+        return Matrix3x3.operatorMultiply(invDeterminant, tempMatrix);
     }
 
 }
