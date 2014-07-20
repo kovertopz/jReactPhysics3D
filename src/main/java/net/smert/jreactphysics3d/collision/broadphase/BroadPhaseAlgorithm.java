@@ -1,6 +1,8 @@
 package net.smert.jreactphysics3d.collision.broadphase;
 
+import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.collision.CollisionDetection;
+import net.smert.jreactphysics3d.collision.shapes.AABB;
 
 /**
  * This class is an abstract class that represents an algorithm used to perform the broad-phase of a collision
@@ -30,7 +32,7 @@ public abstract class BroadPhaseAlgorithm {
 
     // Constructor
     public BroadPhaseAlgorithm(CollisionDetection collisionDetection) {
-        mPairManager = collisionDetection;
+        mPairManager = new PairManager(collisionDetection);
         mCollisionDetection = collisionDetection;
     }
 
@@ -43,5 +45,14 @@ public abstract class BroadPhaseAlgorithm {
     public BodyPair endOverlappingPairsPointer() {
         return mPairManager.endOverlappingPairsPointer();
     }
+
+    /// Notify the broad-phase about a new object in the world
+    public abstract void addObject(CollisionBody body, AABB aabb);
+
+    /// Notify the broad-phase about an object that has been removed from the world
+    public abstract void removeObject(CollisionBody body);
+
+    /// Notify the broad-phase that the AABB of an object has changed
+    public abstract void updateObject(CollisionBody body, AABB aabb);
 
 }

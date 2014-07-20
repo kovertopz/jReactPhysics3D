@@ -127,4 +127,7 @@ public abstract class CollisionShape {
         aabb.setMax(maxCoordinates);
     }
 
+    /// Test equality between two collision shapes of the same type (same derived classes).
+    public abstract boolean isEqualTo(CollisionShape otherCollisionShape);
+
 }

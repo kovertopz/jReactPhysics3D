@@ -168,9 +168,9 @@ public class ConvexMeshShape extends CollisionShape {
         float xSquare = realExtent.x * realExtent.x;
         float ySquare = realExtent.y * realExtent.y;
         float zSquare = realExtent.z * realExtent.z;
-        tensor.setAllValues(factor * (ySquare + zSquare), 0.0, 0.0,
-                0.0, factor * (xSquare + zSquare), 0.0,
-                0.0, 0.0, factor * (xSquare + ySquare));
+        tensor.setAllValues(factor * (ySquare + zSquare), 0.0f, 0.0f,
+                0.0f, factor * (xSquare + zSquare), 0.0f,
+                0.0f, 0.0f, factor * (xSquare + ySquare));
     }
 
     // Add a vertex into the convex mesh
@@ -246,7 +246,7 @@ public class ConvexMeshShape extends CollisionShape {
         // Get the unit direction vector
         Vector3 unitDirection = direction;
         if (direction.lengthSquare() < Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
-            unitDirection.setAllValues(1.0, 1.0, 1.0);
+            unitDirection.setAllValues(1.0f, 1.0f, 1.0f);
         }
         unitDirection.normalize();
 
@@ -331,6 +331,7 @@ public class ConvexMeshShape extends CollisionShape {
     }
 
     // Test equality between two cone shapes
+    @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         ConvexMeshShape otherShape = (ConvexMeshShape) otherCollisionShape;
 

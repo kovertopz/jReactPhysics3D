@@ -166,8 +166,8 @@ public class RigidBody extends CollisionBody {
     public Matrix3x3 getInertiaTensorWorld() {
 
         // Compute and return the inertia tensor in world coordinates
-        return mTransform.getOrientation().getMatrix() * mInertiaTensorLocal
-                * mTransform.getOrientation().getMatrix().getTranspose();
+        return Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(), mInertiaTensorLocal)
+                .operatorSubtractEqual(mTransform.getOrientation().getMatrix().getTranspose());
     }
 
     // Return the inverse of the inertia tensor in world coordinates.
@@ -179,8 +179,8 @@ public class RigidBody extends CollisionBody {
     public Matrix3x3 getInertiaTensorInverseWorld() {
 
         // Compute and return the inertia tensor in world coordinates
-        return mTransform.getOrientation().getMatrix() * mInertiaTensorLocalInverse
-                * mTransform.getOrientation().getMatrix().getTranspose();
+        return Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(), mInertiaTensorLocalInverse)
+                .operatorSubtractEqual(mTransform.getOrientation().getMatrix().getTranspose());
     }
 
     // Set the linear velocity of the rigid body
@@ -270,7 +270,7 @@ public class RigidBody extends CollisionBody {
         }
 
         // Add the force
-        mExternalForce += force;
+        mExternalForce.operatorAddEqual(force);
     }
 
     // Apply an external force to the body at a given point (in world-space coordinates).
@@ -292,8 +292,8 @@ public class RigidBody extends CollisionBody {
         }
 
         // Add the force and torque
-        mExternalForce += force;
-        mExternalTorque += (point - mTransform.getPosition()).cross(force);
+        mExternalForce.operatorAddEqual(force);
+        mExternalTorque.operatorAddEqual(Vector3.operatorSubtract(point, mTransform.getPosition()).cross(force));
     }
 
     // Apply an external torque to the body.
@@ -313,7 +313,7 @@ public class RigidBody extends CollisionBody {
         }
 
         // Add the torque
-        mExternalTorque += torque;
+        mExternalTorque.operatorAddEqual(torque);
     }
 
 }

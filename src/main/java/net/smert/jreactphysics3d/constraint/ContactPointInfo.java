@@ -39,7 +39,7 @@ public class ContactPointInfo {
     }
 
     /// Constructor
-    ContactPointInfo(Vector3 normal, float penetrationDepth, Vector3 localPoint1, Vector3 localPoint2) {
+    public ContactPointInfo(Vector3 normal, float penetrationDepth, Vector3 localPoint1, Vector3 localPoint2) {
         this.normal = normal;
         this.penetrationDepth = penetrationDepth;
         this.localPoint1 = localPoint1;

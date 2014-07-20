@@ -4,6 +4,7 @@ import java.util.Map;
 import net.smert.jreactphysics3d.body.BodyIndexPair;
 import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.body.RigidBody;
+import net.smert.jreactphysics3d.collision.broadphase.BodyPair;
 import net.smert.jreactphysics3d.collision.broadphase.BroadPhaseAlgorithm;
 import net.smert.jreactphysics3d.collision.broadphase.SweepAndPruneAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.GJK.GJKAlgorithm;
@@ -11,6 +12,7 @@ import net.smert.jreactphysics3d.collision.narrowphase.NarrowPhaseAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.SphereVsSphereAlgorithm;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShapeType;
+import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.engine.CollisionWorld;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
@@ -143,8 +145,8 @@ public class CollisionDetection {
     public CollisionDetection(CollisionWorld world, MemoryAllocator memoryAllocator) {
         mWorld = world;
         mMemoryAllocator = memoryAllocator;
-        mNarrowPhaseGJKAlgorithm = memoryAllocator;
-        mNarrowPhaseSphereVsSphereAlgorithm = memoryAllocator;
+        mNarrowPhaseGJKAlgorithm = new GJKAlgorithm(memoryAllocator);
+        mNarrowPhaseSphereVsSphereAlgorithm = new SphereVsSphereAlgorithm(memoryAllocator);
 
         // Create the broad-phase algorithm that will be used (Sweep and Prune with AABB)
         mBroadPhaseAlgorithm = new SweepAndPruneAlgorithm(this);

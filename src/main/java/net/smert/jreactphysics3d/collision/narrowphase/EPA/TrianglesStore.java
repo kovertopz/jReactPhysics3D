@@ -43,7 +43,7 @@ public class TrianglesStore {
     }
 
     // Create a new triangle
-    public TriangleEPA newTriangle(Vector3 vertices, int v0, int v1, int v2) {
+    public TriangleEPA newTriangle(Vector3[] vertices, int v0, int v1, int v2) {
         TriangleEPA newTriangle = null;
 
         // If we have not reached the maximum number of triangles

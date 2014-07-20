@@ -83,12 +83,13 @@ public class CylinderShape extends CollisionShape {
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float height = 2.0f * mHalfHeight;
         float diag = (1.0f / 12.0f) * mass * (3 * mRadius * mRadius + height * height);
-        tensor.setAllValues(diag, 0.0, 0.0, 0.0,
-                0.5f * mass * mRadius * mRadius, 0.0,
-                0.0, 0.0, diag);
+        tensor.setAllValues(diag, 0.0f, 0.0f,
+                0.0f, 0.5f * mass * mRadius * mRadius, 0.0f,
+                0.0f, 0.0f, diag);
     }
 
     // Test equality between two cylinder shapes
+    @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         CylinderShape otherShape = (CylinderShape) otherCollisionShape;
         return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);

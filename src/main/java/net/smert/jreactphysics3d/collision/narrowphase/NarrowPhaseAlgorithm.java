@@ -2,6 +2,7 @@ package net.smert.jreactphysics3d.collision.narrowphase;
 
 import net.smert.jreactphysics3d.collision.BroadPhasePair;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
+import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
@@ -12,7 +13,7 @@ import net.smert.jreactphysics3d.memory.MemoryAllocator;
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */
-public class NarrowPhaseAlgorithm {
+public abstract class NarrowPhaseAlgorithm {
 
     /// Reference to the memory allocator
     protected MemoryAllocator mMemoryAllocator;

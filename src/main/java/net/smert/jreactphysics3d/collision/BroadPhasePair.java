@@ -46,17 +46,17 @@ public class BroadPhasePair {
 
     // Smaller than operator
     public boolean operatorLessThan(BroadPhasePair broadPhasePair2) {
-        return (body1 < broadPhasePair2.body1 ? true : (body2 < broadPhasePair2.body2));
+        return (body1.getID() < broadPhasePair2.body1.getID() ? true : (body2.getID() < broadPhasePair2.body2.getID()));
     }
 
     // Larger than operator
     public boolean operatorGreaterThan(BroadPhasePair broadPhasePair2) {
-        return (body1 > broadPhasePair2.body1 ? true : (body2 > broadPhasePair2.body2));
+        return (body1.getID() > broadPhasePair2.body1.getID() ? true : (body2.getID() > broadPhasePair2.body2.getID()));
     }
 
     // Equal operator
     public boolean operatorEquals(BroadPhasePair broadPhasePair2) {
-        return (body1 == broadPhasePair2.body1 && body2 == broadPhasePair2.body2);
+        return (body1.getID() == broadPhasePair2.body1.getID() && body2.getID() == broadPhasePair2.body2.getID());
     }
 
     // Not equal operator

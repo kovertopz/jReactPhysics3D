@@ -4,6 +4,7 @@ import net.smert.jreactphysics3d.collision.narrowphase.EPA.EPAAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.NarrowPhaseAlgorithm;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.configuration.Defaults;
+import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
@@ -24,7 +25,7 @@ import net.smert.jreactphysics3d.memory.MemoryAllocator;
 public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
     private static final float REL_ERROR = 1.0e-3f;
-    private static final float REL_ERROR_SQUARE = REL_ERROR * REL_ERROR;
+    public static final float REL_ERROR_SQUARE = REL_ERROR * REL_ERROR;
 
     /// EPA Algorithm
     private EPAAlgorithm mAlgoEPA;
@@ -126,7 +127,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
     /// origin, they we give that simplex polytope to the EPA algorithm which will compute
     /// the correct penetration depth and contact points between the enlarged objects.
     @Override
-    boolean testCollision(CollisionShape collisionShape1, Transform transform1,
+    public boolean testCollision(CollisionShape collisionShape1, Transform transform1,
             CollisionShape collisionShape2, Transform transform2,
             ContactPointInfo contactInfo) {
 
@@ -191,7 +192,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 // Project those two points on the margins to have the closest points of both
                 // object with the margins
                 float dist = (float) Math.sqrt(distSquare);
-                assert (dist > 0.0);
+                assert (dist > 0.0f);
                 pA = (pA - (collisionShape1.getMargin() / dist) * v);
                 pB = body2Tobody1.getInverse() * (pB + (collisionShape2.getMargin() / dist) * v);
 

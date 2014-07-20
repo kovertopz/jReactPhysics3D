@@ -2,6 +2,7 @@ package net.smert.jreactphysics3d.collision.narrowphase;
 
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.collision.shapes.SphereShape;
+import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
@@ -48,10 +49,8 @@ public class SphereVsSphereAlgorithm extends NarrowPhaseAlgorithm {
         if (squaredDistanceBetweenCenters <= sumRadius * sumRadius) {
             Vector3 centerSphere2InBody1LocalSpace = transform1.getInverse() * transform2.getPosition();
             Vector3 centerSphere1InBody2LocalSpace = transform2.getInverse() * transform1.getPosition();
-            Vector3 intersectionOnBody1 = sphereShape1.getRadius()
-                    * centerSphere2InBody1LocalSpace.getUnit();
-            Vector3 intersectionOnBody2 = sphereShape2.getRadius()
-                    * centerSphere1InBody2LocalSpace.getUnit();
+            Vector3 intersectionOnBody1 = sphereShape1.getRadius() * centerSphere2InBody1LocalSpace.getUnit();
+            Vector3 intersectionOnBody2 = sphereShape2.getRadius() * centerSphere1InBody2LocalSpace.getUnit();
             float penetrationDepth = sumRadius - (float) Math.sqrt(squaredDistanceBetweenCenters);
 
             // Create the contact info object

@@ -31,6 +31,7 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
     }
 
     // Notify the broad-phase about a new object in the world
+    @Override
     public void addObject(CollisionBody body, AABB aabb) {
 
         // For each body that is already in the world
@@ -45,6 +46,7 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
     }
 
     // Notify the broad-phase about an object that has been removed from the world
+    @Override
     public void removeObject(CollisionBody body) {
 
         // For each body that is in the world
@@ -62,6 +64,7 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
     }
 
     // Notify the broad-phase that the AABB of an object has changed
+    @Override
     public void updateObject(CollisionBody body, AABB aabb) {
         // Do nothing
         return;

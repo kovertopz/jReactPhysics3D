@@ -282,7 +282,7 @@ public class PairManager {
     }
 
     // Return the next power of two of a 32bits integer using a SWAR algorithm
-    public int computeNextPowerOfTwo(int number) {
+    public static int computeNextPowerOfTwo(int number) {
         number |= (number >> 1);
         number |= (number >> 2);
         number |= (number >> 4);

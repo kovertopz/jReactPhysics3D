@@ -1,8 +1,10 @@
 package net.smert.jreactphysics3d.collision.narrowphase.EPA;
 
+import net.smert.jreactphysics3d.collision.narrowphase.GJK.GJKAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.GJK.Simplex;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.configuration.Defaults;
+import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
 import net.smert.jreactphysics3d.mathematics.Transform;
@@ -376,7 +378,7 @@ public class EPAAlgorithm {
 
                 // Compute the error
                 float error = wDotv - triangle.getDistSquare();
-                if (error <= Math.max(tolerance, REL_ERROR_SQUARE * wDotv)
+                if (error <= Math.max(tolerance, GJKAlgorithm.REL_ERROR_SQUARE * wDotv)
                         || points[indexNewVertex] == points[triangle.operatorSquareBrackets(0)]
                         || points[indexNewVertex] == points[triangle.operatorSquareBrackets(1)]
                         || points[indexNewVertex] == points[triangle.operatorSquareBrackets(2)]) {

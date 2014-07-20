@@ -91,12 +91,13 @@ public class ConeShape extends CollisionShape {
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float rSquare = mRadius * mRadius;
         float diagXZ = 0.15f * mass * (rSquare + mHalfHeight);
-        tensor.setAllValues(diagXZ, 0.0, 0.0,
-                0.0, 0.3f * mass * rSquare,
-                0.0, 0.0, 0.0, diagXZ);
+        tensor.setAllValues(diagXZ, 0.0f, 0.0f,
+                0.0f, 0.3f * mass * rSquare,
+                0.0f, 0.0f, 0.0f, diagXZ);
     }
 
     // Test equality between two cone shapes
+    @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         ConeShape otherShape = (ConeShape) otherCollisionShape;
         return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
@@ -130,7 +131,7 @@ public class ConeShape extends CollisionShape {
         if (v.y > sinThetaTimesLengthV) {
             supportPoint = new Vector3(0.0f, mHalfHeight, 0.0f);
         } else {
-            float projectedLength = sqrt(v.x * v.x + v.z * v.z);
+            float projectedLength = (float) Math.sqrt(v.x * v.x + v.z * v.z);
             if (projectedLength > Defaults.MACHINE_EPSILON) {
                 float d = mRadius / projectedLength;
                 supportPoint = new Vector3(v.x * d, -mHalfHeight, v.z * d);

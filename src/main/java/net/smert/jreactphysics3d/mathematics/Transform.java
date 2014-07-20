@@ -102,7 +102,7 @@ public class Transform {
     }
 
     // Return an interpolated transform
-    public Transform interpolateTransforms(Transform oldTransform, Transform newTransform, float interpolationFactor) {
+    public static Transform interpolateTransforms(Transform oldTransform, Transform newTransform, float interpolationFactor) {
 
         Vector3 interPosition = Vector3.operatorMultiply(oldTransform.mPosition, 1.0f - interpolationFactor).operatorAddEqual(Vector3.operatorMultiply(newTransform.mPosition, interpolationFactor));
 

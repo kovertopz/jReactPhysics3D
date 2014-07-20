@@ -11,13 +11,13 @@ import net.smert.jreactphysics3d.body.CollisionBody;
 public class BodyPair {
 
     /// Pointer to the first body
-    CollisionBody body1;
+    public CollisionBody body1;
 
     /// Pointer to the second body
-    CollisionBody body2;
+    public CollisionBody body2;
 
     /// Return the pair of bodies index
-    BodyIndexPair getBodiesIndexPair() {
+    public BodyIndexPair getBodiesIndexPair() {
 
         // Construct the pair of body index
         BodyIndexPair indexPair = body1.getID() < body2.getID()

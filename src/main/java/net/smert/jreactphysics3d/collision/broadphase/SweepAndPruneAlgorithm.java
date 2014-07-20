@@ -484,6 +484,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     }
 
     // Notify the broad-phase that the AABB of an object has changed
+    @Override
     public void updateObject(CollisionBody body, AABB aabb) {
 
         // Compute the corresponding AABB with integer coordinates
@@ -495,6 +496,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
     // Notify the broad-phase about a new object in the world
     /// This method adds the AABB of the object ion to broad-phase
+    @Override
     public void addObject(CollisionBody body, AABB aabb) {
 
         int boxIndex;
@@ -561,6 +563,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     }
 
     // Notify the broad-phase about an object that has been removed from the world
+    @Override
     public void removeObject(CollisionBody body) {
 
         assert (mNbBoxes > 0);

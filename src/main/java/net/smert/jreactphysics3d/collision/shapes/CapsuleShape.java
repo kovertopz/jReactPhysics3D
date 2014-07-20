@@ -77,6 +77,7 @@ public class CapsuleShape extends CollisionShape {
     }
 
     // Test equality between two capsule shapes
+    @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         CapsuleShape otherShape = (CapsuleShape) otherCollisionShape;
         return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
@@ -153,9 +154,9 @@ public class CapsuleShape extends CollisionShape {
         float sum3 = 0.25f * radiusSquare + 1.0f / 12.0f * heightSquare;
         float IxxAndzz = factor1 * mass * (sum1 + sum2) + factor2 * mass * sum3;
         float Iyy = factor1 * mass * sum1 + factor2 * mass * 0.25f * radiusSquareDouble;
-        tensor.setAllValues(IxxAndzz, 0.0, 0.0,
-                0.0, Iyy, 0.0,
-                0.0, 0.0, IxxAndzz);
+        tensor.setAllValues(IxxAndzz, 0.0f, 0.0f,
+                0.0f, Iyy, 0.0f,
+                0.0f, 0.0f, IxxAndzz);
     }
 
 }

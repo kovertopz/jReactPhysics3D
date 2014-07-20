@@ -108,6 +108,7 @@ public class SphereShape extends CollisionShape {
     }
 
     // Test equality between two sphere shapes
+    @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         SphereShape otherShape = (SphereShape) otherCollisionShape;
         return (mRadius == otherShape.mRadius);
