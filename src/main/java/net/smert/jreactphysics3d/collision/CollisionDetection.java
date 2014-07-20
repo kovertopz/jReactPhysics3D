@@ -14,6 +14,7 @@ import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShapeType;
 import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.engine.CollisionWorld;
+import net.smert.jreactphysics3d.engine.Profiler;
 import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
@@ -57,7 +58,7 @@ public class CollisionDetection {
     /// Compute the broad-phase collision detection
     private void computeBroadPhase() {
 
-        PROFILE("CollisionDetection::computeBroadPhase()");
+        Profiler.startProfilingBlock("CollisionDetection::computeBroadPhase()");
 
         // Notify the broad-phase algorithm about the bodies that have moved since last frame
         //for (set<CollisionBody*>::iterator it = mWorld.getBodiesBeginIterator();
@@ -75,7 +76,7 @@ public class CollisionDetection {
     /// Compute the narrow-phase collision detection
     private void computeNarrowPhase() {
 
-        PROFILE("CollisionDetection::computeNarrowPhase()");
+        Profiler.startProfilingBlock("CollisionDetection::computeNarrowPhase()");
 
         for (Map.Entry pairs : mOverlappingPairs.entrySet()) {
             ContactPointInfo contactInfo = null;
@@ -180,7 +181,7 @@ public class CollisionDetection {
     // Compute the collision detection
     public void computeCollisionDetection() {
 
-        PROFILE("CollisionDetection::computeCollisionDetection()");
+        Profiler.startProfilingBlock("CollisionDetection::computeCollisionDetection()");
 
         // Compute the broad-phase collision detection
         computeBroadPhase();

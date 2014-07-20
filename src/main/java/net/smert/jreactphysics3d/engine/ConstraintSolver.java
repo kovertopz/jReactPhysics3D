@@ -126,7 +126,7 @@ public class ConstraintSolver {
     // Initialize the constraint solver for a given island
     public void initializeForIsland(float dt, Island island) {
 
-        PROFILE("ConstraintSolver::initializeForIsland()");
+        Profiler.startProfilingBlock("ConstraintSolver::initializeForIsland()");
 
         assert (mLinearVelocities != null);
         assert (mAngularVelocities != null);
@@ -158,7 +158,7 @@ public class ConstraintSolver {
     // Solve the velocity constraints
     public void solveVelocityConstraints(Island island) {
 
-        PROFILE("ConstraintSolver::solveVelocityConstraints()");
+        Profiler.startProfilingBlock("ConstraintSolver::solveVelocityConstraints()");
 
         assert (island != null);
         assert (island.getNbJoints() > 0);
@@ -175,7 +175,7 @@ public class ConstraintSolver {
     // Solve the position constraints
     public void solvePositionConstraints(Island island) {
 
-        PROFILE("ConstraintSolver::solvePositionConstraints()");
+        Profiler.startProfilingBlock("ConstraintSolver::solvePositionConstraints()");
 
         assert (island != null);
         assert (island.getNbJoints() > 0);

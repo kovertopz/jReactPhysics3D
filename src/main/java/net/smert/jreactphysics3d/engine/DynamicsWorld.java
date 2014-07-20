@@ -133,7 +133,7 @@ public class DynamicsWorld extends CollisionWorld {
     /// the sympletic Euler time stepping scheme.
     protected void integrateRigidBodiesPositions() {
 
-        PROFILE("DynamicsWorld::integrateRigidBodiesPositions()");
+        Profiler.startProfilingBlock("DynamicsWorld::integrateRigidBodiesPositions()");
 
         float dt = (float) mTimer.getTimeStep();
 
@@ -186,7 +186,7 @@ public class DynamicsWorld extends CollisionWorld {
     // Update the AABBs of the bodies
     protected void updateRigidBodiesAABB() {
 
-        PROFILE("DynamicsWorld::updateRigidBodiesAABB()");
+        Profiler.startProfilingBlock("DynamicsWorld::updateRigidBodiesAABB()");
 
         // For each rigid body of the world
         Set<RigidBody> it;
@@ -220,7 +220,7 @@ public class DynamicsWorld extends CollisionWorld {
     // Compute and set the interpolation factor to all bodies
     protected void setInterpolationFactorToAllBodies() {
 
-        PROFILE("DynamicsWorld::setInterpolationFactorToAllBodies()");
+        Profiler.startProfilingBlock("DynamicsWorld::setInterpolationFactorToAllBodies()");
 
         // Compute the interpolation factor
         float factor = mTimer.computeInterpolationFactor();
@@ -281,7 +281,7 @@ public class DynamicsWorld extends CollisionWorld {
     /// contact solver.
     protected void integrateRigidBodiesVelocities() {
 
-        PROFILE("DynamicsWorld::integrateRigidBodiesVelocities()");
+        Profiler.startProfilingBlock("DynamicsWorld::integrateRigidBodiesVelocities()");
 
         // Initialize the bodies velocity arrays
         initVelocityArrays();
@@ -350,7 +350,7 @@ public class DynamicsWorld extends CollisionWorld {
     // Solve the contacts and constraints
     protected void solveContactsAndConstraints() {
 
-        PROFILE("DynamicsWorld::solveContactsAndConstraints()");
+        Profiler.startProfilingBlock("DynamicsWorld::solveContactsAndConstraints()");
 
         // Get the current time step
         float dt = (float) mTimer.getTimeStep();
@@ -416,7 +416,7 @@ public class DynamicsWorld extends CollisionWorld {
     // Solve the position error correction of the constraints
     protected void solvePositionCorrection() {
 
-        PROFILE("DynamicsWorld::solvePositionCorrection()");
+        Profiler.startProfilingBlock("DynamicsWorld::solvePositionCorrection()");
 
         // Do not continue if there is no constraints
         if (mJoints.empty()) {
@@ -493,7 +493,7 @@ public class DynamicsWorld extends CollisionWorld {
     /// it). Then, we create an island with this group of connected bodies.
     protected void computeIslands() {
 
-        PROFILE("DynamicsWorld::computeIslands()");
+        Profiler.startProfilingBlock("DynamicsWorld::computeIslands()");
 
         int nbBodies = mRigidBodies.size();
 
@@ -669,7 +669,7 @@ public class DynamicsWorld extends CollisionWorld {
     /// time, we put all the bodies of the island to sleep.
     protected void updateSleepingBodies() {
 
-        PROFILE("DynamicsWorld::updateSleepingBodies()");
+        Profiler.startProfilingBlock("DynamicsWorld::updateSleepingBodies()");
 
         float dt = (float) mTimer.getTimeStep();
         float sleepLinearVelocitySquare = mSleepLinearVelocity * mSleepLinearVelocity;
@@ -982,7 +982,7 @@ public class DynamicsWorld extends CollisionWorld {
         Profiler.incrementFrameCounter();
         //#endif
 
-        PROFILE("DynamicsWorld::update()");
+        Profiler.startProfilingBlock("DynamicsWorld::update()");
 
         assert (mTimer.getIsRunning());
 
