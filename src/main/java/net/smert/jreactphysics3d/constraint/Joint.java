@@ -2,6 +2,7 @@ package net.smert.jreactphysics3d.constraint;
 
 import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.configuration.JointsPositionCorrectionTechnique;
+import net.smert.jreactphysics3d.engine.ConstraintSolverData;
 
 /**
  * This abstract class represents a joint between two bodies.

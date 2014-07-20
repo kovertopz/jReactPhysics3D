@@ -15,6 +15,11 @@ public class FixedJointInfo extends JointInfo {
     public Vector3 anchorPointWorldSpace;
 
     /// Constructor
+    public FixedJointInfo(JointType constraintType) {
+        super(constraintType);
+    }
+
+    /// Constructor
     public FixedJointInfo(RigidBody rigidBody1, RigidBody rigidBody2, Vector3 initAnchorPointWorldSpace) {
         super(rigidBody1, rigidBody2, JointType.FIXEDJOINT);
 

@@ -1,6 +1,7 @@
 package net.smert.jreactphysics3d.constraint;
 
 import net.smert.jreactphysics3d.configuration.JointsPositionCorrectionTechnique;
+import net.smert.jreactphysics3d.engine.ConstraintSolverData;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
 import net.smert.jreactphysics3d.mathematics.Vector3;
@@ -46,6 +47,7 @@ public class BallAndSocketJoint extends Joint {
     // -------------------- Methods -------------------- //
     /// Private copy-constructor
     private BallAndSocketJoint(BallAndSocketJoint constraint) {
+        super(constraint);
     }
 
     /// Private assignment operator

@@ -35,6 +35,11 @@ public class SliderJointInfo extends JointInfo {
     /// Maximum motor force (in Newtons) that can be applied to reach to desired motor speed
     public float maxMotorForce;
 
+    /// Constructor
+    public SliderJointInfo(JointType constraintType) {
+        super(constraintType);
+    }
+
     /// Constructor without limits and without motor
     public SliderJointInfo(RigidBody rigidBody1, RigidBody rigidBody2,
             Vector3 initAnchorPointWorldSpace, Vector3 initSliderAxisWorldSpace) {

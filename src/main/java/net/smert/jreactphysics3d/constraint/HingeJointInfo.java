@@ -38,6 +38,11 @@ public class HingeJointInfo extends JointInfo {
     /// to desired motor speed
     public float maxMotorTorque;
 
+    /// Constructor
+    public HingeJointInfo(JointType constraintType) {
+        super(constraintType);
+    }
+
     /// Constructor without limits and without motor
     public HingeJointInfo(RigidBody rigidBody1, RigidBody rigidBody2,
             Vector3 initAnchorPointWorldSpace, Vector3 initRotationAxisWorld) {

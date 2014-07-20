@@ -15,6 +15,11 @@ public class BallAndSocketJointInfo extends JointInfo {
     public Vector3 anchorPointWorldSpace;
 
     /// Constructor
+    public BallAndSocketJointInfo(JointType constraintType) {
+        super(constraintType);
+    }
+
+    /// Constructor
     public BallAndSocketJointInfo(RigidBody rigidBody1, RigidBody rigidBody2, Vector3 initAnchorPointWorldSpace) {
         super(rigidBody1, rigidBody2, JointType.BALLSOCKETJOINT);
 

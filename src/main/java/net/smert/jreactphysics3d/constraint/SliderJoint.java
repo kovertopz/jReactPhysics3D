@@ -1,6 +1,7 @@
 package net.smert.jreactphysics3d.constraint;
 
 import net.smert.jreactphysics3d.configuration.JointsPositionCorrectionTechnique;
+import net.smert.jreactphysics3d.engine.ConstraintSolverData;
 import net.smert.jreactphysics3d.mathematics.Matrix2x2;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
@@ -136,6 +137,7 @@ public class SliderJoint extends Joint {
     // -------------------- Methods -------------------- //
     /// Private copy-constructor
     private SliderJoint(SliderJoint constraint) {
+        super(constraint);
     }
 
     /// Private assignment operator
