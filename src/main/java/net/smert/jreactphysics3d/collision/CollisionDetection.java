@@ -1,6 +1,7 @@
 package net.smert.jreactphysics3d.collision;
 
 import java.util.Map;
+import java.util.Set;
 import net.smert.jreactphysics3d.body.BodyIndexPair;
 import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.body.RigidBody;
@@ -44,16 +45,7 @@ public class CollisionDetection {
     private SphereVsSphereAlgorithm mNarrowPhaseSphereVsSphereAlgorithm;
 
     /// Set of pair of bodies that cannot collide between each other
-    private BodyIndexPair mNoCollisionPairs;
-
-    /// Private copy-constructor
-    private CollisionDetection(CollisionDetection collisionDetection) {
-    }
-
-    /// Private assignment operator
-    private CollisionDetection operatorEquals(CollisionDetection collisionDetection) {
-        return this;
-    }
+    private Set<BodyIndexPair> mNoCollisionPairs;
 
     /// Compute the broad-phase collision detection
     private void computeBroadPhase() {
@@ -61,11 +53,10 @@ public class CollisionDetection {
         Profiler.startProfilingBlock("CollisionDetection::computeBroadPhase()");
 
         // Notify the broad-phase algorithm about the bodies that have moved since last frame
-        //for (set<CollisionBody*>::iterator it = mWorld.getBodiesBeginIterator();
-        for (int it = mWorld.getBodiesBeginIterator(); it != mWorld.getBodiesEndIterator(); it++) {
+        for (CollisionBody it : mWorld.getBodies()) {
 
             // If the body has moved
-            if (it.mHasMoved) {
+            if (it.getHasMoved()) {
 
                 // Notify the broad-phase that the body has moved
                 mBroadPhaseAlgorithm.updateObject(it, it.getAABB());
@@ -91,7 +82,7 @@ public class CollisionDetection {
             mWorld.updateOverlappingPair(pair);
 
             // Check if the two bodies are allowed to collide, otherwise, we do not test for collision
-            if (mNoCollisionPairs.count(pair.getBodiesIndexPair()) > 0) {
+            if (mNoCollisionPairs.contains(pair.getBodiesIndexPair()) == true) {
                 continue;
             }
 
@@ -125,8 +116,6 @@ public class CollisionDetection {
                 mWorld.notifyNewContact(pair, contactInfo);
 
                 // Delete and remove the contact info from the memory allocator
-                //contactInfo.ContactPointInfo::~ContactPointInfo();
-                //mMemoryAllocator.release(contactInfo, sizeof(ContactPointInfo));
             }
         }
     }
@@ -137,7 +126,7 @@ public class CollisionDetection {
         // Sphere vs Sphere algorithm
         if (collisionShape1.getType() == CollisionShapeType.SPHERE && collisionShape2.getType() == CollisionShapeType.SPHERE) {
             return mNarrowPhaseSphereVsSphereAlgorithm;
-        } else {   // GJK algorithm
+        } else {    // GJK algorithm
             return mNarrowPhaseGJKAlgorithm;
         }
     }
@@ -170,12 +159,12 @@ public class CollisionDetection {
 
     // Add a pair of bodies that cannot collide with each other
     public void addNoCollisionPair(CollisionBody body1, CollisionBody body2) {
-        mNoCollisionPairs.insert(BroadPhasePair.computeBodiesIndexPair(body1, body2));
+        mNoCollisionPairs.add(BroadPhasePair.ComputeBodiesIndexPair(body1, body2));
     }
 
     // Remove a pair of bodies that cannot collide with each other
     public void removeNoCollisionPair(CollisionBody body1, CollisionBody body2) {
-        mNoCollisionPairs.erase(BroadPhasePair.computeBodiesIndexPair(body1, body2));
+        mNoCollisionPairs.remove(BroadPhasePair.ComputeBodiesIndexPair(body1, body2));
     }
 
     // Compute the collision detection
@@ -202,9 +191,9 @@ public class CollisionDetection {
         assert (broadPhasePair != null);
 
         // Add the pair into the set of overlapping pairs (if not there yet)
-        //pair<map<bodyindexpair, BroadPhasePair>::iterator, bool> check = mOverlappingPairs.insert(
-        //make_pair(indexPair, broadPhasePair));
-        assert (check.second);
+        BroadPhasePair check = mOverlappingPairs.put(indexPair, broadPhasePair);
+
+        assert (check == null);
 
         // Notify the world about the new broad-phase overlapping pair
         mWorld.notifyAddedOverlappingPair(broadPhasePair);
@@ -217,15 +206,13 @@ public class CollisionDetection {
         BodyIndexPair indexPair = removedPair.getBodiesIndexPair();
 
         // Get the broad-phase pair
-        BroadPhasePair broadPhasePair = mOverlappingPairs.find(indexPair).second;
+        BroadPhasePair broadPhasePair = mOverlappingPairs.get(indexPair);
         assert (broadPhasePair != null);
 
         // Notify the world about the removed broad-phase pair
         mWorld.notifyRemovedOverlappingPair(broadPhasePair);
 
         // Remove the overlapping pair from the memory allocator
-        //broadPhasePair.BroadPhasePair::~BroadPhasePair();
-        //mMemoryAllocator.release(broadPhasePair, sizeof(BroadPhasePair));
         mOverlappingPairs.remove(indexPair);
     }
 

@@ -28,20 +28,8 @@ public class BroadPhasePair {
     }
 
     // Return the pair of bodies index
-    public BodyIndexPair computeBodiesIndexPair(CollisionBody body1, CollisionBody body2) {
-
-        // Construct the pair of body index
-        BodyIndexPair indexPair = body1.getID() < body2.getID()
-                ? new BodyIndexPair(body1.getID(), body2.getID())
-                : new BodyIndexPair(body2.getID(), body1.getID());
-        assert (indexPair.first != indexPair.second);
-        return indexPair;
-    }
-
-    // Return the pair of bodies index
     public BodyIndexPair getBodiesIndexPair() {
-
-        return computeBodiesIndexPair(body1, body2);
+        return ComputeBodiesIndexPair(body1, body2);
     }
 
     // Smaller than operator
@@ -62,6 +50,19 @@ public class BroadPhasePair {
     // Not equal operator
     public boolean operatorNotEquals(BroadPhasePair broadPhasePair2) {
         return (body1 != broadPhasePair2.body1 || body2 != broadPhasePair2.body2);
+    }
+
+    // Return the pair of bodies index
+    public static BodyIndexPair ComputeBodiesIndexPair(CollisionBody body1, CollisionBody body2) {
+
+        // Construct the pair of body index
+        BodyIndexPair indexPair = body1.getID() < body2.getID()
+                ? new BodyIndexPair(body1.getID(), body2.getID())
+                : new BodyIndexPair(body2.getID(), body1.getID());
+
+        assert (indexPair.first != indexPair.second);
+
+        return indexPair;
     }
 
 }
