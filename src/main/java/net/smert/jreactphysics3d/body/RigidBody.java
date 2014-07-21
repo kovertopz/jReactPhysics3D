@@ -57,57 +57,24 @@ public class RigidBody extends CollisionBody {
     /// First element of the linked list of joints involving this body
     protected JointListElement mJointsList;
 
-    /// Private copy-constructor
-    protected RigidBody(RigidBody body) {
-        super(body);
-    }
-
-    /// Private assignment operator
-    protected RigidBody operatorEqual(RigidBody body) {
-        return null;
-    }
-
-    // Remove a joint from the joints list
-    protected void removeJointFromJointsList(MemoryAllocator memoryAllocator, Joint joint) {
-
-        assert (joint != null);
-        assert (mJointsList != null);
-
-        // Remove the joint from the linked list of the joints of the first body
-        if (mJointsList.joint == joint) {   // If the first element is the one to remove
-            JointListElement elementToRemove = mJointsList;
-            mJointsList = elementToRemove.next;
-            //elementToRemove.JointListElement::~JointListElement();
-            //memoryAllocator.release(elementToRemove, sizeof(JointListElement));
-        } else {  // If the element to remove is not the first one in the list
-            JointListElement currentElement = mJointsList;
-            while (currentElement.next != null) {
-                if (currentElement.next.joint == joint) {
-                    JointListElement elementToRemove = currentElement.next;
-                    currentElement.next = elementToRemove.next;
-                    //elementToRemove.JointListElement::~JointListElement();
-                    //memoryAllocator.release(elementToRemove, sizeof(JointListElement));
-                    break;
-                }
-                currentElement = currentElement.next;
-            }
-        }
-    }
-
-    // Set the inverse of the mass
-    protected void setMassInverse(float massInverse) {
-        mMassInverse = massInverse;
-    }
-
     // Constructor
     public RigidBody(Transform transform, float mass, Matrix3x3 inertiaTensorLocal, CollisionShape collisionShape, int id) {
         super(transform, collisionShape, id);
+
+        assert (transform != null);
+        assert (inertiaTensorLocal != null);
         assert (collisionShape != null);
-        mInertiaTensorLocal = inertiaTensorLocal;
+
         mMass = mass;
+        mLinearVelocity = new Vector3();
+        mAngularVelocity = new Vector3();
+        mExternalForce = new Vector3();
+        mExternalTorque = new Vector3();
+        mInertiaTensorLocal = inertiaTensorLocal;
         mInertiaTensorLocalInverse = inertiaTensorLocal.getInverse();
         mMassInverse = 1.0f / mass;
         mIsGravityEnabled = true;
+        mMaterial = new Material();
         mLinearDamping = 0.0f;
         mAngularDamping = 0.0f;
         mJointsList = null;
@@ -120,12 +87,24 @@ public class RigidBody extends CollisionBody {
 
     // Method that set the mass of the body
     public void setMass(float mass) {
+
+        // TODO: Set inverse mass when this is set?
         mMass = mass;
     }
 
     // Return the linear velocity
     public Vector3 getLinearVelocity() {
         return mLinearVelocity;
+    }
+
+    // Set the linear velocity of the rigid body
+    public void setLinearVelocity(Vector3 linearVelocity) {
+
+        // If the body is able to move
+        if (mIsMotionEnabled) {
+            // Update the linear velocity of the current body state
+            mLinearVelocity = linearVelocity;
+        }
     }
 
     // Return the angular velocity of the body
@@ -137,14 +116,66 @@ public class RigidBody extends CollisionBody {
         mAngularVelocity = angularVelocity;
     }
 
-    // Get the inverse of the inertia tensor
-    public Matrix3x3 getInertiaTensorLocalInverse() {
-        return mInertiaTensorLocalInverse;
+    // Apply an external force to the body at a given point (in world-space coordinates).
+    /// If the point is not at the center of gravity of the body, it will also
+    /// generate some torque and therefore, change the angular velocity of the body.
+    /// If the body is sleeping, calling this method will wake it up. Note that the
+    /// force will we added to the sum of the applied forces and that this sum will be
+    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
+    public void applyForce(Vector3 force, Vector3 point) {
+
+        // If it is a static body, do not apply any force
+        if (!mIsMotionEnabled) {
+            return;
+        }
+
+        // Awake the body if it was sleeping
+        if (mIsSleeping) {
+            setIsSleeping(false);
+        }
+
+        // Add the force and torque
+        mExternalForce.operatorAddEqual(force);
+        mExternalTorque.operatorAddEqual(Vector3.operatorSubtract(point, mTransform.getPosition()).cross(force));
     }
 
-    // Return the inverse of the mass of the body
-    public float getMassInverse() {
-        return mMassInverse;
+    // Apply an external force to the body at its gravity center.
+    /// If the body is sleeping, calling this method will wake it up. Note that the
+    /// force will we added to the sum of the applied forces and that this sum will be
+    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
+    public void applyForceToCenter(Vector3 force) {
+        // If it is a static body, do not apply any force
+        if (!mIsMotionEnabled) {
+            return;
+        }
+
+        // Awake the body if it was sleeping
+        if (mIsSleeping) {
+            setIsSleeping(false);
+        }
+
+        // Add the force
+        mExternalForce.operatorAddEqual(force);
+    }
+
+    // Apply an external torque to the body.
+    /// If the body is sleeping, calling this method will wake it up. Note that the
+    /// force will we added to the sum of the applied torques and that this sum will be
+    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
+    public void applyTorque(Vector3 torque) {
+
+        // If it is a static body, do not apply any force
+        if (!mIsMotionEnabled) {
+            return;
+        }
+
+        // Awake the body if it was sleeping
+        if (mIsSleeping) {
+            setIsSleeping(false);
+        }
+
+        // Add the torque
+        mExternalTorque.operatorAddEqual(torque);
     }
 
     // Return the local inertia tensor of the body (in body coordinates)
@@ -154,6 +185,8 @@ public class RigidBody extends CollisionBody {
 
     // Set the local inertia tensor of the body (in body coordinates)
     public void setInertiaTensorLocal(Matrix3x3 inertiaTensorLocal) {
+
+        // TODO: Set inertiaTensorLocalInverse when this is set?
         mInertiaTensorLocal = inertiaTensorLocal;
     }
 
@@ -165,9 +198,15 @@ public class RigidBody extends CollisionBody {
     /// the current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorWorld() {
 
+        // TODO: Optimize
         // Compute and return the inertia tensor in world coordinates
         return Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(), mInertiaTensorLocal)
                 .operatorSubtractEqual(mTransform.getOrientation().getMatrix().getTranspose());
+    }
+
+    // Get the inverse of the inertia tensor
+    public Matrix3x3 getInertiaTensorLocalInverse() {
+        return mInertiaTensorLocalInverse;
     }
 
     // Return the inverse of the inertia tensor in world coordinates.
@@ -178,19 +217,20 @@ public class RigidBody extends CollisionBody {
     /// current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorInverseWorld() {
 
+        // TODO: Optimize
         // Compute and return the inertia tensor in world coordinates
         return Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(), mInertiaTensorLocalInverse)
                 .operatorSubtractEqual(mTransform.getOrientation().getMatrix().getTranspose());
     }
 
-    // Set the linear velocity of the rigid body
-    public void setLinearVelocity(Vector3 linearVelocity) {
+    // Return the inverse of the mass of the body
+    public float getMassInverse() {
+        return mMassInverse;
+    }
 
-        // If the body is able to move
-        if (mIsMotionEnabled) {
-            // Update the linear velocity of the current body state
-            mLinearVelocity = linearVelocity;
-        }
+    // Set the inverse of the mass
+    public void setMassInverse(float massInverse) {
+        mMassInverse = massInverse;
     }
 
     // Return true if the gravity needs to be applied to this rigid body
@@ -240,6 +280,29 @@ public class RigidBody extends CollisionBody {
         return mJointsList;
     }
 
+    // Remove a joint from the joints list
+    public void removeJointFromJointsList(MemoryAllocator memoryAllocator, Joint joint) {
+
+        assert (joint != null);
+        assert (mJointsList != null);
+
+        // Remove the joint from the linked list of the joints of the first body
+        if (mJointsList.joint == joint) {   // If the first element is the one to remove
+            JointListElement elementToRemove = mJointsList;
+            mJointsList = elementToRemove.next;
+        } else {    // If the element to remove is not the first one in the list
+            JointListElement currentElement = mJointsList;
+            while (currentElement.next != null) {
+                if (currentElement.next.joint == joint) {
+                    JointListElement elementToRemove = currentElement.next;
+                    currentElement.next = elementToRemove.next;
+                    break;
+                }
+                currentElement = currentElement.next;
+            }
+        }
+    }
+
     // Set the variable to know whether or not the body is sleeping
     @Override
     public void setIsSleeping(boolean isSleeping) {
@@ -252,68 +315,6 @@ public class RigidBody extends CollisionBody {
         }
 
         super.setIsSleeping(isSleeping);
-    }
-
-    // Apply an external force to the body at its gravity center.
-    /// If the body is sleeping, calling this method will wake it up. Note that the
-    /// force will we added to the sum of the applied forces and that this sum will be
-    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
-    public void applyForceToCenter(Vector3 force) {
-        // If it is a static body, do not apply any force
-        if (!mIsMotionEnabled) {
-            return;
-        }
-
-        // Awake the body if it was sleeping
-        if (mIsSleeping) {
-            setIsSleeping(false);
-        }
-
-        // Add the force
-        mExternalForce.operatorAddEqual(force);
-    }
-
-    // Apply an external force to the body at a given point (in world-space coordinates).
-    /// If the point is not at the center of gravity of the body, it will also
-    /// generate some torque and therefore, change the angular velocity of the body.
-    /// If the body is sleeping, calling this method will wake it up. Note that the
-    /// force will we added to the sum of the applied forces and that this sum will be
-    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
-    public void applyForce(Vector3 force, Vector3 point) {
-
-        // If it is a static body, do not apply any force
-        if (!mIsMotionEnabled) {
-            return;
-        }
-
-        // Awake the body if it was sleeping
-        if (mIsSleeping) {
-            setIsSleeping(false);
-        }
-
-        // Add the force and torque
-        mExternalForce.operatorAddEqual(force);
-        mExternalTorque.operatorAddEqual(Vector3.operatorSubtract(point, mTransform.getPosition()).cross(force));
-    }
-
-    // Apply an external torque to the body.
-    /// If the body is sleeping, calling this method will wake it up. Note that the
-    /// force will we added to the sum of the applied torques and that this sum will be
-    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
-    public void applyTorque(Vector3 torque) {
-
-        // If it is a static body, do not apply any force
-        if (!mIsMotionEnabled) {
-            return;
-        }
-
-        // Awake the body if it was sleeping
-        if (mIsSleeping) {
-            setIsSleeping(false);
-        }
-
-        // Add the torque
-        mExternalTorque.operatorAddEqual(torque);
     }
 
 }

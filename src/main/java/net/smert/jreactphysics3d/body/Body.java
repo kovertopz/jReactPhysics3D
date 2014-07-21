@@ -25,15 +25,6 @@ public abstract class Body {
     /// Elapsed time since the body velocity was bellow the sleep velocity
     protected float mSleepTime;
 
-    /// Private copy-constructor
-    protected Body(Body body) {
-    }
-
-    /// Private assignment operator
-    protected Body operatorEqual(Body body) {
-        return null;
-    }
-
     // Constructor
     public Body(int id) {
         mID = id;
@@ -63,14 +54,14 @@ public abstract class Body {
         }
     }
 
-    // Return whether or not the body is sleeping
-    public boolean isSleeping() {
-        return mIsSleeping;
-    }
-
     // Return true if the body is active
     public boolean isActive() {
         return mIsActive;
+    }
+
+    // Return whether or not the body is sleeping
+    public boolean isSleeping() {
+        return mIsSleeping;
     }
 
     // Set the variable to know whether or not the body is sleeping

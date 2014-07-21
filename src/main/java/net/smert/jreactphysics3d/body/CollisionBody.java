@@ -4,7 +4,6 @@ import net.smert.jreactphysics3d.collision.shapes.AABB;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.engine.ContactManifoldListElement;
 import net.smert.jreactphysics3d.mathematics.Transform;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class represents a body that is able to collide with others bodies. This class inherits from the Body class.
@@ -40,64 +39,23 @@ public class CollisionBody extends Body {
     /// First element of the linked list of contact manifolds involving this body
     protected ContactManifoldListElement mContactManifoldsList;
 
-    /// Private copy-constructor
-    protected CollisionBody(CollisionBody body) {
-        super(body);
-    }
-
-    /// Private assignment operator
-    protected CollisionBody operatorEqual(CollisionBody body) {
-        return null;
-    }
-
-    // Reset the contact manifold lists
-    protected void resetContactManifoldsList(MemoryAllocator memoryAllocator) {
-
-        // Delete the linked list of contact manifolds of that body
-        ContactManifoldListElement currentElement = mContactManifoldsList;
-        while (currentElement != null) {
-            ContactManifoldListElement nextElement = currentElement.next;
-
-            // Delete the current element
-            //currentElement.ContactManifoldListElement::~ContactManifoldListElement();
-            //memoryAllocator.release(currentElement, sizeof(ContactManifoldListElement));
-            currentElement = nextElement;
-        }
-        mContactManifoldsList = null;
-
-        assert (mContactManifoldsList == null);
-    }
-
-    // Update the old transform with the current one.
-    /// This is used to compute the interpolated position and orientation of the body
-    protected void updateOldTransform() {
-        mOldTransform = mTransform;
-    }
-
-    // Update the rigid body in order to reflect a change in the body state
-    protected void updateAABB() {
-
-        // Update the AABB
-        mCollisionShape.updateAABB(mAabb, mTransform);
-    }
-
     // Constructor
     public CollisionBody(Transform transform, CollisionShape collisionShape, int id) {
         super(id);
 
+        assert (transform != null);
         assert (collisionShape != null);
 
         mCollisionShape = collisionShape;
         mTransform = transform;
-        mHasMoved = false;
-        mContactManifoldsList = null;
-
-        mIsMotionEnabled = true;
-        mIsCollisionEnabled = true;
-        mInterpolationFactor = 0.0f;
-
         // Initialize the old transform
         mOldTransform = transform;
+        mInterpolationFactor = 0.0f;
+        mIsMotionEnabled = true;
+        mIsCollisionEnabled = true;
+        mAabb = new AABB();
+        mHasMoved = false;
+        mContactManifoldsList = null;
 
         // Initialize the AABB for broad-phase collision detection
         mCollisionShape.updateAABB(mAabb, transform);
@@ -111,8 +69,8 @@ public class CollisionBody extends Body {
 
     // Set the collision shape
     public void setCollisionShape(CollisionShape collisionShape) {
-        assert (collisionShape != null);
         mCollisionShape = collisionShape;
+        assert (mCollisionShape != null);
     }
 
     // Return the interpolated transform for rendering
@@ -120,8 +78,15 @@ public class CollisionBody extends Body {
         return Transform.interpolateTransforms(mOldTransform, mTransform, mInterpolationFactor);
     }
 
+    // Update the old transform with the current one.
+    /// This is used to compute the interpolated position and orientation of the body
+    public void updateOldTransform() {
+        mOldTransform = mTransform;
+    }
+
     // Set the interpolation factor of the body
     public void setInterpolationFactor(float factor) {
+
         // Set the factor
         mInterpolationFactor = factor;
     }
@@ -145,9 +110,9 @@ public class CollisionBody extends Body {
     public void setTransform(Transform transform) {
 
         // Check if the body has moved
-        if (mTransform != transform) {
+        if (!mTransform.equals(transform)) {
             mHasMoved = true;
-        }
+        } // TODO: Reset when not equal. Report bug to upstream.
 
         mTransform = transform;
     }
@@ -155,6 +120,14 @@ public class CollisionBody extends Body {
     // Return the AAABB of the body
     public AABB getAABB() {
         return mAabb;
+    }
+
+    // Update the rigid body in order to reflect a change in the body state
+    public void updateAABB() {
+
+        // TODO: Update only when has moved. Report bug to upsteam.
+        // Update the AABB
+        mCollisionShape.updateAABB(mAabb, mTransform);
     }
 
     // Return true if the body can collide with others bodies
@@ -170,6 +143,13 @@ public class CollisionBody extends Body {
     // Return the first element of the linked list of contact manifolds involving this body
     public ContactManifoldListElement getContactManifoldsLists() {
         return mContactManifoldsList;
+    }
+
+    // Reset the contact manifold lists
+    public void resetContactManifoldsList() {
+        mContactManifoldsList = null;
+
+        assert (mContactManifoldsList == null);
     }
 
 }
