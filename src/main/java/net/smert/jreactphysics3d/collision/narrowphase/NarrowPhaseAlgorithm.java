@@ -21,15 +21,6 @@ public abstract class NarrowPhaseAlgorithm {
     /// Overlapping pair of the bodies currently tested for collision
     protected BroadPhasePair mCurrentOverlappingPair;
 
-    /// Private copy-constructor
-    protected NarrowPhaseAlgorithm(NarrowPhaseAlgorithm algorithm) {
-    }
-
-    /// Private assignment operator
-    protected NarrowPhaseAlgorithm operatorEqual(NarrowPhaseAlgorithm algorithm) {
-        return this;
-    }
-
     // Constructor
     public NarrowPhaseAlgorithm(MemoryAllocator memoryAllocator) {
         mMemoryAllocator = memoryAllocator;
