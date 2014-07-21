@@ -17,10 +17,10 @@ public class ConstraintSolverData {
     public float timeStep;
 
     /// Array with the bodies linear velocities
-    public Vector3 linearVelocities;
+    public Vector3[] linearVelocities;
 
     /// Array with the bodies angular velocities
-    public Vector3 angularVelocities;
+    public Vector3[] angularVelocities;
 
     /// Reference to the bodies positions
     public List<Vector3> positions;

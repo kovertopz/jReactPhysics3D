@@ -1,5 +1,6 @@
 package net.smert.jreactphysics3d.engine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +25,7 @@ import net.smert.jreactphysics3d.constraint.JointInfo;
 import net.smert.jreactphysics3d.constraint.JointListElement;
 import net.smert.jreactphysics3d.constraint.SliderJoint;
 import net.smert.jreactphysics3d.constraint.SliderJointInfo;
+import net.smert.jreactphysics3d.mathematics.Mathematics;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
 import net.smert.jreactphysics3d.mathematics.Transform;
@@ -73,17 +75,17 @@ public class DynamicsWorld extends CollisionWorld {
 
     /// Array of constrained linear velocities (state of the linear velocities
     /// after solving the constraints)
-    protected Vector3 mConstrainedLinearVelocities;
+    protected Vector3[] mConstrainedLinearVelocities;
 
     /// Array of constrained angular velocities (state of the angular velocities
     /// after solving the constraints)
-    protected Vector3 mConstrainedAngularVelocities;
+    protected Vector3[] mConstrainedAngularVelocities;
 
     /// Split linear velocities for the position contact solver (split impulse)
-    protected Vector3 mSplitLinearVelocities;
+    protected Vector3[] mSplitLinearVelocities;
 
     /// Split angular velocities for the position contact solver (split impulse)
-    protected Vector3 mSplitAngularVelocities;
+    protected Vector3[] mSplitAngularVelocities;
 
     /// Array of constrained rigid bodies position (for position error correction)
     protected List<Vector3> mConstrainedPositions;
@@ -101,7 +103,7 @@ public class DynamicsWorld extends CollisionWorld {
     protected int mNbIslandsCapacity;
 
     /// Array with all the islands of awaken bodies
-    protected Island mIslands;
+    protected Island[] mIslands;
 
     /// Current allocated capacity for the bodies
     protected int mNbBodiesCapacity;
@@ -119,15 +121,6 @@ public class DynamicsWorld extends CollisionWorld {
     /// Pointer to an event listener object
     protected EventListener mEventListener;
 
-    /// Private copy-constructor
-    protected DynamicsWorld(DynamicsWorld world) {
-    }
-
-    /// Private assignment operator
-    protected DynamicsWorld operatorEqual(DynamicsWorld world) {
-        return this;
-    }
-
     // Integrate position and orientation of the rigid bodies.
     /// The positions and orientations of the bodies are integrated using
     /// the sympletic Euler time stepping scheme.
@@ -140,7 +133,7 @@ public class DynamicsWorld extends CollisionWorld {
         // For each island of the world
         for (int i = 0; i < mNbIslands; i++) {
 
-            RigidBody bodies = mIslands[i].getBodies();
+            RigidBody[] bodies = mIslands[i].getBodies();
 
             // For each body of the island
             for (int b = 0; b < mIslands[i].getNbBodies(); b++) {
@@ -149,7 +142,7 @@ public class DynamicsWorld extends CollisionWorld {
                 if (bodies[b].isMotionEnabled()) {
 
                     // Get the constrained velocity
-                    int indexArray = mMapBodyToConstrainedVelocityIndex.find(bodies[b]).second;
+                    int indexArray = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
                     Vector3 newLinVelocity = mConstrainedLinearVelocities[indexArray];
                     Vector3 newAngVelocity = mConstrainedAngularVelocities[indexArray];
 
@@ -161,8 +154,8 @@ public class DynamicsWorld extends CollisionWorld {
                     // to update the position)
                     if (mContactSolver.isSplitImpulseActive()) {
 
-                        newLinVelocity += mSplitLinearVelocities[indexArray];
-                        newAngVelocity += mSplitAngularVelocities[indexArray];
+                        newLinVelocity.operatorAddEqual(mSplitLinearVelocities[indexArray]);
+                        newAngVelocity.operatorAddEqual(mSplitAngularVelocities[indexArray]);
                     }
 
                     // Get current position and orientation of the body
@@ -170,14 +163,13 @@ public class DynamicsWorld extends CollisionWorld {
                     Quaternion currentOrientation = bodies[b].getTransform().getOrientation();
 
                     // Compute the new position of the body
-                    Vector3 newPosition = currentPosition + newLinVelocity * dt;
-                    Quaternion newOrientation = currentOrientation + Quaternion(0, newAngVelocity) * currentOrientation * 0.5f * dt;
+                    Vector3 newPosition = Vector3.operatorAdd(currentPosition, Vector3.operatorMultiply(newLinVelocity, dt));
+                    Quaternion newOrientation = currentOrientation.operatorAdd(
+                            new Quaternion(0.0f, newAngVelocity).operatorMultiply(currentOrientation).operatorMultiply(0.5f).operatorMultiply(dt));
 
                     // Update the Transform of the body
-                    Transform newTransform(newPosition
-                        , newOrientation.getUnit()
-                        );
-                        bodies[b].setTransform(newTransform);
+                    Transform newTransform = new Transform(newPosition, newOrientation.getUnit());
+                    bodies[b].setTransform(newTransform);
                 }
             }
         }
@@ -189,11 +181,10 @@ public class DynamicsWorld extends CollisionWorld {
         Profiler.startProfilingBlock("DynamicsWorld::updateRigidBodiesAABB()");
 
         // For each rigid body of the world
-        Set<RigidBody> it;
-        for (it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it) {
+        for (RigidBody it : mRigidBodies) {
 
             // If the body has moved
-            if (it.mHasMoved) {
+            if (it.getHasMoved()) {
 
                 // Update the AABB of the rigid body
                 it.updateAABB();
@@ -205,10 +196,9 @@ public class DynamicsWorld extends CollisionWorld {
     protected void resetBodiesForceAndTorque() {
 
         // For each body of the world
-        Set<RigidBody> it;
-        for (it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it) {
-            it.mExternalForce.setToZero();
-            it.mExternalTorque.setToZero();
+        for (RigidBody it : mRigidBodies) {
+            it.getExternalForce().setToZero();
+            it.getExternalTorque().setToZero();
         }
     }
 
@@ -227,8 +217,7 @@ public class DynamicsWorld extends CollisionWorld {
         assert (factor >= 0.0f && factor <= 1.0f);
 
         // Set the factor to all bodies
-        Set<RigidBody> it;
-        for (it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it) {
+        for (RigidBody it : mRigidBodies) {
 
             it.setInterpolationFactor(factor);
         }
@@ -263,13 +252,11 @@ public class DynamicsWorld extends CollisionWorld {
 
         // Initialize the map of body indexes in the velocity arrays
         mMapBodyToConstrainedVelocityIndex.clear();
-        Set<RigidBody> it;
         int indexBody = 0;
-        for (it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it) {
+        for (RigidBody it : mRigidBodies) {
 
             // Add the body into the map
-            //mMapBodyToConstrainedVelocityIndex.insert(std::make_pair<RigidBody,
-            //                                          int>(it, indexBody));
+            mMapBodyToConstrainedVelocityIndex.put(it, indexBody);
             indexBody++;
         }
     }
@@ -291,31 +278,33 @@ public class DynamicsWorld extends CollisionWorld {
         // For each island of the world
         for (int i = 0; i < mNbIslands; i++) {
 
-            RigidBody bodies = mIslands[i].getBodies();
+            RigidBody[] bodies = mIslands[i].getBodies();
 
             // For each body of the island
             for (int b = 0; b < mIslands[i].getNbBodies(); b++) {
 
                 // Insert the body into the map of constrained velocities
-                int indexBody = mMapBodyToConstrainedVelocityIndex.find(bodies[b]).second;
+                int indexBody = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
 
-                assert (mSplitLinearVelocities[indexBody] == new Vector3(0.0f, 0.0f, 0.0f));
-                assert (mSplitAngularVelocities[indexBody] == new Vector3(0.0f, 0.0f, 0.0f));
+                assert (mSplitLinearVelocities[indexBody] == new Vector3());
+                assert (mSplitAngularVelocities[indexBody] == new Vector3());
 
                 // If the body is allowed to move
                 if (bodies[b].isMotionEnabled()) {
 
                     // Integrate the external force to get the new velocity of the body
-                    mConstrainedLinearVelocities[indexBody] = bodies[b].getLinearVelocity()
-                            + dt * bodies[b].getMassInverse() * bodies[b].mExternalForce;
-                    mConstrainedAngularVelocities[indexBody] = bodies[b].getAngularVelocity()
-                            + dt * bodies[b].getInertiaTensorInverseWorld() * bodies[b].mExternalTorque;
+                    mConstrainedLinearVelocities[indexBody] = Vector3.operatorAdd(bodies[b].getLinearVelocity(),
+                            Vector3.operatorMultiply(dt * bodies[b].getMassInverse(), bodies[b].getExternalForce()));
+                    mConstrainedAngularVelocities[indexBody] = Vector3.operatorAdd(bodies[b].getAngularVelocity(),
+                            Matrix3x3.operatorMultiply(
+                                    Matrix3x3.operatorMultiply(dt, bodies[b].getInertiaTensorInverseWorld()), bodies[b].getExternalTorque()));
 
                     // If the gravity has to be applied to this rigid body
                     if (bodies[b].isGravityEnabled() && mIsGravityEnabled) {
 
                         // Integrate the gravity force
-                        mConstrainedLinearVelocities[indexBody] += dt * bodies[b].getMassInverse() * bodies[b].getMass() * mGravity;
+                        mConstrainedLinearVelocities[indexBody].operatorAddEqual(Vector3.operatorMultiply(
+                                dt * bodies[b].getMassInverse() * bodies[b].getMass(), mGravity));
                     }
 
                     // Apply the velocity damping
@@ -333,10 +322,10 @@ public class DynamicsWorld extends CollisionWorld {
                     //                 => v2 = v1 * (1 - c * dt)
                     float linDampingFactor = bodies[b].getLinearDamping();
                     float angDampingFactor = bodies[b].getAngularDamping();
-                    float linearDamping = clamp(1.0f - dt * linDampingFactor, 0.0f, 1.0f);
-                    float angularDamping = clamp(1.0f - dt * angDampingFactor, 0.0f, 1.0f);
-                    mConstrainedLinearVelocities[indexBody] *= clamp(linearDamping, 0.0f, 1.0f);
-                    mConstrainedAngularVelocities[indexBody] *= clamp(angularDamping, 0.0f, 1.0f);
+                    float linearDamping = Mathematics.clamp(1.0f - dt * linDampingFactor, 0.0f, 1.0f);
+                    float angularDamping = Mathematics.clamp(1.0f - dt * angDampingFactor, 0.0f, 1.0f);
+                    mConstrainedLinearVelocities[indexBody].operatorMultiplyEqual(Mathematics.clamp(linearDamping, 0.0f, 1.0f));
+                    mConstrainedAngularVelocities[indexBody].operatorMultiplyEqual(Mathematics.clamp(angularDamping, 0.0f, 1.0f));
 
                     // Update the old Transform of the body
                     bodies[b].updateOldTransform();
@@ -419,28 +408,28 @@ public class DynamicsWorld extends CollisionWorld {
         Profiler.startProfilingBlock("DynamicsWorld::solvePositionCorrection()");
 
         // Do not continue if there is no constraints
-        if (mJoints.empty()) {
+        if (mJoints.isEmpty()) {
             return;
         }
 
         // ---------- Get the position/orientation of the rigid bodies ---------- //
         // TODO : Use better memory allocation here
-        mConstrainedPositions = List < Vector3 > (mRigidBodies.size());
-        mConstrainedOrientations = List < Quaternion > (mRigidBodies.size());
+        mConstrainedPositions = new ArrayList<>(mRigidBodies.size());
+        mConstrainedOrientations = new ArrayList<>(mRigidBodies.size());
 
         // For each island of the world
         for (int islandIndex = 0; islandIndex < mNbIslands; islandIndex++) {
 
             // For each body of the island
-            RigidBody bodies = mIslands[islandIndex].getBodies();
+            RigidBody[] bodies = mIslands[islandIndex].getBodies();
             for (int b = 0; b < mIslands[islandIndex].getNbBodies(); b++) {
 
-                int index = mMapBodyToConstrainedVelocityIndex.find(bodies[b]).second;
+                int index = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
 
                 // Get the position/orientation of the rigid body
                 Transform transform = bodies[b].getTransform();
-                mConstrainedPositions[index] = transform.getPosition();
-                mConstrainedOrientations[index] = transform.getOrientation();
+                mConstrainedPositions.set(index, transform.getPosition());
+                mConstrainedOrientations.set(index, transform.getOrientation());
             }
 
             // ---------- Solve the position error correction for the constraints ---------- //
@@ -454,17 +443,15 @@ public class DynamicsWorld extends CollisionWorld {
             // ---------- Update the position/orientation of the rigid bodies ---------- //
             for (int b = 0; b < mIslands[islandIndex].getNbBodies(); b++) {
 
-                int index = mMapBodyToConstrainedVelocityIndex.find(bodies[b]).second;
+                int index = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
 
                 // Get the new position/orientation of the body
-                Vector3 newPosition = mConstrainedPositions[index];
-                Quaternion newOrientation = mConstrainedOrientations[index];
+                Vector3 newPosition = mConstrainedPositions.get(index);
+                Quaternion newOrientation = mConstrainedOrientations.get(index);
 
                 // Update the Transform of the body
-                Transform newTransform(newPosition
-                    , newOrientation.getUnit()
-                    );
-                    bodies[b].setTransform(newTransform);
+                Transform newTransform = new Transform(newPosition, newOrientation.getUnit());
+                bodies[b].setTransform(newTransform);
             }
         }
     }
@@ -477,10 +464,10 @@ public class DynamicsWorld extends CollisionWorld {
     protected void resetBodiesMovementVariable() {
 
         // For each rigid body
-        for (Set<RigidBody> it = getRigidBodiesBeginIterator(); it != getRigidBodiesEndIterator(); it++) {
+        for (RigidBody it : getRigidBodies()) {
 
             // Set the hasMoved variable to false
-            it.mHasMoved = false;
+            it.setHasMoved(false);
         }
     }
 
@@ -500,45 +487,40 @@ public class DynamicsWorld extends CollisionWorld {
         // Clear all the islands
         for (int i = 0; i < mNbIslands; i++) {
             // Call the island destructor
-            //mIslands[i].Island::~Island();
-
             // Release the allocated memory for the island
-            mMemoryAllocator.release(mIslands[i], sizeof(Island));
+            mIslands[i] = null;
         }
 
         // Allocate and create the array of islands
         if (mNbIslandsCapacity != nbBodies && nbBodies > 0) {
             if (mNbIslandsCapacity > 0) {
-                //mMemoryAllocator.release(mIslands, sizeof(Island*) * mNbIslandsCapacity);
             }
             mNbIslandsCapacity = nbBodies;
-            //mIslands = (Island**)mMemoryAllocator.allocate(sizeof(Island*) * mNbIslandsCapacity);
+            mIslands = new Island[mNbIslandsCapacity];
         }
         mNbIslands = 0;
 
         // Reset all the isAlreadyInIsland variables of bodies, joints and contact manifolds
-        for (Set<RigidBody> it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it) {
-            it.mIsAlreadyInIsland = false;
+        for (RigidBody it : mRigidBodies) {
+            it.setIsAlreadyInIsland(false);
         }
-        for (List<ContactManifold> it = mContactManifolds.begin();
-                it != mContactManifolds.end(); ++it) {
-            it.mIsAlreadyInIsland = false;
+        for (ContactManifold it : mContactManifolds) {
+            it.setIsAlreadyInIsland(false);
         }
-        for (Set<Joint> it = mJoints.begin(); it != mJoints.end(); ++it) {
-            it.mIsAlreadyInIsland = false;
+        for (Joint it : mJoints) {
+            it.setIsAlreadyInIsland(false);
         }
 
         // Create a stack (using an array) for the rigid bodies to visit during the Depth First Search
-        int nbBytesStack = sizeof(RigidBody) * nbBodies;
-        RigidBody stackBodiesToVisit = (RigidBody) mMemoryAllocator.allocate(nbBytesStack);
+        RigidBody[] stackBodiesToVisit = new RigidBody[nbBodies];
 
         // For each rigid body of the world
-        for (Set<RigidBody> it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it) {
+        for (RigidBody it : mRigidBodies) {
 
             RigidBody body = it;
 
             // If the body has already been added to an island, we go to the next body
-            if (body.mIsAlreadyInIsland) {
+            if (body.isAlreadyInIsland()) {
                 continue;
             }
 
@@ -557,7 +539,7 @@ public class DynamicsWorld extends CollisionWorld {
             int stackIndex = 0;
             stackBodiesToVisit[stackIndex] = body;
             stackIndex++;
-            body.mIsAlreadyInIsland = true;
+            body.setIsAlreadyInIsland(true);
 
             // Create the new island
             //void* allocatedMemoryIsland = mMemoryAllocator.allocate(sizeof(Island));
@@ -585,7 +567,7 @@ public class DynamicsWorld extends CollisionWorld {
 
                 // For each contact manifold in which the current body is involded
                 ContactManifoldListElement contactElement;
-                for (contactElement = bodyToVisit.mContactManifoldsList; contactElement != null;
+                for (contactElement = bodyToVisit.getContactManifoldsLists(); contactElement != null;
                         contactElement = contactElement.next) {
 
                     ContactManifold contactManifold = contactElement.contactManifold;
@@ -597,27 +579,27 @@ public class DynamicsWorld extends CollisionWorld {
 
                     // Add the contact manifold into the island
                     mIslands[mNbIslands].addContactManifold(contactManifold);
-                    contactManifold.mIsAlreadyInIsland = true;
+                    contactManifold.setIsAlreadyInIsland(true);
 
                     // Get the other body of the contact manifold
-                    RigidBody body1 = dynamic_cast < RigidBody > (contactManifold.getBody1());
-                    RigidBody body2 = dynamic_cast < RigidBody > (contactManifold.getBody2());
+                    RigidBody body1 = (RigidBody) (contactManifold.getBody1());
+                    RigidBody body2 = (RigidBody) (contactManifold.getBody2());
                     RigidBody otherBody = (body1.getID() == bodyToVisit.getID()) ? body2 : body1;
 
                     // Check if the other body has already been added to the island
-                    if (otherBody.mIsAlreadyInIsland) {
+                    if (otherBody.isAlreadyInIsland()) {
                         continue;
                     }
 
                     // Insert the other body into the stack of bodies to visit
                     stackBodiesToVisit[stackIndex] = otherBody;
                     stackIndex++;
-                    otherBody.mIsAlreadyInIsland = true;
+                    otherBody.setIsAlreadyInIsland(true);
                 }
 
                 // For each joint in which the current body is involved
                 JointListElement jointElement;
-                for (jointElement = bodyToVisit.mJointsList; jointElement != null;
+                for (jointElement = bodyToVisit.getJointsList(); jointElement != null;
                         jointElement = jointElement.next) {
 
                     Joint joint = jointElement.joint;
@@ -629,31 +611,31 @@ public class DynamicsWorld extends CollisionWorld {
 
                     // Add the joint into the island
                     mIslands[mNbIslands].addJoint(joint);
-                    joint.mIsAlreadyInIsland = true;
+                    joint.setIsAlreadyInIsland(true);
 
                     // Get the other body of the contact manifold
-                    RigidBody body1 = dynamic_cast < RigidBody > (joint.getBody1());
-                    RigidBody body2 = dynamic_cast < RigidBody > (joint.getBody2());
+                    RigidBody body1 = (RigidBody) (joint.getBody1());
+                    RigidBody body2 = (RigidBody) (joint.getBody2());
                     RigidBody otherBody = (body1.getID() == bodyToVisit.getID()) ? body2 : body1;
 
                     // Check if the other body has already been added to the island
-                    if (otherBody.mIsAlreadyInIsland) {
+                    if (otherBody.isAlreadyInIsland()) {
                         continue;
                     }
 
                     // Insert the other body into the stack of bodies to visit
                     stackBodiesToVisit[stackIndex] = otherBody;
                     stackIndex++;
-                    otherBody.mIsAlreadyInIsland = true;
+                    otherBody.setIsAlreadyInIsland(true);
                 }
             }
 
             // Reset the isAlreadyIsland variable of the static bodies so that they
             // can also be included in the other islands
-            for (int i = 0; i < mIslands[mNbIslands].mNbBodies; i++) {
+            for (int i = 0; i < mIslands[mNbIslands].getNbBodies(); i++) {
 
-                if (!mIslands[mNbIslands].mBodies[i].isMotionEnabled()) {
-                    mIslands[mNbIslands].mBodies[i].mIsAlreadyInIsland = false;
+                if (!mIslands[mNbIslands].getBodies()[i].isMotionEnabled()) {
+                    mIslands[mNbIslands].getBodies()[i].setIsAlreadyInIsland(false);
                 }
             }
 
@@ -661,7 +643,6 @@ public class DynamicsWorld extends CollisionWorld {
         }
 
         // Release the allocated memory for the stack of bodies to visit
-        mMemoryAllocator.release(stackBodiesToVisit, nbBytesStack);
     }
 
     // Put bodies to sleep if needed.
@@ -681,7 +662,7 @@ public class DynamicsWorld extends CollisionWorld {
             float minSleepTime = Defaults.DECIMAL_LARGEST;
 
             // For each body of the island
-            RigidBody bodies = mIslands[i].getBodies();
+            RigidBody[] bodies = mIslands[i].getBodies();
             for (int b = 0; b < mIslands[i].getNbBodies(); b++) {
 
                 // Skip static bodies
@@ -695,14 +676,14 @@ public class DynamicsWorld extends CollisionWorld {
                         || !bodies[b].isAllowedToSleep()) {
 
                     // Reset the sleep time of the body
-                    bodies[b].mSleepTime = 0.0f;
+                    bodies[b].setSleepTime(0.0f);
                     minSleepTime = 0.0f;
                 } else {  // If the body velocity is bellow the sleeping velocity threshold
 
                     // Increase the sleep time
-                    bodies[b].mSleepTime += dt;
-                    if (bodies[b].mSleepTime < minSleepTime) {
-                        minSleepTime = bodies[b].mSleepTime;
+                    bodies[b].setSleepTime(bodies[b].getSleepTime() + dt);
+                    if (bodies[b].getSleepTime() < minSleepTime) {
+                        minSleepTime = bodies[b].getSleepTime();
                     }
                 }
             }
@@ -717,78 +698,6 @@ public class DynamicsWorld extends CollisionWorld {
                     bodies[b].setIsSleeping(true);
                 }
             }
-        }
-    }
-
-    /// Update the overlapping pair
-    @Override
-    protected void updateOverlappingPair(BroadPhasePair pair) {
-    }
-
-    // Notify the world about a new broad-phase overlapping pair
-    @Override
-    protected void notifyAddedOverlappingPair(BroadPhasePair addedPair) {
-
-        // Get the pair of body index
-        BodyIndexPair indexPair = addedPair.getBodiesIndexPair();
-
-        // Add the pair into the set of overlapping pairs (if not there yet)
-        OverlappingPair newPair = new OverlappingPair(addedPair.body1, addedPair.body2, mMemoryAllocator);
-        assert (newPair != null);
-        //std::pair<Map<BodyIndexPair, OverlappingPair> , boolean> check =
-        //        mOverlappingPairs.insert(make_pair(indexPair, newPair));
-        assert (check.second);
-    }
-
-    // Notify the world about a removed broad-phase overlapping pair
-    @Override
-    protected void notifyRemovedOverlappingPair(BroadPhasePair removedPair) {
-
-        // Get the pair of body index
-        BodyIndexPair indexPair = removedPair.getBodiesIndexPair();
-
-        // Remove the overlapping pair from the memory allocator
-        //mOverlappingPairs.find(indexPair).second.OverlappingPair::~OverlappingPair();
-        //mMemoryAllocator.release(mOverlappingPairs[indexPair], sizeof(OverlappingPair));
-        mOverlappingPairs.erase(indexPair);
-    }
-
-    // Notify the world about a new narrow-phase contact
-    @Override
-    protected void notifyNewContact(BroadPhasePair broadPhasePair, ContactPointInfo contactInfo) {
-
-        // Create a new contact
-        ContactPoint contact = new ContactPoint(contactInfo);
-        assert (contact != null);
-
-        // Get the corresponding overlapping pair
-        BodyIndexPair indexPair = broadPhasePair.getBodiesIndexPair();
-        OverlappingPair overlappingPair = mOverlappingPairs.find(indexPair).second;
-        assert (overlappingPair != null);
-
-        // If it is the first contact since the pair are overlapping
-        if (overlappingPair.getNbContactPoints() == 0) {
-
-            // Trigger a callback event
-            if (mEventListener != null) {
-                mEventListener.beginContact(contactInfo);
-            }
-        }
-
-        // Add the contact to the contact cache of the corresponding overlapping pair
-        overlappingPair.addContact(contact);
-
-        // Add the contact manifold to the world
-        mContactManifolds.push_back(overlappingPair.getContactManifold());
-
-        // Add the contact manifold into the list of contact manifolds
-        // of the two bodies involved in the contact
-        addContactManifoldToBody(overlappingPair.getContactManifold(), overlappingPair.mBody1,
-                overlappingPair.mBody2);
-
-        // Trigger a callback event for the new contact
-        if (mEventListener != null) {
-            mEventListener.newContact(contactInfo);
         }
     }
 
@@ -848,6 +757,7 @@ public class DynamicsWorld extends CollisionWorld {
 
     // Set the position correction technique used for joints
     public void setJointsPositionCorrectionTechnique(JointsPositionCorrectionTechnique technique) {
+        // TODO: Notify upstream of bug with missing method.
         if (technique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             mConstraintSolver.setIsNonLinearGaussSeidelPositionCorrectionActive(false);
         } else {
@@ -859,19 +769,6 @@ public class DynamicsWorld extends CollisionWorld {
     // the contact manifold instead of solving them at each contact point
     public void setIsSolveFrictionAtContactManifoldCenterActive(boolean isActive) {
         mContactSolver.setIsSolveFrictionAtContactManifoldCenterActive(isActive);
-    }
-
-    // Update the overlapping pair
-    protected void updateOverlappingPair(BroadPhasePair pair) {
-
-        // Get the pair of body index
-        BodyIndexPair indexPair = pair.getBodiesIndexPair();
-
-        // Get the corresponding overlapping pair
-        OverlappingPair overlappingPair = mOverlappingPairs[indexPair];
-
-        // Update the contact cache of the overlapping pair
-        overlappingPair.update();
     }
 
     // Return the gravity vector of the world
@@ -900,13 +797,8 @@ public class DynamicsWorld extends CollisionWorld {
     }
 
     // Return an iterator to the beginning of the bodies of the physics world
-    public Set<RigidBody> getRigidBodiesBeginIterator() {
-        return mRigidBodies.begin();
-    }
-
-    // Return an iterator to the end of the bodies of the physics world
-    public Set<RigidBody> getRigidBodiesEndIterator() {
-        return mRigidBodies.end();
+    public Set<RigidBody> getRigidBodies() {
+        return mRigidBodies;
     }
 
     // Return a reference to the contact manifolds of the world
@@ -1056,8 +948,8 @@ public class DynamicsWorld extends CollisionWorld {
         assert (rigidBody != null);
 
         // Add the rigid body to the physics world
-        mBodies.insert(rigidBody);
-        mRigidBodies.insert(rigidBody);
+        mBodies.add(rigidBody);
+        mRigidBodies.add(rigidBody);
 
         // Add the rigid body to the collision detection
         mCollisionDetection.addBody(rigidBody);
@@ -1073,28 +965,26 @@ public class DynamicsWorld extends CollisionWorld {
         mCollisionDetection.removeBody(rigidBody);
 
         // Add the body ID to the list of free IDs
-        mFreeBodiesIDs.push_back(rigidBody.getID());
+        mFreeBodiesIDs.add(rigidBody.getID());
 
         // Remove the collision shape from the world
         removeCollisionShape(rigidBody.getCollisionShape());
 
         // Destroy all the joints in which the rigid body to be destroyed is involved
         JointListElement element;
-        for (element = rigidBody.mJointsList; element != null; element = element.next) {
+        for (element = rigidBody.getJointsList(); element != null; element = element.next) {
             destroyJoint(element.joint);
         }
 
         // Reset the contact manifold list of the body
-        rigidBody.resetContactManifoldsList(mMemoryAllocator);
+        rigidBody.resetContactManifoldsList();
         // Call the destructor of the rigid body
-        //rigidBody.RigidBody::~RigidBody();
 
         // Remove the rigid body from the list of rigid bodies
-        mBodies.erase(rigidBody);
-        mRigidBodies.erase(rigidBody);
+        mBodies.remove(rigidBody);
+        mRigidBodies.remove(rigidBody);
 
         // Free the object from the memory allocator
-        mMemoryAllocator.release(rigidBody, sizeof(RigidBody));
     }
 
     // Create a joint between two bodies in the world and return a pointer to the new joint
@@ -1151,7 +1041,7 @@ public class DynamicsWorld extends CollisionWorld {
         }
 
         // Add the joint into the world
-        mJoints.insert(newJoint);
+        mJoints.add(newJoint);
 
         // Add the joint into the joint list of the bodies involved in the joint
         addJointToBody(newJoint);
@@ -1177,18 +1067,14 @@ public class DynamicsWorld extends CollisionWorld {
         joint.getBody2().setIsSleeping(false);
 
         // Remove the joint from the world
-        mJoints.erase(joint);
+        mJoints.remove(joint);
 
         // Remove the joint from the joint list of the bodies involved in the joint
-        joint.mBody1.removeJointFromJointsList(mMemoryAllocator, joint);
-        joint.mBody2.removeJointFromJointsList(mMemoryAllocator, joint);
+        joint.getBody1().removeJointFromJointsList(mMemoryAllocator, joint);
+        joint.getBody2().removeJointFromJointsList(mMemoryAllocator, joint);
 
-        int nbBytes = joint.getSizeInBytes();
         // Call the destructor of the joint
-        //joint.Joint::~Joint();
-
         // Release the allocated memory
-        mMemoryAllocator.release(joint, nbBytes);
     }
 
     // Add the joint to the list of joints of the two bodies involved in the joint
@@ -1198,13 +1084,13 @@ public class DynamicsWorld extends CollisionWorld {
 
         // Add the joint at the beginning of the linked list of joints of the first body
         //void* allocatedMemory1 = mMemoryAllocator.allocate(sizeof(JointListElement));
-        JointListElement jointListElement1 = new JointListElement(joint, joint.mBody1.mJointsList);
-        joint.mBody1.mJointsList = jointListElement1;
+        JointListElement jointListElement1 = new JointListElement(joint, joint.getBody1().getJointsList());
+        joint.getBody1().setJointsList(jointListElement1);
 
         // Add the joint at the beginning of the linked list of joints of the second body
         //void* allocatedMemory2 = mMemoryAllocator.allocate(sizeof(JointListElement));
-        JointListElement jointListElement2 = new JointListElement(joint, joint.mBody2.mJointsList);
-        joint.mBody2.mJointsList = jointListElement2;
+        JointListElement jointListElement2 = new JointListElement(joint, joint.getBody2().getJointsList());
+        joint.getBody2().setJointsList(jointListElement2);
     }
 
     // Add a contact manifold to the linked list of contact manifolds of the two bodies involed
@@ -1216,23 +1102,23 @@ public class DynamicsWorld extends CollisionWorld {
         // Add the contact manifold at the beginning of the linked
         // list of contact manifolds of the first body
         //void* allocatedMemory1 = mMemoryAllocator.allocate(sizeof(ContactManifoldListElement));
-        ContactManifoldListElement listElement1 = new ContactManifoldListElement(contactManifold, body1.mContactManifoldsList);
-        body1.mContactManifoldsList = listElement1;
+        ContactManifoldListElement listElement1 = new ContactManifoldListElement(contactManifold, body1.getContactManifoldsLists());
+        body1.setContactManifoldsLists(listElement1);
 
         // Add the joint at the beginning of the linked list of joints of the second body
         //void* allocatedMemory2 = mMemoryAllocator.allocate(sizeof(ContactManifoldListElement));
-        ContactManifoldListElement listElement2 = new ContactManifoldListElement(contactManifold, body2.mContactManifoldsList);
-        body2.mContactManifoldsList = listElement2;
+        ContactManifoldListElement listElement2 = new ContactManifoldListElement(contactManifold, body2.getContactManifoldsLists());
+        body2.setContactManifoldsLists(listElement2);
     }
 
     // Reset all the contact manifolds linked list of each body
     public void resetContactManifoldListsOfBodies() {
 
         // For each rigid body of the world
-        for (Set<RigidBody> it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it) {
+        for (RigidBody it : mRigidBodies) {
 
             // Reset the contact manifold list of the body
-            it.resetContactManifoldsList(mMemoryAllocator);
+            it.resetContactManifoldsList();
         }
     }
 
@@ -1243,13 +1129,92 @@ public class DynamicsWorld extends CollisionWorld {
         if (!mIsSleepingEnabled) {
 
             // For each body of the world
-            Set<RigidBody> it;
-            for (it = mRigidBodies.begin(); it != mRigidBodies.end(); ++it) {
+            for (RigidBody it : mRigidBodies) {
 
                 // Wake up the rigid body
                 it.setIsSleeping(false);
             }
         }
+    }
+
+    // Notify the world about a new broad-phase overlapping pair
+    @Override
+    public void notifyAddedOverlappingPair(BroadPhasePair addedPair) {
+
+        // Get the pair of body index
+        BodyIndexPair indexPair = addedPair.getBodiesIndexPair();
+
+        // Add the pair into the set of overlapping pairs (if not there yet)
+        OverlappingPair newPair = new OverlappingPair(addedPair.body1, addedPair.body2, mMemoryAllocator);
+        assert (newPair != null);
+
+        OverlappingPair check = mOverlappingPairs.put(indexPair, newPair);
+
+        assert (check == null);
+    }
+
+    // Notify the world about a removed broad-phase overlapping pair
+    @Override
+    public void notifyRemovedOverlappingPair(BroadPhasePair removedPair) {
+
+        // Get the pair of body index
+        BodyIndexPair indexPair = removedPair.getBodiesIndexPair();
+
+        // Remove the overlapping pair from the memory allocator
+        mOverlappingPairs.remove(indexPair);
+    }
+
+    // Notify the world about a new narrow-phase contact
+    @Override
+    public void notifyNewContact(BroadPhasePair broadPhasePair, ContactPointInfo contactInfo) {
+
+        // Create a new contact
+        ContactPoint contact = new ContactPoint(contactInfo);
+        assert (contact != null);
+
+        // Get the corresponding overlapping pair
+        BodyIndexPair indexPair = broadPhasePair.getBodiesIndexPair();
+        OverlappingPair overlappingPair = mOverlappingPairs.get(indexPair);
+        assert (overlappingPair != null);
+
+        // If it is the first contact since the pair are overlapping
+        if (overlappingPair.getNbContactPoints() == 0) {
+
+            // Trigger a callback event
+            if (mEventListener != null) {
+                mEventListener.beginContact(contactInfo);
+            }
+        }
+
+        // Add the contact to the contact cache of the corresponding overlapping pair
+        overlappingPair.addContact(contact);
+
+        // Add the contact manifold to the world
+        mContactManifolds.add(overlappingPair.getContactManifold());
+
+        // Add the contact manifold into the list of contact manifolds
+        // of the two bodies involved in the contact
+        addContactManifoldToBody(overlappingPair.getContactManifold(), overlappingPair.getBody1(),
+                overlappingPair.getBody2());
+
+        // Trigger a callback event for the new contact
+        if (mEventListener != null) {
+            mEventListener.newContact(contactInfo);
+        }
+    }
+
+    @Override
+    // Update the overlapping pair
+    public void updateOverlappingPair(BroadPhasePair pair) {
+
+        // Get the pair of body index
+        BodyIndexPair indexPair = pair.getBodiesIndexPair();
+
+        // Get the corresponding overlapping pair
+        OverlappingPair overlappingPair = mOverlappingPairs.get(indexPair);
+
+        // Update the contact cache of the overlapping pair
+        overlappingPair.update();
     }
 
 }

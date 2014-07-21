@@ -3,6 +3,7 @@ package net.smert.jreactphysics3d.engine;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.smert.jreactphysics3d.body.BodyIndexPair;
 import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.collision.BroadPhasePair;
 import net.smert.jreactphysics3d.collision.CollisionDetection;
@@ -29,7 +30,7 @@ public class CollisionWorld {
     protected List<CollisionShape> mCollisionShapes;
 
     /// Broad-phase overlapping pairs of bodies
-    protected Map<Integer, OverlappingPair> mOverlappingPairs;
+    protected Map<BodyIndexPair, OverlappingPair> mOverlappingPairs;
 
     /// Current body ID
     protected int mCurrentBodyID;
@@ -40,46 +41,15 @@ public class CollisionWorld {
     /// Memory allocator
     protected MemoryAllocator mMemoryAllocator;
 
-    /// Private copy-constructor
-    protected CollisionWorld(CollisionWorld world) {
-    }
-
-    /// Private assignment operator
-    protected CollisionWorld operatorEqual(CollisionWorld world) {
-        return this;
-    }
-
-    // Notify the world about a new broad-phase overlapping pair
-    protected void notifyAddedOverlappingPair(BroadPhasePair addedPair) {
-
-        // TODO : Implement this method
-    }
-
-    // Notify the world about a removed broad-phase overlapping pair
-    protected void notifyRemovedOverlappingPair(BroadPhasePair removedPair) {
-
-        // TODO : Implement this method
-    }
-
-    // Notify the world about a new narrow-phase contact
-    protected void notifyNewContact(BroadPhasePair broadPhasePair, ContactPointInfo contactInfo) {
-
-        // TODO : Implement this method
-    }
-
-    // Update the overlapping pair
-    protected void updateOverlappingPair(BroadPhasePair pair) {
-
-    }
-
     // Return the next available body ID
     protected int computeNextAvailableBodyID() {
 
         // Compute the body ID
         int bodyID;
-        if (!mFreeBodiesIDs.empty()) {
-            bodyID = mFreeBodiesIDs.back();
-            mFreeBodiesIDs.pop_back();
+        if (!mFreeBodiesIDs.isEmpty()) {
+            int lastIndex = mFreeBodiesIDs.size() - 1;
+            bodyID = mFreeBodiesIDs.get(lastIndex);
+            mFreeBodiesIDs.remove(lastIndex);
         } else {
             bodyID = mCurrentBodyID;
             mCurrentBodyID++;
@@ -97,8 +67,7 @@ public class CollisionWorld {
     protected CollisionShape createCollisionShape(CollisionShape collisionShape) {
 
         // Check if there is already a similar collision shape in the world
-        List<CollisionShape> it;
-        for (it = mCollisionShapes.begin(); it != mCollisionShapes.end(); ++it) {
+        for (CollisionShape it : mCollisionShapes) {
 
             if (collisionShape == it) {
 
@@ -113,9 +82,8 @@ public class CollisionWorld {
 
         // A similar collision shape does not already exist in the world, so we create a
         // new one and add it to the world
-        //void* allocatedMemory = mMemoryAllocator.allocate(collisionShape.getSizeInBytes());
-        CollisionShape newCollisionShape = collisionShape.clone(allocatedMemory);
-        mCollisionShapes.push_back(newCollisionShape);
+        CollisionShape newCollisionShape = collisionShape.clone();
+        mCollisionShapes.add(newCollisionShape);
 
         newCollisionShape.incrementNbSimilarCreatedShapes();
 
@@ -141,12 +109,8 @@ public class CollisionWorld {
             mCollisionShapes.remove(collisionShape);
 
             // Compute the size (in bytes) of the collision shape
-            int nbBytesShape = collisionShape.getSizeInBytes();
-
             // Call the destructor of the collision shape
-            //collisionShape.CollisionShape::~CollisionShape();
             // Deallocate the memory used by the collision shape
-            mMemoryAllocator.release(collisionShape, nbBytesShape);
         }
     }
 
@@ -154,16 +118,6 @@ public class CollisionWorld {
     public CollisionWorld() {
         mCollisionDetection = new CollisionDetection(this, mMemoryAllocator);
         mCurrentBodyID = 0;
-    }
-
-    // Return an iterator to the beginning of the bodies of the physics world
-    public Set<CollisionBody> getBodiesBeginIterator() {
-        return mBodies.begin();
-    }
-
-    // Return an iterator to the end of the bodies of the physics world
-    public Set<CollisionBody> getBodiesEndIterator() {
-        return mBodies.end();
     }
 
     // Create a collision body and add it to the world
@@ -181,7 +135,7 @@ public class CollisionWorld {
         assert (collisionBody != null);
 
         // Add the collision body to the world
-        mBodies.insert(collisionBody);
+        mBodies.add(collisionBody);
 
         // Add the collision body to the collision detection
         mCollisionDetection.addBody(collisionBody);
@@ -197,15 +151,34 @@ public class CollisionWorld {
         mCollisionDetection.removeBody(collisionBody);
 
         // Add the body ID to the list of free IDs
-        mFreeBodiesIDs.push_back(collisionBody.getID());
+        mFreeBodiesIDs.add(collisionBody.getID());
 
         // Call the destructor of the collision body
-        //collisionBody.CollisionBody::~CollisionBody();
         // Remove the collision body from the list of bodies
-        mBodies.erase(collisionBody);
+        mBodies.remove(collisionBody);
 
         // Free the object from the memory allocator
-        //mMemoryAllocator.release(collisionBody, sizeof(CollisionBody));
+    }
+
+    // Return an iterator to the beginning of the bodies of the physics world
+    public Set<CollisionBody> getBodies() {
+        return mBodies;
+    }
+
+    // Notify the world about a new broad-phase overlapping pair
+    public void notifyAddedOverlappingPair(BroadPhasePair addedPair) {
+    }
+
+    // Notify the world about a new narrow-phase contact
+    public void notifyNewContact(BroadPhasePair broadPhasePair, ContactPointInfo contactInfo) {
+    }
+
+    // Notify the world about a removed broad-phase overlapping pair
+    public void notifyRemovedOverlappingPair(BroadPhasePair removedPair) {
+    }
+
+    // Update the overlapping pair
+    public void updateOverlappingPair(BroadPhasePair pair) {
     }
 
 }

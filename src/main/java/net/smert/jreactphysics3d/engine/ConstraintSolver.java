@@ -73,11 +73,11 @@ public class ConstraintSolver {
 
     /// Array of constrained linear velocities (state of the linear velocities
     /// after solving the constraints)
-    private Vector3 mLinearVelocities;
+    private Vector3[] mLinearVelocities;
 
     /// Array of constrained angular velocities (state of the angular velocities
     /// after solving the constraints)
-    private Vector3 mAngularVelocities;
+    private Vector3[] mAngularVelocities;
 
     /// Reference to the array of bodies positions (for position error correction)
     private List<Vector3> mPositions;
@@ -114,7 +114,7 @@ public class ConstraintSolver {
     // Enable/Disable the Non-Linear-Gauss-Seidel position correction technique.
     //public void setIsNonLinearGaussSeidelPositionCorrectionActive(boolean isActive);
     // Set the constrained velocities arrays
-    public void setConstrainedVelocitiesArrays(Vector3 constrainedLinearVelocities, Vector3 constrainedAngularVelocities) {
+    public void setConstrainedVelocitiesArrays(Vector3[] constrainedLinearVelocities, Vector3[] constrainedAngularVelocities) {
         assert (constrainedLinearVelocities != null);
         assert (constrainedAngularVelocities != null);
         mLinearVelocities = constrainedLinearVelocities;
@@ -187,6 +187,10 @@ public class ConstraintSolver {
             // Solve the constraint
             joints[i].solvePositionConstraint(mConstraintSolverData);
         }
+    }
+
+    public void setIsNonLinearGaussSeidelPositionCorrectionActive(boolean isNonLinearGaussSeidelPositionCorrectionActive) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

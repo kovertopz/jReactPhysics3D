@@ -78,6 +78,10 @@ public abstract class Joint {
         return mIsAlreadyInIsland;
     }
 
+    public void setIsAlreadyInIsland(boolean isAlreadyInIsland) {
+        mIsAlreadyInIsland = isAlreadyInIsland;
+    }
+
     /// Initialize before solving the joint
     public abstract void initBeforeSolve(ConstraintSolverData constraintSolverData);
 
