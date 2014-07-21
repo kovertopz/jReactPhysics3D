@@ -50,15 +50,6 @@ public class Simplex {
     /// allBits = bitsCurrentSimplex | lastFoundBit;
     private int mAllBits;
 
-    /// Private copy-constructor
-    private Simplex(Simplex simplex) {
-    }
-
-    /// Private assignment operator
-    private Simplex operatorEqual(Simplex simplex) {
-        return this;
-    }
-
     // Return true if some bits of "a" overlap with bits of "b"
     private boolean overlap(int a, int b) {
         return ((a & b) != 0x0);

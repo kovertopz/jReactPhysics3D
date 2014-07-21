@@ -33,15 +33,6 @@ public class TriangleEPA {
     /// Square distance of the point closest point v to the origin
     private float mDistSquare;
 
-    /// Private copy-constructor
-    private TriangleEPA(TriangleEPA triangle) {
-    }
-
-    /// Private assignment operator
-    private TriangleEPA operatorEqual(TriangleEPA triangle) {
-        return this;
-    }
-
     // Constructor
     public TriangleEPA() {
     }

@@ -17,20 +17,10 @@ public class EdgeEPA {
     private int mIndex;
 
     // Constructor
-    public EdgeEPA() {
-    }
-
-    // Constructor
     public EdgeEPA(TriangleEPA ownerTriangle, int index) {
         assert (index >= 0 && index < 3);
         mOwnerTriangle = ownerTriangle;
         mIndex = index;
-    }
-
-    // Copy-constructor
-    public EdgeEPA(EdgeEPA edge) {
-        mOwnerTriangle = edge.mOwnerTriangle;
-        mIndex = edge.mIndex;
     }
 
     // Return the pointer to the owner triangle
@@ -41,13 +31,6 @@ public class EdgeEPA {
     // Return the edge index
     public int getIndex() {
         return mIndex;
-    }
-
-    // Assignment operator
-    public EdgeEPA operatorEqual(EdgeEPA edge) {
-        mOwnerTriangle = edge.mOwnerTriangle;
-        mIndex = edge.mIndex;
-        return this;
     }
 
     // Return the index of the next counter-clockwise edge of the ownver triangle
