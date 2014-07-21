@@ -70,7 +70,7 @@ public class CollisionDetection {
         Profiler.startProfilingBlock("CollisionDetection::computeNarrowPhase()");
 
         for (Map.Entry pairs : mOverlappingPairs.entrySet()) {
-            ContactPointInfo contactInfo = null;
+            ContactPointInfo contactInfo = new ContactPointInfo(null, 0.0f, null, null);
 
             BroadPhasePair pair = (BroadPhasePair) pairs.getValue();
             assert (pair != null);
