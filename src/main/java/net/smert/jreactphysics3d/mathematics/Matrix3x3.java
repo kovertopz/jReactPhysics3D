@@ -1,5 +1,6 @@
 package net.smert.jreactphysics3d.mathematics;
 
+import java.util.Arrays;
 import net.smert.jreactphysics3d.configuration.Defaults;
 
 /**
@@ -294,6 +295,25 @@ public class Matrix3x3 {
 
         // Return the inverse matrix
         return Matrix3x3.operatorMultiply(invDeterminant, tempMatrix);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Arrays.deepHashCode(this.m);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Matrix3x3 other = (Matrix3x3) obj;
+        return Arrays.deepEquals(this.m, other.m);
     }
 
 }
