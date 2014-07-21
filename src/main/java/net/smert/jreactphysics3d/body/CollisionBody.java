@@ -112,7 +112,7 @@ public class CollisionBody extends Body {
         // Check if the body has moved
         if (!mTransform.equals(transform)) {
             mHasMoved = true;
-        } // TODO: Reset when not equal. Report bug to upstream.
+        }
 
         mTransform = transform;
     }
@@ -144,9 +144,17 @@ public class CollisionBody extends Body {
         return mHasMoved;
     }
 
+    public void setHasMoved(boolean hasMoved) {
+        mHasMoved = hasMoved;
+    }
+
     // Return the first element of the linked list of contact manifolds involving this body
     public ContactManifoldListElement getContactManifoldsLists() {
         return mContactManifoldsList;
+    }
+
+    public void setContactManifoldsLists(ContactManifoldListElement contactManifoldsList) {
+        mContactManifoldsList = contactManifoldsList;
     }
 
     // Reset the contact manifold lists

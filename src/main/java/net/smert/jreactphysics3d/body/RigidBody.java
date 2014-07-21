@@ -116,6 +116,14 @@ public class RigidBody extends CollisionBody {
         mAngularVelocity = angularVelocity;
     }
 
+    public Vector3 getExternalForce() {
+        return mExternalForce;
+    }
+
+    public Vector3 getExternalTorque() {
+        return mExternalTorque;
+    }
+
     // Apply an external force to the body at a given point (in world-space coordinates).
     /// If the point is not at the center of gravity of the body, it will also
     /// generate some torque and therefore, change the angular velocity of the body.
@@ -278,6 +286,10 @@ public class RigidBody extends CollisionBody {
     // Return the first element of the linked list of joints involving this body
     public JointListElement getJointsList() {
         return mJointsList;
+    }
+
+    public void setJointsList(JointListElement jointsList) {
+        mJointsList = jointsList;
     }
 
     // Remove a joint from the joints list

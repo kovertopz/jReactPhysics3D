@@ -40,6 +40,14 @@ public abstract class Body {
         return mID;
     }
 
+    public boolean isAlreadyInIsland() {
+        return mIsAlreadyInIsland;
+    }
+
+    public void setIsAlreadyInIsland(boolean isAlreadyInIsland) {
+        mIsAlreadyInIsland = isAlreadyInIsland;
+    }
+
     // Return whether or not the body is allowed to sleep
     public boolean isAllowedToSleep() {
         return mIsAllowedToSleep;
@@ -76,6 +84,14 @@ public abstract class Body {
         }
 
         mIsSleeping = isSleeping;
+    }
+
+    public float getSleepTime() {
+        return mSleepTime;
+    }
+
+    public void setSleepTime(float sleepTime) {
+        mSleepTime = sleepTime;
     }
 
     // Smaller than operator
