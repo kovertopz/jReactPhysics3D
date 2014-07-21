@@ -140,6 +140,10 @@ public class CollisionBody extends Body {
         mIsCollisionEnabled = isCollisionEnabled;
     }
 
+    public boolean getHasMoved() {
+        return mHasMoved;
+    }
+
     // Return the first element of the linked list of contact manifolds involving this body
     public ContactManifoldListElement getContactManifoldsLists() {
         return mContactManifoldsList;
