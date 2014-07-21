@@ -16,15 +16,6 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
     /// All bodies of the world
     protected Set<CollisionBody> mBodies;
 
-    /// Private copy-constructor
-    protected NoBroadPhaseAlgorithm(NoBroadPhaseAlgorithm algorithm) {
-    }
-
-    /// Private assignment operator
-    protected NoBroadPhaseAlgorithm operatorEqual(NoBroadPhaseAlgorithm algorithm) {
-        return this;
-    }
-
     // Constructor
     public NoBroadPhaseAlgorithm(CollisionDetection collisionDetection) {
         super(collisionDetection);
@@ -67,7 +58,6 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
     @Override
     public void updateObject(CollisionBody body, AABB aabb) {
         // Do nothing
-        return;
     }
 
 }

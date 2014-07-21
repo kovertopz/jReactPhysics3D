@@ -10,12 +10,12 @@ import net.smert.jreactphysics3d.body.CollisionBody;
 public class BoxAABB {
 
     /// Index of the 3 minimum end-points of the AABB over the x,y,z axis
-    int[] min = new int[3];
+    public int[] min = new int[3];
 
     /// Index of the 3 maximum end-points of the AABB over the x,y,z axis
-    int[] max = new int[3];
+    public int[] max = new int[3];
 
     /// Body that corresponds to the owner of the AABB
-    CollisionBody body;
+    public CollisionBody body;
 
 }

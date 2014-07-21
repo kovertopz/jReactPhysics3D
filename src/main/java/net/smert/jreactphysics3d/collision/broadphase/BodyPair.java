@@ -19,6 +19,7 @@ public class BodyPair {
     /// Return the pair of bodies index
     public BodyIndexPair getBodiesIndexPair() {
 
+        // TODO: Cache object?
         // Construct the pair of body index
         BodyIndexPair indexPair = body1.getID() < body2.getID()
                 ? new BodyIndexPair(body1.getID(), body2.getID())

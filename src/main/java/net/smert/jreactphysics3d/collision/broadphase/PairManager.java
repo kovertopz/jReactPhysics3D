@@ -37,47 +37,6 @@ public class PairManager {
     /// Reference to the collision detection
     private CollisionDetection mCollisionDetection;
 
-    /// Private copy-constructor
-    private PairManager(PairManager pairManager) {
-    }
-
-    /// Private assignment operator
-    private PairManager operatorEqual(PairManager pairManager) {
-        return this;
-    }
-
-    // Sort the bodies according to their IDs (smallest ID first)
-    private void sortBodiesUsingID(CollisionBody body1, CollisionBody body2) {
-
-        // If the ID of body1 is larger than the ID of body 2
-        if (body1.getID() > body2.getID()) {
-
-            // Swap the two bodies pointers
-            CollisionBody temp = body2;
-            body2 = body1;
-            body1 = temp;
-        }
-    }
-
-    // Sort the IDs (smallest ID first)
-    private void sortIDs(int id1, int id2) {
-        if (id1 > id2) {
-            int temp = id2;
-            id2 = id1;
-            id1 = temp;
-        }
-    }
-
-    // Return true if pair1 and pair2 are the same
-    private boolean isDifferentPair(BodyPair pair1, int pair2ID1, int pair2ID2) {
-        return (pair2ID1 != pair1.body1.getID() || pair2ID2 != pair1.body2.getID());
-    }
-
-    // Compute the hash value of two bodies
-    private int computeHashBodies(int id1, int id2) {
-        return computeHash32Bits(id1 | (id2 << 16));
-    }
-
     // This method returns an hash value for a 32 bits key.
     /// using Thomas Wang's hash technique.
     /// This hash function can be found at :
@@ -92,64 +51,38 @@ public class PairManager {
         return key;
     }
 
-    // Reallocate more pairs
-    private void reallocatePairs() {
-
-        // Reallocate the hash table and initialize it
-        //free(mHashTable);
-        mHashTable = new int[mNbElementsHashTable];
-        assert (mHashTable != null);
-        for (int i = 0; i < mNbElementsHashTable; i++) {
-            mHashTable[i] = INVALID_INDEX;
-        }
-
-        // Reallocate the overlapping pairs
-        BodyPair[] newOverlappingPairs = new BodyPair[mNbElementsHashTable];
-        int[] newOffsetNextPair = new int[mNbElementsHashTable];
-
-        assert (newOverlappingPairs != null);
-        assert (newOffsetNextPair != null);
-
-        // If there is already some overlapping pairs
-        if (mNbOverlappingPairs > 0) {
-            // Copy the pairs to the new location
-            //memcpy(newOverlappingPairs, mOverlappingPairs, mNbOverlappingPairs * sizeof(BodyPair));
-        }
-
-        // Recompute the hash table with the new hash values
-        for (int i = 0; i < mNbOverlappingPairs; i++) {
-            int newHashValue = computeHashBodies(mOverlappingPairs[i].body1.getID(),
-                    mOverlappingPairs[i].body2.getID()) & mHashMask;
-            newOffsetNextPair[i] = mHashTable[newHashValue];
-            mHashTable[newHashValue] = i;
-        }
-
-        // Delete the old pairs
-        //free(mOffsetNextPair);
-        //free(mOverlappingPairs);
-        // Replace by the new data
-        mOverlappingPairs = newOverlappingPairs;
-        mOffsetNextPair = newOffsetNextPair;
-    }
-
-    // Try to reduce the allocated memory by the pair manager
-    private void shrinkMemory() {
-
-        // Check if the allocated memory can be reduced
-        int correctNbElementsHashTable = computeNextPowerOfTwo(mNbOverlappingPairs);
-        if (mNbElementsHashTable == correctNbElementsHashTable) {
-            return;
-        }
-
-        // Reduce the allocated memory
-        mNbElementsHashTable = correctNbElementsHashTable;
-        mHashMask = mNbElementsHashTable - 1;
-        reallocatePairs();
+    // Compute the hash value of two bodies
+    private int computeHashBodies(int id1, int id2) {
+        return computeHash32Bits(id1 | (id2 << 16));
     }
 
     // Compute the offset of a given pair in the array of overlapping pairs
     private int computePairOffset(BodyPair pair) {
-        return ((int) ((size_t(pair) - size_t(mOverlappingPairs))) / sizeof(BodyPair));
+        for (int i = 0; i < mOverlappingPairs.length; i++) {
+            if (pair.equals(mOverlappingPairs[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Find a pair given two body IDs and an hash value.
+    /// This internal version is used to avoid computing multiple times in the
+    /// caller method
+    private BodyPair findPairWithHashValue(int id1, int id2, int hashValue) {
+
+        // Check if the hash table has been allocated yet
+        if (mHashTable == null) {
+            return null;
+        }
+
+        // Look for the pair in the set of overlapping pairs
+        return lookForAPair(id1, id2, hashValue);
+    }
+
+    // Return true if pair1 and pair2 are the same
+    private boolean isDifferentPair(BodyPair pair1, int pair2ID1, int pair2ID2) {
+        return (pair2ID1 != pair1.body1.getID() || pair2ID2 != pair1.body2.getID());
     }
 
     // Look for a pair in the set of overlapping pairs
@@ -173,18 +106,41 @@ public class PairManager {
         return mOverlappingPairs[offset];
     }
 
-    // Find a pair given two body IDs and an hash value.
-    /// This internal version is used to avoid computing multiple times in the
-    /// caller method
-    private BodyPair findPairWithHashValue(int id1, int id2, int hashValue) {
+    // Reallocate more pairs
+    private void reallocatePairs() {
 
-        // Check if the hash table has been allocated yet
-        if (mHashTable == null) {
-            return null;
+        // Reallocate the hash table and initialize it
+        mHashTable = new int[mNbElementsHashTable];
+        assert (mHashTable != null);
+        for (int i = 0; i < mNbElementsHashTable; i++) {
+            mHashTable[i] = INVALID_INDEX;
         }
 
-        // Look for the pair in the set of overlapping pairs
-        return lookForAPair(id1, id2, hashValue);
+        // Reallocate the overlapping pairs
+        BodyPair[] newOverlappingPairs = new BodyPair[mNbElementsHashTable];
+        int[] newOffsetNextPair = new int[mNbElementsHashTable];
+
+        assert (newOverlappingPairs != null);
+        assert (newOffsetNextPair != null);
+
+        // If there is already some overlapping pairs
+        if (mNbOverlappingPairs > 0) {
+            // Copy the pairs to the new location
+            System.arraycopy(mOverlappingPairs, 0, newOverlappingPairs, 0, mNbOverlappingPairs);
+        }
+
+        // Recompute the hash table with the new hash values
+        for (int i = 0; i < mNbOverlappingPairs; i++) {
+            int newHashValue = computeHashBodies(mOverlappingPairs[i].body1.getID(),
+                    mOverlappingPairs[i].body2.getID()) & mHashMask;
+            newOffsetNextPair[i] = mHashTable[newHashValue];
+            mHashTable[newHashValue] = i;
+        }
+
+        // Delete the old pairs
+        // Replace by the new data
+        mOverlappingPairs = newOverlappingPairs;
+        mOffsetNextPair = newOffsetNextPair;
     }
 
     // Internal method to remove a pair from the set of overlapping pair
@@ -208,7 +164,7 @@ public class PairManager {
             // Replace the pair to remove in the
             // hash table by the next one
             mHashTable[hashValue] = mOffsetNextPair[indexPair];
-        } else {  // If the pair was not the first one
+        } else {    // If the pair was not the first one
             // Replace the pair to remove in the
             // hash table by the next one
             assert (mOffsetNextPair[previousPair] == indexPair);
@@ -222,7 +178,7 @@ public class PairManager {
 
             // We simply decrease the number of overlapping pairs
             mNbOverlappingPairs--;
-        } else {  // If the pair to remove is in the middle of the list
+        } else {    // If the pair to remove is in the middle of the list
 
             // Now, we want to move the last pair into the location that is
             // now free because of the pair we want to remove
@@ -249,7 +205,7 @@ public class PairManager {
                 // Remove the offset of the last pair in the "nextOffset" array
                 assert (mOffsetNextPair[previous] == indexLastPair);
                 mOffsetNextPair[previous] = mOffsetNextPair[indexLastPair];
-            } else {  // If the last pair is the first offset with this hash value
+            } else {    // If the last pair is the first offset with this hash value
 
                 // Remove the offset of the last pair in the "nextOffset" array
                 mHashTable[lastPairHashValue] = mOffsetNextPair[indexLastPair];
@@ -265,48 +221,40 @@ public class PairManager {
         }
     }
 
-    // Constructor of PairManager
-    public PairManager(CollisionDetection collisionDetection) {
-        mCollisionDetection = collisionDetection;
-        mHashTable = null;
-        mOverlappingPairs = null;
-        mOffsetNextPair = null;
-        mNbOverlappingPairs = 0;
-        mHashMask = 0;
-        mNbElementsHashTable = 0;
-    }
+    // Try to reduce the allocated memory by the pair manager
+    private void shrinkMemory() {
 
-    // Return the number of overlapping pairs
-    public int getNbOverlappingPairs() {
-        return mNbOverlappingPairs;
-    }
-
-    // Return the next power of two of a 32bits integer using a SWAR algorithm
-    public static int computeNextPowerOfTwo(int number) {
-        number |= (number >> 1);
-        number |= (number >> 2);
-        number |= (number >> 4);
-        number |= (number >> 8);
-        number |= (number >> 16);
-        return number + 1;
-    }
-
-    // Find a pair given two body IDs
-    public BodyPair findPair(int id1, int id2) {
-
-        // Check if the hash table has been allocated yet
-        if (mHashTable == null) {
-            return null;
+        // Check if the allocated memory can be reduced
+        int correctNbElementsHashTable = ComputeNextPowerOfTwo(mNbOverlappingPairs);
+        if (mNbElementsHashTable == correctNbElementsHashTable) {
+            return;
         }
 
-        // Sort the IDs
-        sortIDs(id1, id2);
+        // Reduce the allocated memory
+        mNbElementsHashTable = correctNbElementsHashTable;
+        mHashMask = mNbElementsHashTable - 1;
+        reallocatePairs();
+    }
 
-        // Compute the hash value of the pair to find
-        int hashValue = computeHashBodies(id1, id2) & mHashMask;
+    // Sort the bodies according to their IDs (smallest ID first)
+    private void sortBodiesUsingID(CollisionBody body1, CollisionBody body2) {
+        // TODO: remove unused method
+    }
 
-        // Look for the pair in the set of overlapping pairs
-        return lookForAPair(id1, id2, hashValue);
+    // Sort the IDs (smallest ID first)
+    private void sortIDs(int id1, int id2) {
+        // TODO: remove unused method
+    }
+
+    // Constructor of PairManager
+    public PairManager(CollisionDetection collisionDetection) {
+        mNbElementsHashTable = 0;
+        mHashMask = 0;
+        mNbOverlappingPairs = 0;
+        mHashTable = null;
+        mOffsetNextPair = null;
+        mOverlappingPairs = null;
+        mCollisionDetection = collisionDetection;
     }
 
     // Return a pointer to the first overlapping pair (used to iterate over the overlapping pairs) or
@@ -325,6 +273,33 @@ public class PairManager {
         }
     }
 
+    // Return the number of overlapping pairs
+    public int getNbOverlappingPairs() {
+        return mNbOverlappingPairs;
+    }
+
+    // Find a pair given two body IDs
+    public BodyPair findPair(int id1, int id2) {
+
+        // Check if the hash table has been allocated yet
+        if (mHashTable == null) {
+            return null;
+        }
+
+        // Sort the IDs
+        if (id1 > id2) {
+            int temp = id2;
+            id2 = id1;
+            id1 = temp;
+        }
+
+        // Compute the hash value of the pair to find
+        int hashValue = computeHashBodies(id1, id2) & mHashMask;
+
+        // Look for the pair in the set of overlapping pairs
+        return lookForAPair(id1, id2, hashValue);
+    }
+
     // Add a pair of bodies in the pair manager and returns a pointer to that pair.
     /// If the pair to add does not already exist in the set of
     /// overlapping pairs, it will be created and if it already exists, we only
@@ -332,7 +307,14 @@ public class PairManager {
     public BodyPair addPair(CollisionBody body1, CollisionBody body2) {
 
         // Sort the bodies to have the body with smallest ID first
-        sortBodiesUsingID(body1, body2);
+        // If the ID of body1 is larger than the ID of body 2
+        if (body1.getID() > body2.getID()) {
+
+            // Swap the two bodies pointers
+            CollisionBody temp = body2;
+            body2 = body1;
+            body1 = temp;
+        }
 
         // Get the bodies IDs
         int id1 = body1.getID();
@@ -353,7 +335,7 @@ public class PairManager {
         // If we need to allocate more pairs in the set of overlapping pairs
         if (mNbOverlappingPairs >= mNbElementsHashTable) {
             // Increase the size of the hash table (always a power of two)
-            mNbElementsHashTable = computeNextPowerOfTwo(mNbOverlappingPairs + 1);
+            mNbElementsHashTable = ComputeNextPowerOfTwo(mNbOverlappingPairs + 1);
 
             // Compute the new hash mask with the new hash size
             mHashMask = mNbElementsHashTable - 1;
@@ -386,7 +368,11 @@ public class PairManager {
     public boolean removePair(int id1, int id2) {
 
         // Sort the bodies IDs
-        sortIDs(id1, id2);
+        if (id1 > id2) {
+            int temp = id2;
+            id2 = id1;
+            id1 = temp;
+        }
 
         // Compute the hash value of the pair to remove
         int hashValue = computeHashBodies(id1, id2) & mHashMask;
@@ -412,6 +398,16 @@ public class PairManager {
         shrinkMemory();
 
         return true;
+    }
+
+    // Return the next power of two of a 32bits integer using a SWAR algorithm
+    public static int ComputeNextPowerOfTwo(int number) {
+        number |= (number >> 1);
+        number |= (number >> 2);
+        number |= (number >> 4);
+        number |= (number >> 8);
+        number |= (number >> 16);
+        return number + 1;
     }
 
 }

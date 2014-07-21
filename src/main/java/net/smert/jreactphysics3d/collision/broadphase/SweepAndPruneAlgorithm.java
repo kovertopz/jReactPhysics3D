@@ -1,6 +1,7 @@
 package net.smert.jreactphysics3d.collision.broadphase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import net.smert.jreactphysics3d.body.CollisionBody;
@@ -40,13 +41,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     /// Map a body pointer to a box index
     protected Map<CollisionBody, Integer> mMapBodyToBoxIndex;
 
-    /// Private copy-ructor
-    protected SweepAndPruneAlgorithm(SweepAndPruneAlgorithm algorithm) {
-    }
-
-    /// Private assignment operator
-    protected SweepAndPruneAlgorithm operatorEqual(SweepAndPruneAlgorithm algorithm) {
-        return this;
+    /// Add an overlapping pair of AABBS
+    protected void addPair(CollisionBody body1, CollisionBody body2) {
+        // TODO: remove unused method
     }
 
     // Resize the boxes and end-points arrays when it is full
@@ -72,16 +69,15 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         if (mNbBoxes > 0) {
 
             // Copy the data from the old arrays into the new one
-            //memcpy(newBoxesArray, mBoxes, sizeof(BoxAABB) * mNbBoxes);
-            //size_t nbBytesNewEndPoints = sizeof(EndPoint) * nbEndPoints;
-            //memcpy(newEndPointsXArray, mEndPoints[0], nbBytesNewEndPoints);
-            //memcpy(newEndPointsYArray, mEndPoints[1], nbBytesNewEndPoints);
-            //memcpy(newEndPointsZArray, mEndPoints[2], nbBytesNewEndPoints);
+            System.arraycopy(mBoxes, 0, newBoxesArray, 0, mNbBoxes);
+            System.arraycopy(mEndPoints[0], 0, newEndPointsXArray, 0, nbEndPoints);
+            System.arraycopy(mEndPoints[1], 0, newEndPointsYArray, 0, nbEndPoints);
+            System.arraycopy(mEndPoints[2], 0, newEndPointsZArray, 0, nbEndPoints);
         } else {   // If the arrays were empty
 
             // Add the limits endpoints (sentinels) into the array
-            int min = encodeFloatIntoInteger(Float.MIN_VALUE);
-            int max = encodeFloatIntoInteger(Float.MAX_VALUE);
+            int min = Utils.encodeFloatIntoInteger(Float.MIN_VALUE);
+            int max = Utils.encodeFloatIntoInteger(Float.MAX_VALUE);
             newEndPointsXArray[0].setValues(INVALID_INDEX, true, min);
             newEndPointsXArray[1].setValues(INVALID_INDEX, false, max);
             newEndPointsYArray[0].setValues(INVALID_INDEX, true, min);
@@ -91,10 +87,6 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         }
 
         // Delete the old arrays
-        //delete[] mBoxes;
-        //delete[] mEndPoints[0];
-        //delete[] mEndPoints[1];
-        //delete[] mEndPoints[2];
         // Assign the pointer to the new arrays
         mBoxes = newBoxesArray;
         mEndPoints[0] = newEndPointsXArray;
@@ -108,7 +100,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     protected void shrinkArrays() {
 
         // New number of boxes and end-points in the array
-        int nextPowerOf2 = PairManager.computeNextPowerOfTwo((mNbBoxes - 1) / 100);
+        int nextPowerOf2 = PairManager.ComputeNextPowerOfTwo((mNbBoxes - 1) / 100);
         int newNbMaxBoxes = (mNbBoxes > 100) ? nextPowerOf2 * 100 : 100;
         int nbEndPoints = mNbBoxes * 2 + NB_SENTINELS;
         int newNbEndPoints = newNbMaxBoxes * 2 + NB_SENTINELS;
@@ -116,25 +108,24 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         assert (newNbMaxBoxes < mNbMaxBoxes);
 
         // Sort the list of the free boxes indices in ascending order
-        mFreeBoxIndices.sort();
+        Collections.sort(mFreeBoxIndices);
 
         // Reorganize the boxes inside the boxes array so that all the boxes are at the
         // beginning of the array
         Map<CollisionBody, Integer> newMapBodyToBoxIndex = new HashMap<>();
-        Map<CollisionBody, Integer> it;
-        for (it = mMapBodyToBoxIndex.begin(); it != mMapBodyToBoxIndex.end(); ++it) {
+        for (Map.Entry it : mMapBodyToBoxIndex.entrySet()) {
 
-            CollisionBody body = it.first;
-            int boxIndex = it.second;
+            CollisionBody body = (CollisionBody) it.getKey();
+            int boxIndex = (int) it.getValue();
 
             // If the box index is outside the range of the current number of boxes
             if (boxIndex >= mNbBoxes) {
 
-                assert (!mFreeBoxIndices.empty());
+                assert (!mFreeBoxIndices.isEmpty());
 
                 // Get a new box index for that body (from the list of free box indices)
-                int newBoxIndex = mFreeBoxIndices.front();
-                mFreeBoxIndices.pop_front();
+                int newBoxIndex = mFreeBoxIndices.get(0);
+                mFreeBoxIndices.remove(0);
                 assert (newBoxIndex < mNbBoxes);
 
                 // Copy the box to its new location in the boxes array
@@ -178,16 +169,12 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         assert (newEndPointsZArray != null);
 
         // Copy the data from the old arrays into the new one
-        //memcpy(newBoxesArray, mBoxes, sizeof(BoxAABB) * mNbBoxes);
-        //size_t nbBytesNewEndPoints = sizeof(EndPoint) * nbEndPoints;
-        //memcpy(newEndPointsXArray, mEndPoints[0], nbBytesNewEndPoints);
-        //memcpy(newEndPointsYArray, mEndPoints[1], nbBytesNewEndPoints);
-        //memcpy(newEndPointsZArray, mEndPoints[2], nbBytesNewEndPoints);
+        System.arraycopy(mBoxes, 0, newBoxesArray, 0, mNbBoxes);
+        System.arraycopy(mEndPoints[0], 0, newEndPointsXArray, 0, nbEndPoints);
+        System.arraycopy(mEndPoints[1], 0, newEndPointsYArray, 0, nbEndPoints);
+        System.arraycopy(mEndPoints[2], 0, newEndPointsZArray, 0, nbEndPoints);
+
         // Delete the old arrays
-        //delete[] mBoxes;
-        //delete[] mEndPoints[0];
-        //delete[] mEndPoints[1];
-        //delete[] mEndPoints[2];
         // Assign the pointer to the new arrays
         mBoxes = newBoxesArray;
         mEndPoints[0] = newEndPointsXArray;
@@ -195,10 +182,6 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         mEndPoints[2] = newEndPointsZArray;
 
         mNbMaxBoxes = newNbMaxBoxes;
-    }
-
-    /// Add an overlapping pair of AABBS
-    protected void addPair(CollisionBody body1, CollisionBody body2) {
     }
 
     // Check for 1D box intersection between two boxes that are sorted on the given axis.
@@ -220,15 +203,15 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     /// The input is an AABB with integer coordinates
     protected void updateObjectIntegerAABB(CollisionBody body, AABBInt aabbInt) {
 
-        assert (aabbInt.min[0] > encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (aabbInt.min[1] > encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (aabbInt.min[2] > encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (aabbInt.max[0] < encodeFloatIntoInteger(Float.MAX_VALUE));
-        assert (aabbInt.max[1] < encodeFloatIntoInteger(Float.MAX_VALUE));
-        assert (aabbInt.max[2] < encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (aabbInt.min[0] > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
+        assert (aabbInt.min[1] > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
+        assert (aabbInt.min[2] > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
+        assert (aabbInt.max[0] < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (aabbInt.max[1] < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (aabbInt.max[2] < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
 
         // Get the corresponding box
-        int boxIndex = mMapBodyToBoxIndex.find(body).second;
+        int boxIndex = mMapBodyToBoxIndex.get(body);
         BoxAABB box = mBoxes[boxIndex];
 
         // Current axis
@@ -243,6 +226,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
             // -------- Update the minimum end-point ------------//
             EndPoint currentMinEndPoint = startEndPointsCurrentAxis[box.min[axis]];
+            int currentMinEndPointIndex = box.min[axis];
             assert (currentMinEndPoint.isMin);
 
             // Get the minimum value of the AABB on the current axis
@@ -256,11 +240,10 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
                 // The minimum end-point is moving left
                 EndPoint savedEndPoint = currentMinEndPoint;
-                int indexEndPoint = (size_t(currentMinEndPoint)
-                        - size_t(startEndPointsCurrentAxis)) / sizeof(EndPoint);
+                int indexEndPoint = currentMinEndPointIndex;
                 int savedEndPointIndex = indexEndPoint;
 
-                while ((--currentMinEndPoint).value > limit) {
+                while (startEndPointsCurrentAxis[--currentMinEndPointIndex].value > limit) {
                     BoxAABB id1 = mBoxes[currentMinEndPoint.boxID];
                     boolean isMin = currentMinEndPoint.isMin;
 
@@ -285,7 +268,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         id1.min[axis] = indexEndPoint--;
                     }
 
-                    (currentMinEndPoint + 1) = currentMinEndPoint;
+                    startEndPointsCurrentAxis[currentMinEndPointIndex + 1] = currentMinEndPoint;
                 }
 
                 // Update the current minimum endpoint that we are moving
@@ -304,13 +287,13 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
                 // The minimum en-point is moving right
                 EndPoint savedEndPoint = currentMinEndPoint;
-                int indexEndPoint = (size_t(currentMinEndPoint)
-                        - size_t(startEndPointsCurrentAxis)) / sizeof(EndPoint);
+                int indexEndPoint = currentMinEndPointIndex;
                 int savedEndPointIndex = indexEndPoint;
 
                 // For each end-point between the current position of the minimum
                 // end-point and the new position of the minimum end-point
-                while ((++currentMinEndPoint).value < limit) {
+                while (startEndPointsCurrentAxis[++currentMinEndPointIndex].value < limit) {
+
                     BoxAABB id1 = mBoxes[currentMinEndPoint.boxID];
                     boolean isMin = currentMinEndPoint.isMin;
 
@@ -332,7 +315,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         id1.min[axis] = indexEndPoint++;
                     }
 
-                    (currentMinEndPoint - 1) = currentMinEndPoint;
+                    startEndPointsCurrentAxis[currentMinEndPointIndex + 1] = currentMinEndPoint;
                 }
 
                 // Update the current minimum endpoint that we are moving
@@ -349,6 +332,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
             // ------- Update the maximum end-point ------------ //
             EndPoint currentMaxEndPoint = startEndPointsCurrentAxis[box.max[axis]];
+
+            int currentMaxEndPointIndex = box.max[axis];
             assert (!currentMaxEndPoint.isMin);
 
             // Get the maximum value of the AABB on the current axis
@@ -362,11 +347,10 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 currentMaxEndPoint.value = limit;
 
                 EndPoint savedEndPoint = currentMaxEndPoint;
-                int indexEndPoint = (size_t(currentMaxEndPoint)
-                        - size_t(startEndPointsCurrentAxis)) / sizeof(EndPoint);
+                int indexEndPoint = currentMinEndPointIndex;
                 int savedEndPointIndex = indexEndPoint;
 
-                while ((++currentMaxEndPoint).value < limit) {
+                while (startEndPointsCurrentAxis[++currentMaxEndPointIndex].value < limit) {
 
                     // Get the next end-point
                     BoxAABB id1 = mBoxes[currentMaxEndPoint.boxID];
@@ -393,7 +377,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         id1.max[axis] = indexEndPoint++;
                     }
 
-                    (currentMaxEndPoint - 1) = currentMaxEndPoint;
+                    startEndPointsCurrentAxis[currentMaxEndPointIndex + 1] = currentMaxEndPoint;
                 }
 
                 // Update the current minimum endpoint that we are moving
@@ -410,13 +394,12 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 currentMaxEndPoint.value = limit;
 
                 EndPoint savedEndPoint = currentMaxEndPoint;
-                int indexEndPoint = (size_t(currentMaxEndPoint)
-                        - size_t(startEndPointsCurrentAxis)) / sizeof(EndPoint);
+                int indexEndPoint = currentMaxEndPointIndex;
                 int savedEndPointIndex = indexEndPoint;
 
                 // For each end-point between the current position of the maximum
                 // end-point and the new position of the maximum end-point
-                while ((--currentMaxEndPoint).value > limit) {
+                while (startEndPointsCurrentAxis[--currentMaxEndPointIndex].value > limit) {
                     BoxAABB id1 = mBoxes[currentMaxEndPoint.boxID];
                     boolean isMin = currentMaxEndPoint.isMin;
 
@@ -438,7 +421,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         id1.max[axis] = indexEndPoint--;
                     }
 
-                    (currentMaxEndPoint + 1) = currentMaxEndPoint;
+                    startEndPointsCurrentAxis[currentMaxEndPointIndex + 1] = currentMaxEndPoint;
                 }
 
                 // Update the current minimum endpoint that we are moving
@@ -464,36 +447,6 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         mNbMaxBoxes = 0;
     }
 
-    /// Encode a floating value into a integer value in order to
-    /// work with integer comparison in the Sweep-And-Prune algorithm
-    /// because it is faster. The main issue when encoding floating
-    /// number into integer is to keep to sorting order. This is a
-    /// problem for negative float number. This article describes
-    /// how to solve this issue : http://www.stereopsis.com/radix.html
-    public int encodeFloatIntoInteger(float number) {
-        int intNumber = Float.floatToIntBits(number) & 0xFFFFFFFF;
-
-        // If it's a negative number
-        if ((intNumber & 0x80000000) == 0x80000000) {
-            intNumber = ~intNumber;
-        } else {     // If it is a positive number
-            intNumber |= 0x80000000l;
-        }
-
-        return intNumber;
-    }
-
-    // Notify the broad-phase that the AABB of an object has changed
-    @Override
-    public void updateObject(CollisionBody body, AABB aabb) {
-
-        // Compute the corresponding AABB with integer coordinates
-        AABBInt aabbInt = new AABBInt(aabb);
-
-        // Call the update object method that uses an AABB with integer coordinates
-        updateObjectIntegerAABB(body, aabbInt);
-    }
-
     // Notify the broad-phase about a new object in the world
     /// This method adds the AABB of the object ion to broad-phase
     @Override
@@ -501,19 +454,20 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
         int boxIndex;
 
-        assert (encodeFloatIntoInteger(aabb.getMin().x) > encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (encodeFloatIntoInteger(aabb.getMin().y) > encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (encodeFloatIntoInteger(aabb.getMin().z) > encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (encodeFloatIntoInteger(aabb.getMax().x) < encodeFloatIntoInteger(Float.MAX_VALUE));
-        assert (encodeFloatIntoInteger(aabb.getMax().y) < encodeFloatIntoInteger(Float.MAX_VALUE));
-        assert (encodeFloatIntoInteger(aabb.getMax().z) < encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().x) > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().y) > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().z) > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMax().x) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMax().y) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMax().z) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
 
         // If the index of the first free box is valid (means that
         // there is a bucket in the middle of the array that doesn't
         // contain a box anymore because it has been removed)
-        if (!mFreeBoxIndices.empty()) {
-            boxIndex = mFreeBoxIndices.back();
-            mFreeBoxIndices.pop_back();
+        if (!mFreeBoxIndices.isEmpty()) {
+            int lastIndex = mFreeBoxIndices.size() - 1;
+            boxIndex = mFreeBoxIndices.get(lastIndex);
+            mFreeBoxIndices.remove(lastIndex);
         } else {
             // If the array boxes and end-points arrays are full
             if (mNbBoxes == mNbMaxBoxes) {
@@ -539,8 +493,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         // Create a new box
         BoxAABB box = mBoxes[boxIndex];
         box.body = body;
-        int maxEndPointValue = encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
-        int minEndPointValue = encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
+        int maxEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
+        int minEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
         for (int axis = 0; axis < 3; axis++) {
             box.min[axis] = indexLimitEndPoint;
             box.max[axis] = indexLimitEndPoint + 1;
@@ -570,13 +524,13 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
         // Call the update method with an AABB that is very far away
         // in order to remove all overlapping pairs from the pair manager
-        int maxEndPointValue = encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
-        int minEndPointValue = encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
+        int maxEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
+        int minEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
         AABBInt aabbInt = new AABBInt(minEndPointValue, maxEndPointValue);
         updateObjectIntegerAABB(body, aabbInt);
 
         // Get the corresponding box
-        int boxIndex = mMapBodyToBoxIndex.find(body).second;
+        int boxIndex = mMapBodyToBoxIndex.get(body);
 
         // Remove the end-points of the box by moving the maximum end-points two elements back in
         // the end-points array
@@ -595,16 +549,27 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         }
 
         // Add the box index into the list of free indices
-        mFreeBoxIndices.push_back(boxIndex);
+        mFreeBoxIndices.add(boxIndex);
 
-        mMapBodyToBoxIndex.erase(body);
+        mMapBodyToBoxIndex.remove(body);
         mNbBoxes--;
 
         // Check if we need to shrink the allocated memory
-        int nextPowerOf2 = PairManager.computeNextPowerOfTwo((mNbBoxes - 1) / 100);
+        int nextPowerOf2 = PairManager.ComputeNextPowerOfTwo((mNbBoxes - 1) / 100);
         if (nextPowerOf2 * 100 < mNbMaxBoxes) {
             shrinkArrays();
         }
+    }
+
+    // Notify the broad-phase that the AABB of an object has changed
+    @Override
+    public void updateObject(CollisionBody body, AABB aabb) {
+
+        // Compute the corresponding AABB with integer coordinates
+        AABBInt aabbInt = new AABBInt(aabb);
+
+        // Call the update object method that uses an AABB with integer coordinates
+        updateObjectIntegerAABB(body, aabbInt);
     }
 
 }

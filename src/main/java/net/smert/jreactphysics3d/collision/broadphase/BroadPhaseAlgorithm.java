@@ -21,15 +21,6 @@ public abstract class BroadPhaseAlgorithm {
     /// Reference to the collision detection object
     protected CollisionDetection mCollisionDetection;
 
-    /// Private copy-constructor
-    protected BroadPhaseAlgorithm(BroadPhaseAlgorithm algorithm) {
-    }
-
-    /// Private assignment operator
-    protected BroadPhaseAlgorithm operatorEqual(BroadPhaseAlgorithm algorithm) {
-        return this;
-    }
-
     // Constructor
     public BroadPhaseAlgorithm(CollisionDetection collisionDetection) {
         mPairManager = new PairManager(collisionDetection);
