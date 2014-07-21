@@ -35,18 +35,12 @@ public class ConeShape extends CollisionShape {
         mSinTheta = shape.mSinTheta;
     }
 
-    /// Private assignment operator
-    private ConeShape operatorEqual(ConeShape shape) {
-        return this;
-    }
-
     // Constructor
     public ConeShape(float radius, float height, float margin) {
         super(CollisionShapeType.CONE, margin);
 
-        assert (mRadius > 0.0f);
-        assert (mHalfHeight > 0.0f);
-        assert (margin > 0.0f);
+        assert (radius > 0.0f);
+        assert (height > 0.0f);
 
         mRadius = radius;
         mHalfHeight = height * 0.5f;
@@ -65,25 +59,9 @@ public class ConeShape extends CollisionShape {
         return 2.0f * mHalfHeight;
     }
 
-    // Return the number of bytes used by the collision shape
     @Override
-    public int getSizeInBytes() {
-        return 4;
-    }
-
-    // Return the local bounds of the shape in x, y and z directions
-    @Override
-    public void getLocalBounds(Vector3 min, Vector3 max) {
-
-        // Maximum bounds
-        max.x = mRadius + mMargin;
-        max.y = mHalfHeight + mMargin;
-        max.z = max.x;
-
-        // Minimum bounds
-        min.x = -max.x;
-        min.y = -max.y;
-        min.z = min.x;
+    public CollisionShape clone() {
+        return new ConeShape(this);
     }
 
     // Return the local inertia tensor of the collision shape
@@ -94,13 +72,6 @@ public class ConeShape extends CollisionShape {
         tensor.setAllValues(diagXZ, 0.0f, 0.0f,
                 0.0f, 0.3f * mass * rSquare,
                 0.0f, 0.0f, 0.0f, diagXZ);
-    }
-
-    // Test equality between two cone shapes
-    @Override
-    public boolean isEqualTo(CollisionShape otherCollisionShape) {
-        ConeShape otherShape = (ConeShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
     }
 
     // Return a local support point in a given direction with the object margin
@@ -115,7 +86,7 @@ public class ConeShape extends CollisionShape {
         if (direction.lengthSquare() > Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
             unitVec = direction.getUnit();
         }
-        supportPoint += unitVec * mMargin;
+        supportPoint.operatorAddEqual(unitVec.operatorMultiplyEqual(mMargin));
 
         return supportPoint;
     }
@@ -141,6 +112,28 @@ public class ConeShape extends CollisionShape {
         }
 
         return supportPoint;
+    }
+
+    // Return the local bounds of the shape in x, y and z directions
+    @Override
+    public void getLocalBounds(Vector3 min, Vector3 max) {
+
+        // Maximum bounds
+        max.x = mRadius + mMargin;
+        max.y = mHalfHeight + mMargin;
+        max.z = max.x;
+
+        // Minimum bounds
+        min.x = -max.x;
+        min.y = -max.y;
+        min.z = min.x;
+    }
+
+    // Test equality between two cone shapes
+    @Override
+    public boolean isEqualTo(CollisionShape otherCollisionShape) {
+        ConeShape otherShape = (ConeShape) otherCollisionShape;
+        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
     }
 
 }

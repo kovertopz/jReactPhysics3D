@@ -17,17 +17,13 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class BoxShape extends CollisionShape {
 
     /// Extent sizes of the box in the x, y and z direction
-    private Vector3 mExtent;
+    private final Vector3 mExtent;
 
     // Private copy-constructor
     private BoxShape(BoxShape shape) {
         super(shape);
-        mExtent = shape.mExtent;
-    }
-
-    /// Private assignment operator
-    private BoxShape operatorEqual(BoxShape shape) {
-        return this;
+        mExtent = new Vector3();
+        mExtent.setAllValues(shape.mExtent.x, shape.mExtent.y, shape.mExtent.z);
     }
 
     // Constructor
@@ -37,32 +33,31 @@ public class BoxShape extends CollisionShape {
         assert (extent.x > 0.0f && extent.x > margin);
         assert (extent.y > 0.0f && extent.y > margin);
         assert (extent.z > 0.0f && extent.z > margin);
-        assert (margin > 0.0f);
 
-        mExtent = extent - new Vector3(margin, margin, margin);
+        mExtent = Vector3.operatorSubtract(extent, new Vector3(margin, margin, margin));
     }
 
     // Return the extents of the box
     public Vector3 getExtent() {
-        return mExtent + new Vector3(mMargin, mMargin, mMargin);
+        return Vector3.operatorAdd(mExtent, new Vector3(mMargin, mMargin, mMargin));
     }
 
-    // Return the local bounds of the shape in x, y and z directions
-    /// This method is used to compute the AABB of the box
     @Override
-    public void getLocalBounds(Vector3 min, Vector3 max) {
-
-        // Maximum bounds
-        max = mExtent + new Vector3(mMargin, mMargin, mMargin);
-
-        // Minimum bounds
-        min = -max;
+    public CollisionShape clone() {
+        return new BoxShape(this);
     }
 
-    // Return the number of bytes used by the collision shape
+    // Return the local inertia tensor of the collision shape
     @Override
-    public int getSizeInBytes() {
-        return 4;
+    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
+        float factor = (1.0f / 3.0f) * mass;
+        Vector3 realExtent = Vector3.operatorAdd(mExtent, new Vector3(mMargin, mMargin, mMargin));
+        float xSquare = realExtent.x * realExtent.x;
+        float ySquare = realExtent.y * realExtent.y;
+        float zSquare = realExtent.z * realExtent.z;
+        tensor.setAllValues(factor * (ySquare + zSquare), 0.0f, 0.0f,
+                0.0f, factor * (xSquare + zSquare), 0.0f,
+                0.0f, 0.0f, factor * (xSquare + ySquare));
     }
 
     // Return a local support point in a given direction with the object margin
@@ -85,24 +80,24 @@ public class BoxShape extends CollisionShape {
                 direction.z < 0.0f ? -mExtent.z : mExtent.z);
     }
 
+    // Return the local bounds of the shape in x, y and z directions
+    /// This method is used to compute the AABB of the box
+    @Override
+    public void getLocalBounds(Vector3 min, Vector3 max) {
+
+        // Maximum bounds
+        max.setAllValues(mExtent.x, mExtent.y, mExtent.z);
+        max.operatorAddEqual(new Vector3(mMargin, mMargin, mMargin));
+
+        // Minimum bounds
+        min.setAllValues(-max.x, -max.y, -max.z);
+    }
+
     // Test equality between two box shapes
     @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         BoxShape otherShape = (BoxShape) otherCollisionShape;
-        return (mExtent == otherShape.mExtent);
-    }
-
-    // Return the local inertia tensor of the collision shape
-    @Override
-    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float factor = (1.0f / 3.0f) * mass;
-        Vector3 realExtent = mExtent + new Vector3(mMargin, mMargin, mMargin);
-        float xSquare = realExtent.x * realExtent.x;
-        float ySquare = realExtent.y * realExtent.y;
-        float zSquare = realExtent.z * realExtent.z;
-        tensor.setAllValues(factor * (ySquare + zSquare), 0.0f, 0.0f,
-                0.0f, factor * (xSquare + zSquare), 0.0f,
-                0.0f, 0.0f, factor * (xSquare + ySquare));
+        return (mExtent.equals(otherShape.mExtent));
     }
 
 }

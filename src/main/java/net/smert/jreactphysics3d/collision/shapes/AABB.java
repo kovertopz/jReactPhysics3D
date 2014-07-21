@@ -1,6 +1,5 @@
 package net.smert.jreactphysics3d.collision.shapes;
 
-import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 
 /**
@@ -18,22 +17,10 @@ public class AABB {
     /// Maximum world coordinates of the AABB on the x,y and z axis
     private Vector3 mMaxCoordinates;
 
-    /// Private copy-constructor
-    private AABB(AABB aabb) {
-    }
-
-    /// Private assignment operator
-    private AABB operatorEqual(AABB aabb) {
-        return this;
-    }
-
-    /// Constructor
-    private AABB(Transform transform, Vector3 extents) {
-    }
-
     // Constructor
     public AABB() {
-
+        mMinCoordinates = new Vector3();
+        mMaxCoordinates = new Vector3();
     }
 
     // Constructor
@@ -44,7 +31,7 @@ public class AABB {
 
     // Return the center point of the AABB in world coordinates
     public Vector3 getCenter() {
-        return (mMinCoordinates + mMaxCoordinates) * 0.5f;
+        return Vector3.operatorAdd(mMinCoordinates, mMaxCoordinates).operatorMultiplyEqual(0.5f);
     }
 
     // Return the minimum coordinates of the AABB
@@ -76,10 +63,7 @@ public class AABB {
         if (mMaxCoordinates.y < aabb.mMinCoordinates.y || aabb.mMaxCoordinates.y < mMinCoordinates.y) {
             return false;
         }
-        if (mMaxCoordinates.z < aabb.mMinCoordinates.z || aabb.mMaxCoordinates.z < mMinCoordinates.z) {
-            return false;
-        }
-        return true;
+        return mMaxCoordinates.z >= aabb.mMinCoordinates.z && aabb.mMaxCoordinates.z >= mMinCoordinates.z;
     }
 
 }

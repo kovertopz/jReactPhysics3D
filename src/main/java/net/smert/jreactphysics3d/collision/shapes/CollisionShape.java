@@ -13,7 +13,7 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public abstract class CollisionShape {
 
     /// Type of the collision shape
-    protected CollisionShapeType mType;
+    protected final CollisionShapeType mType;
 
     /// Current number of similar created shapes
     protected int mNbSimilarCreatedShapes;
@@ -28,16 +28,13 @@ public abstract class CollisionShape {
         mMargin = shape.mMargin;
     }
 
-    /// Private assignment operator
-    protected CollisionShape operatorEqual(CollisionShape shape) {
-        return this;
-    }
-
     // Constructor
     public CollisionShape(CollisionShapeType type, float margin) {
         mType = type;
         mNbSimilarCreatedShapes = 0;
         mMargin = margin;
+
+        assert (margin > 0.0f);
     }
 
     // Return the type of the collision shape
@@ -50,11 +47,6 @@ public abstract class CollisionShape {
         return mNbSimilarCreatedShapes;
     }
 
-    // Return the current object margin
-    public float getMargin() {
-        return mMargin;
-    }
-
     // Increment the number of similar allocated collision shapes
     public void incrementNbSimilarCreatedShapes() {
         mNbSimilarCreatedShapes++;
@@ -63,6 +55,11 @@ public abstract class CollisionShape {
     // Decrement the number of similar allocated collision shapes
     public void decrementNbSimilarCreatedShapes() {
         mNbSimilarCreatedShapes--;
+    }
+
+    // Return the current object margin
+    public float getMargin() {
+        return mMargin;
     }
 
     // Equality operator between two collision shapes.
@@ -86,21 +83,6 @@ public abstract class CollisionShape {
         return otherCollisionShape.isEqualTo(this);
     }
 
-    /// Return the number of bytes used by the collision shape
-    public abstract int getSizeInBytes();
-
-    /// Return a local support point in a given direction with the object margin
-    public abstract Vector3 getLocalSupportPointWithMargin(Vector3 direction);
-
-    /// Return a local support point in a given direction without the object margin
-    public abstract Vector3 getLocalSupportPointWithoutMargin(Vector3 direction);
-
-    /// Return the local bounds of the shape in x, y and z directions
-    public abstract void getLocalBounds(Vector3 min, Vector3 max);
-
-    /// Return the local inertia tensor of the collision shapes
-    public abstract void computeLocalInertiaTensor(Matrix3x3 tensor, float mass);
-
     // Update the AABB of a body using its collision shape
     public void updateAABB(AABB aabb, Transform transform) {
 
@@ -119,13 +101,28 @@ public abstract class CollisionShape {
                 worldAxis.getColumn(2).dot(maxBounds));
 
         // Compute the minimum and maximum coordinates of the rotated extents
-        Vector3 minCoordinates = transform.getPosition() + worldMinBounds;
-        Vector3 maxCoordinates = transform.getPosition() + worldMaxBounds;
+        Vector3 minCoordinates = Vector3.operatorAdd(transform.getPosition(), worldMinBounds);
+        Vector3 maxCoordinates = Vector3.operatorAdd(transform.getPosition(), worldMaxBounds);
 
         // Update the AABB with the new minimum and maximum coordinates
         aabb.setMin(minCoordinates);
         aabb.setMax(maxCoordinates);
     }
+
+    @Override
+    public abstract CollisionShape clone();
+
+    /// Return the local inertia tensor of the collision shapes
+    public abstract void computeLocalInertiaTensor(Matrix3x3 tensor, float mass);
+
+    /// Return a local support point in a given direction with the object margin
+    public abstract Vector3 getLocalSupportPointWithMargin(Vector3 direction);
+
+    /// Return a local support point in a given direction without the object margin
+    public abstract Vector3 getLocalSupportPointWithoutMargin(Vector3 direction);
+
+    /// Return the local bounds of the shape in x, y and z directions
+    public abstract void getLocalBounds(Vector3 min, Vector3 max);
 
     /// Test equality between two collision shapes of the same type (same derived classes).
     public abstract boolean isEqualTo(CollisionShape otherCollisionShape);

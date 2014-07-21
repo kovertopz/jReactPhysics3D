@@ -28,13 +28,9 @@ public class CapsuleShape extends CollisionShape {
         mHalfHeight = shape.mHalfHeight;
     }
 
-    /// Private assignment operator
-    private CapsuleShape operatorEqual(CapsuleShape shape) {
-        return this;
-    }
-
     // Constructor
     public CapsuleShape(float radius, float height) {
+        // TODO: Should radius really be the margin for a capsule? Seems like a bug.
         super(CollisionShapeType.CAPSULE, radius);
 
         assert (radius > 0.0f);
@@ -54,33 +50,30 @@ public class CapsuleShape extends CollisionShape {
         return mHalfHeight + mHalfHeight;
     }
 
-    // Return the number of bytes used by the collision shape
     @Override
-    public int getSizeInBytes() {
-        return 4;
+    public CollisionShape clone() {
+        return new CapsuleShape(this);
     }
 
-    // Return the local bounds of the shape in x, y and z directions
-    // This method is used to compute the AABB of the box
+    // Return the local inertia tensor of the capsule
     @Override
-    public void getLocalBounds(Vector3 min, Vector3 max) {
+    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
 
-        // Maximum bounds
-        max.x = mRadius;
-        max.y = mHalfHeight + mRadius;
-        max.z = mRadius;
-
-        // Minimum bounds
-        min.x = -mRadius;
-        min.y = -max.y;
-        min.z = min.x;
-    }
-
-    // Test equality between two capsule shapes
-    @Override
-    public boolean isEqualTo(CollisionShape otherCollisionShape) {
-        CapsuleShape otherShape = (CapsuleShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
+        // The inertia tensor formula for a capsule can be found in : Game Engine Gems, Volume 1
+        float height = mHalfHeight + mHalfHeight;
+        float radiusSquare = mRadius * mRadius;
+        float heightSquare = height * height;
+        float radiusSquareDouble = radiusSquare + radiusSquare;
+        float factor1 = 2.0f * mRadius / (4.0f * mRadius + 3.0f * height);
+        float factor2 = 3.0f * height / (4.0f * mRadius + 3.0f * height);
+        float sum1 = 0.4f * radiusSquareDouble;
+        float sum2 = 0.75f * height * mRadius + 0.5f * heightSquare;
+        float sum3 = 0.25f * radiusSquare + 1.0f / 12.0f * heightSquare;
+        float IxxAndzz = factor1 * mass * (sum1 + sum2) + factor2 * mass * sum3;
+        float Iyy = factor1 * mass * sum1 + factor2 * mass * 0.25f * radiusSquareDouble;
+        tensor.setAllValues(IxxAndzz, 0.0f, 0.0f,
+                0.0f, Iyy, 0.0f,
+                0.0f, 0.0f, IxxAndzz);
     }
 
     // Return a local support point in a given direction with the object margin.
@@ -100,12 +93,12 @@ public class CapsuleShape extends CollisionShape {
 
             // Support point top sphere
             Vector3 centerTopSphere = new Vector3(0.0f, mHalfHeight, 0.0f);
-            Vector3 topSpherePoint = centerTopSphere + unitDirection * mRadius;
+            Vector3 topSpherePoint = Vector3.operatorAdd(centerTopSphere, unitDirection).operatorMultiplyEqual(mRadius);
             float dotProductTop = topSpherePoint.dot(direction);
 
             // Support point bottom sphere
             Vector3 centerBottomSphere = new Vector3(0.0f, -mHalfHeight, 0.0f);
-            Vector3 bottomSpherePoint = centerBottomSphere + unitDirection * mRadius;
+            Vector3 bottomSpherePoint = Vector3.operatorAdd(centerBottomSphere, unitDirection).operatorMultiplyEqual(mRadius);
             float dotProductBottom = bottomSpherePoint.dot(direction);
 
             // Return the point with the maximum dot product
@@ -138,25 +131,27 @@ public class CapsuleShape extends CollisionShape {
         }
     }
 
-    // Return the local inertia tensor of the capsule
+    // Return the local bounds of the shape in x, y and z directions
+    // This method is used to compute the AABB of the box
     @Override
-    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
+    public void getLocalBounds(Vector3 min, Vector3 max) {
 
-        // The inertia tensor formula for a capsule can be found in : Game Engine Gems, Volume 1
-        float height = mHalfHeight + mHalfHeight;
-        float radiusSquare = mRadius * mRadius;
-        float heightSquare = height * height;
-        float radiusSquareDouble = radiusSquare + radiusSquare;
-        float factor1 = 2.0f * mRadius / (4.0f * mRadius + 3.0f * height);
-        float factor2 = 3.0f * height / (4.0f * mRadius + 3.0f * height);
-        float sum1 = 0.4f * radiusSquareDouble;
-        float sum2 = 0.75f * height * mRadius + 0.5f * heightSquare;
-        float sum3 = 0.25f * radiusSquare + 1.0f / 12.0f * heightSquare;
-        float IxxAndzz = factor1 * mass * (sum1 + sum2) + factor2 * mass * sum3;
-        float Iyy = factor1 * mass * sum1 + factor2 * mass * 0.25f * radiusSquareDouble;
-        tensor.setAllValues(IxxAndzz, 0.0f, 0.0f,
-                0.0f, Iyy, 0.0f,
-                0.0f, 0.0f, IxxAndzz);
+        // Maximum bounds
+        max.x = mRadius;
+        max.y = mHalfHeight + mRadius;
+        max.z = mRadius;
+
+        // Minimum bounds
+        min.x = -mRadius;
+        min.y = -max.y;
+        min.z = min.x;
+    }
+
+    // Test equality between two capsule shapes
+    @Override
+    public boolean isEqualTo(CollisionShape otherCollisionShape) {
+        CapsuleShape otherShape = (CapsuleShape) otherCollisionShape;
+        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
     }
 
 }

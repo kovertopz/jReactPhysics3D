@@ -23,11 +23,6 @@ public class SphereShape extends CollisionShape {
         mRadius = shape.mRadius;
     }
 
-    /// Private assignment operator
-    private SphereShape operatorEqual(SphereShape shape) {
-        return this;
-    }
-
     // Constructor
     public SphereShape(float radius) {
         super(CollisionShapeType.SPHERE, radius);
@@ -40,10 +35,30 @@ public class SphereShape extends CollisionShape {
         return mRadius;
     }
 
-    // Return the number of bytes used by the collision shape
+    // Update the AABB of a body using its collision shape
     @Override
-    public int getSizeInBytes() {
-        return 4;
+    public void updateAABB(AABB aabb, Transform transform) {
+
+        // Get the local extents in x,y and z direction
+        Vector3 extents = new Vector3(mRadius, mRadius, mRadius);
+
+        // Update the AABB with the new minimum and maximum coordinates
+        aabb.setMin(Vector3.operatorSubtract(transform.getPosition(), extents));
+        aabb.setMax(Vector3.operatorAdd(transform.getPosition(), extents));
+    }
+
+    @Override
+    public CollisionShape clone() {
+        return new SphereShape(this);
+    }
+
+    // Return the local inertia tensor of the sphere
+    @Override
+    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
+        float diag = 0.4f * mass * mRadius * mRadius;
+        tensor.setAllValues(diag, 0.0f, 0.0f,
+                0.0f, diag, 0.0f,
+                0.0f, 0.0f, diag);
     }
 
     // Return a local support point in a given direction with the object margin
@@ -54,7 +69,7 @@ public class SphereShape extends CollisionShape {
         if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
 
             // Return the support point of the sphere in the given direction
-            return mMargin * direction.getUnit();
+            return direction.getUnit().operatorMultiplyEqual(mMargin);
         }
 
         // If the direction vector is the zero vector we return a point on the
@@ -67,7 +82,7 @@ public class SphereShape extends CollisionShape {
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
 
         // Return the center of the sphere (the radius is taken into account in the object margin)
-        return new Vector3(0.0f, 0.0f, 0.0f);
+        return new Vector3();
     }
 
     // Return the local bounds of the shape in x, y and z directions.
@@ -77,34 +92,13 @@ public class SphereShape extends CollisionShape {
 
         // Maximum bounds
         max.x = mRadius;
-        max.y = mRadius;
-        max.z = mRadius;
+        max.y = max.x;
+        max.z = max.x;
 
         // Minimum bounds
         min.x = -mRadius;
         min.y = min.x;
         min.z = min.x;
-    }
-
-    // Return the local inertia tensor of the sphere
-    @Override
-    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float diag = 0.4f * mass * mRadius * mRadius;
-        tensor.setAllValues(diag, 0.0f, 0.0f,
-                0.0f, diag, 0.0f,
-                0.0f, 0.0f, diag);
-    }
-
-    // Update the AABB of a body using its collision shape
-    @Override
-    public void updateAABB(AABB aabb, Transform transform) {
-
-        // Get the local extents in x,y and z direction
-        Vector3 extents = new Vector3(mRadius, mRadius, mRadius);
-
-        // Update the AABB with the new minimum and maximum coordinates
-        aabb.setMin(transform.getPosition() - extents);
-        aabb.setMax(transform.getPosition() + extents);
     }
 
     // Test equality between two sphere shapes
