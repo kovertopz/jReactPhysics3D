@@ -30,15 +30,6 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
     /// EPA Algorithm
     private EPAAlgorithm mAlgoEPA;
 
-    /// Private copy-constructor
-    private GJKAlgorithm(GJKAlgorithm algorithm) {
-    }
-
-    /// Private assignment operator
-    private GJKAlgorithm operatorEqual(GJKAlgorithm algorithm) {
-        return this;
-    }
-
     /// This method runs the GJK algorithm on the two enlarged objects (with margin)
     /// to compute a simplex polytope that contains the origin. The two objects are
     /// assumed to intersect in the original objects (without margin). Therefore such
@@ -47,7 +38,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
     private boolean computePenetrationDepthForEnlargedObjects(CollisionShape collisionShape1, Transform transform1,
             CollisionShape collisionShape2, Transform transform2,
             ContactPointInfo contactInfo, Vector3 v) {
-        Simplex simplex;
+        Simplex simplex = new Simplex();
         Vector3 suppA;
         Vector3 suppB;
         Vector3 w;
@@ -57,24 +48,24 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
         // Transform a point from local space of body 2 to local space
         // of body 1 (the GJK algorithm is done in local space of body 1)
-        Transform body2ToBody1 = transform1.getInverse() * transform2;
+        Transform body2ToBody1 = transform1.getInverse().operatorMultiply(transform2);
 
         // Matrix that transform a direction from local space of body 1 into local space of body 2
-        Matrix3x3 rotateToBody2 = transform2.getOrientation().getMatrix().getTranspose()
-                * transform1.getOrientation().getMatrix();
+        Matrix3x3 rotateToBody2 = Matrix3x3.operatorMultiply(transform2.getOrientation().getMatrix().getTranspose(),
+                transform1.getOrientation().getMatrix());
 
         do {
             // Compute the support points for the enlarged object A and B
-            suppA = collisionShape1.getLocalSupportPointWithMargin(-v);
-            suppB = body2ToBody1 * collisionShape2.getLocalSupportPointWithMargin(rotateToBody2 * v);
+            suppA = collisionShape1.getLocalSupportPointWithMargin(Vector3.operatorNegative(v));
+            suppB = body2ToBody1.operatorMultiply(collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, v)));
 
             // Compute the support point for the Minkowski difference A-B
-            w = suppA - suppB;
+            w = Vector3.operatorSubtract(suppA, suppB);
 
             vDotw = v.dot(w);
 
             // If the enlarge objects do not intersect
-            if (vDotw > 0.0) {
+            if (vDotw > 0.0f) {
 
                 // No intersection, we return false
                 return false;
@@ -113,7 +104,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
     // Constructor
     public GJKAlgorithm(MemoryAllocator memoryAllocator) {
         super(memoryAllocator);
-        mAlgoEPA = memoryAllocator;
+        mAlgoEPA = new EPAAlgorithm(memoryAllocator);
     }
 
     // Return true and compute a contact info if the two bounding volumes collide.
@@ -134,27 +125,27 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
         Vector3 suppA;             // Support point of object A
         Vector3 suppB;             // Support point of object B
         Vector3 w;                 // Support point of Minkowski difference A-B
-        Vector3 pA;                // Closest point of object A
-        Vector3 pB;                // Closest point of object B
+        Vector3 pA = new Vector3();// Closest point of object A
+        Vector3 pB = new Vector3();// Closest point of object B
         float vDotw;
         float prevDistSquare;
 
         // Transform a point from local space of body 2 to local
         // space of body 1 (the GJK algorithm is done in local space of body 1)
-        Transform body2Tobody1 = transform1.getInverse() * transform2;
+        Transform body2Tobody1 = transform1.getInverse().operatorMultiply(transform2);
 
         // Matrix that transform a direction from local
         // space of body 1 into local space of body 2
-        Matrix3x3 rotateToBody2 = transform2.getOrientation().getMatrix().getTranspose()
-                * transform1.getOrientation().getMatrix();
+        Matrix3x3 rotateToBody2 = Matrix3x3.operatorMultiply(transform2.getOrientation().getMatrix().getTranspose(),
+                transform1.getOrientation().getMatrix());
 
         // Initialize the margin (sum of margins of both objects)
         float margin = collisionShape1.getMargin() + collisionShape2.getMargin();
         float marginSquare = margin * margin;
-        assert (margin > 0.0);
+        assert (margin > 0.0f);
 
         // Create a simplex set
-        Simplex simplex;
+        Simplex simplex = new Simplex();
 
         // Get the previous point V (last cached separating axis)
         Vector3 v = mCurrentOverlappingPair.previousSeparatingAxis;
@@ -165,16 +156,16 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
         do {
 
             // Compute the support points for original objects (without margins) A and B
-            suppA = collisionShape1.getLocalSupportPointWithoutMargin(-v);
-            suppB = body2Tobody1 * collisionShape2.getLocalSupportPointWithoutMargin(rotateToBody2 * v);
+            suppA = collisionShape1.getLocalSupportPointWithoutMargin(Vector3.operatorNegative(v));
+            suppB = body2Tobody1.operatorMultiply(collisionShape2.getLocalSupportPointWithoutMargin(Matrix3x3.operatorMultiply(rotateToBody2, v)));
 
             // Compute the support point for the Minkowski difference A-B
-            w = suppA - suppB;
+            w = Vector3.operatorSubtract(suppA, suppB);
 
             vDotw = v.dot(w);
 
             // If the enlarge objects (with margins) do not intersect
-            if (vDotw > 0.0 && vDotw * vDotw > distSquare * marginSquare) {
+            if (vDotw > 0.0f && vDotw * vDotw > distSquare * marginSquare) {
 
                 // Cache the current separating axis for frame coherence
                 mCurrentOverlappingPair.previousSeparatingAxis = v;
@@ -193,20 +184,23 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 // object with the margins
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
-                pA = (pA - (collisionShape1.getMargin() / dist) * v);
-                pB = body2Tobody1.getInverse() * (pB + (collisionShape2.getMargin() / dist) * v);
+                pA = Vector3.operatorSubtract(pA, Vector3.operatorMultiply(collisionShape1.getMargin() / dist, v));
+                pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
-                Vector3 normal = transform1.getOrientation().getMatrix() * (-v.getUnit());
+                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v).getUnit());
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
-                if (penetrationDepth <= 0.0) {
+                if (penetrationDepth <= 0.0f) {
                     return false;
                 }
 
                 // Create the contact info object
-                contactInfo = new ContactPointInfo(normal, penetrationDepth, pA, pB);
+                contactInfo.normal = normal;
+                contactInfo.penetrationDepth = penetrationDepth;
+                contactInfo.localPoint1 = pA;
+                contactInfo.localPoint2 = pB;
 
                 // There is an intersection, therefore we return true
                 return true;
@@ -224,21 +218,24 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 // Project those two points on the margins to have the closest points of both
                 // object with the margins
                 float dist = (float) Math.sqrt(distSquare);
-                assert (dist > 0.0);
-                pA = (pA - (collisionShape1.getMargin() / dist) * v);
-                pB = body2Tobody1.getInverse() * (pB + (collisionShape2.getMargin() / dist) * v);
+                assert (dist > 0.0f);
+                pA = Vector3.operatorSubtract(pA, Vector3.operatorMultiply(collisionShape1.getMargin() / dist, v));
+                pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
-                Vector3 normal = transform1.getOrientation().getMatrix() * (-v.getUnit());
+                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v).getUnit());
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
-                if (penetrationDepth <= 0.0) {
+                if (penetrationDepth <= 0.0f) {
                     return false;
                 }
 
                 // Create the contact info object
-                contactInfo = new ContactPointInfo(normal, penetrationDepth, pA, pB);
+                contactInfo.normal = normal;
+                contactInfo.penetrationDepth = penetrationDepth;
+                contactInfo.localPoint1 = pA;
+                contactInfo.localPoint2 = pB;
 
                 // There is an intersection, therefore we return true
                 return true;
@@ -254,21 +251,24 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 // Project those two points on the margins to have the closest points of both
                 // object with the margins
                 float dist = (float) Math.sqrt(distSquare);
-                assert (dist > 0.0);
-                pA = (pA - (collisionShape1.getMargin() / dist) * v);
-                pB = body2Tobody1.getInverse() * (pB + (collisionShape2.getMargin() / dist) * v);
+                assert (dist > 0.0f);
+                pA = Vector3.operatorSubtract(pA, Vector3.operatorMultiply(collisionShape1.getMargin() / dist, v));
+                pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
-                Vector3 normal = transform1.getOrientation().getMatrix() * (-v.getUnit());
+                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v).getUnit());
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
-                if (penetrationDepth <= 0.0) {
+                if (penetrationDepth <= 0.0f) {
                     return false;
                 }
 
                 // Create the contact info object
-                contactInfo = new ContactPointInfo(normal, penetrationDepth, pA, pB);
+                contactInfo.normal = normal;
+                contactInfo.penetrationDepth = penetrationDepth;
+                contactInfo.localPoint1 = pA;
+                contactInfo.localPoint2 = pB;
 
                 // There is an intersection, therefore we return true
                 return true;
@@ -291,21 +291,24 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 // Project those two points on the margins to have the closest points of both
                 // object with the margins
                 float dist = (float) Math.sqrt(distSquare);
-                assert (dist > 0.0);
-                pA = (pA - (collisionShape1.getMargin() / dist) * v);
-                pB = body2Tobody1.getInverse() * (pB + (collisionShape2.getMargin() / dist) * v);
+                assert (dist > 0.0f);
+                pA = Vector3.operatorSubtract(pA, Vector3.operatorMultiply(collisionShape1.getMargin() / dist, v));
+                pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
-                Vector3 normal = transform1.getOrientation().getMatrix() * (-v.getUnit());
+                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v).getUnit());
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
-                if (penetrationDepth <= 0.0) {
+                if (penetrationDepth <= 0.0f) {
                     return false;
                 }
 
                 // Create the contact info object
-                contactInfo = new ContactPointInfo(normal, penetrationDepth, pA, pB);
+                contactInfo.normal = normal;
+                contactInfo.penetrationDepth = penetrationDepth;
+                contactInfo.localPoint1 = pA;
+                contactInfo.localPoint2 = pB;
 
                 // There is an intersection, therefore we return true
                 return true;

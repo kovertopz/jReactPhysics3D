@@ -14,28 +14,28 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class Simplex {
 
     /// Current points
-    private Vector3[] mPoints = new Vector3[4];
+    private final Vector3[] mPoints = new Vector3[4];
 
     /// pointsLengthSquare[i] = (points[i].length)^2
-    private float[] mPointsLengthSquare = new float[4];
+    private final float[] mPointsLengthSquare = new float[4];
 
     /// Maximum length of pointsLengthSquare[i]
     private float mMaxLengthSquare;
 
     /// Support points of object A in local coordinates
-    private Vector3[] mSuppPointsA = new Vector3[4];
+    private final Vector3[] mSuppPointsA = new Vector3[4];
 
     /// Support points of object B in local coordinates
-    private Vector3[] mSuppPointsB = new Vector3[4];
+    private final Vector3[] mSuppPointsB = new Vector3[4];
 
     /// diff[i][j] contains points[i] - points[j]
-    private Vector3[][] mDiffLength = new Vector3[4][4];
+    private final Vector3[][] mDiffLength = new Vector3[4][4];
 
     /// Cached determinant values
-    private float[][] mDet = new float[16][4];
+    private final float[][] mDet = new float[16][4];
 
     /// norm[i][j] = (diff[i][j].length())^2
-    private float[][] mNormSquare = new float[4][4];
+    private final float[][] mNormSquare = new float[4][4];
 
     /// 4 bits that identify the current points of the simplex
     /// For instance, 0101 means that points[1] and points[3] are in the simplex
@@ -83,13 +83,13 @@ public class Simplex {
                 // If the current point is in the subset
                 if (overlap(subset, bit)) {
                     // If one delta(X)_i is smaller or equal to zero
-                    if (mDet[subset][i] <= 0.0) {
+                    if (mDet[subset][i] <= 0.0f) {
                         // The subset is not valid
                         return false;
                     }
                 } // If the point is not in the subset and the value delta(X U {y_j})_j
                 // is bigger than zero
-                else if (mDet[subset | bit][i] > 0.0) {
+                else if (mDet[subset | bit][i] > 0.0f) {
                     // The subset is not valid
                     return false;
                 }
@@ -108,7 +108,7 @@ public class Simplex {
 
         // For each four point of the possible simplex set
         for (i = 0, bit = 0x1; i < 4; i++, bit <<= 1) {
-            if (overlap(subset, bit) && mDet[subset][i] <= 0.0) {
+            if (overlap(subset, bit) && mDet[subset][i] <= 0.0f) {
                 return false;
             }
         }
@@ -127,8 +127,8 @@ public class Simplex {
             if (overlap(mBitsCurrentSimplex, bit)) {
 
                 // Compute the distance between two points in the possible simplex set
-                mDiffLength[i][mLastFound] = mPoints[i] - mPoints[mLastFound];
-                mDiffLength[mLastFound][i] = -mDiffLength[i][mLastFound];
+                mDiffLength[i][mLastFound] = Vector3.operatorSubtract(mPoints[i], mPoints[mLastFound]);
+                mDiffLength[mLastFound][i] = Vector3.operatorNegative(mDiffLength[i][mLastFound]);
 
                 // Compute the squared length of the vector
                 // distances from points in the possible simplex set
@@ -223,7 +223,7 @@ public class Simplex {
     // Return the closest point "v" in the convex hull of the points in the subset
     // represented by the bits "subset"
     private Vector3 computeClosestPointForSubset(int subset) {
-        Vector3 v = new Vector3(0.0f, 0.0f, 0.0f);      // Closet point v = sum(lambda_i * points[i])
+        Vector3 v = new Vector3();      // Closet point v = sum(lambda_i * points[i])
         mMaxLengthSquare = 0.0f;
         float deltaX = 0.0f;            // deltaX = sum of all det[subset][i]
         int i;
@@ -241,14 +241,14 @@ public class Simplex {
                 }
 
                 // Closest point v = sum(lambda_i * points[i])
-                v += mDet[subset][i] * mPoints[i];
+                v.operatorAddEqual(Vector3.operatorMultiply(mDet[subset][i], mPoints[i]));
             }
         }
 
-        assert (deltaX > 0.0);
+        assert (deltaX > 0.0f);
 
         // Return the closet point "v" in the convex hull for the given subset
-        return (1.0f / deltaX) * v;
+        return Vector3.operatorMultiply(1.0f / deltaX, v);
     }
 
     public Simplex() {
@@ -362,7 +362,7 @@ public class Simplex {
             }
         }
 
-        return (sum <= 0.0);
+        return (sum <= 0.0f);
     }
 
     // Compute the closest points "pA" and "pB" of object A and B.
@@ -382,15 +382,15 @@ public class Simplex {
             // If the current point is part of the simplex
             if (overlap(mBitsCurrentSimplex, bit)) {
                 deltaX += mDet[mBitsCurrentSimplex][i];
-                pA += mDet[mBitsCurrentSimplex][i] * mSuppPointsA[i];
-                pB += mDet[mBitsCurrentSimplex][i] * mSuppPointsB[i];
+                pA.operatorAddEqual(Vector3.operatorMultiply(mDet[mBitsCurrentSimplex][i], mSuppPointsA[i]));
+                pB.operatorAddEqual(Vector3.operatorMultiply(mDet[mBitsCurrentSimplex][i], mSuppPointsB[i]));
             }
         }
 
-        assert (deltaX > 0.0);
+        assert (deltaX > 0.0f);
         float factor = 1.0f / deltaX;
-        pA *= factor;
-        pB *= factor;
+        pA.operatorMultiplyEqual(factor);
+        pB.operatorMultiplyEqual(factor);
     }
 
     // Compute the closest point "v" to the origin of the current simplex.

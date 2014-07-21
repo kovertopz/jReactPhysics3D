@@ -1,5 +1,7 @@
 package net.smert.jreactphysics3d.collision.narrowphase.EPA;
 
+import java.util.PriorityQueue;
+import java.util.Queue;
 import net.smert.jreactphysics3d.collision.narrowphase.GJK.GJKAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.GJK.Simplex;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
@@ -37,22 +39,14 @@ public class EPAAlgorithm {
     /// Triangle comparison operator
     private TriangleComparison mTriangleComparison;
 
-    /// Private copy-constructor
-    private EPAAlgorithm(EPAAlgorithm algorithm) {
-    }
-
-    /// Private assignment operator
-    private EPAAlgorithm operatorEqual(EPAAlgorithm algorithm) {
-        return this;
-    }
-
     // Constructor
     public EPAAlgorithm(MemoryAllocator memoryAllocator) {
         mMemoryAllocator = memoryAllocator;
+        mTriangleComparison = new TriangleComparison();
     }
 
     // Add a triangle face in the candidate triangle heap in the EPA algorithm
-    private void addFaceCandidate(TriangleEPA triangle, TriangleEPA heap, int nbTriangles, float upperBoundSquarePenDepth) {
+    private void addFaceCandidate(TriangleEPA triangle, Queue<TriangleEPA> heap, int nbTriangles, float upperBoundSquarePenDepth) {
 
         // If the closest point of the affine hull of triangle
         // points is internal to the triangle and if the distance
@@ -62,9 +56,8 @@ public class EPAAlgorithm {
                 && triangle.getDistSquare() <= upperBoundSquarePenDepth) {
 
             // Add the triangle face to the list of candidates
-            heap[nbTriangles] = triangle;
+            heap.add(triangle);
             nbTriangles++;
-            push_heap(heap[0], heap[nbTriangles], mTriangleComparison);
         }
     }
 
@@ -74,26 +67,26 @@ public class EPAAlgorithm {
     private int isOriginInTetrahedron(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4) {
 
         // Check vertex 1
-        Vector3 normal1 = (p2 - p1).cross(p3 - p1);
-        if (normal1.dot(p1) > 0.0 == normal1.dot(p4) > 0.0) {
+        Vector3 normal1 = Vector3.operatorSubtract(p2, p1).cross(Vector3.operatorSubtract(p3, p1));
+        if (normal1.dot(p1) > 0.0f == normal1.dot(p4) > 0.0f) {
             return 4;
         }
 
         // Check vertex 2
-        Vector3 normal2 = (p4 - p2).cross(p3 - p2);
-        if (normal2.dot(p2) > 0.0 == normal2.dot(p1) > 0.0) {
+        Vector3 normal2 = Vector3.operatorSubtract(p4, p2).cross(Vector3.operatorSubtract(p3, p2));
+        if (normal2.dot(p2) > 0.0f == normal2.dot(p1) > 0.0f) {
             return 1;
         }
 
         // Check vertex 3
-        Vector3 normal3 = (p4 - p3).cross(p1 - p3);
-        if (normal3.dot(p3) > 0.0 == normal3.dot(p2) > 0.0) {
+        Vector3 normal3 = Vector3.operatorSubtract(p4, p3).cross(Vector3.operatorSubtract(p1, p3));
+        if (normal3.dot(p3) > 0.0f == normal3.dot(p2) > 0.0f) {
             return 2;
         }
 
         // Check vertex 4
-        Vector3 normal4 = (p2 - p4).cross(p1 - p4);
-        if (normal4.dot(p4) > 0.0 == normal4.dot(p3) > 0.0) {
+        Vector3 normal4 = Vector3.operatorSubtract(p2, p4).cross(Vector3.operatorSubtract(p1, p4));
+        if (normal4.dot(p4) > 0.0f == normal4.dot(p3) > 0.0f) {
             return 3;
         }
 
@@ -115,18 +108,18 @@ public class EPAAlgorithm {
         Vector3[] suppPointsA = new Vector3[MAX_SUPPORT_POINTS];  // Support points of object A in local coordinates
         Vector3[] suppPointsB = new Vector3[MAX_SUPPORT_POINTS];  // Support points of object B in local coordinates
         Vector3[] points = new Vector3[MAX_SUPPORT_POINTS];       // Current points
-        TrianglesStore triangleStore;             // Store the triangles
-        TriangleEPA[] triangleHeap = new TriangleEPA[MAX_FACETS];    // Heap that contains the face
-        // candidate of the EPA algorithm
+        TrianglesStore triangleStore = new TrianglesStore();      // Store the triangles
+        Queue<TriangleEPA> triangleHeap = new PriorityQueue<>(MAX_FACETS, mTriangleComparison); // Heap that contains the face
 
+        // candidate of the EPA algorithm
         // Transform a point from local space of body 2 to local
         // space of body 1 (the GJK algorithm is done in local space of body 1)
-        Transform body2Tobody1 = transform1.getInverse() * transform2;
+        Transform body2Tobody1 = transform1.getInverse().operatorMultiply(transform2);
 
         // Matrix that transform a direction from local
         // space of body 1 into local space of body 2
-        Matrix3x3 rotateToBody2 = transform2.getOrientation().getMatrix().getTranspose()
-                * transform1.getOrientation().getMatrix();
+        Matrix3x3 rotateToBody2 = Matrix3x3.operatorMultiply(transform2.getOrientation().getMatrix().getTranspose(),
+                transform1.getOrientation().getMatrix());
 
         // Get the simplex computed previously by the GJK algorithm
         int nbVertices = simplex.getSimplex(suppPointsA, suppPointsB, points);
@@ -160,7 +153,7 @@ public class EPAAlgorithm {
                 // v1, v2 and v3.
 
                 // Direction of the segment
-                Vector3 d = (points[1] - points[0]).getUnit();
+                Vector3 d = Vector3.operatorSubtract(points[1], points[0]).getUnit();
 
                 // Choose the coordinate axis from the minimal absolute component of the vector d
                 int minAxis = d.getAbsoluteVector().getMinAxis();
@@ -170,30 +163,33 @@ public class EPAAlgorithm {
 
                 // Create a rotation quaternion to rotate the vector v1 to get the vectors
                 // v2 and v3
-                Quaternion rotationQuat = new Quaternion(d.x * sin60, d.y * sin60, d.z * sin60, 0.5);
+                Quaternion rotationQuat = new Quaternion(d.x * sin60, d.y * sin60, d.z * sin60, 0.5f);
 
                 // Construct the corresponding rotation matrix
                 Matrix3x3 rotationMat = rotationQuat.getMatrix();
 
                 // Compute the vector v1, v2, v3
                 Vector3 v1 = d.cross(new Vector3(minAxis == 0 ? 1.0f : 0.0f, minAxis == 1 ? 1.0f : 0.0f, minAxis == 2 ? 1.0f : 0.0f));
-                Vector3 v2 = rotationMat * v1;
-                Vector3 v3 = rotationMat * v2;
+                Vector3 v2 = Matrix3x3.operatorMultiply(rotationMat, v1);
+                Vector3 v3 = Matrix3x3.operatorMultiply(rotationMat, v2);
 
                 // Compute the support point in the direction of v1
                 suppPointsA[2] = collisionShape1.getLocalSupportPointWithMargin(v1);
-                suppPointsB[2] = body2Tobody1 * collisionShape2.getLocalSupportPointWithMargin(rotateToBody2 * (-v1));
-                points[2] = suppPointsA[2] - suppPointsB[2];
+                suppPointsB[2] = body2Tobody1.operatorMultiply(
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(v1))));
+                points[2] = Vector3.operatorSubtract(suppPointsA[2], suppPointsB[2]);
 
                 // Compute the support point in the direction of v2
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(v2);
-                suppPointsB[3] = body2Tobody1 * collisionShape2.getLocalSupportPointWithMargin(rotateToBody2 * (-v2));
-                points[3] = suppPointsA[3] - suppPointsB[3];
+                suppPointsB[3] = body2Tobody1.operatorMultiply(
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(v2))));
+                points[3] = Vector3.operatorSubtract(suppPointsA[3], suppPointsB[3]);
 
                 // Compute the support point in the direction of v3
                 suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(v3);
-                suppPointsB[4] = body2Tobody1 * collisionShape2.getLocalSupportPointWithMargin(rotateToBody2 * (-v3));
-                points[4] = suppPointsA[4] - suppPointsB[4];
+                suppPointsB[4] = body2Tobody1.operatorMultiply(
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(v3))));
+                points[4] = Vector3.operatorSubtract(suppPointsA[4], suppPointsB[4]);
 
                 // Now we have an hexahedron (two tetrahedron glued together). We can simply keep the
                 // tetrahedron that contains the origin in order that the initial polytope of the
@@ -240,18 +236,18 @@ public class EPAAlgorithm {
 
                     // If the constructed tetrahedron is not correct
                     if (!((face0 != null) && (face1 != null) && (face2 != null) && (face3 != null)
-                            && face0.getDistSquare() > 0.0 && face1.getDistSquare() > 0.0
-                            && face2.getDistSquare() > 0.0 && face3.getDistSquare() > 0.0)) {
+                            && face0.getDistSquare() > 0.0f && face1.getDistSquare() > 0.0f
+                            && face2.getDistSquare() > 0.0f && face3.getDistSquare() > 0.0f)) {
                         return false;
                     }
 
                     // Associate the edges of neighbouring triangle faces
-                    link(new EdgeEPA(face0, 0), new EdgeEPA(face1, 2));
-                    link(new EdgeEPA(face0, 1), new EdgeEPA(face3, 2));
-                    link(new EdgeEPA(face0, 2), new EdgeEPA(face2, 0));
-                    link(new EdgeEPA(face1, 0), new EdgeEPA(face2, 2));
-                    link(new EdgeEPA(face1, 1), new EdgeEPA(face3, 0));
-                    link(new EdgeEPA(face2, 1), new EdgeEPA(face3, 1));
+                    Utils.link(new EdgeEPA(face0, 0), new EdgeEPA(face1, 2));
+                    Utils.link(new EdgeEPA(face0, 1), new EdgeEPA(face3, 2));
+                    Utils.link(new EdgeEPA(face0, 2), new EdgeEPA(face2, 0));
+                    Utils.link(new EdgeEPA(face1, 0), new EdgeEPA(face2, 2));
+                    Utils.link(new EdgeEPA(face1, 1), new EdgeEPA(face3, 0));
+                    Utils.link(new EdgeEPA(face2, 1), new EdgeEPA(face3, 1));
 
                     // Add the triangle faces in the candidate heap
                     addFaceCandidate(face0, triangleHeap, nbTriangles, Defaults.DECIMAL_LARGEST);
@@ -281,17 +277,19 @@ public class EPAAlgorithm {
                 // normal of the triangle.
 
                 // Compute the normal of the triangle
-                Vector3 v1 = points[1] - points[0];
-                Vector3 v2 = points[2] - points[0];
+                Vector3 v1 = Vector3.operatorSubtract(points[1], points[0]);
+                Vector3 v2 = Vector3.operatorSubtract(points[2], points[0]);
                 Vector3 n = v1.cross(v2);
 
                 // Compute the two new vertices to obtain a hexahedron
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(n);
-                suppPointsB[3] = body2Tobody1 * collisionShape2.getLocalSupportPointWithMargin(rotateToBody2 * (-n));
-                points[3] = suppPointsA[3] - suppPointsB[3];
-                suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(-n);
-                suppPointsB[4] = body2Tobody1 * collisionShape2.getLocalSupportPointWithMargin(rotateToBody2 * n);
-                points[4] = suppPointsA[4] - suppPointsB[4];
+                suppPointsB[3] = body2Tobody1.operatorMultiply(
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(n))));
+                points[3] = Vector3.operatorSubtract(suppPointsA[3], suppPointsB[3]);
+                suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(Vector3.operatorNegative(n));
+                suppPointsB[4] = body2Tobody1.operatorMultiply(
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, n)));
+                points[4] = Vector3.operatorSubtract(suppPointsA[4], suppPointsB[4]);
 
                 // Construct the triangle faces
                 TriangleEPA face0 = triangleStore.newTriangle(points, 0, 1, 3);
@@ -304,22 +302,22 @@ public class EPAAlgorithm {
                 // If the polytope hasn't been correctly constructed
                 if (!((face0 != null) && (face1 != null) && (face2 != null) && (face3 != null)
                         && (face4 != null) && (face5 != null)
-                        && face0.getDistSquare() > 0.0 && face1.getDistSquare() > 0.0
-                        && face2.getDistSquare() > 0.0 && face3.getDistSquare() > 0.0
-                        && face4.getDistSquare() > 0.0 && face5.getDistSquare() > 0.0)) {
+                        && face0.getDistSquare() > 0.0f && face1.getDistSquare() > 0.0f
+                        && face2.getDistSquare() > 0.0f && face3.getDistSquare() > 0.0f
+                        && face4.getDistSquare() > 0.0f && face5.getDistSquare() > 0.0f)) {
                     return false;
                 }
 
                 // Associate the edges of neighbouring faces
-                link(EdgeEPA(face0, 1), EdgeEPA(face1, 2));
-                link(EdgeEPA(face1, 1), EdgeEPA(face2, 2));
-                link(EdgeEPA(face2, 1), EdgeEPA(face0, 2));
-                link(EdgeEPA(face0, 0), EdgeEPA(face5, 0));
-                link(EdgeEPA(face1, 0), EdgeEPA(face4, 0));
-                link(EdgeEPA(face2, 0), EdgeEPA(face3, 0));
-                link(EdgeEPA(face3, 1), EdgeEPA(face4, 2));
-                link(EdgeEPA(face4, 1), EdgeEPA(face5, 2));
-                link(EdgeEPA(face5, 1), EdgeEPA(face3, 2));
+                Utils.link(new EdgeEPA(face0, 1), new EdgeEPA(face1, 2));
+                Utils.link(new EdgeEPA(face1, 1), new EdgeEPA(face2, 2));
+                Utils.link(new EdgeEPA(face2, 1), new EdgeEPA(face0, 2));
+                Utils.link(new EdgeEPA(face0, 0), new EdgeEPA(face5, 0));
+                Utils.link(new EdgeEPA(face1, 0), new EdgeEPA(face4, 0));
+                Utils.link(new EdgeEPA(face2, 0), new EdgeEPA(face3, 0));
+                Utils.link(new EdgeEPA(face3, 1), new EdgeEPA(face4, 2));
+                Utils.link(new EdgeEPA(face4, 1), new EdgeEPA(face5, 2));
+                Utils.link(new EdgeEPA(face5, 1), new EdgeEPA(face3, 2));
 
                 // Add the candidate faces in the heap
                 addFaceCandidate(face0, triangleHeap, nbTriangles, Defaults.DECIMAL_LARGEST);
@@ -344,10 +342,9 @@ public class EPAAlgorithm {
         float upperBoundSquarePenDepth = Defaults.DECIMAL_LARGEST;
 
         do {
-            triangle = triangleHeap[0];
+            triangle = triangleHeap.remove();
 
             // Get the next candidate face (the face closest to the origin)
-            pop_heap(triangleHeap[0], triangleHeap[nbTriangles], mTriangleComparison);
             nbTriangles--;
 
             // If the candidate face in the heap is not obsolete
@@ -361,16 +358,16 @@ public class EPAAlgorithm {
                 // Compute the support point of the Minkowski
                 // difference (A-B) in the closest point direction
                 suppPointsA[nbVertices] = collisionShape1.getLocalSupportPointWithMargin(triangle.getClosestPoint());
-                suppPointsB[nbVertices] = body2Tobody1 * collisionShape2.getLocalSupportPointWithMargin(rotateToBody2
-                        * (-triangle.getClosestPoint()));
-                points[nbVertices] = suppPointsA[nbVertices] - suppPointsB[nbVertices];
+                suppPointsB[nbVertices] = body2Tobody1.operatorMultiply(
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(triangle.getClosestPoint()))));
+                points[nbVertices] = Vector3.operatorSubtract(suppPointsA[nbVertices], suppPointsB[nbVertices]);
 
                 int indexNewVertex = nbVertices;
                 nbVertices++;
 
                 // Update the upper bound of the penetration depth
                 float wDotv = points[indexNewVertex].dot(triangle.getClosestPoint());
-                assert (wDotv > 0.0);
+                assert (wDotv > 0.0f);
                 float wDotVSquare = wDotv * wDotv / triangle.getDistSquare();
                 if (wDotVSquare < upperBoundSquarePenDepth) {
                     upperBoundSquarePenDepth = wDotVSquare;
@@ -401,15 +398,15 @@ public class EPAAlgorithm {
                     i++;
                 }
             }
-        } while (nbTriangles > 0 && triangleHeap[0].getDistSquare() <= upperBoundSquarePenDepth);
+        } while (nbTriangles > 0 && triangleHeap.element().getDistSquare() <= upperBoundSquarePenDepth);
 
         // Compute the contact info
-        v = transform1.getOrientation().getMatrix() * triangle.getClosestPoint();
+        v = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), triangle.getClosestPoint());
         Vector3 pALocal = triangle.computeClosestPointOfObject(suppPointsA);
-        Vector3 pBLocal = body2Tobody1.getInverse() * triangle.computeClosestPointOfObject(suppPointsB);
+        Vector3 pBLocal = body2Tobody1.getInverse().operatorMultiply(triangle.computeClosestPointOfObject(suppPointsB));
         Vector3 normal = v.getUnit();
         float penetrationDepth = v.length();
-        assert (penetrationDepth > 0.0);
+        assert (penetrationDepth > 0.0f);
 
         // Create the contact info object
         contactInfo = new ContactPointInfo(normal, penetrationDepth, pALocal, pBLocal);

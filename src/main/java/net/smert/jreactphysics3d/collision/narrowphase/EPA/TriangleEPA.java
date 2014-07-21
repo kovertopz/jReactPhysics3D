@@ -10,10 +10,10 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class TriangleEPA {
 
     /// Indices of the vertices y_i of the triangle
-    private int[] mIndicesVertices = new int[3];
+    private final int[] mIndicesVertices = new int[3];
 
     /// Three adjacent edges of the triangle (edges of other triangles)
-    private EdgeEPA[] mAdjacentEdges = new EdgeEPA[3];
+    final EdgeEPA[] mAdjacentEdges = new EdgeEPA[3];
 
     /// True if the triangle face is visible from the new support point
     private boolean mIsObsolete;
@@ -88,20 +88,22 @@ public class TriangleEPA {
 
     // Return true if the closest point on affine hull is inside the triangle
     public boolean isClosestPointInternalToTriangle() {
-        return (mLambda1 >= 0.0 && mLambda2 >= 0.0 && (mLambda1 + mLambda2) <= mDet);
+        return (mLambda1 >= 0.0f && mLambda2 >= 0.0f && (mLambda1 + mLambda2) <= mDet);
     }
 
     // Return true if the triangle is visible from a given vertex
     public boolean isVisibleFromVertex(Vector3[] vertices, int index) {
-        Vector3 closestToVert = vertices[index] - mClosestPoint;
-        return (mClosestPoint.dot(closestToVert) > 0.0);
+        Vector3 closestToVert = Vector3.operatorSubtract(vertices[index], mClosestPoint);
+        return (mClosestPoint.dot(closestToVert) > 0.0f);
     }
 
     // Compute the point of an object closest to the origin
     public Vector3 computeClosestPointOfObject(Vector3[] supportPointsOfObject) {
         Vector3 p0 = supportPointsOfObject[mIndicesVertices[0]];
-        return p0 + float(1.0) / mDet * (mLambda1 * (supportPointsOfObject[mIndicesVertices[1]] - p0)
-                + mLambda2 * (supportPointsOfObject[mIndicesVertices[2]] - p0));
+        return Vector3.operatorAdd(p0, Vector3.operatorMultiply(1.0f / mDet,
+                Vector3.operatorAdd(
+                        Vector3.operatorMultiply(mLambda1, Vector3.operatorSubtract(supportPointsOfObject[mIndicesVertices[1]], p0)),
+                        Vector3.operatorMultiply(mLambda2, Vector3.operatorSubtract(supportPointsOfObject[mIndicesVertices[2]], p0)))));
     }
 
     // Access operator
@@ -114,8 +116,8 @@ public class TriangleEPA {
     public boolean computeClosestPoint(Vector3[] vertices) {
         Vector3 p0 = vertices[mIndicesVertices[0]];
 
-        Vector3 v1 = vertices[mIndicesVertices[1]] - p0;
-        Vector3 v2 = vertices[mIndicesVertices[2]] - p0;
+        Vector3 v1 = Vector3.operatorSubtract(vertices[mIndicesVertices[1]], p0);
+        Vector3 v2 = Vector3.operatorSubtract(vertices[mIndicesVertices[2]], p0);
         float v1Dotv1 = v1.dot(v1);
         float v1Dotv2 = v1.dot(v2);
         float v2Dotv2 = v2.dot(v2);
@@ -130,9 +132,10 @@ public class TriangleEPA {
         mLambda2 = p0Dotv1 * v1Dotv2 - p0Dotv2 * v1Dotv1;
 
         // If the determinant is positive
-        if (mDet > 0.0) {
+        if (mDet > 0.0f) {
             // Compute the closest point v
-            mClosestPoint = p0 + 1.0f / mDet * (mLambda1 * v1 + mLambda2 * v2);
+            mClosestPoint = Vector3.operatorAdd(p0, Vector3.operatorMultiply(1.0f / mDet,
+                    Vector3.operatorAdd(Vector3.operatorMultiply(mLambda1, v1), Vector3.operatorMultiply(mLambda2, v2))));
 
             // Compute the square distance of closest point to the origin
             mDistSquare = mClosestPoint.dot(mClosestPoint);
@@ -141,33 +144,6 @@ public class TriangleEPA {
         }
 
         return false;
-    }
-
-    /// Link an edge with another one. It means that the current edge of a triangle will
-    /// be associated with the edge of another triangle in order that both triangles
-    /// are neighbour along both edges).
-    public boolean link(EdgeEPA edge0, EdgeEPA edge1) {
-        boolean isPossible = (edge0.getSourceVertexIndex() == edge1.getTargetVertexIndex()
-                && edge0.getTargetVertexIndex() == edge1.getSourceVertexIndex());
-
-        if (isPossible) {
-            edge0.getOwnerTriangle().mAdjacentEdges[edge0.getIndex()] = edge1;
-            edge1.getOwnerTriangle().mAdjacentEdges[edge1.getIndex()] = edge0;
-        }
-
-        return isPossible;
-    }
-
-    /// Make an half link of an edge with another one from another triangle. An half-link
-    /// between an edge "edge0" and an edge "edge1" represents the fact that "edge1" is an
-    /// adjacent edge of "edge0" but not the opposite. The opposite edge connection will
-    /// be made later.
-    public void halfLink(EdgeEPA edge0, EdgeEPA edge1) {
-        assert (edge0.getSourceVertexIndex() == edge1.getTargetVertexIndex()
-                && edge0.getTargetVertexIndex() == edge1.getSourceVertexIndex());
-
-        // Link
-        edge0.getOwnerTriangle().mAdjacentEdges[edge0.getIndex()] = edge1;
     }
 
     // Execute the recursive silhouette algorithm from this triangle face.
@@ -181,7 +157,7 @@ public class TriangleEPA {
     /// face from the new vertex, computes the silhouette and create the new faces from the new vertex in
     /// order that we always have a convex polytope. The faces visible from the new vertex are set
     /// obselete and will not be considered as being a candidate face in the future.
-    public boolean computeSilhouette(Vector3 vertices, int indexNewVertex, TrianglesStore triangleStore) {
+    public boolean computeSilhouette(Vector3[] vertices, int indexNewVertex, TrianglesStore triangleStore) {
 
         int first = triangleStore.getNbTriangles();
 
@@ -201,9 +177,9 @@ public class TriangleEPA {
             for (i = first, j = triangleStore.getNbTriangles() - 1;
                     i != triangleStore.getNbTriangles(); j = i++) {
                 TriangleEPA triangle = triangleStore.operatorSquareBrackets(i);
-                halfLink(triangle.getAdjacentEdge(1), new EdgeEPA(triangle, 1));
+                Utils.halfLink(triangle.getAdjacentEdge(1), new EdgeEPA(triangle, 1));
 
-                if (!link(new EdgeEPA(triangle, 0), new EdgeEPA(triangleStore[j], 2))) {
+                if (!Utils.link(new EdgeEPA(triangle, 0), new EdgeEPA(triangleStore.operatorSquareBrackets(j), 2))) {
                     return false;
                 }
             }

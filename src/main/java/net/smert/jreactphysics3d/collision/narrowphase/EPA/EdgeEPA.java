@@ -71,7 +71,7 @@ public class EdgeEPA {
     }
 
     // Execute the recursive silhouette algorithm from this edge
-    public boolean computeSilhouette(Vector3 vertices, int indexNewVertex,
+    public boolean computeSilhouette(Vector3[] vertices, int indexNewVertex,
             TrianglesStore triangleStore) {
         // If the edge has not already been visited
         if (!mOwnerTriangle.getIsObsolete()) {
@@ -84,7 +84,7 @@ public class EdgeEPA {
 
                 // If the triangle has been created
                 if (triangle != null) {
-                    halfLink(new EdgeEPA(triangle, 1), this);
+                    Utils.halfLink(new EdgeEPA(triangle, 1), this);
                     return true;
                 }
 
@@ -108,7 +108,7 @@ public class EdgeEPA {
 
                     // If the triangle has been created
                     if (triangle != null) {
-                        halfLink(new EdgeEPA(triangle, 1), this);
+                        Utils.halfLink(new EdgeEPA(triangle, 1), this);
                         return true;
                     }
 
@@ -126,7 +126,7 @@ public class EdgeEPA {
                             getSourceVertexIndex());
 
                     if (triangle != null) {
-                        halfLink(new EdgeEPA(triangle, 1), this);
+                        Utils.halfLink(new EdgeEPA(triangle, 1), this);
                         return true;
                     }
 
