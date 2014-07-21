@@ -126,7 +126,7 @@ public class Matrix3x3 {
     // Return a skew-symmetric matrix using a given vector that can be used
     // to compute cross product with another vector using matrix multiplication
     public static Matrix3x3 computeSkewSymmetricMatrixForCrossProduct(Vector3 vector) {
-        return new Matrix3x3(0, -vector.z, vector.y, vector.z, 0, -vector.x, -vector.y, vector.x, 0.0f);
+        return new Matrix3x3(0.0f, -vector.z, vector.y, vector.z, 0, -vector.x, -vector.y, vector.x, 0.0f);
     }
 
     // Return the matrix with absolute values

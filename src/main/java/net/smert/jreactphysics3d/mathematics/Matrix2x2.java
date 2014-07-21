@@ -155,7 +155,7 @@ public class Matrix2x2 {
     }
 
     // Overloaded operator for multiplication with a vector
-    public Vector2 operatorMultiply(Matrix2x2 matrix, Vector2 vector) {
+    public static Vector2 operatorMultiply(Matrix2x2 matrix, Vector2 vector) {
         return new Vector2(matrix.m[0][0] * vector.x + matrix.m[0][1] * vector.y,
                 matrix.m[1][0] * vector.x + matrix.m[1][1] * vector.y);
     }
