@@ -182,27 +182,4 @@ public class Vector2 {
         return this;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 53 * hash + Float.floatToIntBits(this.x);
-        hash = 53 * hash + Float.floatToIntBits(this.y);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Vector2 other = (Vector2) obj;
-        if (Float.floatToIntBits(this.x) != Float.floatToIntBits(other.x)) {
-            return false;
-        }
-        return Float.floatToIntBits(this.y) == Float.floatToIntBits(other.y);
-    }
-
 }
