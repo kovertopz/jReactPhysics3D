@@ -1,5 +1,7 @@
 package net.smert.jreactphysics3d.mathematics;
 
+import java.util.Objects;
+
 /**
  * This class represents a position and an orientation in 3D. It can also be seen as representing a translation and a
  * rotation.
@@ -147,6 +149,29 @@ public class Transform {
             mOrientation = transform.mOrientation;
         }
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + Objects.hashCode(this.mPosition);
+        hash = 71 * hash + Objects.hashCode(this.mOrientation);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Transform other = (Transform) obj;
+        if (!Objects.equals(this.mPosition, other.mPosition)) {
+            return false;
+        }
+        return Objects.equals(this.mOrientation, other.mOrientation);
     }
 
 }

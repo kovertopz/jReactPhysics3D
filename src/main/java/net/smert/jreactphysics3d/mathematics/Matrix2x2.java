@@ -1,5 +1,6 @@
 package net.smert.jreactphysics3d.mathematics;
 
+import java.util.Arrays;
 import net.smert.jreactphysics3d.configuration.Defaults;
 
 /**
@@ -220,6 +221,25 @@ public class Matrix2x2 {
 
         // Return the inverse matrix
         return Matrix2x2.operatorMultiply(invDeterminant, tempMatrix);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + Arrays.deepHashCode(this.m);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Matrix2x2 other = (Matrix2x2) obj;
+        return Arrays.deepEquals(this.m, other.m);
     }
 
 }

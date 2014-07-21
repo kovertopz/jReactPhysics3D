@@ -391,4 +391,35 @@ public class Quaternion {
         return quaternion1.operatorMultiply(coeff1).operatorAdd(quaternion2.operatorMultiply(coeff2));
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + Float.floatToIntBits(this.x);
+        hash = 59 * hash + Float.floatToIntBits(this.y);
+        hash = 59 * hash + Float.floatToIntBits(this.z);
+        hash = 59 * hash + Float.floatToIntBits(this.w);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Quaternion other = (Quaternion) obj;
+        if (Float.floatToIntBits(this.x) != Float.floatToIntBits(other.x)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.y) != Float.floatToIntBits(other.y)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.z) != Float.floatToIntBits(other.z)) {
+            return false;
+        }
+        return Float.floatToIntBits(this.w) == Float.floatToIntBits(other.w);
+    }
+
 }

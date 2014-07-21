@@ -236,4 +236,31 @@ public class Vector3 {
 
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 11 * hash + Float.floatToIntBits(this.x);
+        hash = 11 * hash + Float.floatToIntBits(this.y);
+        hash = 11 * hash + Float.floatToIntBits(this.z);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Vector3 other = (Vector3) obj;
+        if (Float.floatToIntBits(this.x) != Float.floatToIntBits(other.x)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.y) != Float.floatToIntBits(other.y)) {
+            return false;
+        }
+        return Float.floatToIntBits(this.z) == Float.floatToIntBits(other.z);
+    }
+
 }
