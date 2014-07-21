@@ -93,14 +93,14 @@ public class CylinderShape extends CollisionShape {
         float lengthW = (float) Math.sqrt(direction.x * direction.x + direction.z * direction.z);
 
         if (lengthW > Defaults.MACHINE_EPSILON) {
-            if (uDotv < 0.0) {
+            if (uDotv < 0.0f) {
                 supportPoint.y = -mHalfHeight;
             } else {
                 supportPoint.y = mHalfHeight;
             }
             supportPoint.operatorAddEqual(w.operatorMultiplyEqual(mRadius / lengthW));
         } else {
-            if (uDotv < 0.0) {
+            if (uDotv < 0.0f) {
                 supportPoint.y = -mHalfHeight;
             } else {
                 supportPoint.y = mHalfHeight;

@@ -313,7 +313,7 @@ public class SliderJoint extends Joint {
             if (mBody2.isMotionEnabled()) {
                 mInverseMassMatrixMotor += mBody2.getMassInverse();
             }
-            mInverseMassMatrixMotor = (mInverseMassMatrixMotor > 0.0) ? 1.0f / mInverseMassMatrixMotor : 0.0f;
+            mInverseMassMatrixMotor = (mInverseMassMatrixMotor > 0.0f) ? 1.0f / mInverseMassMatrixMotor : 0.0f;
         }
 
         // If warm-starting is not enabled

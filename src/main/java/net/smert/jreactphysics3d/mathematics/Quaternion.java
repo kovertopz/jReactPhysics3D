@@ -62,7 +62,7 @@ public class Quaternion {
         float r;
         float s;
 
-        if (trace < 0.0) {
+        if (trace < 0.0f) {
             if (matrix.m[1][1] > matrix.m[0][0]) {
                 if (matrix.m[2][2] > matrix.m[1][1]) {
                     r = (float) Math.sqrt(matrix.m[2][2] - matrix.m[0][0] - matrix.m[1][1] + 1.0f);
@@ -329,7 +329,7 @@ public class Quaternion {
         float nQ = x * x + y * y + z * z + w * w;
         float s = 0.0f;
 
-        if (nQ > 0.0) {
+        if (nQ > 0.0f) {
             s = 2.0f / nQ;
         }
 
@@ -364,7 +364,7 @@ public class Quaternion {
         float cosineTheta = quaternion1.dot(quaternion2);
 
         // Take care of the sign of cosineTheta
-        if (cosineTheta < 0.0) {
+        if (cosineTheta < 0.0f) {
             cosineTheta = -cosineTheta;
             invert = -1.0f;
         }

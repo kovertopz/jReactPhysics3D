@@ -8,7 +8,7 @@ package net.smert.jreactphysics3d.engine;
  */
 public class Timer {
 
-    /// Timestep dt of the physics engine (timestep > 0.0)
+    /// Timestep dt of the physics engine (timestep > 0.0f)
     private double mTimeStep;
 
     /// Last time the timer has been updated
@@ -34,7 +34,7 @@ public class Timer {
 
     // Constructor
     public Timer(double timeStep) {
-        assert (timeStep > 0.0);
+        assert (timeStep > 0.0f);
 
         mTimeStep = timeStep;
         mIsRunning = false;
