@@ -16,7 +16,7 @@ public class Transform {
 
     // Constructor
     public Transform() {
-        mPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        mPosition = new Vector3();
         mOrientation = Quaternion.identity();
     }
 
@@ -60,7 +60,7 @@ public class Transform {
 
     // Set the transform to the identity transform
     public void setToIdentity() {
-        mPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        mPosition = new Vector3();
         mOrientation = Quaternion.identity();
     }
 
@@ -115,7 +115,7 @@ public class Transform {
 
     // Return the identity transform
     public static Transform identity() {
-        return new Transform(new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity());
+        return new Transform(new Vector3(), Quaternion.identity());
     }
 
     // Return the transformed vector
