@@ -35,35 +35,6 @@ public abstract class Joint {
     /// True if the joint has already been added into an island
     protected boolean mIsAlreadyInIsland;
 
-    /// Private copy-constructor
-    protected Joint(Joint constraint) {
-    }
-
-    /// Private assignment operator
-    protected Joint operatorEqual(Joint constraint) {
-        return this;
-    }
-
-    // Return true if the joint has already been added into an island
-    protected boolean isAlreadyInIsland() {
-        return mIsAlreadyInIsland;
-    }
-
-    /// Return the number of bytes used by the joint
-    protected abstract int getSizeInBytes();
-
-    /// Initialize before solving the joint
-    protected abstract void initBeforeSolve(ConstraintSolverData constraintSolverData);
-
-    /// Warm start the joint (apply the previous impulse at the beginning of the step)
-    protected abstract void warmstart(ConstraintSolverData constraintSolverData);
-
-    /// Solve the velocity constraint
-    protected abstract void solveVelocityConstraint(ConstraintSolverData constraintSolverData);
-
-    /// Solve the position constraint
-    protected abstract void solvePositionConstraint(ConstraintSolverData constraintSolverData);
-
     // Constructor
     public Joint(JointInfo jointInfo) {
         mBody1 = jointInfo.body1;
@@ -101,5 +72,22 @@ public abstract class Joint {
     public boolean isCollisionEnabled() {
         return mIsCollisionEnabled;
     }
+
+    // Return true if the joint has already been added into an island
+    public boolean isAlreadyInIsland() {
+        return mIsAlreadyInIsland;
+    }
+
+    /// Initialize before solving the joint
+    public abstract void initBeforeSolve(ConstraintSolverData constraintSolverData);
+
+    /// Warm start the joint (apply the previous impulse at the beginning of the step)
+    public abstract void warmstart(ConstraintSolverData constraintSolverData);
+
+    /// Solve the velocity constraint
+    public abstract void solveVelocityConstraint(ConstraintSolverData constraintSolverData);
+
+    /// Solve the position constraint
+    public abstract void solvePositionConstraint(ConstraintSolverData constraintSolverData);
 
 }

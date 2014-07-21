@@ -49,15 +49,6 @@ public class ContactPoint {
     /// Cached second friction impulse
     private float mFrictionImpulse2;
 
-    /// Private copy-constructor
-    private ContactPoint(ContactPoint contact) {
-    }
-
-    /// Private assignment operator
-    private ContactPoint operatorEqual(ContactPoint contact) {
-        return this;
-    }
-
     // Constructor
     public ContactPoint(ContactPointInfo contactInfo) {
         mBody1 = contactInfo.body1;
@@ -66,12 +57,12 @@ public class ContactPoint {
         mPenetrationDepth = contactInfo.penetrationDepth;
         mLocalPointOnBody1 = contactInfo.localPoint1;
         mLocalPointOnBody2 = contactInfo.localPoint2;
-        mWorldPointOnBody1 = contactInfo.body1.getTransform() * contactInfo.localPoint1;
-        mWorldPointOnBody2 = contactInfo.body2.getTransform() * contactInfo.localPoint2;
+        mWorldPointOnBody1 = contactInfo.body1.getTransform().operatorMultiply(contactInfo.localPoint1);
+        mWorldPointOnBody2 = contactInfo.body2.getTransform().operatorMultiply(contactInfo.localPoint2);
         mIsRestingContact = false;
 
-        mFrictionVectors[0] = new Vector3(0.0f, 0.0f, 0.0f);
-        mFrictionVectors[1] = new Vector3(0.0f, 0.0f, 0.0f);
+        mFrictionVectors[0] = new Vector3();
+        mFrictionVectors[1] = new Vector3();
 
         assert (mPenetrationDepth > 0.0f);
     }
@@ -189,11 +180,6 @@ public class ContactPoint {
     // Return the penetration depth of the contact
     public float getPenetrationDepth() {
         return mPenetrationDepth;
-    }
-
-    // Return the number of bytes used by the contact point
-    public int getSizeInBytes() {
-        return 4;
     }
 
 }

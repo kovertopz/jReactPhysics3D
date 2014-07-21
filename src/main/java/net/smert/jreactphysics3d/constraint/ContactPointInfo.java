@@ -29,15 +29,6 @@ public class ContactPointInfo {
     /// Contact point of body 2 in local space of body 2
     public Vector3 localPoint2;
 
-    /// Private copy-constructor
-    private ContactPointInfo(ContactPointInfo contactInfo) {
-    }
-
-    /// Private assignment operator
-    private ContactPointInfo operatorEqual(ContactPointInfo contactInfo) {
-        return this;
-    }
-
     /// Constructor
     public ContactPointInfo(Vector3 normal, float penetrationDepth, Vector3 localPoint1, Vector3 localPoint2) {
         this.normal = normal;
