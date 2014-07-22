@@ -2,7 +2,6 @@ package net.smert.jreactphysics3d.engine;
 
 import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.constraint.Joint;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * An island represent an isolated group of awake bodies that are connected with each other by some contraints (contacts
@@ -30,9 +29,6 @@ public class Island {
     /// Current number of joints in the island
     private int mNbJoints;
 
-    /// Reference to the memory allocator
-    private MemoryAllocator mMemoryAllocator;
-
     /// Number of bytes allocated for the bodies array
     private int mNbAllocatedBytesBodies;
 
@@ -52,14 +48,13 @@ public class Island {
     }
 
     // Constructor
-    public Island(int nbMaxBodies, int nbMaxContactManifolds, int nbMaxJoints, MemoryAllocator memoryAllocator) {
+    public Island(int nbMaxBodies, int nbMaxContactManifolds, int nbMaxJoints) {
         mBodies = null;
         mContactManifolds = null;
         mJoints = null;
         mNbBodies = 0;
         mNbContactManifolds = 0;
         mNbJoints = 0;
-        mMemoryAllocator = memoryAllocator;
 
         // Allocate memory for the arrays
         mNbAllocatedBytesBodies = 4 * nbMaxBodies;

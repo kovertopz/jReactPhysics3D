@@ -11,7 +11,6 @@ import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class is the implementation of the Expanding Polytope Algorithm (EPA). The EPA algorithm computes the
@@ -33,15 +32,11 @@ public class EPAAlgorithm {
     /// Maximum number of facets of the polytope
     private static final int MAX_FACETS = 200;
 
-    /// Reference to the memory allocator
-    private MemoryAllocator mMemoryAllocator;
-
     /// Triangle comparison operator
     private TriangleComparison mTriangleComparison;
 
     // Constructor
-    public EPAAlgorithm(MemoryAllocator memoryAllocator) {
-        mMemoryAllocator = memoryAllocator;
+    public EPAAlgorithm() {
         mTriangleComparison = new TriangleComparison();
     }
 

@@ -3,7 +3,6 @@ package net.smert.jreactphysics3d.engine;
 import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.constraint.ContactPoint;
 import net.smert.jreactphysics3d.mathematics.Vector3;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class represents a pair of two bodies that are overlapping during the broad-phase collision detection. It is
@@ -36,10 +35,10 @@ public class OverlappingPair {
     }
 
     // Constructor
-    public OverlappingPair(CollisionBody body1, CollisionBody body2, MemoryAllocator memoryAllocator) {
+    public OverlappingPair(CollisionBody body1, CollisionBody body2) {
         mBody1 = body1;
         mBody2 = body2;
-        mContactManifold = new ContactManifold(body1, body2, memoryAllocator);
+        mContactManifold = new ContactManifold(body1, body2);
         mCachedSeparatingAxis = new Vector3(1.0f, 1.0f, 1.0f);
     }
 

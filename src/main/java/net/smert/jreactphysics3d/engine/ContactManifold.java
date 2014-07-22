@@ -5,7 +5,6 @@ import net.smert.jreactphysics3d.configuration.Defaults;
 import net.smert.jreactphysics3d.constraint.ContactPoint;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class represents the set of contact points between two bodies. The contact manifold is implemented in a way to
@@ -53,10 +52,6 @@ public class ContactManifold {
     /// True if the contact manifold has already been added into an island
     private boolean mIsAlreadyInIsland;
 
-    /// Reference to the memory allocator
-    private MemoryAllocator mMemoryAllocator;
-
-    // -------------------- Methods -------------------- //
     /// Private copy-constructor
     private ContactManifold(ContactManifold contactManifold) {
     }
@@ -190,8 +185,6 @@ public class ContactManifold {
 
         // Call the destructor explicitly and tell the memory allocator that
         // the corresponding memory block is now free
-        //mContactPoints[index].ContactPoint::~ContactPoint();
-        //mMemoryAllocator.release(mContactPoints[index], sizeof(ContactPoint));
         // If we don't remove the last index
         if (index < mNbContactPoints - 1) {
             mContactPoints[index] = mContactPoints[mNbContactPoints - 1];
@@ -201,7 +194,7 @@ public class ContactManifold {
     }
 
     // Constructor
-    public ContactManifold(CollisionBody body1, CollisionBody body2, MemoryAllocator memoryAllocator) {
+    public ContactManifold(CollisionBody body1, CollisionBody body2) {
         mBody1 = body1;
         mBody2 = body2;
         mNbContactPoints = 0;
@@ -209,7 +202,6 @@ public class ContactManifold {
         mFrictionImpulse2 = 0.0f;
         mFrictionTwistImpulse = 0.0f;
         mIsAlreadyInIsland = false;
-        mMemoryAllocator = memoryAllocator;
     }
 
     // Return the number of contact points in the manifold
@@ -294,9 +286,6 @@ public class ContactManifold {
             if (distance <= Defaults.PERSISTENT_CONTACT_DIST_THRESHOLD * Defaults.PERSISTENT_CONTACT_DIST_THRESHOLD) {
 
                 // Delete the new contact
-                //contact.ContactPoint::~ContactPoint();
-                //mMemoryAllocator.release(contact, sizeof(ContactPoint));
-                //removeContact(i);
                 return;
                 //break;
             }

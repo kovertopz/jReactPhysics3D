@@ -542,8 +542,7 @@ public class DynamicsWorld extends CollisionWorld {
             body.setIsAlreadyInIsland(true);
 
             // Create the new island
-            //void* allocatedMemoryIsland = mMemoryAllocator.allocate(sizeof(Island));
-            mIslands[mNbIslands] = new Island(nbBodies, mContactManifolds.size(), mJoints.size(), mMemoryAllocator);
+            mIslands[mNbIslands] = new Island(nbBodies, mContactManifolds.size(), mJoints.size());
 
             // While there are still some bodies to visit in the stack
             while (stackIndex > 0) {
@@ -997,7 +996,6 @@ public class DynamicsWorld extends CollisionWorld {
 
             // Ball-and-Socket joint
             case BALLSOCKETJOINT: {
-                //void* allocatedMemory = mMemoryAllocator.allocate(sizeof(BallAndSocketJoint));
                 BallAndSocketJointInfo info = (BallAndSocketJointInfo) jointInfo;
                 newJoint = new BallAndSocketJoint(info);
                 break;
@@ -1005,7 +1003,6 @@ public class DynamicsWorld extends CollisionWorld {
 
             // Slider joint
             case SLIDERJOINT: {
-                //void* allocatedMemory = mMemoryAllocator.allocate(sizeof(SliderJoint));
                 SliderJointInfo info = (SliderJointInfo) jointInfo;
                 newJoint = new SliderJoint(info);
                 break;
@@ -1013,7 +1010,6 @@ public class DynamicsWorld extends CollisionWorld {
 
             // Hinge joint
             case HINGEJOINT: {
-                //void* allocatedMemory = mMemoryAllocator.allocate(sizeof(HingeJoint));
                 HingeJointInfo info = (HingeJointInfo) jointInfo;
                 newJoint = new HingeJoint(info);
                 break;
@@ -1021,7 +1017,6 @@ public class DynamicsWorld extends CollisionWorld {
 
             // Fixed joint
             case FIXEDJOINT: {
-                //void* allocatedMemory = mMemoryAllocator.allocate(sizeof(FixedJoint));
                 FixedJointInfo info = (FixedJointInfo) jointInfo;
                 newJoint = new FixedJoint(info);
                 break;
@@ -1070,8 +1065,8 @@ public class DynamicsWorld extends CollisionWorld {
         mJoints.remove(joint);
 
         // Remove the joint from the joint list of the bodies involved in the joint
-        joint.getBody1().removeJointFromJointsList(mMemoryAllocator, joint);
-        joint.getBody2().removeJointFromJointsList(mMemoryAllocator, joint);
+        joint.getBody1().removeJointFromJointsList(joint);
+        joint.getBody2().removeJointFromJointsList(joint);
 
         // Call the destructor of the joint
         // Release the allocated memory
@@ -1083,12 +1078,10 @@ public class DynamicsWorld extends CollisionWorld {
         assert (joint != null);
 
         // Add the joint at the beginning of the linked list of joints of the first body
-        //void* allocatedMemory1 = mMemoryAllocator.allocate(sizeof(JointListElement));
         JointListElement jointListElement1 = new JointListElement(joint, joint.getBody1().getJointsList());
         joint.getBody1().setJointsList(jointListElement1);
 
         // Add the joint at the beginning of the linked list of joints of the second body
-        //void* allocatedMemory2 = mMemoryAllocator.allocate(sizeof(JointListElement));
         JointListElement jointListElement2 = new JointListElement(joint, joint.getBody2().getJointsList());
         joint.getBody2().setJointsList(jointListElement2);
     }
@@ -1101,12 +1094,10 @@ public class DynamicsWorld extends CollisionWorld {
 
         // Add the contact manifold at the beginning of the linked
         // list of contact manifolds of the first body
-        //void* allocatedMemory1 = mMemoryAllocator.allocate(sizeof(ContactManifoldListElement));
         ContactManifoldListElement listElement1 = new ContactManifoldListElement(contactManifold, body1.getContactManifoldsLists());
         body1.setContactManifoldsLists(listElement1);
 
         // Add the joint at the beginning of the linked list of joints of the second body
-        //void* allocatedMemory2 = mMemoryAllocator.allocate(sizeof(ContactManifoldListElement));
         ContactManifoldListElement listElement2 = new ContactManifoldListElement(contactManifold, body2.getContactManifoldsLists());
         body2.setContactManifoldsLists(listElement2);
     }
@@ -1145,7 +1136,7 @@ public class DynamicsWorld extends CollisionWorld {
         BodyIndexPair indexPair = addedPair.getBodiesIndexPair();
 
         // Add the pair into the set of overlapping pairs (if not there yet)
-        OverlappingPair newPair = new OverlappingPair(addedPair.body1, addedPair.body2, mMemoryAllocator);
+        OverlappingPair newPair = new OverlappingPair(addedPair.body1, addedPair.body2);
         assert (newPair != null);
 
         OverlappingPair check = mOverlappingPairs.put(indexPair, newPair);

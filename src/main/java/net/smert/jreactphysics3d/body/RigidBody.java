@@ -7,7 +7,6 @@ import net.smert.jreactphysics3d.engine.Material;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class represents a rigid body of the physics engine. A rigid body is a non-deformable body that has a constant
@@ -293,7 +292,7 @@ public class RigidBody extends CollisionBody {
     }
 
     // Remove a joint from the joints list
-    public void removeJointFromJointsList(MemoryAllocator memoryAllocator, Joint joint) {
+    public void removeJointFromJointsList(Joint joint) {
 
         assert (joint != null);
         assert (mJointsList != null);

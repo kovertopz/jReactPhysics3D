@@ -5,7 +5,6 @@ import net.smert.jreactphysics3d.collision.shapes.SphereShape;
 import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class is used to compute the narrow-phase collision detection between two sphere collision shapes.
@@ -15,8 +14,8 @@ import net.smert.jreactphysics3d.memory.MemoryAllocator;
 public class SphereVsSphereAlgorithm extends NarrowPhaseAlgorithm {
 
     // Constructor
-    public SphereVsSphereAlgorithm(MemoryAllocator memoryAllocator) {
-        super(memoryAllocator);
+    public SphereVsSphereAlgorithm() {
+        super();
     }
 
     @Override

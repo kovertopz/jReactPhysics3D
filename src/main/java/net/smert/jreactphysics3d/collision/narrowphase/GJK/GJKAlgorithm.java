@@ -8,7 +8,6 @@ import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class implements a narrow-phase collision detection algorithm. This algorithm uses the ISA-GJK algorithm and the
@@ -102,9 +101,9 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
     }
 
     // Constructor
-    public GJKAlgorithm(MemoryAllocator memoryAllocator) {
-        super(memoryAllocator);
-        mAlgoEPA = new EPAAlgorithm(memoryAllocator);
+    public GJKAlgorithm() {
+        super();
+        mAlgoEPA = new EPAAlgorithm();
     }
 
     // Return true and compute a contact info if the two bounding volumes collide.

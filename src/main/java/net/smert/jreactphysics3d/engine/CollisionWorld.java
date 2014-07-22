@@ -10,7 +10,6 @@ import net.smert.jreactphysics3d.collision.CollisionDetection;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.mathematics.Transform;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class represent a world where it is possible to move bodies by hand and to test collision between each other. In
@@ -37,9 +36,6 @@ public class CollisionWorld {
 
     /// List of free ID for rigid bodies
     protected List<Integer> mFreeBodiesIDs;
-
-    /// Memory allocator
-    protected MemoryAllocator mMemoryAllocator;
 
     // Return the next available body ID
     protected int computeNextAvailableBodyID() {
@@ -116,7 +112,7 @@ public class CollisionWorld {
 
     // Constructor
     public CollisionWorld() {
-        mCollisionDetection = new CollisionDetection(this, mMemoryAllocator);
+        mCollisionDetection = new CollisionDetection(this);
         mCurrentBodyID = 0;
     }
 

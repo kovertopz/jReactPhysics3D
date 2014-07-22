@@ -4,7 +4,6 @@ import net.smert.jreactphysics3d.collision.BroadPhasePair;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.mathematics.Transform;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class is an abstract class that represents an algorithm used to perform the narrow-phase of a collision
@@ -15,15 +14,11 @@ import net.smert.jreactphysics3d.memory.MemoryAllocator;
  */
 public abstract class NarrowPhaseAlgorithm {
 
-    /// Reference to the memory allocator
-    protected MemoryAllocator mMemoryAllocator;
-
     /// Overlapping pair of the bodies currently tested for collision
     protected BroadPhasePair mCurrentOverlappingPair;
 
     // Constructor
-    public NarrowPhaseAlgorithm(MemoryAllocator memoryAllocator) {
-        mMemoryAllocator = memoryAllocator;
+    public NarrowPhaseAlgorithm() {
         mCurrentOverlappingPair = null;
     }
 

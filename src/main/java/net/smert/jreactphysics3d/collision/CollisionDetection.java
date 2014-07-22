@@ -16,7 +16,6 @@ import net.smert.jreactphysics3d.collision.shapes.CollisionShapeType;
 import net.smert.jreactphysics3d.constraint.ContactPointInfo;
 import net.smert.jreactphysics3d.engine.CollisionWorld;
 import net.smert.jreactphysics3d.engine.Profiler;
-import net.smert.jreactphysics3d.memory.MemoryAllocator;
 
 /**
  * This class computes the collision detection algorithms. We first perform a broad-phase algorithm to know which pairs
@@ -28,9 +27,6 @@ public class CollisionDetection {
 
     /// Pointer to the physics world
     private CollisionWorld mWorld;
-
-    /// Memory allocator
-    private MemoryAllocator mMemoryAllocator;
 
     /// Broad-phase overlapping pairs
     private Map<BodyIndexPair, BroadPhasePair> mOverlappingPairs;
@@ -132,11 +128,10 @@ public class CollisionDetection {
     }
 
     // Constructor
-    public CollisionDetection(CollisionWorld world, MemoryAllocator memoryAllocator) {
+    public CollisionDetection(CollisionWorld world) {
         mWorld = world;
-        mMemoryAllocator = memoryAllocator;
-        mNarrowPhaseGJKAlgorithm = new GJKAlgorithm(memoryAllocator);
-        mNarrowPhaseSphereVsSphereAlgorithm = new SphereVsSphereAlgorithm(memoryAllocator);
+        mNarrowPhaseGJKAlgorithm = new GJKAlgorithm();
+        mNarrowPhaseSphereVsSphereAlgorithm = new SphereVsSphereAlgorithm();
 
         // Create the broad-phase algorithm that will be used (Sweep and Prune with AABB)
         mBroadPhaseAlgorithm = new SweepAndPruneAlgorithm(this);
