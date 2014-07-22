@@ -23,15 +23,6 @@ public class Timer {
     /// True if the timer is running
     private boolean mIsRunning;
 
-    /// Private copy-constructor
-    private Timer(Timer timer) {
-    }
-
-    /// Private assignment operator
-    private Timer operatorEqual(Timer timer) {
-        return this;
-    }
-
     // Constructor
     public Timer(double timeStep) {
         assert (timeStep > 0.0f);

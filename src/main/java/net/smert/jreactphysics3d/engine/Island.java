@@ -38,15 +38,6 @@ public class Island {
     /// Number of bytes allocated for the joints array
     private int mNbAllocatedBytesJoints;
 
-    /// Private assignment operator
-    private Island operatorEqual(Island island) {
-        return this;
-    }
-
-    /// Private copy-constructor
-    private Island(Island island) {
-    }
-
     // Constructor
     public Island(int nbMaxBodies, int nbMaxContactManifolds, int nbMaxJoints) {
         mBodies = null;

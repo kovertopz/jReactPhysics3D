@@ -52,15 +52,6 @@ public class ContactManifold {
     /// True if the contact manifold has already been added into an island
     private boolean mIsAlreadyInIsland;
 
-    /// Private copy-constructor
-    private ContactManifold(ContactManifold contactManifold) {
-    }
-
-    /// Private assignment operator
-    private ContactManifold operatorEqual(ContactManifold contactManifold) {
-        return this;
-    }
-
     // Return a pointer to the first body of the contact manifold
     public CollisionBody getBody1() {
         return mBody1;

@@ -25,15 +25,6 @@ public class OverlappingPair {
     /// Cached previous separating axis
     private Vector3 mCachedSeparatingAxis;
 
-    /// Private copy-constructor
-    private OverlappingPair(OverlappingPair pair) {
-    }
-
-    /// Private assignment operator
-    private OverlappingPair operatorEqual(OverlappingPair pair) {
-        return this;
-    }
-
     // Constructor
     public OverlappingPair(CollisionBody body1, CollisionBody body2) {
         mBody1 = body1;

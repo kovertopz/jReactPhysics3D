@@ -21,11 +21,6 @@ public class Impulse {
     /// Angular impulse applied to the second body
     public Vector3 angularImpulseBody2;
 
-    /// Private assignment operator
-    private Impulse operatorEqual(Impulse impulse) {
-        return this;
-    }
-
     /// Constructor
     public Impulse(Vector3 initLinearImpulseBody1, Vector3 initAngularImpulseBody1,
             Vector3 initLinearImpulseBody2, Vector3 initAngularImpulseBody2) {
