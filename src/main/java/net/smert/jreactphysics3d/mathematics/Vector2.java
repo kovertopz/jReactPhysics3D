@@ -182,6 +182,26 @@ public class Vector2 {
         return this;
     }
 
+    // Return the corresponding unit vector
+    public Vector2 getUnit() {
+        float lengthVector = length();
+
+        assert (lengthVector > Defaults.MACHINE_EPSILON);
+
+        // Compute and return the unit vector
+        float lengthInv = 1.0f / lengthVector;
+        return new Vector2(x * lengthInv, y * lengthInv);
+    }
+
+    // Return one unit orthogonal vector of the current vector
+    public Vector2 getOneUnitOrthogonalVector() {
+
+        float l = length();
+        assert (l > Defaults.MACHINE_EPSILON);
+
+        return new Vector2(-y / l, x / l);
+    }
+
     @Override
     public int hashCode() {
         int hash = 3;
