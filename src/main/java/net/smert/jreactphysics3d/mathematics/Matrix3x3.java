@@ -158,7 +158,7 @@ public class Matrix3x3 {
     }
 
     // Overloaded operator for the negative of the matrix
-    public static Matrix3x3 operatorSubtract(Matrix3x3 matrix) {
+    public static Matrix3x3 operatorNegative(Matrix3x3 matrix) {
         return new Matrix3x3(-matrix.m[0][0], -matrix.m[0][1], -matrix.m[0][2],
                 -matrix.m[1][0], -matrix.m[1][1], -matrix.m[1][2],
                 -matrix.m[2][0], -matrix.m[2][1], -matrix.m[2][2]);
