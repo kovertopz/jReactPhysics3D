@@ -205,4 +205,9 @@ public class Vector2 {
         return Float.floatToIntBits(this.y) == Float.floatToIntBits(other.y);
     }
 
+    @Override
+    public String toString() {
+        return "(x= " + x + ", y= " + y + ")";
+    }
+
 }

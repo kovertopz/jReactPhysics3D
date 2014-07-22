@@ -316,4 +316,11 @@ public class Matrix3x3 {
         return Arrays.deepEquals(this.m, other.m);
     }
 
+    @Override
+    public String toString() {
+        return "(00= " + m[0][0] + ", 01= " + m[0][1] + ", 02= " + m[0][2]
+                + ", 10= " + m[1][0] + ", 11= " + m[1][1] + ", 12= " + m[1][2]
+                + ", 20= " + m[2][0] + ", 21= " + m[2][1] + ", 22= " + m[2][2] + ")";
+    }
+
 }

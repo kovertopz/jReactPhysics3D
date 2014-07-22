@@ -263,4 +263,9 @@ public class Vector3 {
         return Float.floatToIntBits(this.z) == Float.floatToIntBits(other.z);
     }
 
+    @Override
+    public String toString() {
+        return "(x= " + x + ", y= " + y + ", z= " + z + ")";
+    }
+
 }

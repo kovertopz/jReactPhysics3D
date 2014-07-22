@@ -242,4 +242,10 @@ public class Matrix2x2 {
         return Arrays.deepEquals(this.m, other.m);
     }
 
+    @Override
+    public String toString() {
+        return "(00= " + m[0][0] + ", 01= " + m[0][1]
+                + ", 10= " + m[1][0] + ", 11= " + m[1][1] + ")";
+    }
+
 }

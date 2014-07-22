@@ -174,4 +174,9 @@ public class Transform {
         return Objects.equals(this.mOrientation, other.mOrientation);
     }
 
+    @Override
+    public String toString() {
+        return "(position= " + mPosition + ", orientation= " + mOrientation + ")";
+    }
+
 }

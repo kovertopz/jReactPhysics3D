@@ -299,7 +299,7 @@ public class Quaternion {
     // Compute the rotation angle (in radians) and the rotation axis
     /// This method is used to get the rotation angle (in radian) and the unit
     /// rotation axis of an orientation quaternion.
-    public void getRotationAngleAxis(float angle, Vector3 axis) {
+    public void getRotationAngleAxis(float[] angle, Vector3 axis) {
         Quaternion quaternion;
 
         // If the quaternion is unit
@@ -311,7 +311,7 @@ public class Quaternion {
         }
 
         // Compute the roation angle
-        angle = (float) Math.acos(quaternion.w) * 2.0f;
+        angle[0] = (float) Math.acos(quaternion.w) * 2.0f;
 
         // Compute the 3D rotation axis
         Vector3 rotationAxis = new Vector3(quaternion.x, quaternion.y, quaternion.z);
@@ -420,6 +420,11 @@ public class Quaternion {
             return false;
         }
         return Float.floatToIntBits(this.w) == Float.floatToIntBits(other.w);
+    }
+
+    @Override
+    public String toString() {
+        return "(w= " + w + ", x= " + x + ", y= " + y + ", z= " + z + ")";
     }
 
 }
