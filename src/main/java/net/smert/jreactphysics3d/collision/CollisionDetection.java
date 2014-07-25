@@ -9,7 +9,7 @@ import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.collision.broadphase.BodyPair;
 import net.smert.jreactphysics3d.collision.broadphase.BroadPhaseAlgorithm;
-import net.smert.jreactphysics3d.collision.broadphase.NoBroadPhaseAlgorithm;
+import net.smert.jreactphysics3d.collision.broadphase.SweepAndPruneAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.GJK.GJKAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.NarrowPhaseAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.SphereVsSphereAlgorithm;
@@ -136,7 +136,7 @@ public class CollisionDetection {
         mNarrowPhaseSphereVsSphereAlgorithm = new SphereVsSphereAlgorithm();
 
         // Create the broad-phase algorithm that will be used (Sweep and Prune with AABB)
-        mBroadPhaseAlgorithm = new NoBroadPhaseAlgorithm(this);
+        mBroadPhaseAlgorithm = new SweepAndPruneAlgorithm(this);
         assert (mBroadPhaseAlgorithm != null);
 
         mNoCollisionPairs = new HashSet<>();

@@ -14,10 +14,10 @@ public class EndPoint {
     public boolean isMin;
 
     /// Value (one dimension coordinate) of the end-point
-    public int value;
+    public long value;
 
     /// Set the values of the endpoint
-    public void setValues(int boxID, boolean isMin, int value) {
+    public void setValues(int boxID, boolean isMin, long value) {
         this.boxID = boxID;
         this.isMin = isMin;
         this.value = value;

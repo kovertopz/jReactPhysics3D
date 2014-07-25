@@ -76,8 +76,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         } else {   // If the arrays were empty
 
             // Add the limits endpoints (sentinels) into the array
-            int min = Utils.encodeFloatIntoInteger(Float.MIN_VALUE);
-            int max = Utils.encodeFloatIntoInteger(Float.MAX_VALUE);
+            long min = Utils.encodeFloatIntoInteger(-Float.MAX_VALUE);
+            long max = Utils.encodeFloatIntoInteger(Float.MAX_VALUE);
             newEndPointsXArray[0] = new EndPoint();
             newEndPointsXArray[0].setValues(INVALID_INDEX, true, min);
             newEndPointsXArray[1] = new EndPoint();
@@ -161,7 +161,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         }
 
         assert (newMapBodyToBoxIndex.size() == mMapBodyToBoxIndex.size());
-        mMapBodyToBoxIndex = newMapBodyToBoxIndex;
+        mMapBodyToBoxIndex.clear();
+        mMapBodyToBoxIndex.putAll(newMapBodyToBoxIndex);
 
         // Allocate memory for the new boxes and end-points arrays
         BoxAABB[] newBoxesArray = new BoxAABB[newNbMaxBoxes];
@@ -236,7 +237,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
             assert (currentMinEndPoint.isMin);
 
             // Get the minimum value of the AABB on the current axis
-            int limit = aabbInt.min[axis];
+            long limit = aabbInt.min[axis];
 
             // If the minimum value of the AABB is smaller
             // than the current minimum endpoint
@@ -249,7 +250,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 int indexEndPoint = currentMinEndPointIndex;
                 int savedEndPointIndex = indexEndPoint;
 
-                while (startEndPointsCurrentAxis[--currentMinEndPointIndex].value > limit) {
+                while ((currentMinEndPoint = startEndPointsCurrentAxis[--currentMinEndPointIndex]).value > limit) {
                     BoxAABB id1 = mBoxes[currentMinEndPoint.boxID];
                     boolean isMin = currentMinEndPoint.isMin;
 
@@ -259,10 +260,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         // passed a maximum end-point. Thus, the boxes start
                         // overlapping on the current axis. Therefore we test
                         // for box intersection
-                        if (box != id1) {
+                        if (!box.equals(id1)) {
                             if (testIntersect2D(box, id1, otherAxis1, otherAxis2)
-                                    && testIntersect1DSortedAABBs(id1, aabbInt,
-                                            startEndPointsCurrentAxis, axis)) {
+                                    && testIntersect1DSortedAABBs(id1, aabbInt, startEndPointsCurrentAxis, axis)) {
 
                                 // Add an overlapping pair to the pair manager
                                 mPairManager.addPair(body, id1.body);
@@ -287,18 +287,18 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
                     startEndPointsCurrentAxis[indexEndPoint] = savedEndPoint;
                 }
-            } else if (limit > currentMinEndPoint.value) {// The minimum of the box has moved to the right
+            } else if (limit > currentMinEndPoint.value) {  // The minimum of the box has moved to the right
 
                 currentMinEndPoint.value = limit;
 
-                // The minimum en-point is moving right
+                // The minimum end-point is moving right
                 EndPoint savedEndPoint = currentMinEndPoint;
                 int indexEndPoint = currentMinEndPointIndex;
                 int savedEndPointIndex = indexEndPoint;
 
                 // For each end-point between the current position of the minimum
                 // end-point and the new position of the minimum end-point
-                while (startEndPointsCurrentAxis[++currentMinEndPointIndex].value < limit) {
+                while ((currentMinEndPoint = startEndPointsCurrentAxis[++currentMinEndPointIndex]).value < limit) {
 
                     BoxAABB id1 = mBoxes[currentMinEndPoint.boxID];
                     boolean isMin = currentMinEndPoint.isMin;
@@ -308,7 +308,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         // The minimum end-point is moving to the right and
                         // passed a maximum end-point. Thus, the boxes stop
                         // overlapping on the current axis.
-                        if (box != id1) {
+                        if (!box.equals(id1)) {
                             if (testIntersect2D(box, id1, otherAxis1, otherAxis2)) {
 
                                 // Remove the pair from the pair manager
@@ -321,7 +321,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         id1.min[axis] = indexEndPoint++;
                     }
 
-                    startEndPointsCurrentAxis[currentMinEndPointIndex + 1] = currentMinEndPoint;
+                    startEndPointsCurrentAxis[currentMinEndPointIndex - 1] = currentMinEndPoint;
                 }
 
                 // Update the current minimum endpoint that we are moving
@@ -353,10 +353,10 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 currentMaxEndPoint.value = limit;
 
                 EndPoint savedEndPoint = currentMaxEndPoint;
-                int indexEndPoint = currentMinEndPointIndex;
+                int indexEndPoint = currentMaxEndPointIndex;
                 int savedEndPointIndex = indexEndPoint;
 
-                while (startEndPointsCurrentAxis[++currentMaxEndPointIndex].value < limit) {
+                while ((currentMaxEndPoint = startEndPointsCurrentAxis[++currentMaxEndPointIndex]).value < limit) {
 
                     // Get the next end-point
                     BoxAABB id1 = mBoxes[currentMaxEndPoint.boxID];
@@ -368,10 +368,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         // passed a minimum end-point. Thus, the boxes start
                         // overlapping on the current axis. Therefore we test
                         // for box intersection
-                        if (box != id1) {
+                        if (!box.equals(id1)) {
                             if (testIntersect2D(box, id1, otherAxis1, otherAxis2)
-                                    && testIntersect1DSortedAABBs(id1, aabbInt,
-                                            startEndPointsCurrentAxis, axis)) {
+                                    && testIntersect1DSortedAABBs(id1, aabbInt, startEndPointsCurrentAxis, axis)) {
 
                                 // Add an overlapping pair to the pair manager
                                 mPairManager.addPair(body, id1.body);
@@ -383,7 +382,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         id1.max[axis] = indexEndPoint++;
                     }
 
-                    startEndPointsCurrentAxis[currentMaxEndPointIndex + 1] = currentMaxEndPoint;
+                    startEndPointsCurrentAxis[currentMaxEndPointIndex - 1] = currentMaxEndPoint;
                 }
 
                 // Update the current minimum endpoint that we are moving
@@ -396,7 +395,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
                     startEndPointsCurrentAxis[indexEndPoint] = savedEndPoint;
                 }
-            } else if (limit < currentMaxEndPoint.value) {   // If the AABB is moving to the left 
+            } else if (limit < currentMaxEndPoint.value) {  // If the AABB is moving to the left 
+
                 currentMaxEndPoint.value = limit;
 
                 EndPoint savedEndPoint = currentMaxEndPoint;
@@ -405,7 +405,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
                 // For each end-point between the current position of the maximum
                 // end-point and the new position of the maximum end-point
-                while (startEndPointsCurrentAxis[--currentMaxEndPointIndex].value > limit) {
+                while ((currentMaxEndPoint = startEndPointsCurrentAxis[--currentMaxEndPointIndex]).value > limit) {
                     BoxAABB id1 = mBoxes[currentMaxEndPoint.boxID];
                     boolean isMin = currentMaxEndPoint.isMin;
 
@@ -414,7 +414,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                         // The maximum end-point is moving to the right and
                         // passed a minimum end-point. Thus, the boxes stop
                         // overlapping on the current axis.
-                        if (box != id1) {
+                        if (!box.equals(id1)) {
                             if (testIntersect2D(box, id1, otherAxis1, otherAxis2)) {
 
                                 // Remove the pair from the pair manager
@@ -508,8 +508,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         }
         BoxAABB box = mBoxes[boxIndex];
         box.body = body;
-        int maxEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
-        int minEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
+        long maxEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
+        long minEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
         for (int axis = 0; axis < 3; axis++) {
             box.min[axis] = indexLimitEndPoint;
             box.max[axis] = indexLimitEndPoint + 1;
@@ -542,8 +542,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
         // Call the update method with an AABB that is very far away
         // in order to remove all overlapping pairs from the pair manager
-        int maxEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
-        int minEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
+        long maxEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
+        long minEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
         AABBInt aabbInt = new AABBInt(minEndPointValue, maxEndPointValue);
         updateObjectIntegerAABB(body, aabbInt);
 
@@ -562,8 +562,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
             assert (!mEndPoints[axis][indexLimitEndPoint - 1].isMin);
             assert (newMaxLimitEndPoint.boxID == boxIndex);
             assert (newMaxLimitEndPoint.isMin);
-            newMaxLimitEndPoint.setValues(maxLimitEndPoint.boxID, maxLimitEndPoint.isMin,
-                    maxLimitEndPoint.value);
+            newMaxLimitEndPoint.setValues(maxLimitEndPoint.boxID, maxLimitEndPoint.isMin, maxLimitEndPoint.value);
         }
 
         // Add the box index into the list of free indices
