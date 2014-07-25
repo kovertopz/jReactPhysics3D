@@ -35,10 +35,10 @@ public class ContactManifold {
     private int mNbContactPoints;
 
     /// First friction vector of the contact manifold
-    private Vector3 mFrictionVector1;
+    private Vector3 mFrictionVector1 = new Vector3();
 
     /// Second friction vector of the contact manifold
-    private Vector3 mFrictionVector2;
+    private Vector3 mFrictionVector2 = new Vector3();
 
     /// First friction raint accumulated impulse
     private float mFrictionImpulse1;
@@ -207,7 +207,7 @@ public class ContactManifold {
 
     // set the first friction vector at the center of the contact manifold
     public void setFrictionVector1(Vector3 frictionVector1) {
-        mFrictionVector1 = frictionVector1;
+        mFrictionVector1 = new Vector3(frictionVector1);
     }
 
     // Return the second friction vector at the center of the contact manifold
@@ -217,7 +217,7 @@ public class ContactManifold {
 
     // set the second friction vector at the center of the contact manifold
     public void setFrictionVector2(Vector3 frictionVector2) {
-        mFrictionVector2 = frictionVector2;
+        mFrictionVector2 = new Vector3(frictionVector2);
     }
 
     // Return the first friction accumulated impulse

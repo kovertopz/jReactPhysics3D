@@ -48,11 +48,13 @@ public class TrianglesStore {
 
         // If we have not reached the maximum number of triangles
         if (mNbTriangles != MAX_TRIANGLES) {
-            newTriangle = mTriangles[mNbTriangles++];
             newTriangle = new TriangleEPA(v0, v1, v2);
+            mTriangles[mNbTriangles] = newTriangle;
+            mNbTriangles++;
             if (!newTriangle.computeClosestPoint(vertices)) {
                 mNbTriangles--;
                 newTriangle = null;
+                mTriangles[mNbTriangles] = null;
             }
         }
 

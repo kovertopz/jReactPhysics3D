@@ -1,5 +1,6 @@
 package net.smert.jreactphysics3d.collision.broadphase;
 
+import java.util.HashSet;
 import java.util.Set;
 import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.collision.CollisionDetection;
@@ -19,6 +20,8 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
     // Constructor
     public NoBroadPhaseAlgorithm(CollisionDetection collisionDetection) {
         super(collisionDetection);
+
+        mBodies = new HashSet<>();
     }
 
     // Notify the broad-phase about a new object in the world

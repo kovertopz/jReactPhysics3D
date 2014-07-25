@@ -35,6 +35,7 @@ public class TriangleEPA {
 
     // Constructor
     public TriangleEPA() {
+        this(0, 0, 0);
     }
 
     // Constructor

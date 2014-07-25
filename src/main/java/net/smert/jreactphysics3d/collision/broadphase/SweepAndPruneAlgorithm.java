@@ -78,11 +78,17 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
             // Add the limits endpoints (sentinels) into the array
             int min = Utils.encodeFloatIntoInteger(Float.MIN_VALUE);
             int max = Utils.encodeFloatIntoInteger(Float.MAX_VALUE);
+            newEndPointsXArray[0] = new EndPoint();
             newEndPointsXArray[0].setValues(INVALID_INDEX, true, min);
+            newEndPointsXArray[1] = new EndPoint();
             newEndPointsXArray[1].setValues(INVALID_INDEX, false, max);
+            newEndPointsYArray[0] = new EndPoint();
             newEndPointsYArray[0].setValues(INVALID_INDEX, true, min);
+            newEndPointsYArray[1] = new EndPoint();
             newEndPointsYArray[1].setValues(INVALID_INDEX, false, max);
+            newEndPointsZArray[0] = new EndPoint();
             newEndPointsZArray[0].setValues(INVALID_INDEX, true, min);
+            newEndPointsZArray[1] = new EndPoint();
             newEndPointsZArray[1].setValues(INVALID_INDEX, false, max);
         }
 
@@ -445,6 +451,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         mBoxes = null;
         mNbBoxes = 0;
         mNbMaxBoxes = 0;
+
+        mFreeBoxIndices = new ArrayList<>();
+        mMapBodyToBoxIndex = new HashMap<>();
     }
 
     // Notify the broad-phase about a new object in the world
@@ -485,12 +494,18 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
             EndPoint maxLimitEndPoint = mEndPoints[axis][indexLimitEndPoint];
             assert (mEndPoints[axis][0].boxID == INVALID_INDEX && mEndPoints[axis][0].isMin);
             assert (maxLimitEndPoint.boxID == INVALID_INDEX && !maxLimitEndPoint.isMin);
+            if (mEndPoints[axis][indexLimitEndPoint + 2] == null) {
+                mEndPoints[axis][indexLimitEndPoint + 2] = new EndPoint();
+            }
             EndPoint newMaxLimitEndPoint = mEndPoints[axis][indexLimitEndPoint + 2];
             newMaxLimitEndPoint.setValues(maxLimitEndPoint.boxID, maxLimitEndPoint.isMin,
                     maxLimitEndPoint.value);
         }
 
         // Create a new box
+        if (mBoxes[boxIndex] == null) {
+            mBoxes[boxIndex] = new BoxAABB();
+        }
         BoxAABB box = mBoxes[boxIndex];
         box.body = body;
         int maxEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
@@ -500,6 +515,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
             box.max[axis] = indexLimitEndPoint + 1;
             EndPoint minimumEndPoint = mEndPoints[axis][box.min[axis]];
             minimumEndPoint.setValues(boxIndex, true, minEndPointValue);
+            if (mEndPoints[axis][box.max[axis]] == null) {
+                mEndPoints[axis][box.max[axis]] = new EndPoint();
+            }
             EndPoint maximumEndPoint = mEndPoints[axis][box.max[axis]];
             maximumEndPoint.setValues(boxIndex, false, maxEndPointValue);
         }

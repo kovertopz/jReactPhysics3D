@@ -11,22 +11,22 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class ContactPoint {
 
     /// First rigid body of the contact
-    private RigidBody mBody1;
+    private final RigidBody mBody1;
 
     /// Second rigid body of the contact
-    private RigidBody mBody2;
+    private final RigidBody mBody2;
 
     /// Normal vector of the contact (From body1 toward body2) in world space
-    private Vector3 mNormal;
+    private final Vector3 mNormal;
 
     /// Penetration depth
     private float mPenetrationDepth;
 
     /// Contact point on body 1 in local space of body 1
-    private Vector3 mLocalPointOnBody1;
+    private final Vector3 mLocalPointOnBody1;
 
     /// Contact point on body 2 in local space of body 2
-    private Vector3 mLocalPointOnBody2;
+    private final Vector3 mLocalPointOnBody2;
 
     /// Contact point on body 1 in world space
     private Vector3 mWorldPointOnBody1;
@@ -38,7 +38,7 @@ public class ContactPoint {
     private boolean mIsRestingContact;
 
     /// Two orthogonal vectors that span the tangential friction plane
-    private Vector3[] mFrictionVectors = new Vector3[2];
+    private final Vector3[] mFrictionVectors = new Vector3[2];
 
     /// Cached penetration impulse
     private float mPenetrationImpulse;
@@ -53,10 +53,10 @@ public class ContactPoint {
     public ContactPoint(ContactPointInfo contactInfo) {
         mBody1 = contactInfo.body1;
         mBody2 = contactInfo.body2;
-        mNormal = contactInfo.normal;
+        mNormal = new Vector3(contactInfo.normal);
         mPenetrationDepth = contactInfo.penetrationDepth;
-        mLocalPointOnBody1 = contactInfo.localPoint1;
-        mLocalPointOnBody2 = contactInfo.localPoint2;
+        mLocalPointOnBody1 = new Vector3(contactInfo.localPoint1);
+        mLocalPointOnBody2 = new Vector3(contactInfo.localPoint2);
         mWorldPointOnBody1 = contactInfo.body1.getTransform().operatorMultiply(contactInfo.localPoint1);
         mWorldPointOnBody2 = contactInfo.body2.getTransform().operatorMultiply(contactInfo.localPoint2);
         mIsRestingContact = false;
@@ -139,12 +139,12 @@ public class ContactPoint {
 
     // Set the contact world point on body 1
     public void setWorldPointOnBody1(Vector3 worldPoint) {
-        mWorldPointOnBody1 = worldPoint;
+        mWorldPointOnBody1 = new Vector3(worldPoint);
     }
 
     // Set the contact world point on body 2
     public void setWorldPointOnBody2(Vector3 worldPoint) {
-        mWorldPointOnBody2 = worldPoint;
+        mWorldPointOnBody2 = new Vector3(worldPoint);
     }
 
     // Return true if the contact is a resting contact
@@ -164,7 +164,7 @@ public class ContactPoint {
 
     // Set the first friction vector
     public void setFrictionVector1(Vector3 frictionVector1) {
-        mFrictionVectors[0] = frictionVector1;
+        mFrictionVectors[0] = new Vector3(frictionVector1);
     }
 
     // Get the second friction vector
@@ -174,7 +174,7 @@ public class ContactPoint {
 
     // Set the second friction vector
     public void setFrictionVector2(Vector3 frictionVector2) {
-        mFrictionVectors[1] = frictionVector2;
+        mFrictionVectors[1] = new Vector3(frictionVector2);
     }
 
     // Return the penetration depth of the contact

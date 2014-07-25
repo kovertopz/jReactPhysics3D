@@ -1,5 +1,7 @@
 package net.smert.jreactphysics3d.collision;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.smert.jreactphysics3d.body.BodyIndexPair;
@@ -7,7 +9,7 @@ import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.collision.broadphase.BodyPair;
 import net.smert.jreactphysics3d.collision.broadphase.BroadPhaseAlgorithm;
-import net.smert.jreactphysics3d.collision.broadphase.SweepAndPruneAlgorithm;
+import net.smert.jreactphysics3d.collision.broadphase.NoBroadPhaseAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.GJK.GJKAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.NarrowPhaseAlgorithm;
 import net.smert.jreactphysics3d.collision.narrowphase.SphereVsSphereAlgorithm;
@@ -134,8 +136,11 @@ public class CollisionDetection {
         mNarrowPhaseSphereVsSphereAlgorithm = new SphereVsSphereAlgorithm();
 
         // Create the broad-phase algorithm that will be used (Sweep and Prune with AABB)
-        mBroadPhaseAlgorithm = new SweepAndPruneAlgorithm(this);
+        mBroadPhaseAlgorithm = new NoBroadPhaseAlgorithm(this);
         assert (mBroadPhaseAlgorithm != null);
+
+        mNoCollisionPairs = new HashSet<>();
+        mOverlappingPairs = new HashMap<>();
     }
 
     // Add a body to the collision detection

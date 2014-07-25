@@ -38,9 +38,9 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
             CollisionShape collisionShape2, Transform transform2,
             ContactPointInfo contactInfo, Vector3 v) {
         Simplex simplex = new Simplex();
-        Vector3 suppA;
-        Vector3 suppB;
-        Vector3 w;
+        Vector3 suppA = new Vector3();
+        Vector3 suppB = new Vector3();
+        Vector3 w = new Vector3();
         float vDotw;
         float distSquare = Defaults.DECIMAL_LARGEST;
         float prevDistSquare;
@@ -187,7 +187,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
-                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v).getUnit());
+                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v.getUnit()));
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
@@ -222,7 +222,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
-                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v).getUnit());
+                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v.getUnit()));
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
@@ -255,7 +255,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
-                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v).getUnit());
+                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v.getUnit()));
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
@@ -295,7 +295,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
-                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v).getUnit());
+                Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), Vector3.operatorNegative(v.getUnit()));
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)

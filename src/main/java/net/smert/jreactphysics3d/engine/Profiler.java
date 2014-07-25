@@ -20,7 +20,7 @@ public class Profiler {
     private static int mFrameCounter;
 
     /// Starting profiling time
-    private static long mProfilingStartTime;
+    private static float mProfilingStartTime;
 
     // Recursively print the report of a given node of the profiler tree
     private static void printRecursiveNodeReport(ProfileNodeIterator iterator, int spacing, int outputStream) {
@@ -31,7 +31,7 @@ public class Profiler {
             return;
         }
 
-        long parentTime = iterator.isRoot() ? getElapsedTimeSinceStart() : iterator.getCurrentParentTotalTime();
+        float parentTime = iterator.isRoot() ? getElapsedTimeSinceStart() : iterator.getCurrentParentTotalTime();
         long accumulatedTime = 0l;
         int nbFrames = getNbFrames();
         for (int i = 0; i < spacing; i++) {
@@ -52,7 +52,7 @@ public class Profiler {
         int nbChildren = 0;
         for (int i = 0; !iterator.isEnd(); i++, iterator.next()) {
             nbChildren++;
-            long currentTotalTime = iterator.getCurrentTotalTime();
+            float currentTotalTime = iterator.getCurrentTotalTime();
             accumulatedTime += currentTotalTime;
             long fraction = parentTime > Defaults.MACHINE_EPSILON ? (long) (currentTotalTime / parentTime) * 100l : 0l;
             for (int j = 0; j < spacing; j++) {
@@ -79,7 +79,7 @@ public class Profiler {
             System.out.print(" ");
         }
         long percentage = parentTime > Defaults.MACHINE_EPSILON ? (long) ((parentTime - accumulatedTime) / parentTime) * 100l : 0l;
-        long difference = parentTime - accumulatedTime;
+        float difference = parentTime - accumulatedTime;
         System.out.print("| Unaccounted : ");
         System.out.print(difference);
         System.out.print(" ms (");
@@ -99,8 +99,8 @@ public class Profiler {
     }
 
     // Return the elasped time since the start/reset of the profiling
-    public static long getElapsedTimeSinceStart() {
-        long currentTime = Timer.getCurrentSystemTime() * 1000l;
+    public static float getElapsedTimeSinceStart() {
+        float currentTime = Timer.getCurrentSystemTime() * 1000l;
         return currentTime - mProfilingStartTime;
     }
 
@@ -153,7 +153,7 @@ public class Profiler {
         mRootNode.reset();
         mRootNode.enterBlockOfCode();
         mFrameCounter = 0;
-        mProfilingStartTime = Timer.getCurrentSystemTime() * 1000l;
+        mProfilingStartTime = Timer.getCurrentSystemTime() * 1000.0f;
     }
 
     // Print the report of the profiler in a given output stream
@@ -171,7 +171,7 @@ public class Profiler {
         // Initialization of static variables
         mRootNode = new ProfileNode("Root", null);
         mCurrentNode = mRootNode;
-        mProfilingStartTime = Timer.getCurrentSystemTime() * 1000l;
+        mProfilingStartTime = Timer.getCurrentSystemTime() * 1000.0f;
         mFrameCounter = 0;
     }
 

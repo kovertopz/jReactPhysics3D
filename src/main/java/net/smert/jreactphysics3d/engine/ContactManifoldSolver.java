@@ -51,31 +51,31 @@ public class ContactManifoldSolver {
 
     // - Variables used when friction constraints are apply at the center of the manifold-//
     /// Average normal vector of the contact manifold
-    public Vector3 normal;
+    public Vector3 normal = new Vector3();
 
     /// Point on body 1 where to apply the friction constraints
-    public Vector3 frictionPointBody1;
+    public Vector3 frictionPointBody1 = new Vector3();
 
     /// Point on body 2 where to apply the friction constraints
-    public Vector3 frictionPointBody2;
+    public Vector3 frictionPointBody2 = new Vector3();
 
     /// R1 vector for the friction constraints
-    public Vector3 r1Friction;
+    public Vector3 r1Friction = new Vector3();
 
     /// R2 vector for the friction constraints
-    public Vector3 r2Friction;
+    public Vector3 r2Friction = new Vector3();
 
     /// Cross product of r1 with 1st friction vector
-    public Vector3 r1CrossT1;
+    public Vector3 r1CrossT1 = new Vector3();
 
     /// Cross product of r1 with 2nd friction vector
-    public Vector3 r1CrossT2;
+    public Vector3 r1CrossT2 = new Vector3();
 
     /// Cross product of r2 with 1st friction vector
-    public Vector3 r2CrossT1;
+    public Vector3 r2CrossT1 = new Vector3();
 
     /// Cross product of r2 with 2nd friction vector
-    public Vector3 r2CrossT2;
+    public Vector3 r2CrossT2 = new Vector3();
 
     /// Matrix K for the first friction constraint
     public float inverseFriction1Mass;
@@ -87,16 +87,16 @@ public class ContactManifoldSolver {
     public float inverseTwistFrictionMass;
 
     /// First friction direction at contact manifold center
-    public Vector3 frictionVector1;
+    public Vector3 frictionVector1 = new Vector3();
 
     /// Second friction direction at contact manifold center
-    public Vector3 frictionVector2;
+    public Vector3 frictionVector2 = new Vector3();
 
     /// Old 1st friction direction at contact manifold center
-    public Vector3 oldFrictionVector1;
+    public Vector3 oldFrictionVector1 = new Vector3();
 
     /// Old 2nd friction direction at contact manifold center
-    public Vector3 oldFrictionVector2;
+    public Vector3 oldFrictionVector2 = new Vector3();
 
     /// First friction direction impulse at manifold center
     public float friction1Impulse;

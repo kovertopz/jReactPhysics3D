@@ -24,20 +24,20 @@ public class Transform {
 
     // Constructor
     public Transform(Vector3 position, Matrix3x3 orientation) {
-        mPosition = position;
+        mPosition = new Vector3(position);
         mOrientation = new Quaternion(orientation);
     }
 
     // Constructor
     public Transform(Vector3 position, Quaternion orientation) {
-        mPosition = position;
-        mOrientation = orientation;
+        mPosition = new Vector3(position);
+        mOrientation = new Quaternion(orientation);
     }
 
     // Copy-constructor
     public Transform(Transform transform) {
-        mPosition = transform.mPosition;
-        mOrientation = transform.mOrientation;
+        mPosition = new Vector3(transform.mPosition);
+        mOrientation = new Quaternion(transform.mOrientation);
     }
 
     // Return the position of the transform

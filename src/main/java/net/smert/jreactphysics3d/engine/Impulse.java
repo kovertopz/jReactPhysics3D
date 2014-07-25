@@ -24,18 +24,18 @@ public class Impulse {
     /// Constructor
     public Impulse(Vector3 initLinearImpulseBody1, Vector3 initAngularImpulseBody1,
             Vector3 initLinearImpulseBody2, Vector3 initAngularImpulseBody2) {
-        linearImpulseBody1 = initLinearImpulseBody1;
-        angularImpulseBody1 = initAngularImpulseBody1;
-        linearImpulseBody2 = initLinearImpulseBody2;
-        angularImpulseBody2 = initAngularImpulseBody2;
+        linearImpulseBody1 = new Vector3(initLinearImpulseBody1);
+        angularImpulseBody1 = new Vector3(initAngularImpulseBody1);
+        linearImpulseBody2 = new Vector3(initLinearImpulseBody2);
+        angularImpulseBody2 = new Vector3(initAngularImpulseBody2);
     }
 
     /// Copy-constructor
     public Impulse(Impulse impulse) {
-        linearImpulseBody1 = impulse.linearImpulseBody1;
-        angularImpulseBody1 = impulse.angularImpulseBody1;
-        linearImpulseBody2 = impulse.linearImpulseBody2;
-        angularImpulseBody2 = impulse.angularImpulseBody2;
+        linearImpulseBody1 = new Vector3(impulse.linearImpulseBody1);
+        angularImpulseBody1 = new Vector3(impulse.angularImpulseBody1);
+        linearImpulseBody2 = new Vector3(impulse.linearImpulseBody2);
+        angularImpulseBody2 = new Vector3(impulse.angularImpulseBody2);
     }
 
 }

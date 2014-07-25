@@ -1,5 +1,8 @@
 package net.smert.jreactphysics3d.engine;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -65,7 +68,7 @@ public class CollisionWorld {
         // Check if there is already a similar collision shape in the world
         for (CollisionShape it : mCollisionShapes) {
 
-            if (collisionShape == it) {
+            if (collisionShape.equals(it)) {
 
                 // Increment the number of similar created shapes
                 it.incrementNbSimilarCreatedShapes();
@@ -114,6 +117,11 @@ public class CollisionWorld {
     public CollisionWorld() {
         mCollisionDetection = new CollisionDetection(this);
         mCurrentBodyID = 0;
+
+        mBodies = new HashSet<>();
+        mCollisionShapes = new ArrayList<>();
+        mFreeBodiesIDs = new ArrayList<>();
+        mOverlappingPairs = new HashMap<>();
     }
 
     // Create a collision body and add it to the world

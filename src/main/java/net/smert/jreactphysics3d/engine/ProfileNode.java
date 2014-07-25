@@ -14,10 +14,10 @@ public class ProfileNode {
     private int mNbTotalCalls;
 
     /// Starting time of the sampling of corresponding block of code
-    private long mStartingTime;
+    private float mStartingTime;
 
     /// Total time spent in the block of code
-    private long mTotalTime;
+    private float mTotalTime;
 
     /// Recursion counter
     private int mRecursionCounter;
@@ -71,7 +71,7 @@ public class ProfileNode {
     }
 
     // Return the total time spent in the block of code
-    public long getTotalTime() {
+    public float getTotalTime() {
         return mTotalTime;
     }
 
@@ -105,7 +105,7 @@ public class ProfileNode {
 
             // Get the current system time to initialize the starting time of
             // the profiling of the current block of code
-            mStartingTime = Timer.getCurrentSystemTime() * 1000l;
+            mStartingTime = Timer.getCurrentSystemTime() * 1000.0f;
         }
 
         mRecursionCounter++;
@@ -118,7 +118,7 @@ public class ProfileNode {
         if (mRecursionCounter == 0 && mNbTotalCalls != 0) {
 
             // Get the current system time
-            long currentTime = Timer.getCurrentSystemTime() * 1000l;
+            float currentTime = Timer.getCurrentSystemTime() * 1000.0f;
 
             // Increase the total elasped time in the current block of code
             mTotalTime += currentTime - mStartingTime;

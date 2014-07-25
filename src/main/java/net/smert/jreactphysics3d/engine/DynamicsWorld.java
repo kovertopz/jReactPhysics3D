@@ -1,6 +1,8 @@
 package net.smert.jreactphysics3d.engine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -246,8 +248,8 @@ public class DynamicsWorld extends CollisionWorld {
 
         // Reset the velocities arrays
         for (int i = 0; i < mNbBodiesCapacity; i++) {
-            mSplitLinearVelocities[i].setToZero();
-            mSplitAngularVelocities[i].setToZero();
+            mSplitLinearVelocities[i] = new Vector3();
+            mSplitAngularVelocities[i] = new Vector3();
         }
 
         // Initialize the map of body indexes in the velocity arrays
@@ -286,8 +288,8 @@ public class DynamicsWorld extends CollisionWorld {
                 // Insert the body into the map of constrained velocities
                 int indexBody = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
 
-                assert (mSplitLinearVelocities[indexBody] == new Vector3());
-                assert (mSplitAngularVelocities[indexBody] == new Vector3());
+                assert (mSplitLinearVelocities[indexBody].equals(new Vector3()));
+                assert (mSplitAngularVelocities[indexBody].equals(new Vector3()));
 
                 // If the body is allowed to move
                 if (bodies[b].isMotionEnabled()) {
@@ -329,6 +331,9 @@ public class DynamicsWorld extends CollisionWorld {
 
                     // Update the old Transform of the body
                     bodies[b].updateOldTransform();
+                } else {
+                    mConstrainedLinearVelocities[indexBody] = new Vector3(0, 0, 0);
+                    mConstrainedAngularVelocities[indexBody] = new Vector3(0, 0, 0);
                 }
 
                 indexBody++;
@@ -704,6 +709,12 @@ public class DynamicsWorld extends CollisionWorld {
     public DynamicsWorld(Vector3 gravity, float timeStep) {
         super();
 
+        mBodies = new HashSet<>();
+        mContactManifolds = new ArrayList<>();
+        mJoints = new HashSet<>();
+        mMapBodyToConstrainedVelocityIndex = new HashMap<>();
+        mRigidBodies = new HashSet<>();
+
         mTimer = new Timer(timeStep);
         mGravity = gravity;
         mIsGravityEnabled = true;
@@ -811,7 +822,7 @@ public class DynamicsWorld extends CollisionWorld {
     }
 
     // Return the current physics time (in seconds)
-    public long getPhysicsTime() {
+    public float getPhysicsTime() {
         return mTimer.getPhysicsTime();
     }
 

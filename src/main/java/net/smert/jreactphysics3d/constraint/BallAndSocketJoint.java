@@ -151,7 +151,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody2 = mImpulse;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(mImpulse).cross(mR2World);
+            Vector3 angularImpulseBody2 = Vector3.operatorNegative(mImpulse.cross(mR2World));
 
             // Apply the impulse to the body
             v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
@@ -195,7 +195,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody2 = deltaLambda;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(deltaLambda).cross(mR2World);
+            Vector3 angularImpulseBody2 = Vector3.operatorNegative(deltaLambda.cross(mR2World));
 
             // Apply the impulse to the body
             v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
@@ -287,7 +287,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse
             Vector3 linearImpulseBody2 = lambda;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(lambda).cross(mR2World);
+            Vector3 angularImpulseBody2 = Vector3.operatorNegative(lambda.cross(mR2World));
 
             // Compute the pseudo velocity
             Vector3 v2 = Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2);

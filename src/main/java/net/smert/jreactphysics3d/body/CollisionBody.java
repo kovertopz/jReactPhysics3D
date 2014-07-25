@@ -47,9 +47,9 @@ public class CollisionBody extends Body {
         assert (collisionShape != null);
 
         mCollisionShape = collisionShape;
-        mTransform = transform;
+        mTransform = new Transform(transform);
         // Initialize the old transform
-        mOldTransform = transform;
+        mOldTransform = new Transform(transform);
         mInterpolationFactor = 0.0f;
         mIsMotionEnabled = true;
         mIsCollisionEnabled = true;
@@ -81,7 +81,7 @@ public class CollisionBody extends Body {
     // Update the old transform with the current one.
     /// This is used to compute the interpolated position and orientation of the body
     public void updateOldTransform() {
-        mOldTransform = mTransform;
+        mOldTransform = new Transform(mTransform);
     }
 
     // Set the interpolation factor of the body
@@ -114,7 +114,7 @@ public class CollisionBody extends Body {
             mHasMoved = true;
         }
 
-        mTransform = transform;
+        mTransform = new Transform(transform);
     }
 
     // Return the AAABB of the body

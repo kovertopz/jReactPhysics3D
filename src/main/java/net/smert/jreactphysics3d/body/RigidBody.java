@@ -102,7 +102,9 @@ public class RigidBody extends CollisionBody {
         // If the body is able to move
         if (mIsMotionEnabled) {
             // Update the linear velocity of the current body state
-            mLinearVelocity = linearVelocity;
+            mLinearVelocity.x = linearVelocity.x;
+            mLinearVelocity.y = linearVelocity.y;
+            mLinearVelocity.z = linearVelocity.z;
         }
     }
 
@@ -112,7 +114,9 @@ public class RigidBody extends CollisionBody {
     }
 
     public void setAngularVelocity(Vector3 angularVelocity) {
-        mAngularVelocity = angularVelocity;
+        mAngularVelocity.x = angularVelocity.x;
+        mAngularVelocity.y = angularVelocity.y;
+        mAngularVelocity.z = angularVelocity.z;
     }
 
     public Vector3 getExternalForce() {
@@ -194,7 +198,7 @@ public class RigidBody extends CollisionBody {
     public void setInertiaTensorLocal(Matrix3x3 inertiaTensorLocal) {
 
         // TODO: Set inertiaTensorLocalInverse when this is set?
-        mInertiaTensorLocal = inertiaTensorLocal;
+        mInertiaTensorLocal = new Matrix3x3(inertiaTensorLocal);
     }
 
     // Return the inertia tensor in world coordinates.
@@ -257,7 +261,7 @@ public class RigidBody extends CollisionBody {
 
     // Set a new material for this rigid body
     public void setMaterial(Material material) {
-        mMaterial = material;
+        mMaterial = new Material(material);
     }
 
     // Return the linear velocity damping factor

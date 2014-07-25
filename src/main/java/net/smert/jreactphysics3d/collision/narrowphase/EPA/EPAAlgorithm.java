@@ -41,7 +41,7 @@ public class EPAAlgorithm {
     }
 
     // Add a triangle face in the candidate triangle heap in the EPA algorithm
-    private void addFaceCandidate(TriangleEPA triangle, Queue<TriangleEPA> heap, int nbTriangles, float upperBoundSquarePenDepth) {
+    private void addFaceCandidate(TriangleEPA triangle, Queue<TriangleEPA> heap, int[] nbTriangles, float upperBoundSquarePenDepth) {
 
         // If the closest point of the affine hull of triangle
         // points is internal to the triangle and if the distance
@@ -52,7 +52,7 @@ public class EPAAlgorithm {
 
             // Add the triangle face to the list of candidates
             heap.add(triangle);
-            nbTriangles++;
+            nbTriangles[0]++;
         }
     }
 
@@ -123,7 +123,8 @@ public class EPAAlgorithm {
         float tolerance = Defaults.MACHINE_EPSILON * simplex.getMaxLengthSquareOfAPoint();
 
         // Number of triangles in the polytope
-        int nbTriangles = 0;
+        int[] nbTriangles = new int[1];
+        nbTriangles[0] = 0;
 
         // Clear the storing of triangles
         triangleStore.clear();
@@ -329,7 +330,7 @@ public class EPAAlgorithm {
 
         // At this point, we have a polytope that contains the origin. Therefore, we
         // can run the EPA algorithm.
-        if (nbTriangles == 0) {
+        if (nbTriangles[0] == 0) {
             return false;
         }
 
@@ -340,7 +341,7 @@ public class EPAAlgorithm {
             triangle = triangleHeap.remove();
 
             // Get the next candidate face (the face closest to the origin)
-            nbTriangles--;
+            nbTriangles[0]--;
 
             // If the candidate face in the heap is not obsolete
             if (!triangle.getIsObsolete()) {
@@ -393,7 +394,7 @@ public class EPAAlgorithm {
                     i++;
                 }
             }
-        } while (nbTriangles > 0 && triangleHeap.element().getDistSquare() <= upperBoundSquarePenDepth);
+        } while (nbTriangles[0] > 0 && triangleHeap.element().getDistSquare() <= upperBoundSquarePenDepth);
 
         // Compute the contact info
         v = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), triangle.getClosestPoint());
@@ -404,7 +405,10 @@ public class EPAAlgorithm {
         assert (penetrationDepth > 0.0f);
 
         // Create the contact info object
-        contactInfo = new ContactPointInfo(normal, penetrationDepth, pALocal, pBLocal);
+        contactInfo.normal = normal;
+        contactInfo.penetrationDepth = penetrationDepth;
+        contactInfo.localPoint1 = pALocal;
+        contactInfo.localPoint2 = pBLocal;
 
         return true;
     }

@@ -12,10 +12,10 @@ public class Timer {
     private double mTimeStep;
 
     /// Last time the timer has been updated
-    private long mLastUpdateTime;
+    private float mLastUpdateTime;
 
     /// Time difference between the two last timer update() calls
-    private long mDeltaTime;
+    private float mDeltaTime;
 
     /// Used to fix the time step and avoid strange time effects
     private double mAccumulator;
@@ -43,7 +43,7 @@ public class Timer {
     }
 
     // Return the current time
-    public long getPhysicsTime() {
+    public float getPhysicsTime() {
         return mLastUpdateTime;
     }
 
@@ -91,7 +91,7 @@ public class Timer {
     public void update() {
 
         // Get the current system time
-        long currentTime = getCurrentSystemTime();
+        float currentTime = getCurrentSystemTime();
 
         // Compute the delta display time between two display frames
         mDeltaTime = currentTime - mLastUpdateTime;
@@ -104,8 +104,8 @@ public class Timer {
     }
 
     // Return the current time of the system in seconds
-    public static long getCurrentSystemTime() {
-        return System.nanoTime();
+    public static float getCurrentSystemTime() {
+        return System.nanoTime() / 1000000000.0f;
     }
 
 }

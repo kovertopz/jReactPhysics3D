@@ -23,43 +23,43 @@ public class ContactPointSolver {
     public float penetrationSplitImpulse;
 
     /// Normal vector of the contact
-    public Vector3 normal;
+    public Vector3 normal = new Vector3();
 
     /// First friction vector in the tangent plane
-    public Vector3 frictionVector1;
+    public Vector3 frictionVector1 = new Vector3();
 
     /// Second friction vector in the tangent plane
-    public Vector3 frictionVector2;
+    public Vector3 frictionVector2 = new Vector3();
 
     /// Old first friction vector in the tangent plane
-    public Vector3 oldFrictionVector1;
+    public Vector3 oldFrictionVector1 = new Vector3();
 
     /// Old second friction vector in the tangent plane
-    public Vector3 oldFrictionVector2;
+    public Vector3 oldFrictionVector2 = new Vector3();
 
     /// Vector from the body 1 center to the contact point
-    public Vector3 r1;
+    public Vector3 r1 = new Vector3();
 
     /// Vector from the body 2 center to the contact point
-    public Vector3 r2;
+    public Vector3 r2 = new Vector3();
 
     /// Cross product of r1 with 1st friction vector
-    public Vector3 r1CrossT1;
+    public Vector3 r1CrossT1 = new Vector3();
 
     /// Cross product of r1 with 2nd friction vector
-    public Vector3 r1CrossT2;
+    public Vector3 r1CrossT2 = new Vector3();
 
     /// Cross product of r2 with 1st friction vector
-    public Vector3 r2CrossT1;
+    public Vector3 r2CrossT1 = new Vector3();
 
     /// Cross product of r2 with 2nd friction vector
-    public Vector3 r2CrossT2;
+    public Vector3 r2CrossT2 = new Vector3();
 
     /// Cross product of r1 with the contact normal
-    public Vector3 r1CrossN;
+    public Vector3 r1CrossN = new Vector3();
 
     /// Cross product of r2 with the contact normal
-    public Vector3 r2CrossN;
+    public Vector3 r2CrossN = new Vector3();
 
     /// Penetration depth
     public float penetrationDepth;

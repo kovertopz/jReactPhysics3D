@@ -15,4 +15,30 @@ public class BodyIndexPair {
         this.second = second;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + this.first;
+        hash = 29 * hash + this.second;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BodyIndexPair other = (BodyIndexPair) obj;
+        if (this.first != other.first) {
+            return false;
+        }
+        if (this.second != other.second) {
+            return false;
+        }
+        return true;
+    }
+
 }

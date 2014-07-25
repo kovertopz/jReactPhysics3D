@@ -35,7 +35,7 @@ public class ProfileNodeIterator {
     }
 
     // Return the total time of the current node
-    public long getCurrentTotalTime() {
+    public float getCurrentTotalTime() {
         return mCurrentChildNode.getTotalTime();
     }
 
@@ -50,7 +50,7 @@ public class ProfileNodeIterator {
     }
 
     // Return the total time of the current parent node
-    public long getCurrentParentTotalTime() {
+    public float getCurrentParentTotalTime() {
         return mCurrentParentNode.getTotalTime();
     }
 

@@ -466,7 +466,8 @@ public class ContactSolver {
 
             ContactManifold externalManifold = contactManifolds[i];
 
-            ContactManifoldSolver internalManifold = mContactConstraints[i];
+            ContactManifoldSolver internalManifold = new ContactManifoldSolver();
+            mContactConstraints[i] = internalManifold;
 
             assert (externalManifold.getNbContactPoints() > 0);
 
@@ -501,7 +502,9 @@ public class ContactSolver {
 
             // For each  contact point of the contact manifold
             for (int c = 0; c < externalManifold.getNbContactPoints(); c++) {
-
+                if (internalManifold.contacts[c] == null) {
+                    internalManifold.contacts[c] = new ContactPointSolver();
+                }
                 ContactPointSolver contactPoint = internalManifold.contacts[c];
 
                 // Get a contact point
@@ -512,14 +515,14 @@ public class ContactSolver {
                 Vector3 p2 = externalContact.getWorldPointOnBody2();
 
                 contactPoint.externalContact = externalContact;
-                contactPoint.normal = externalContact.getNormal();
+                contactPoint.normal = new Vector3(externalContact.getNormal());
                 contactPoint.r1 = Vector3.operatorSubtract(p1, x1);
                 contactPoint.r2 = Vector3.operatorSubtract(p2, x2);
                 contactPoint.penetrationDepth = externalContact.getPenetrationDepth();
                 contactPoint.isRestingContact = externalContact.getIsRestingContact();
                 externalContact.setIsRestingContact(true);
-                contactPoint.oldFrictionVector1 = externalContact.getFrictionVector1();
-                contactPoint.oldFrictionVector2 = externalContact.getFrictionVector2();
+                contactPoint.oldFrictionVector1 = new Vector3(externalContact.getFrictionVector1());
+                contactPoint.oldFrictionVector2 = new Vector3(externalContact.getFrictionVector2());
                 contactPoint.penetrationImpulse = 0.0f;
                 contactPoint.friction1Impulse = 0.0f;
                 contactPoint.friction2Impulse = 0.0f;
@@ -538,8 +541,8 @@ public class ContactSolver {
                 internalManifold.frictionPointBody2.operatorDivideEqual((float) internalManifold.nbContacts);
                 internalManifold.r1Friction = Vector3.operatorSubtract(internalManifold.frictionPointBody1, x1);
                 internalManifold.r2Friction = Vector3.operatorSubtract(internalManifold.frictionPointBody2, x2);
-                internalManifold.oldFrictionVector1 = externalManifold.getFrictionVector1();
-                internalManifold.oldFrictionVector2 = externalManifold.getFrictionVector2();
+                internalManifold.oldFrictionVector1 = new Vector3(externalManifold.getFrictionVector1());
+                internalManifold.oldFrictionVector2 = new Vector3(externalManifold.getFrictionVector2());
 
                 // If warm starting is active
                 if (mIsWarmStartingActive) {

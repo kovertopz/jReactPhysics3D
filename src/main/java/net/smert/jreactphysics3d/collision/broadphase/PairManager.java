@@ -35,7 +35,7 @@ public class PairManager {
     private static final int INVALID_INDEX = Integer.MAX_VALUE;
 
     /// Reference to the collision detection
-    private CollisionDetection mCollisionDetection;
+    private final CollisionDetection mCollisionDetection;
 
     // This method returns an hash value for a 32 bits key.
     /// using Thomas Wang's hash technique.
@@ -348,6 +348,9 @@ public class PairManager {
         }
 
         // Create the new overlapping pair
+        if (mOverlappingPairs[mNbOverlappingPairs] == null) {
+            mOverlappingPairs[mNbOverlappingPairs] = new BodyPair();
+        }
         BodyPair newPair = mOverlappingPairs[mNbOverlappingPairs];
         newPair.body1 = body1;
         newPair.body2 = body2;
