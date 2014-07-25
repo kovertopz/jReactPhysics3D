@@ -78,7 +78,7 @@ public class ContactSolver {
     private static final float BETA_SPLIT_IMPULSE = 0.2f;
 
     /// Slop distance (allowed penetration distance between bodies)
-    private static final float SLOP = 0.2f;
+    private static final float SLOP = 0.01f;
 
     /// Split linear velocities for the position contact solver (split impulse)
     private Vector3[] mSplitLinearVelocities;
@@ -102,10 +102,10 @@ public class ContactSolver {
     private Vector3[] mAngularVelocities;
 
     /// Reference to the map of rigid body to their index in the constrained velocities array
-    private Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
+    private final Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
 
     /// True if the warm starting of the solver is active
-    private boolean mIsWarmStartingActive;
+    private final boolean mIsWarmStartingActive;
 
     /// True if the split impulse position correction is active
     private boolean mIsSplitImpulseActive;
@@ -120,15 +120,15 @@ public class ContactSolver {
         // For each contact constraint
         for (int c = 0; c < mNbContactManifolds; c++) {
 
-            ContactManifoldSolver manifold = mContactConstraints[c];
+            final ContactManifoldSolver manifold = mContactConstraints[c];
 
             // Get the inertia tensors of both bodies
-            Matrix3x3 I1 = manifold.inverseInertiaTensorBody1;
-            Matrix3x3 I2 = manifold.inverseInertiaTensorBody2;
+            final Matrix3x3 I1 = manifold.inverseInertiaTensorBody1;
+            final Matrix3x3 I2 = manifold.inverseInertiaTensorBody2;
 
             // If we solve the friction constraints at the center of the contact manifold
             if (mIsSolveFrictionAtContactManifoldCenterActive) {
-                manifold.normal = new Vector3();
+                manifold.normal.setToZero();
             }
 
             // Get the velocities of the bodies
@@ -147,8 +147,8 @@ public class ContactSolver {
                 Vector3 deltaV = Vector3.operatorSubtract(
                         Vector3.operatorSubtract(Vector3.operatorAdd(v2, w2.cross(contactPoint.r2)), v1), w1.cross(contactPoint.r1));
 
-                contactPoint.r1CrossN = contactPoint.r1.cross(contactPoint.normal);
-                contactPoint.r2CrossN = contactPoint.r2.cross(contactPoint.normal);
+                contactPoint.r1CrossN.set(contactPoint.r1.cross(contactPoint.normal));
+                contactPoint.r2CrossN.set(contactPoint.r2.cross(contactPoint.normal));
 
                 // Compute the inverse mass matrix K for the penetration constraint
                 float massPenetration = 0.0f;
@@ -168,10 +168,10 @@ public class ContactSolver {
                     // Compute the friction vectors
                     computeFrictionVectors(deltaV, contactPoint);
 
-                    contactPoint.r1CrossT1 = contactPoint.r1.cross(contactPoint.frictionVector1);
-                    contactPoint.r1CrossT2 = contactPoint.r1.cross(contactPoint.frictionVector2);
-                    contactPoint.r2CrossT1 = contactPoint.r2.cross(contactPoint.frictionVector1);
-                    contactPoint.r2CrossT2 = contactPoint.r2.cross(contactPoint.frictionVector2);
+                    contactPoint.r1CrossT1.set(contactPoint.r1.cross(contactPoint.frictionVector1));
+                    contactPoint.r1CrossT2.set(contactPoint.r1.cross(contactPoint.frictionVector2));
+                    contactPoint.r2CrossT1.set(contactPoint.r2.cross(contactPoint.frictionVector1));
+                    contactPoint.r2CrossT2.set(contactPoint.r2.cross(contactPoint.frictionVector2));
 
                     // Compute the inverse mass matrix K for the friction
                     // constraints at each contact point
@@ -234,10 +234,10 @@ public class ContactSolver {
 
                 // Compute the inverse mass matrix K for the friction constraints at the center of
                 // the contact manifold
-                manifold.r1CrossT1 = manifold.r1Friction.cross(manifold.frictionVector1);
-                manifold.r1CrossT2 = manifold.r1Friction.cross(manifold.frictionVector2);
-                manifold.r2CrossT1 = manifold.r2Friction.cross(manifold.frictionVector1);
-                manifold.r2CrossT2 = manifold.r2Friction.cross(manifold.frictionVector2);
+                manifold.r1CrossT1.set(manifold.r1Friction.cross(manifold.frictionVector1));
+                manifold.r1CrossT2.set(manifold.r1Friction.cross(manifold.frictionVector2));
+                manifold.r2CrossT1.set(manifold.r2Friction.cross(manifold.frictionVector1));
+                manifold.r2CrossT2.set(manifold.r2Friction.cross(manifold.frictionVector2));
                 float friction1Mass = 0.0f;
                 float friction2Mass = 0.0f;
                 if (manifold.isBody1Moving) {
@@ -329,16 +329,16 @@ public class ContactSolver {
 
             // Compute the first friction vector in the direction of the tangent
             // velocity difference
-            contact.frictionVector1 = Vector3.operatorDivide(tangentVelocity, lengthTangenVelocity);
+            contact.frictionVector1.set(Vector3.operatorDivide(tangentVelocity, lengthTangenVelocity));
         } else {
 
             // Get any orthogonal vector to the normal as the first friction vector
-            contact.frictionVector1 = contact.normal.getOneUnitOrthogonalVector();
+            contact.frictionVector1.set(contact.normal.getOneUnitOrthogonalVector());
         }
 
         // The second friction vector is computed by the cross product of the firs
         // friction vector and the contact normal
-        contact.frictionVector2 = contact.normal.cross(contact.frictionVector1).getUnit();
+        contact.frictionVector2.set(contact.normal.cross(contact.frictionVector1).getUnit());
     }
 
     // Compute the two unit orthogonal vectors "t1" and "t2" that span the tangential friction plane
@@ -357,16 +357,16 @@ public class ContactSolver {
 
             // Compute the first friction vector in the direction of the tangent
             // velocity difference
-            contactPoint.frictionVector1 = Vector3.operatorDivide(tangentVelocity, lengthTangenVelocity);
+            contactPoint.frictionVector1.set(Vector3.operatorDivide(tangentVelocity, lengthTangenVelocity));
         } else {
 
             // Get any orthogonal vector to the normal as the first friction vector
-            contactPoint.frictionVector1 = contactPoint.normal.getOneUnitOrthogonalVector();
+            contactPoint.frictionVector1.set(contactPoint.normal.getOneUnitOrthogonalVector());
         }
 
         // The second friction vector is computed by the cross product of the firs
         // friction vector and the contact normal
-        contactPoint.frictionVector2 = contactPoint.normal.cross(contactPoint.frictionVector1).getUnit();
+        contactPoint.frictionVector2.set(contactPoint.normal.cross(contactPoint.frictionVector1).getUnit());
     }
 
     // Compute a penetration constraint impulse
@@ -483,8 +483,8 @@ public class ContactSolver {
             // contact manifold
             internalManifold.indexBody1 = mMapBodyToConstrainedVelocityIndex.get(body1);
             internalManifold.indexBody2 = mMapBodyToConstrainedVelocityIndex.get(body2);
-            internalManifold.inverseInertiaTensorBody1 = body1.getInertiaTensorInverseWorld();
-            internalManifold.inverseInertiaTensorBody2 = body2.getInertiaTensorInverseWorld();
+            internalManifold.inverseInertiaTensorBody1.set(body1.getInertiaTensorInverseWorld());
+            internalManifold.inverseInertiaTensorBody2.set(body2.getInertiaTensorInverseWorld());
             internalManifold.isBody1Moving = body1.isMotionEnabled();
             internalManifold.isBody2Moving = body2.isMotionEnabled();
             internalManifold.massInverseBody1 = body1.getMassInverse();
@@ -496,8 +496,8 @@ public class ContactSolver {
 
             // If we solve the friction constraints at the center of the contact manifold
             if (mIsSolveFrictionAtContactManifoldCenterActive) {
-                internalManifold.frictionPointBody1 = new Vector3();
-                internalManifold.frictionPointBody2 = new Vector3();
+                internalManifold.frictionPointBody1.setToZero();
+                internalManifold.frictionPointBody2.setToZero();
             }
 
             // For each  contact point of the contact manifold
@@ -515,14 +515,14 @@ public class ContactSolver {
                 Vector3 p2 = externalContact.getWorldPointOnBody2();
 
                 contactPoint.externalContact = externalContact;
-                contactPoint.normal = new Vector3(externalContact.getNormal());
-                contactPoint.r1 = Vector3.operatorSubtract(p1, x1);
-                contactPoint.r2 = Vector3.operatorSubtract(p2, x2);
+                contactPoint.normal.set(new Vector3(externalContact.getNormal()));
+                contactPoint.r1.set(Vector3.operatorSubtract(p1, x1));
+                contactPoint.r2.set(Vector3.operatorSubtract(p2, x2));
                 contactPoint.penetrationDepth = externalContact.getPenetrationDepth();
                 contactPoint.isRestingContact = externalContact.getIsRestingContact();
                 externalContact.setIsRestingContact(true);
-                contactPoint.oldFrictionVector1 = new Vector3(externalContact.getFrictionVector1());
-                contactPoint.oldFrictionVector2 = new Vector3(externalContact.getFrictionVector2());
+                contactPoint.oldFrictionVector1.set(new Vector3(externalContact.getFrictionVector1()));
+                contactPoint.oldFrictionVector2.set(new Vector3(externalContact.getFrictionVector2()));
                 contactPoint.penetrationImpulse = 0.0f;
                 contactPoint.friction1Impulse = 0.0f;
                 contactPoint.friction2Impulse = 0.0f;
@@ -539,10 +539,10 @@ public class ContactSolver {
 
                 internalManifold.frictionPointBody1.operatorDivideEqual(internalManifold.nbContacts);
                 internalManifold.frictionPointBody2.operatorDivideEqual((float) internalManifold.nbContacts);
-                internalManifold.r1Friction = Vector3.operatorSubtract(internalManifold.frictionPointBody1, x1);
-                internalManifold.r2Friction = Vector3.operatorSubtract(internalManifold.frictionPointBody2, x2);
-                internalManifold.oldFrictionVector1 = new Vector3(externalManifold.getFrictionVector1());
-                internalManifold.oldFrictionVector2 = new Vector3(externalManifold.getFrictionVector2());
+                internalManifold.r1Friction.set(Vector3.operatorSubtract(internalManifold.frictionPointBody1, x1));
+                internalManifold.r2Friction.set(Vector3.operatorSubtract(internalManifold.frictionPointBody2, x2));
+                internalManifold.oldFrictionVector1.set(new Vector3(externalManifold.getFrictionVector1()));
+                internalManifold.oldFrictionVector2.set(new Vector3(externalManifold.getFrictionVector2()));
 
                 // If warm starting is active
                 if (mIsWarmStartingActive) {

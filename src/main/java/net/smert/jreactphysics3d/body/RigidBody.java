@@ -211,8 +211,9 @@ public class RigidBody extends CollisionBody {
 
         // TODO: Optimize
         // Compute and return the inertia tensor in world coordinates
-        return Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(), mInertiaTensorLocal)
-                .operatorSubtractEqual(mTransform.getOrientation().getMatrix().getTranspose());
+        return Matrix3x3.operatorMultiply(
+                Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(),
+                        mInertiaTensorLocal), mTransform.getOrientation().getMatrix().getTranspose());
     }
 
     // Get the inverse of the inertia tensor
@@ -230,8 +231,9 @@ public class RigidBody extends CollisionBody {
 
         // TODO: Optimize
         // Compute and return the inertia tensor in world coordinates
-        return Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(), mInertiaTensorLocalInverse)
-                .operatorSubtractEqual(mTransform.getOrientation().getMatrix().getTranspose());
+        return Matrix3x3.operatorMultiply(
+                Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(), mInertiaTensorLocalInverse),
+                mTransform.getOrientation().getMatrix().getTranspose());
     }
 
     // Return the inverse of the mass of the body

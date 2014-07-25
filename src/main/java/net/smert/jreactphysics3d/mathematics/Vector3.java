@@ -268,4 +268,10 @@ public class Vector3 {
         return "(x= " + x + ", y= " + y + ", z= " + z + ")";
     }
 
+    public void set(Vector3 v) {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+    }
+
 }

@@ -323,4 +323,10 @@ public class Matrix3x3 {
                 + ", 20= " + m[2][0] + ", 21= " + m[2][1] + ", 22= " + m[2][2] + ")";
     }
 
+    public void set(Matrix3x3 matrix) {
+        setAllValues(matrix.m[0][0], matrix.m[0][1], matrix.m[0][2],
+                matrix.m[1][0], matrix.m[1][1], matrix.m[1][2],
+                matrix.m[2][0], matrix.m[2][1], matrix.m[2][2]);
+    }
+
 }
