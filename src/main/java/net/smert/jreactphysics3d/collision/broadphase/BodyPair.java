@@ -10,13 +10,13 @@ import net.smert.jreactphysics3d.body.CollisionBody;
  */
 public class BodyPair {
 
-    /// Pointer to the first body
+    // Pointer to the first body
     public CollisionBody body1;
 
-    /// Pointer to the second body
+    // Pointer to the second body
     public CollisionBody body2;
 
-    /// Return the pair of bodies index
+    // Return the pair of bodies index
     public BodyIndexPair getBodiesIndexPair() {
 
         // TODO: Cache object?

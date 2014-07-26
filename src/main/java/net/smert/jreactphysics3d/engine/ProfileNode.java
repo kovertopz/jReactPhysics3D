@@ -7,28 +7,28 @@ package net.smert.jreactphysics3d.engine;
  */
 public class ProfileNode {
 
-    /// Name of the node
+    // Name of the node
     private String mName;
 
-    /// Total number of calls of this node
+    // Total number of calls of this node
     private int mNbTotalCalls;
 
-    /// Starting time of the sampling of corresponding block of code
+    // Starting time of the sampling of corresponding block of code
     private float mStartingTime;
 
-    /// Total time spent in the block of code
+    // Total time spent in the block of code
     private float mTotalTime;
 
-    /// Recursion counter
+    // Recursion counter
     private int mRecursionCounter;
 
-    /// Pointer to the parent node
+    // Pointer to the parent node
     private ProfileNode mParentNode;
 
-    /// Pointer to a child node
+    // Pointer to a child node
     private ProfileNode mChildNode;
 
-    /// Pointer to a sibling node
+    // Pointer to a sibling node
     private ProfileNode mSiblingNode;
 
     // Constructor

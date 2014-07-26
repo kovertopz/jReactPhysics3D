@@ -15,10 +15,10 @@ import net.smert.jreactphysics3d.collision.shapes.AABB;
  */
 public abstract class BroadPhaseAlgorithm {
 
-    /// Pair manager containing the overlapping pairs
+    // Pair manager containing the overlapping pairs
     protected PairManager mPairManager;
 
-    /// Reference to the collision detection object
+    // Reference to the collision detection object
     protected CollisionDetection mCollisionDetection;
 
     // Constructor
@@ -37,13 +37,13 @@ public abstract class BroadPhaseAlgorithm {
         return mPairManager.endOverlappingPairsPointer();
     }
 
-    /// Notify the broad-phase about a new object in the world
+    // Notify the broad-phase about a new object in the world
     public abstract void addObject(CollisionBody body, AABB aabb);
 
-    /// Notify the broad-phase about an object that has been removed from the world
+    // Notify the broad-phase about an object that has been removed from the world
     public abstract void removeObject(CollisionBody body);
 
-    /// Notify the broad-phase that the AABB of an object has changed
+    // Notify the broad-phase that the AABB of an object has changed
     public abstract void updateObject(CollisionBody body, AABB aabb);
 
 }

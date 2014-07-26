@@ -9,16 +9,16 @@ import net.smert.jreactphysics3d.configuration.Defaults;
  */
 public class Quaternion {
 
-    /// Component x
+    // Component x
     public float x;
 
-    /// Component y
+    // Component y
     public float y;
 
-    /// Component z
+    // Component z
     public float z;
 
-    /// Component w
+    // Component w
     public float w;
 
     // Constructor of the class
@@ -114,7 +114,7 @@ public class Quaternion {
         }
     }
 
-    /// Set all the values
+    // Set all the values
     public void setAllValues(float newX, float newY, float newZ, float newW) {
         x = newX;
         y = newY;
@@ -122,7 +122,7 @@ public class Quaternion {
         w = newW;
     }
 
-    /// Set the quaternion to zero
+    // Set the quaternion to zero
     public void setToZero() {
         x = 0.0f;
         y = 0.0f;
@@ -269,7 +269,7 @@ public class Quaternion {
     }
 
     // Overloaded operator for the multiplication with a vector.
-    /// This methods rotates a point given the rotation of a quaternion.
+    // This methods rotates a point given the rotation of a quaternion.
     public Vector3 operatorMultiply(Vector3 point) {
         Quaternion p = new Quaternion(point.x, point.y, point.z, 0.0f);
         return operatorMultiply(p).operatorMultiply(getConjugate()).getVectorV();
@@ -297,8 +297,8 @@ public class Quaternion {
     }
 
     // Compute the rotation angle (in radians) and the rotation axis
-    /// This method is used to get the rotation angle (in radian) and the unit
-    /// rotation axis of an orientation quaternion.
+    // This method is used to get the rotation angle (in radian) and the unit
+    // rotation axis of an orientation quaternion.
     public void getRotationAngleAxis(float[] angle, Vector3 axis) {
         Quaternion quaternion;
 
@@ -354,7 +354,7 @@ public class Quaternion {
     }
 
     // Compute the spherical linear interpolation between two quaternions.
-    /// The t argument has to be such that 0 <= t <= 1. This method is static.
+    // The t argument has to be such that 0 <= t <= 1. This method is static.
     public static Quaternion slerp(Quaternion quaternion1, Quaternion quaternion2, float t) {
         assert (t >= 0.0f && t <= 1.0f);
 

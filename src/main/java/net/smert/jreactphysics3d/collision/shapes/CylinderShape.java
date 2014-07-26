@@ -17,10 +17,10 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class CylinderShape extends CollisionShape {
 
-    /// Radius of the base
+    // Radius of the base
     private float mRadius;
 
-    /// Half height of the cylinder
+    // Half height of the cylinder
     private float mHalfHeight;
 
     // Private copy-constructor

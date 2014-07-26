@@ -22,34 +22,34 @@ public class ContactManifold {
 
     public static final int MAX_CONTACT_POINTS_IN_MANIFOLD = 4;
 
-    /// Pointer to the first body of the contact
+    // Pointer to the first body of the contact
     private CollisionBody mBody1;
 
-    /// Pointer to the second body of the contact
+    // Pointer to the second body of the contact
     private CollisionBody mBody2;
 
-    /// Contact points in the manifold
+    // Contact points in the manifold
     private ContactPoint[] mContactPoints = new ContactPoint[MAX_CONTACT_POINTS_IN_MANIFOLD];
 
-    /// Number of contacts in the cache
+    // Number of contacts in the cache
     private int mNbContactPoints;
 
-    /// First friction vector of the contact manifold
+    // First friction vector of the contact manifold
     private Vector3 mFrictionVector1 = new Vector3();
 
-    /// Second friction vector of the contact manifold
+    // Second friction vector of the contact manifold
     private Vector3 mFrictionVector2 = new Vector3();
 
-    /// First friction raint accumulated impulse
+    // First friction raint accumulated impulse
     private float mFrictionImpulse1;
 
-    /// Second friction raint accumulated impulse
+    // Second friction raint accumulated impulse
     private float mFrictionImpulse2;
 
-    /// Twist friction raint accumulated impulse
+    // Twist friction raint accumulated impulse
     private float mFrictionTwistImpulse;
 
-    /// True if the contact manifold has already been added into an island
+    // True if the contact manifold has already been added into an island
     private boolean mIsAlreadyInIsland;
 
     // Return a pointer to the first body of the contact manifold
@@ -96,8 +96,8 @@ public class ContactManifold {
     }
 
     // Return the index of the contact point with the larger penetration depth.
-    /// This corresponding contact will be kept in the cache. The method returns -1 is
-    /// the new contact is the deepest.
+    // This corresponding contact will be kept in the cache. The method returns -1 is
+    // the new contact is the deepest.
     private int getIndexOfDeepestPenetration(ContactPoint newContact) {
         assert (mNbContactPoints == MAX_CONTACT_POINTS_IN_MANIFOLD);
         int indexMaxPenetrationDepth = -1;
@@ -118,15 +118,15 @@ public class ContactManifold {
     }
 
     // Return the index that will be removed.
-    /// The index of the contact point with the larger penetration
-    /// depth is given as a parameter. This contact won't be removed. Given this contact, we compute
-    /// the different area and we want to keep the contacts with the largest area. The new point is also
-    /// kept. In order to compute the area of a quadrilateral, we use the formula :
-    /// Area = 0.5 * | AC x BD | where AC and BD form the diagonals of the quadrilateral. Note that
-    /// when we compute this area, we do not calculate it exactly but we
-    /// only estimate it because we do not compute the actual diagonals of the quadrialteral. Therefore,
-    /// this is only a guess that is faster to compute. This idea comes from the Bullet Physics library
-    /// by Erwin Coumans (http://wwww.bulletphysics.org).
+    // The index of the contact point with the larger penetration
+    // depth is given as a parameter. This contact won't be removed. Given this contact, we compute
+    // the different area and we want to keep the contacts with the largest area. The new point is also
+    // kept. In order to compute the area of a quadrilateral, we use the formula :
+    // Area = 0.5 * | AC x BD | where AC and BD form the diagonals of the quadrilateral. Note that
+    // when we compute this area, we do not calculate it exactly but we
+    // only estimate it because we do not compute the actual diagonals of the quadrialteral. Therefore,
+    // this is only a guess that is faster to compute. This idea comes from the Bullet Physics library
+    // by Erwin Coumans (http://wwww.bulletphysics.org).
     private int getIndexToRemove(int indexMaxPenetration, Vector3 newPoint) {
 
         assert (mNbContactPoints == MAX_CONTACT_POINTS_IN_MANIFOLD);
@@ -295,11 +295,11 @@ public class ContactManifold {
     }
 
     // Update the contact manifold
-    /// First the world space coordinates of the current contacts in the manifold are recomputed from
-    /// the corresponding transforms of the bodies because they have moved. Then we remove the contacts
-    /// with a negative penetration depth (meaning that the bodies are not penetrating anymore) and also
-    /// the contacts with a too large distance between the contact points in the plane orthogonal to the
-    /// contact normal.
+    // First the world space coordinates of the current contacts in the manifold are recomputed from
+    // the corresponding transforms of the bodies because they have moved. Then we remove the contacts
+    // with a negative penetration depth (meaning that the bodies are not penetrating anymore) and also
+    // the contacts with a too large distance between the contact points in the plane orthogonal to the
+    // contact normal.
     public void update(Transform transform1, Transform transform2) {
 
         if (mNbContactPoints == 0) {

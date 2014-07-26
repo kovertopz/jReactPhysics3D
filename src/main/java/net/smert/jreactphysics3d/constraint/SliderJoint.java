@@ -21,118 +21,118 @@ public class SliderJoint extends Joint {
     // Beta value for the position correction bias factor
     private static final float BETA = 0.2f;
 
-    /// Anchor point of body 1 (in local-space coordinates of body 1)
+    // Anchor point of body 1 (in local-space coordinates of body 1)
     private Vector3 mLocalAnchorPointBody1;
 
-    /// Anchor point of body 2 (in local-space coordinates of body 2)
+    // Anchor point of body 2 (in local-space coordinates of body 2)
     private Vector3 mLocalAnchorPointBody2;
 
-    /// Slider axis (in local-space coordinates of body 1)
+    // Slider axis (in local-space coordinates of body 1)
     private Vector3 mSliderAxisBody1;
 
-    /// Inertia tensor of body 1 (in world-space coordinates)
+    // Inertia tensor of body 1 (in world-space coordinates)
     private Matrix3x3 mI1;
 
-    /// Inertia tensor of body 2 (in world-space coordinates)
+    // Inertia tensor of body 2 (in world-space coordinates)
     private Matrix3x3 mI2;
 
-    /// Inverse of the initial orientation difference between the two bodies
+    // Inverse of the initial orientation difference between the two bodies
     private Quaternion mInitOrientationDifferenceInv;
 
-    /// First vector orthogonal to the slider axis local-space of body 1
+    // First vector orthogonal to the slider axis local-space of body 1
     private Vector3 mN1;
 
-    /// Second vector orthogonal to the slider axis and mN1 in local-space of body 1
+    // Second vector orthogonal to the slider axis and mN1 in local-space of body 1
     private Vector3 mN2;
 
-    /// Vector r1 in world-space coordinates
+    // Vector r1 in world-space coordinates
     private Vector3 mR1;
 
-    /// Vector r2 in world-space coordinates
+    // Vector r2 in world-space coordinates
     private Vector3 mR2;
 
-    /// Cross product of r2 and n1
+    // Cross product of r2 and n1
     private Vector3 mR2CrossN1;
 
-    /// Cross product of r2 and n2
+    // Cross product of r2 and n2
     private Vector3 mR2CrossN2;
 
-    /// Cross product of r2 and the slider axis
+    // Cross product of r2 and the slider axis
     private Vector3 mR2CrossSliderAxis;
 
-    /// Cross product of vector (r1 + u) and n1
+    // Cross product of vector (r1 + u) and n1
     private Vector3 mR1PlusUCrossN1;
 
-    /// Cross product of vector (r1 + u) and n2
+    // Cross product of vector (r1 + u) and n2
     private Vector3 mR1PlusUCrossN2;
 
-    /// Cross product of vector (r1 + u) and the slider axis
+    // Cross product of vector (r1 + u) and the slider axis
     private Vector3 mR1PlusUCrossSliderAxis;
 
-    /// Bias of the 2 translation constraints
+    // Bias of the 2 translation constraints
     private Vector2 mBTranslation;
 
-    /// Bias of the 3 rotation constraints
+    // Bias of the 3 rotation constraints
     private Vector3 mBRotation;
 
-    /// Bias of the lower limit constraint
+    // Bias of the lower limit constraint
     private float mBLowerLimit;
 
-    /// Bias of the upper limit constraint
+    // Bias of the upper limit constraint
     private float mBUpperLimit;
 
-    /// Inverse of mass matrix K=JM^-1J^t for the translation constraint (2x2 matrix)
+    // Inverse of mass matrix K=JM^-1J^t for the translation constraint (2x2 matrix)
     private Matrix2x2 mInverseMassMatrixTranslationConstraint;
 
-    /// Inverse of mass matrix K=JM^-1J^t for the rotation constraint (3x3 matrix)
+    // Inverse of mass matrix K=JM^-1J^t for the rotation constraint (3x3 matrix)
     private Matrix3x3 mInverseMassMatrixRotationConstraint;
 
-    /// Inverse of mass matrix K=JM^-1J^t for the upper and lower limit constraints (1x1 matrix)
+    // Inverse of mass matrix K=JM^-1J^t for the upper and lower limit constraints (1x1 matrix)
     private float mInverseMassMatrixLimit;
 
-    /// Inverse of mass matrix K=JM^-1J^t for the motor
+    // Inverse of mass matrix K=JM^-1J^t for the motor
     private float mInverseMassMatrixMotor;
 
-    /// Accumulated impulse for the 2 translation constraints
+    // Accumulated impulse for the 2 translation constraints
     private Vector2 mImpulseTranslation;
 
-    /// Accumulated impulse for the 3 rotation constraints
+    // Accumulated impulse for the 3 rotation constraints
     private Vector3 mImpulseRotation;
 
-    /// Accumulated impulse for the lower limit constraint
+    // Accumulated impulse for the lower limit constraint
     private float mImpulseLowerLimit;
 
-    /// Accumulated impulse for the upper limit constraint
+    // Accumulated impulse for the upper limit constraint
     private float mImpulseUpperLimit;
 
-    /// Accumulated impulse for the motor
+    // Accumulated impulse for the motor
     private float mImpulseMotor;
 
-    /// True if the slider limits are enabled
+    // True if the slider limits are enabled
     private boolean mIsLimitEnabled;
 
-    /// True if the motor of the joint in enabled
+    // True if the motor of the joint in enabled
     private boolean mIsMotorEnabled;
 
-    /// Slider axis in world-space coordinates
+    // Slider axis in world-space coordinates
     private Vector3 mSliderAxisWorld;
 
-    /// Lower limit (minimum translation distance)
+    // Lower limit (minimum translation distance)
     private float mLowerLimit;
 
-    /// Upper limit (maximum translation distance)
+    // Upper limit (maximum translation distance)
     private float mUpperLimit;
 
-    /// True if the lower limit is violated
+    // True if the lower limit is violated
     private boolean mIsLowerLimitViolated;
 
-    /// True if the upper limit is violated
+    // True if the upper limit is violated
     private boolean mIsUpperLimitViolated;
 
-    /// Motor speed
+    // Motor speed
     private float mMotorSpeed;
 
-    /// Maximum motor force (in Newtons) that can be applied to reach to desired motor speed
+    // Maximum motor force (in Newtons) that can be applied to reach to desired motor speed
     private float mMaxMotorForce;
 
     // Reset the limits

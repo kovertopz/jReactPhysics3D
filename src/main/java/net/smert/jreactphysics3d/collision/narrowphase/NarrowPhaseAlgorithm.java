@@ -14,7 +14,7 @@ import net.smert.jreactphysics3d.mathematics.Transform;
  */
 public abstract class NarrowPhaseAlgorithm {
 
-    /// Overlapping pair of the bodies currently tested for collision
+    // Overlapping pair of the bodies currently tested for collision
     protected BroadPhasePair mCurrentOverlappingPair;
 
     // Constructor
@@ -27,7 +27,7 @@ public abstract class NarrowPhaseAlgorithm {
         mCurrentOverlappingPair = overlappingPair;
     }
 
-    /// Return true and compute a contact info if the two bounding volume collide
+    // Return true and compute a contact info if the two bounding volume collide
     public abstract boolean testCollision(
             CollisionShape collisionShape1, Transform transform1,
             CollisionShape collisionShape2, Transform transform2,

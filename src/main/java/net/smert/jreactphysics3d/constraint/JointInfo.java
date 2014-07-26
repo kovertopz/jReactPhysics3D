@@ -10,23 +10,23 @@ import net.smert.jreactphysics3d.configuration.JointsPositionCorrectionTechnique
  */
 public class JointInfo {
 
-    /// First rigid body of the joint
+    // First rigid body of the joint
     public RigidBody body1;
 
-    /// Second rigid body of the joint
+    // Second rigid body of the joint
     public RigidBody body2;
 
-    /// Type of the joint
+    // Type of the joint
     public JointType type;
 
-    /// True if the two bodies of the joint are allowed to collide with each other
+    // True if the two bodies of the joint are allowed to collide with each other
     public boolean isCollisionEnabled;
 
-    /// Position correction technique used for the constraint (used for joints).
-    /// By default, the BAUMGARTE technique is used
+    // Position correction technique used for the constraint (used for joints).
+    // By default, the BAUMGARTE technique is used
     public JointsPositionCorrectionTechnique positionCorrectionTechnique;
 
-    /// Constructor
+    // Constructor
     public JointInfo(JointType constraintType) {
         body1 = null;
         body2 = null;
@@ -35,7 +35,7 @@ public class JointInfo {
         isCollisionEnabled = true;
     }
 
-    /// Constructor
+    // Constructor
     public JointInfo(RigidBody rigidBody1, RigidBody rigidBody2, JointType constraintType) {
         body1 = rigidBody1;
         body2 = rigidBody2;

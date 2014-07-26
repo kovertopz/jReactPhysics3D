@@ -11,31 +11,31 @@ import net.smert.jreactphysics3d.constraint.Joint;
  */
 public class Island {
 
-    /// Array with all the bodies of the island
+    // Array with all the bodies of the island
     private RigidBody[] mBodies;
 
-    /// Array with all the contact manifolds between bodies of the island
+    // Array with all the contact manifolds between bodies of the island
     private ContactManifold[] mContactManifolds;
 
-    /// Array with all the joints between bodies of the island
+    // Array with all the joints between bodies of the island
     private Joint[] mJoints;
 
-    /// Current number of bodies in the island
+    // Current number of bodies in the island
     private int mNbBodies;
 
-    /// Current number of contact manifold in the island
+    // Current number of contact manifold in the island
     private int mNbContactManifolds;
 
-    /// Current number of joints in the island
+    // Current number of joints in the island
     private int mNbJoints;
 
-    /// Number of bytes allocated for the bodies array
+    // Number of bytes allocated for the bodies array
     private int mNbAllocatedBytesBodies;
 
-    /// Number of bytes allocated for the contact manifolds array
+    // Number of bytes allocated for the contact manifolds array
     private int mNbAllocatedBytesContactManifolds;
 
-    /// Number of bytes allocated for the joints array
+    // Number of bytes allocated for the joints array
     private int mNbAllocatedBytesJoints;
 
     // Constructor

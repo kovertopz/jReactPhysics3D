@@ -15,10 +15,10 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class CapsuleShape extends CollisionShape {
 
-    /// Radius of the two spheres of the capsule
+    // Radius of the two spheres of the capsule
     private float mRadius;
 
-    /// Half height of the capsule (height = distance between the centers of the two spheres)
+    // Half height of the capsule (height = distance between the centers of the two spheres)
     private float mHalfHeight;
 
     // Private copy-constructor
@@ -77,12 +77,12 @@ public class CapsuleShape extends CollisionShape {
     }
 
     // Return a local support point in a given direction with the object margin.
-    /// A capsule is the convex hull of two spheres S1 and S2. The support point in the direction "d"
-    /// of the convex hull of a set of convex objects is the support point "p" in the set of all
-    /// support points from all the convex objects with the maximum dot product with the direction "d".
-    /// Therefore, in this method, we compute the support points of both top and bottom spheres of
-    /// the capsule and return the point with the maximum dot product with the direction vector. Note
-    /// that the object margin is implicitly the radius and height of the capsule.
+    // A capsule is the convex hull of two spheres S1 and S2. The support point in the direction "d"
+    // of the convex hull of a set of convex objects is the support point "p" in the set of all
+    // support points from all the convex objects with the maximum dot product with the direction "d".
+    // Therefore, in this method, we compute the support points of both top and bottom spheres of
+    // the capsule and return the point with the maximum dot product with the direction vector. Note
+    // that the object margin is implicitly the radius and height of the capsule.
     @Override
     public Vector3 getLocalSupportPointWithMargin(Vector3 direction) {
 

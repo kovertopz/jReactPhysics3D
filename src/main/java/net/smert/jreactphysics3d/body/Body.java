@@ -7,22 +7,22 @@ package net.smert.jreactphysics3d.body;
  */
 public abstract class Body {
 
-    /// ID of the body
+    // ID of the body
     protected int mID;
 
-    /// True if the body has already been added in an island (for sleeping technique)
+    // True if the body has already been added in an island (for sleeping technique)
     protected boolean mIsAlreadyInIsland;
 
-    /// True if the body is allowed to go to sleep for better efficiency
+    // True if the body is allowed to go to sleep for better efficiency
     protected boolean mIsAllowedToSleep;
 
-    /// True if the body is active
+    // True if the body is active
     protected boolean mIsActive;
 
-    /// True if the body is sleeping (for sleeping technique)
+    // True if the body is sleeping (for sleeping technique)
     protected boolean mIsSleeping;
 
-    /// Elapsed time since the body velocity was bellow the sleep velocity
+    // Elapsed time since the body velocity was bellow the sleep velocity
     protected float mSleepTime;
 
     // Constructor

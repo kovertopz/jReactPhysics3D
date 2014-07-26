@@ -9,28 +9,28 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class TriangleEPA {
 
-    /// Indices of the vertices y_i of the triangle
+    // Indices of the vertices y_i of the triangle
     private final int[] mIndicesVertices = new int[3];
 
-    /// Three adjacent edges of the triangle (edges of other triangles)
+    // Three adjacent edges of the triangle (edges of other triangles)
     final EdgeEPA[] mAdjacentEdges = new EdgeEPA[3];
 
-    /// True if the triangle face is visible from the new support point
+    // True if the triangle face is visible from the new support point
     private boolean mIsObsolete;
 
-    /// Determinant
+    // Determinant
     private float mDet;
 
-    /// Point v closest to the origin on the affine hull of the triangle
+    // Point v closest to the origin on the affine hull of the triangle
     private Vector3 mClosestPoint;
 
-    /// Lambda1 value such that v = lambda0 * y_0 + lambda1 * y_1 + lambda2 * y_2
+    // Lambda1 value such that v = lambda0 * y_0 + lambda1 * y_1 + lambda2 * y_2
     private float mLambda1;
 
-    /// Lambda1 value such that v = lambda0 * y_0 + lambda1 * y_1 + lambda2 * y_2
+    // Lambda1 value such that v = lambda0 * y_0 + lambda1 * y_1 + lambda2 * y_2
     private float mLambda2;
 
-    /// Square distance of the point closest point v to the origin
+    // Square distance of the point closest point v to the origin
     private float mDistSquare;
 
     // Constructor
@@ -139,16 +139,16 @@ public class TriangleEPA {
     }
 
     // Execute the recursive silhouette algorithm from this triangle face.
-    /// The parameter "vertices" is an array that contains the vertices of the current polytope and the
-    /// parameter "indexNewVertex" is the index of the new vertex in this array. The goal of the
-    /// silhouette algorithm is to add the new vertex in the polytope by keeping it convex. Therefore,
-    /// the triangle faces that are visible from the new vertex must be removed from the polytope and we
-    /// need to add triangle faces where each face contains the new vertex and an edge of the silhouette.
-    /// The silhouette is the connected set of edges that are part of the border between faces that
-    /// are seen and faces that are not seen from the new vertex. This method starts from the nearest
-    /// face from the new vertex, computes the silhouette and create the new faces from the new vertex in
-    /// order that we always have a convex polytope. The faces visible from the new vertex are set
-    /// obselete and will not be considered as being a candidate face in the future.
+    // The parameter "vertices" is an array that contains the vertices of the current polytope and the
+    // parameter "indexNewVertex" is the index of the new vertex in this array. The goal of the
+    // silhouette algorithm is to add the new vertex in the polytope by keeping it convex. Therefore,
+    // the triangle faces that are visible from the new vertex must be removed from the polytope and we
+    // need to add triangle faces where each face contains the new vertex and an edge of the silhouette.
+    // The silhouette is the connected set of edges that are part of the border between faces that
+    // are seen and faces that are not seen from the new vertex. This method starts from the nearest
+    // face from the new vertex, computes the silhouette and create the new faces from the new vertex in
+    // order that we always have a convex polytope. The faces visible from the new vertex are set
+    // obselete and will not be considered as being a candidate face in the future.
     public boolean computeSilhouette(Vector3[] vertices, int indexNewVertex, TrianglesStore triangleStore) {
 
         int first = triangleStore.getNbTriangles();

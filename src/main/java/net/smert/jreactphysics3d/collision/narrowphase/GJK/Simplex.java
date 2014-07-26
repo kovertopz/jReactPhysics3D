@@ -13,41 +13,41 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class Simplex {
 
-    /// Current points
+    // Current points
     private final Vector3[] mPoints = new Vector3[4];
 
-    /// pointsLengthSquare[i] = (points[i].length)^2
+    // pointsLengthSquare[i] = (points[i].length)^2
     private final float[] mPointsLengthSquare = new float[4];
 
-    /// Maximum length of pointsLengthSquare[i]
+    // Maximum length of pointsLengthSquare[i]
     private float mMaxLengthSquare;
 
-    /// Support points of object A in local coordinates
+    // Support points of object A in local coordinates
     private final Vector3[] mSuppPointsA = new Vector3[4];
 
-    /// Support points of object B in local coordinates
+    // Support points of object B in local coordinates
     private final Vector3[] mSuppPointsB = new Vector3[4];
 
-    /// diff[i][j] contains points[i] - points[j]
+    // diff[i][j] contains points[i] - points[j]
     private final Vector3[][] mDiffLength = new Vector3[4][4];
 
-    /// Cached determinant values
+    // Cached determinant values
     private final float[][] mDet = new float[16][4];
 
-    /// norm[i][j] = (diff[i][j].length())^2
+    // norm[i][j] = (diff[i][j].length())^2
     private final float[][] mNormSquare = new float[4][4];
 
-    /// 4 bits that identify the current points of the simplex
-    /// For instance, 0101 means that points[1] and points[3] are in the simplex
+    // 4 bits that identify the current points of the simplex
+    // For instance, 0101 means that points[1] and points[3] are in the simplex
     private int mBitsCurrentSimplex;
 
-    /// Number between 1 and 4 that identify the last found support point
+    // Number between 1 and 4 that identify the last found support point
     private int mLastFound;
 
-    /// Position of the last found support point (lastFoundBit = 0x1 << lastFound)
+    // Position of the last found support point (lastFoundBit = 0x1 << lastFound)
     private int mLastFoundBit;
 
-    /// allBits = bitsCurrentSimplex | lastFoundBit;
+    // allBits = bitsCurrentSimplex | lastFoundBit;
     private int mAllBits;
 
     // Return true if some bits of "a" overlap with bits of "b"
@@ -61,9 +61,9 @@ public class Simplex {
     }
 
     // Return true if the subset is a valid one for the closest point computation.
-    /// A subset X is valid if :
-    ///    1. delta(X)_i > 0 for each "i" in I_x and
-    ///    2. delta(X U {y_j})_j <= 0 for each "j" not in I_x_
+    // A subset X is valid if :
+    //    1. delta(X)_i > 0 for each "i" in I_x and
+    //    2. delta(X U {y_j})_j <= 0 for each "j" not in I_x_
     private boolean isValidSubset(int subset) {
         int i;
         int bit;
@@ -91,8 +91,8 @@ public class Simplex {
     }
 
     // Return true if the subset is a proper subset.
-    /// A proper subset X is a subset where for all point "y_i" in X, we have
-    /// detX_i value bigger than zero
+    // A proper subset X is a subset where for all point "y_i" in X, we have
+    // detX_i value bigger than zero
     private boolean isProperSubset(int subset) {
         int i;
         int bit;
@@ -263,9 +263,9 @@ public class Simplex {
     }
 
     // Add a new support point of (A-B) into the simplex
-    /// suppPointA : support point of object A in a direction -v
-    /// suppPointB : support point of object B in a direction v
-    /// point      : support point of object (A-B) => point = suppPointA - suppPointB
+    // suppPointA : support point of object A in a direction -v
+    // suppPointB : support point of object B in a direction v
+    // point      : support point of object (A-B) => point = suppPointA - suppPointB
     public void addPoint(Vector3 point, Vector3 suppPointA, Vector3 suppPointB) {
         assert (!isFull());
 
@@ -339,8 +339,8 @@ public class Simplex {
     }
 
     // Return true if the set is affinely dependent.
-    /// A set if affinely dependent if a point of the set
-    /// is an affine combination of other points in the set
+    // A set if affinely dependent if a point of the set
+    // is an affine combination of other points in the set
     public boolean isAffinelyDependent() {
         float sum = 0.0f;
         int i;
@@ -357,10 +357,10 @@ public class Simplex {
     }
 
     // Compute the closest points "pA" and "pB" of object A and B.
-    /// The points are computed as follows :
-    ///      pA = sum(lambda_i * a_i)    where "a_i" are the support points of object A
-    ///      pB = sum(lambda_i * b_i)    where "b_i" are the support points of object B
-    ///      with lambda_i = deltaX_i / deltaX
+    // The points are computed as follows :
+    //      pA = sum(lambda_i * a_i)    where "a_i" are the support points of object A
+    //      pB = sum(lambda_i * b_i)    where "b_i" are the support points of object B
+    //      with lambda_i = deltaX_i / deltaX
     public void computeClosestPointsOfAandB(Vector3 pA, Vector3 pB) {
         float deltaX = 0.0f;
         pA.setAllValues(0.0f, 0.0f, 0.0f);
@@ -385,9 +385,9 @@ public class Simplex {
     }
 
     // Compute the closest point "v" to the origin of the current simplex.
-    /// This method executes the Jonhnson's algorithm for computing the point
-    /// "v" of simplex that is closest to the origin. The method returns true
-    /// if a closest point has been found.
+    // This method executes the Jonhnson's algorithm for computing the point
+    // "v" of simplex that is closest to the origin. The method returns true
+    // if a closest point has been found.
     public boolean computeClosestPoint(Vector3 v) {
         int subset;
 

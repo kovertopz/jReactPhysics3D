@@ -22,103 +22,103 @@ public class HingeJoint extends Joint {
     // Beta value for the bias factor of position correction
     private static final float BETA = 0.2f;
 
-    /// Anchor point of body 1 (in local-space coordinates of body 1)
+    // Anchor point of body 1 (in local-space coordinates of body 1)
     private Vector3 mLocalAnchorPointBody1;
 
-    /// Anchor point of body 2 (in local-space coordinates of body 2)
+    // Anchor point of body 2 (in local-space coordinates of body 2)
     private Vector3 mLocalAnchorPointBody2;
 
-    /// Hinge rotation axis (in local-space coordinates of body 1)
+    // Hinge rotation axis (in local-space coordinates of body 1)
     private Vector3 mHingeLocalAxisBody1;
 
-    /// Hinge rotation axis (in local-space coordiantes of body 2)
+    // Hinge rotation axis (in local-space coordiantes of body 2)
     private Vector3 mHingeLocalAxisBody2;
 
-    /// Inertia tensor of body 1 (in world-space coordinates)
+    // Inertia tensor of body 1 (in world-space coordinates)
     private Matrix3x3 mI1;
 
-    /// Inertia tensor of body 2 (in world-space coordinates)
+    // Inertia tensor of body 2 (in world-space coordinates)
     private Matrix3x3 mI2;
 
-    /// Hinge rotation axis (in world-space coordinates) computed from body 1
+    // Hinge rotation axis (in world-space coordinates) computed from body 1
     private Vector3 mA1;
 
-    /// Vector from center of body 2 to anchor point in world-space
+    // Vector from center of body 2 to anchor point in world-space
     private Vector3 mR1World;
 
-    /// Vector from center of body 2 to anchor point in world-space
+    // Vector from center of body 2 to anchor point in world-space
     private Vector3 mR2World;
 
-    /// Cross product of vector b2 and a1
+    // Cross product of vector b2 and a1
     private Vector3 mB2CrossA1;
 
-    /// Cross product of vector c2 and a1;
+    // Cross product of vector c2 and a1;
     private Vector3 mC2CrossA1;
 
-    /// Impulse for the 3 translation constraints
+    // Impulse for the 3 translation constraints
     private Vector3 mImpulseTranslation;
 
-    /// Impulse for the 2 rotation constraints
+    // Impulse for the 2 rotation constraints
     private Vector2 mImpulseRotation;
 
-    /// Accumulated impulse for the lower limit constraint
+    // Accumulated impulse for the lower limit constraint
     private float mImpulseLowerLimit;
 
-    /// Accumulated impulse for the upper limit constraint
+    // Accumulated impulse for the upper limit constraint
     private float mImpulseUpperLimit;
 
-    /// Accumulated impulse for the motor constraint;
+    // Accumulated impulse for the motor constraint;
     private float mImpulseMotor;
 
-    /// Inverse mass matrix K=JM^-1J^t for the 3 translation constraints
+    // Inverse mass matrix K=JM^-1J^t for the 3 translation constraints
     private Matrix3x3 mInverseMassMatrixTranslation;
 
-    /// Inverse mass matrix K=JM^-1J^t for the 2 rotation constraints
+    // Inverse mass matrix K=JM^-1J^t for the 2 rotation constraints
     private Matrix2x2 mInverseMassMatrixRotation;
 
-    /// Inverse of mass matrix K=JM^-1J^t for the limits and motor constraints (1x1 matrix)
+    // Inverse of mass matrix K=JM^-1J^t for the limits and motor constraints (1x1 matrix)
     private float mInverseMassMatrixLimitMotor;
 
-    /// Inverse of mass matrix K=JM^-1J^t for the motor
+    // Inverse of mass matrix K=JM^-1J^t for the motor
     private float mInverseMassMatrixMotor;
 
-    /// Bias vector for the error correction for the translation constraints
+    // Bias vector for the error correction for the translation constraints
     private Vector3 mBTranslation;
 
-    /// Bias vector for the error correction for the rotation constraints
+    // Bias vector for the error correction for the rotation constraints
     private Vector2 mBRotation;
 
-    /// Bias of the lower limit constraint
+    // Bias of the lower limit constraint
     private float mBLowerLimit;
 
-    /// Bias of the upper limit constraint
+    // Bias of the upper limit constraint
     private float mBUpperLimit;
 
-    /// Inverse of the initial orientation difference between the bodies
+    // Inverse of the initial orientation difference between the bodies
     private Quaternion mInitOrientationDifferenceInv;
 
-    /// True if the joint limits are enabled
+    // True if the joint limits are enabled
     private boolean mIsLimitEnabled;
 
-    /// True if the motor of the joint in enabled
+    // True if the motor of the joint in enabled
     private boolean mIsMotorEnabled;
 
-    /// Lower limit (minimum allowed rotation angle in radi)
+    // Lower limit (minimum allowed rotation angle in radi)
     private float mLowerLimit;
 
-    /// Upper limit (maximum translation distance)
+    // Upper limit (maximum translation distance)
     private float mUpperLimit;
 
-    /// True if the lower limit is violated
+    // True if the lower limit is violated
     private boolean mIsLowerLimitViolated;
 
-    /// True if the upper limit is violated
+    // True if the upper limit is violated
     private boolean mIsUpperLimitViolated;
 
-    /// Motor speed
+    // Motor speed
     private float mMotorSpeed;
 
-    /// Maximum motor torque (in Newtons) that can be applied to reach to desired motor speed
+    // Maximum motor torque (in Newtons) that can be applied to reach to desired motor speed
     private float mMaxMotorTorque;
 
     // Reset the limits

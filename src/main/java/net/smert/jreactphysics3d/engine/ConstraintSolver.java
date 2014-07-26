@@ -71,31 +71,31 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ConstraintSolver {
 
-    /// Array of constrained linear velocities (state of the linear velocities
-    /// after solving the constraints)
+    // Array of constrained linear velocities (state of the linear velocities
+    // after solving the constraints)
     private Vector3[] mLinearVelocities;
 
-    /// Array of constrained angular velocities (state of the angular velocities
-    /// after solving the constraints)
+    // Array of constrained angular velocities (state of the angular velocities
+    // after solving the constraints)
     private Vector3[] mAngularVelocities;
 
-    /// Reference to the array of bodies positions (for position error correction)
+    // Reference to the array of bodies positions (for position error correction)
     private List<Vector3> mPositions;
 
-    /// Reference to the array of bodies orientations (for position error correction)
+    // Reference to the array of bodies orientations (for position error correction)
     private List<Quaternion> mOrientations;
 
-    /// Reference to the map that associates rigid body to their index in
-    /// the constrained velocities array
+    // Reference to the map that associates rigid body to their index in
+    // the constrained velocities array
     private Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
 
-    /// Current time step
+    // Current time step
     private float mTimeStep;
 
-    /// True if the warm starting of the solver is active
+    // True if the warm starting of the solver is active
     private boolean mIsWarmStartingActive;
 
-    /// Constraint solver data used to initialize and solve the constraints
+    // Constraint solver data used to initialize and solve the constraints
     private ConstraintSolverData mConstraintSolverData;
 
     // Constructor

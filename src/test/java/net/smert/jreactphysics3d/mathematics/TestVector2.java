@@ -1,6 +1,5 @@
 package net.smert.jreactphysics3d.mathematics;
 
-import net.smert.jreactphysics3d.mathematics.Vector2;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,7 +12,7 @@ import org.junit.Test;
  */
 public class TestVector2 {
 
-    /// Zero vector
+    // Zero vector
     private Vector2 mVectorZero;
 
     // Vector (3, 4)
@@ -31,7 +30,7 @@ public class TestVector2 {
     }
 
     @Test
-    /// Test the constructors, getter and setter
+    // Test the constructors, getter and setter
     public void testConstructors() {
 
         // Test constructor
@@ -60,7 +59,7 @@ public class TestVector2 {
     }
 
     @Test
-    /// Test the length, unit vector and normalize methods
+    // Test the length, unit vector and normalize methods
     public void testLengthMethods() {
 
         // Test length methods
@@ -97,7 +96,7 @@ public class TestVector2 {
     }
 
     @Test
-    /// Test the dot product
+    // Test the dot product
     public void testDotProduct() {
 
         // Test the dot product
@@ -111,7 +110,7 @@ public class TestVector2 {
     }
 
     @Test
-    /// Test others methods
+    // Test others methods
     public void testOthersMethods() {
 
         // Test the method that returns the absolute vector
@@ -132,7 +131,7 @@ public class TestVector2 {
     }
 
     @Test
-    /// Test the operators
+    // Test the operators
     public void testOperators() {
 
         // Test the [] operator

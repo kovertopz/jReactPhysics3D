@@ -27,25 +27,25 @@ import net.smert.jreactphysics3d.engine.Profiler;
  */
 public class CollisionDetection {
 
-    /// Pointer to the physics world
+    // Pointer to the physics world
     private CollisionWorld mWorld;
 
-    /// Broad-phase overlapping pairs
+    // Broad-phase overlapping pairs
     private Map<BodyIndexPair, BroadPhasePair> mOverlappingPairs;
 
-    /// Broad-phase algorithm
+    // Broad-phase algorithm
     private BroadPhaseAlgorithm mBroadPhaseAlgorithm;
 
-    /// Narrow-phase GJK algorithm
+    // Narrow-phase GJK algorithm
     private GJKAlgorithm mNarrowPhaseGJKAlgorithm;
 
-    /// Narrow-phase Sphere vs Sphere algorithm
+    // Narrow-phase Sphere vs Sphere algorithm
     private SphereVsSphereAlgorithm mNarrowPhaseSphereVsSphereAlgorithm;
 
-    /// Set of pair of bodies that cannot collide between each other
+    // Set of pair of bodies that cannot collide between each other
     private Set<BodyIndexPair> mNoCollisionPairs;
 
-    /// Compute the broad-phase collision detection
+    // Compute the broad-phase collision detection
     private void computeBroadPhase() {
 
         Profiler.startProfilingBlock("CollisionDetection::computeBroadPhase()");
@@ -62,7 +62,7 @@ public class CollisionDetection {
         }
     }
 
-    /// Compute the narrow-phase collision detection
+    // Compute the narrow-phase collision detection
     private void computeNarrowPhase() {
 
         Profiler.startProfilingBlock("CollisionDetection::computeNarrowPhase()");
@@ -180,7 +180,7 @@ public class CollisionDetection {
     }
 
     // Allow the broadphase to notify the collision detection about an overlapping pair.
-    /// This method is called by a broad-phase collision detection algorithm
+    // This method is called by a broad-phase collision detection algorithm
     public void broadPhaseNotifyAddedOverlappingPair(BodyPair addedPair) {
 
         // Get the pair of body index

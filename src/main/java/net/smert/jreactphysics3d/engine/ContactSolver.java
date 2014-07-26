@@ -71,47 +71,47 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ContactSolver {
 
-    /// Beta value for the penetration depth position correction without split impulses
+    // Beta value for the penetration depth position correction without split impulses
     private static final float BETA = 0.2f;
 
-    /// Beta value for the penetration depth position correction with split impulses
+    // Beta value for the penetration depth position correction with split impulses
     private static final float BETA_SPLIT_IMPULSE = 0.2f;
 
-    /// Slop distance (allowed penetration distance between bodies)
+    // Slop distance (allowed penetration distance between bodies)
     private static final float SLOP = 0.01f;
 
-    /// Split linear velocities for the position contact solver (split impulse)
+    // Split linear velocities for the position contact solver (split impulse)
     private Vector3[] mSplitLinearVelocities;
 
-    /// Split angular velocities for the position contact solver (split impulse)
+    // Split angular velocities for the position contact solver (split impulse)
     private Vector3[] mSplitAngularVelocities;
 
-    /// Current time step
+    // Current time step
     private float mTimeStep;
 
-    /// Contact constraints
+    // Contact constraints
     private ContactManifoldSolver[] mContactConstraints;
 
-    /// Number of contact constraints
+    // Number of contact constraints
     private int mNbContactManifolds;
 
-    /// Array of linear velocities
+    // Array of linear velocities
     private Vector3[] mLinearVelocities;
 
-    /// Array of angular velocities
+    // Array of angular velocities
     private Vector3[] mAngularVelocities;
 
-    /// Reference to the map of rigid body to their index in the constrained velocities array
+    // Reference to the map of rigid body to their index in the constrained velocities array
     private final Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
 
-    /// True if the warm starting of the solver is active
+    // True if the warm starting of the solver is active
     private final boolean mIsWarmStartingActive;
 
-    /// True if the split impulse position correction is active
+    // True if the split impulse position correction is active
     private boolean mIsSplitImpulseActive;
 
-    /// True if we solve 3 friction constraints at the contact manifold center only
-    /// instead of 2 friction constraints at each contact point
+    // True if we solve 3 friction constraints at the contact manifold center only
+    // instead of 2 friction constraints at each contact point
     private boolean mIsSolveFrictionAtContactManifoldCenterActive;
 
     // Initialize the contact constraints before solving the system
@@ -566,9 +566,9 @@ public class ContactSolver {
     }
 
     // Warm start the solver.
-    /// For each constraint, we apply the previous impulse (from the previous step)
-    /// at the beginning. With this technique, we will converge faster towards
-    /// the solution of the linear system
+    // For each constraint, we apply the previous impulse (from the previous step)
+    // at the beginning. With this technique, we will converge faster towards
+    // the solution of the linear system
     public void warmStart() {
 
         // Check that warm starting is active

@@ -26,13 +26,13 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class EPAAlgorithm {
 
-    /// Maximum number of support points of the polytope
+    // Maximum number of support points of the polytope
     private static final int MAX_SUPPORT_POINTS = 100;
 
-    /// Maximum number of facets of the polytope
+    // Maximum number of facets of the polytope
     private static final int MAX_FACETS = 200;
 
-    /// Triangle comparison operator
+    // Triangle comparison operator
     private TriangleComparison mTriangleComparison;
 
     // Constructor
@@ -57,8 +57,8 @@ public class EPAAlgorithm {
     }
 
     // Decide if the origin is in the tetrahedron.
-    /// Return 0 if the origin is in the tetrahedron and return the number (1,2,3 or 4) of
-    /// the vertex that is wrong if the origin is not in the tetrahedron
+    // Return 0 if the origin is in the tetrahedron and return the number (1,2,3 or 4) of
+    // the vertex that is wrong if the origin is not in the tetrahedron
     private int isOriginInTetrahedron(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4) {
 
         // Check vertex 1
@@ -90,11 +90,11 @@ public class EPAAlgorithm {
     }
 
     // Compute the penetration depth with the EPA algorithm.
-    /// This method computes the penetration depth and contact points between two
-    /// enlarged objects (with margin) where the original objects (without margin)
-    /// intersect. An initial simplex that contains origin has been computed with
-    /// GJK algorithm. The EPA Algorithm will extend this simplex polytope to find
-    /// the correct penetration depth
+    // This method computes the penetration depth and contact points between two
+    // enlarged objects (with margin) where the original objects (without margin)
+    // intersect. An initial simplex that contains origin has been computed with
+    // GJK algorithm. The EPA Algorithm will extend this simplex polytope to find
+    // the correct penetration depth
     public boolean computePenetrationDepthAndContactPoints(Simplex simplex,
             CollisionShape collisionShape1, Transform transform1,
             CollisionShape collisionShape2, Transform transform2,

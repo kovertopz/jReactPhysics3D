@@ -17,43 +17,43 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class RigidBody extends CollisionBody {
 
     // TODO : Remove the mass variable (duplicate with inverseMass)
-    /// Mass of the body
+    // Mass of the body
     protected float mMass;
 
-    /// Linear velocity of the body
+    // Linear velocity of the body
     protected Vector3 mLinearVelocity;
 
-    /// Angular velocity of the body
+    // Angular velocity of the body
     protected Vector3 mAngularVelocity;
 
-    /// Current external force on the body
+    // Current external force on the body
     protected Vector3 mExternalForce;
 
-    /// Current external torque on the body
+    // Current external torque on the body
     protected Vector3 mExternalTorque;
 
-    /// Local inertia tensor of the body (in local-space)
+    // Local inertia tensor of the body (in local-space)
     protected Matrix3x3 mInertiaTensorLocal;
 
-    /// Inverse of the inertia tensor of the body
+    // Inverse of the inertia tensor of the body
     protected Matrix3x3 mInertiaTensorLocalInverse;
 
-    /// Inverse of the mass of the body
+    // Inverse of the mass of the body
     protected float mMassInverse;
 
-    /// True if the gravity needs to be applied to this rigid body
+    // True if the gravity needs to be applied to this rigid body
     protected boolean mIsGravityEnabled;
 
-    /// Material properties of the rigid body
+    // Material properties of the rigid body
     protected Material mMaterial;
 
-    /// Linear velocity damping factor
+    // Linear velocity damping factor
     protected float mLinearDamping;
 
-    /// Angular velocity damping factor
+    // Angular velocity damping factor
     protected float mAngularDamping;
 
-    /// First element of the linked list of joints involving this body
+    // First element of the linked list of joints involving this body
     protected JointListElement mJointsList;
 
     // Constructor
@@ -128,11 +128,11 @@ public class RigidBody extends CollisionBody {
     }
 
     // Apply an external force to the body at a given point (in world-space coordinates).
-    /// If the point is not at the center of gravity of the body, it will also
-    /// generate some torque and therefore, change the angular velocity of the body.
-    /// If the body is sleeping, calling this method will wake it up. Note that the
-    /// force will we added to the sum of the applied forces and that this sum will be
-    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
+    // If the point is not at the center of gravity of the body, it will also
+    // generate some torque and therefore, change the angular velocity of the body.
+    // If the body is sleeping, calling this method will wake it up. Note that the
+    // force will we added to the sum of the applied forces and that this sum will be
+    // reset to zero at the end of each call of the DynamicsWorld::update() method.
     public void applyForce(Vector3 force, Vector3 point) {
 
         // If it is a static body, do not apply any force
@@ -151,9 +151,9 @@ public class RigidBody extends CollisionBody {
     }
 
     // Apply an external force to the body at its gravity center.
-    /// If the body is sleeping, calling this method will wake it up. Note that the
-    /// force will we added to the sum of the applied forces and that this sum will be
-    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
+    // If the body is sleeping, calling this method will wake it up. Note that the
+    // force will we added to the sum of the applied forces and that this sum will be
+    // reset to zero at the end of each call of the DynamicsWorld::update() method.
     public void applyForceToCenter(Vector3 force) {
         // If it is a static body, do not apply any force
         if (!mIsMotionEnabled) {
@@ -170,9 +170,9 @@ public class RigidBody extends CollisionBody {
     }
 
     // Apply an external torque to the body.
-    /// If the body is sleeping, calling this method will wake it up. Note that the
-    /// force will we added to the sum of the applied torques and that this sum will be
-    /// reset to zero at the end of each call of the DynamicsWorld::update() method.
+    // If the body is sleeping, calling this method will wake it up. Note that the
+    // force will we added to the sum of the applied torques and that this sum will be
+    // reset to zero at the end of each call of the DynamicsWorld::update() method.
     public void applyTorque(Vector3 torque) {
 
         // If it is a static body, do not apply any force
@@ -202,11 +202,11 @@ public class RigidBody extends CollisionBody {
     }
 
     // Return the inertia tensor in world coordinates.
-    /// The inertia tensor I_w in world coordinates is computed
-    /// with the local inertia tensor I_b in body coordinates
-    /// by I_w = R * I_b * R^T
-    /// where R is the rotation matrix (and R^T its transpose) of
-    /// the current orientation quaternion of the body
+    // The inertia tensor I_w in world coordinates is computed
+    // with the local inertia tensor I_b in body coordinates
+    // by I_w = R * I_b * R^T
+    // where R is the rotation matrix (and R^T its transpose) of
+    // the current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorWorld() {
 
         // TODO: Optimize
@@ -222,11 +222,11 @@ public class RigidBody extends CollisionBody {
     }
 
     // Return the inverse of the inertia tensor in world coordinates.
-    /// The inertia tensor I_w in world coordinates is computed with the
-    /// local inverse inertia tensor I_b^-1 in body coordinates
-    /// by I_w = R * I_b^-1 * R^T
-    /// where R is the rotation matrix (and R^T its transpose) of the
-    /// current orientation quaternion of the body
+    // The inertia tensor I_w in world coordinates is computed with the
+    // local inverse inertia tensor I_b^-1 in body coordinates
+    // by I_w = R * I_b^-1 * R^T
+    // where R is the rotation matrix (and R^T its transpose) of the
+    // current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorInverseWorld() {
 
         // TODO: Optimize

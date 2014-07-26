@@ -11,10 +11,10 @@ public class TrianglesStore {
 
     private static final int MAX_TRIANGLES = 200;     // Maximum number of triangles
 
-    /// Triangles
+    // Triangles
     private TriangleEPA[] mTriangles = new TriangleEPA[MAX_TRIANGLES];
 
-    /// Number of triangles
+    // Number of triangles
     private int mNbTriangles;
 
     // Constructor

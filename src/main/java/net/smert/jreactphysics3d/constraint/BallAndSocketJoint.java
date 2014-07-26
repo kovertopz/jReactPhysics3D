@@ -17,31 +17,31 @@ public class BallAndSocketJoint extends Joint {
     // Beta value for the bias factor of position correction
     private static final float BETA = 0.2f;
 
-    /// Anchor point of body 1 (in local-space coordinates of body 1)
+    // Anchor point of body 1 (in local-space coordinates of body 1)
     private Vector3 mLocalAnchorPointBody1;
 
-    /// Anchor point of body 2 (in local-space coordinates of body 2)
+    // Anchor point of body 2 (in local-space coordinates of body 2)
     private Vector3 mLocalAnchorPointBody2;
 
-    /// Vector from center of body 2 to anchor point in world-space
+    // Vector from center of body 2 to anchor point in world-space
     private Vector3 mR1World;
 
-    /// Vector from center of body 2 to anchor point in world-space
+    // Vector from center of body 2 to anchor point in world-space
     private Vector3 mR2World;
 
-    /// Inertia tensor of body 1 (in world-space coordinates)
+    // Inertia tensor of body 1 (in world-space coordinates)
     private Matrix3x3 mI1;
 
-    /// Inertia tensor of body 2 (in world-space coordinates)
+    // Inertia tensor of body 2 (in world-space coordinates)
     private Matrix3x3 mI2;
 
-    /// Bias vector for the constraint
+    // Bias vector for the constraint
     private Vector3 mBiasVector;
 
-    /// Inverse mass matrix K=JM^-1J^-t of the constraint
+    // Inverse mass matrix K=JM^-1J^-t of the constraint
     private Matrix3x3 mInverseMassMatrix;
 
-    /// Accumulated impulse
+    // Accumulated impulse
     private Vector3 mImpulse;
 
     // Constructor

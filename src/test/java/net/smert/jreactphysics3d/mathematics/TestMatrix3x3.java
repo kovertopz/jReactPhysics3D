@@ -1,7 +1,5 @@
 package net.smert.jreactphysics3d.mathematics;
 
-import net.smert.jreactphysics3d.mathematics.Matrix3x3;
-import net.smert.jreactphysics3d.mathematics.Vector3;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,10 +12,10 @@ import org.junit.Test;
  */
 public class TestMatrix3x3 {
 
-    /// Identity transform
+    // Identity transform
     private Matrix3x3 mIdentity;
 
-    /// First example matrix
+    // First example matrix
     private Matrix3x3 mMatrix1;
 
     @Before
@@ -31,7 +29,7 @@ public class TestMatrix3x3 {
         Assert.assertThat(new Matrix3x3(), CoreMatchers.instanceOf(Matrix3x3.class));
     }
 
-    /// Test the constructors
+    // Test the constructors
     @Test
     public void testConstructors() {
 
@@ -76,7 +74,7 @@ public class TestMatrix3x3 {
         Assert.assertEquals(test4.m[2][2], 0, 0);
     }
 
-    /// Test the getter and setter methods
+    // Test the getter and setter methods
     @Test
     public void testGetSet() {
 
@@ -110,7 +108,7 @@ public class TestMatrix3x3 {
         Assert.assertEquals(row3.equals(new Vector3(-15, 11, 66)), true);
     }
 
-    /// Test the identity methods
+    // Test the identity methods
     public void testIdentity() {
 
         Matrix3x3 test1 = Matrix3x3.identity();
@@ -131,7 +129,7 @@ public class TestMatrix3x3 {
         Assert.assertEquals(test2.equals(Matrix3x3.identity()), true);
     }
 
-    /// Test others methods
+    // Test others methods
     @Test
     public void testOthersMethods() {
 
@@ -196,7 +194,7 @@ public class TestMatrix3x3 {
         Assert.assertEquals(crossProduct1.equals(crossProduct2), true);
     }
 
-    /// Test the operators
+    // Test the operators
     @Test
     public void testOperators() {
 

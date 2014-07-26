@@ -22,22 +22,22 @@ import net.smert.jreactphysics3d.mathematics.Transform;
  */
 public class CollisionWorld {
 
-    /// Reference to the collision detection
+    // Reference to the collision detection
     protected CollisionDetection mCollisionDetection;
 
-    /// All the bodies (rigid and soft) of the world
+    // All the bodies (rigid and soft) of the world
     protected Set<CollisionBody> mBodies;
 
-    /// All the collision shapes of the world
+    // All the collision shapes of the world
     protected List<CollisionShape> mCollisionShapes;
 
-    /// Broad-phase overlapping pairs of bodies
+    // Broad-phase overlapping pairs of bodies
     protected Map<BodyIndexPair, OverlappingPair> mOverlappingPairs;
 
-    /// Current body ID
+    // Current body ID
     protected int mCurrentBodyID;
 
-    /// List of free ID for rigid bodies
+    // List of free ID for rigid bodies
     protected List<Integer> mFreeBodiesIDs;
 
     // Return the next available body ID
@@ -58,11 +58,11 @@ public class CollisionWorld {
     }
 
     // Create a new collision shape.
-    /// First, this methods checks that the new collision shape does not exist yet in the
-    /// world. If it already exists, we do not allocate memory for a new one but instead
-    /// we reuse the existing one. The goal is to only allocate memory for a single
-    /// collision shape if this one is used for several bodies in the world. To allocate
-    /// memory for a new collision shape, we use the memory allocator.
+    // First, this methods checks that the new collision shape does not exist yet in the
+    // world. If it already exists, we do not allocate memory for a new one but instead
+    // we reuse the existing one. The goal is to only allocate memory for a single
+    // collision shape if this one is used for several bodies in the world. To allocate
+    // memory for a new collision shape, we use the memory allocator.
     protected CollisionShape createCollisionShape(CollisionShape collisionShape) {
 
         // Check if there is already a similar collision shape in the world
@@ -91,9 +91,9 @@ public class CollisionWorld {
     }
 
     // Remove a collision shape.
-    /// First, we check if another body is still using the same collision shape. If so,
-    /// we keep the allocated collision shape. If it is not the case, we can deallocate
-    /// the memory associated with the collision shape.
+    // First, we check if another body is still using the same collision shape. If so,
+    // we keep the allocated collision shape. If it is not the case, we can deallocate
+    // the memory associated with the collision shape.
     protected void removeCollisionShape(CollisionShape collisionShape) {
 
         assert (collisionShape.getNbSimilarCreatedShapes() != 0);

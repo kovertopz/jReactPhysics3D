@@ -11,13 +11,13 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class BroadPhasePair {
 
-    /// Pointer to the first body
+    // Pointer to the first body
     public CollisionBody body1;
 
-    /// Pointer to the second body
+    // Pointer to the second body
     public CollisionBody body2;
 
-    /// Previous cached separating axis
+    // Previous cached separating axis
     public Vector3 previousSeparatingAxis;
 
     // Constructor

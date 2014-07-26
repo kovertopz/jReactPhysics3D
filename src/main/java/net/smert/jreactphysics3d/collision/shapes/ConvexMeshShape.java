@@ -25,26 +25,26 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ConvexMeshShape extends CollisionShape {
 
-    /// Array with the vertices of the mesh
+    // Array with the vertices of the mesh
     private List<Vector3> mVertices;
 
-    /// Number of vertices in the mesh
+    // Number of vertices in the mesh
     private int mNbVertices;
 
-    /// Mesh minimum bounds in the three local x, y and z directions
+    // Mesh minimum bounds in the three local x, y and z directions
     private Vector3 mMinBounds;
 
-    /// Mesh maximum bounds in the three local x, y and z directions
+    // Mesh maximum bounds in the three local x, y and z directions
     private Vector3 mMaxBounds;
 
-    /// True if the shape contains the edges of the convex mesh in order to
-    /// make the collision detection faster
+    // True if the shape contains the edges of the convex mesh in order to
+    // make the collision detection faster
     private boolean mIsEdgesInformationUsed;
 
-    /// Adjacency list representing the edges of the mesh
+    // Adjacency list representing the edges of the mesh
     private Map<Integer, List<Integer>> mEdgesAdjacencyList;
 
-    /// Cached support vertex index (previous support vertex)
+    // Cached support vertex index (previous support vertex)
     private int mCachedSupportVertex;
 
     // Private copy-constructor
@@ -100,7 +100,7 @@ public class ConvexMeshShape extends CollisionShape {
     }
 
     // Constructor to initialize with a array of 3D vertices.
-    /// This method creates an internal copy of the input vertices.
+    // This method creates an internal copy of the input vertices.
     public ConvexMeshShape(float[] arrayVertices, int nbVertices, int stride, float margin) {
         super(CollisionShapeType.CONVEX_MESH, margin);
 
@@ -129,8 +129,8 @@ public class ConvexMeshShape extends CollisionShape {
     }
 
     // Constructor.
-    /// If you use this constructor, you will need to set the vertices manually one by one using
-    /// the addVertex() method.
+    // If you use this constructor, you will need to set the vertices manually one by one using
+    // the addVertex() method.
     public ConvexMeshShape(float margin) {
         super(CollisionShapeType.CONVEX_MESH, margin);
 
@@ -144,9 +144,9 @@ public class ConvexMeshShape extends CollisionShape {
     }
 
     // Add an edge into the convex mesh by specifying the two vertex indices of the edge.
-    /// Note that the vertex indices start at zero and need to correspond to the order of
-    /// the vertices in the vertices array in the constructor or the order of the calls
-    /// of the addVertex() methods that you use to add vertices into the convex mesh.
+    // Note that the vertex indices start at zero and need to correspond to the order of
+    // the vertices in the vertices array in the constructor or the order of the calls
+    // of the addVertex() methods that you use to add vertices into the convex mesh.
     public void addEdge(int v1, int v2) {
 
         assert (v1 >= 0);
@@ -212,8 +212,8 @@ public class ConvexMeshShape extends CollisionShape {
     }
 
     // Return the local inertia tensor of the collision shape.
-    /// The local inertia tensor of the convex mesh is approximated using the inertia tensor
-    /// of its bounding box.
+    // The local inertia tensor of the convex mesh is approximated using the inertia tensor
+    // of its bounding box.
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
@@ -246,13 +246,13 @@ public class ConvexMeshShape extends CollisionShape {
     }
 
     // Return a local support point in a given direction without the object margin.
-    /// If the edges information is not used for collision detection, this method will go through
-    /// the whole vertices list and pick up the vertex with the largest dot product in the support
-    /// direction. This is an O(n) process with "n" being the number of vertices in the mesh.
-    /// However, if the edges information is used, we can cache the previous support vertex and use
-    /// it as a start in a hill-climbing (local search) process to find the new support vertex which
-    /// will be in most of the cases very close to the previous one. Using hill-climbing, this method
-    /// runs in almost constant time.
+    // If the edges information is not used for collision detection, this method will go through
+    // the whole vertices list and pick up the vertex with the largest dot product in the support
+    // direction. This is an O(n) process with "n" being the number of vertices in the mesh.
+    // However, if the edges information is used, we can cache the previous support vertex and use
+    // it as a start in a hill-climbing (local search) process to find the new support vertex which
+    // will be in most of the cases very close to the previous one. Using hill-climbing, this method
+    // runs in almost constant time.
     @Override
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
 

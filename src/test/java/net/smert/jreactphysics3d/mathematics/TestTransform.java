@@ -1,10 +1,6 @@
 package net.smert.jreactphysics3d.mathematics;
 
 import net.smert.jreactphysics3d.configuration.Defaults;
-import net.smert.jreactphysics3d.mathematics.Matrix3x3;
-import net.smert.jreactphysics3d.mathematics.Quaternion;
-import net.smert.jreactphysics3d.mathematics.Transform;
-import net.smert.jreactphysics3d.mathematics.Vector3;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,13 +13,13 @@ import org.junit.Test;
  */
 public class TestTransform {
 
-    /// Identity transform
+    // Identity transform
     private Transform mIdentityTransform;
 
-    /// First example transform
+    // First example transform
     private Transform mTransform1;
 
-    /// Second example transform
+    // Second example transform
     private Transform mTransform2;
 
     @Before
@@ -46,7 +42,7 @@ public class TestTransform {
     }
 
     @Test
-    /// Test the constructors
+    // Test the constructors
     public void testConstructors() {
 
         Transform transform1 = new Transform(new Vector3(1, 2, 3), new Quaternion(6, 7, 8, 9));
@@ -65,7 +61,7 @@ public class TestTransform {
     }
 
     @Test
-    /// Test getter and setter
+    // Test getter and setter
     public void testGetSet() {
 
         Assert.assertEquals(mIdentityTransform.getPosition().equals(new Vector3(0, 0, 0)), true);
@@ -85,7 +81,7 @@ public class TestTransform {
     }
 
     @Test
-    /// Test the inverse
+    // Test the inverse
     public void testInverse() {
 
         Transform inverseTransform = mTransform1.getInverse();
@@ -99,7 +95,7 @@ public class TestTransform {
     }
 
     @Test
-    /// Test methods to set and get transform matrix from and to OpenGL
+    // Test methods to set and get transform matrix from and to OpenGL
     public void testGetSetOpenGLMatrix() {
 
         Transform transform = new Transform();
@@ -132,7 +128,7 @@ public class TestTransform {
     }
 
     @Test
-    /// Test the method to interpolate transforms
+    // Test the method to interpolate transforms
     public void testInterpolateTransform() {
 
         Transform transformStart = Transform.interpolateTransforms(mTransform1, mTransform2, 0);
@@ -161,7 +157,7 @@ public class TestTransform {
     }
 
     @Test
-    /// Test the identity methods
+    // Test the identity methods
     public void testIdentity() {
 
         Transform transform = Transform.identity();
@@ -177,7 +173,7 @@ public class TestTransform {
     }
 
     @Test
-    /// Test the overloaded operators
+    // Test the overloaded operators
     public void testOperators() {
 
         // Equality, inequality operator

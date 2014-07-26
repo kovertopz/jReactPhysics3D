@@ -18,13 +18,13 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ConeShape extends CollisionShape {
 
-    /// Radius of the base
+    // Radius of the base
     private float mRadius;
 
-    /// Half height of the cone
+    // Half height of the cone
     private float mHalfHeight;
 
-    /// sine of the semi angle at the apex point
+    // sine of the semi angle at the apex point
     private float mSinTheta;
 
     // Private copy-constructor

@@ -7,12 +7,12 @@ package net.smert.jreactphysics3d.collision.broadphase;
  */
 public class Utils {
 
-    /// Encode a floating value into a integer value in order to
-    /// work with integer comparison in the Sweep-And-Prune algorithm
-    /// because it is faster. The main issue when encoding floating
-    /// number into integer is to keep to sorting order. This is a
-    /// problem for negative float number. This article describes
-    /// how to solve this issue : http://www.stereopsis.com/radix.html
+    // Encode a floating value into a integer value in order to
+    // work with integer comparison in the Sweep-And-Prune algorithm
+    // because it is faster. The main issue when encoding floating
+    // number into integer is to keep to sorting order. This is a
+    // problem for negative float number. This article describes
+    // how to solve this issue : http://www.stereopsis.com/radix.html
     public static long encodeFloatIntoInteger(float number) {
         long intNumber = (long) Float.floatToIntBits(number) & 0xFFFFFFFFl;
 

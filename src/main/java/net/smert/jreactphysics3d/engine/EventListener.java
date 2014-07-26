@@ -11,10 +11,10 @@ import net.smert.jreactphysics3d.constraint.ContactPointInfo;
  */
 public abstract class EventListener {
 
-    /// Called when a new contact point is found between two bodies that were separated before
+    // Called when a new contact point is found between two bodies that were separated before
     public abstract void beginContact(ContactPointInfo contact);
 
-    /// Called when a new contact point is found between two bodies
+    // Called when a new contact point is found between two bodies
     public abstract void newContact(ContactPointInfo contact);
 
 }

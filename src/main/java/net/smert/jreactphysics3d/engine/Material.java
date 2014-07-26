@@ -10,10 +10,10 @@ import net.smert.jreactphysics3d.configuration.Defaults;
  */
 public class Material {
 
-    /// Friction coefficient (positive value)
+    // Friction coefficient (positive value)
     private float mFrictionCoefficient;
 
-    /// Bounciness during collisions (between 0 and 1) where 1 is for a very bouncy body
+    // Bounciness during collisions (between 0 and 1) where 1 is for a very bouncy body
     private float mBounciness;
 
     // Constructor
@@ -34,8 +34,8 @@ public class Material {
     }
 
     // Set the bounciness.
-    /// The bounciness should be a value between 0 and 1. The value 1 is used for a
-    /// very bouncy body and zero is used for a body that is not bouncy at all.
+    // The bounciness should be a value between 0 and 1. The value 1 is used for a
+    // very bouncy body and zero is used for a body that is not bouncy at all.
     public void setBounciness(float bounciness) {
         assert (bounciness >= 0.0f && bounciness <= 1.0f);
         mBounciness = bounciness;
@@ -47,8 +47,8 @@ public class Material {
     }
 
     // Set the friction coefficient.
-    /// The friction coefficient has to be a positive value. The value zero is used for no
-    /// friction at all.
+    // The friction coefficient has to be a positive value. The value zero is used for no
+    // friction at all.
     public void setFrictionCoefficient(float frictionCoefficient) {
         assert (frictionCoefficient >= 0.0f);
         mFrictionCoefficient = frictionCoefficient;

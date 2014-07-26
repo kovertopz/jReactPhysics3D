@@ -10,43 +10,43 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ContactPoint {
 
-    /// First rigid body of the contact
+    // First rigid body of the contact
     private final RigidBody mBody1;
 
-    /// Second rigid body of the contact
+    // Second rigid body of the contact
     private final RigidBody mBody2;
 
-    /// Normal vector of the contact (From body1 toward body2) in world space
+    // Normal vector of the contact (From body1 toward body2) in world space
     private final Vector3 mNormal;
 
-    /// Penetration depth
+    // Penetration depth
     private float mPenetrationDepth;
 
-    /// Contact point on body 1 in local space of body 1
+    // Contact point on body 1 in local space of body 1
     private final Vector3 mLocalPointOnBody1;
 
-    /// Contact point on body 2 in local space of body 2
+    // Contact point on body 2 in local space of body 2
     private final Vector3 mLocalPointOnBody2;
 
-    /// Contact point on body 1 in world space
+    // Contact point on body 1 in world space
     private Vector3 mWorldPointOnBody1;
 
-    /// Contact point on body 2 in world space
+    // Contact point on body 2 in world space
     private Vector3 mWorldPointOnBody2;
 
-    /// True if the contact is a resting contact (exists for more than one time step)
+    // True if the contact is a resting contact (exists for more than one time step)
     private boolean mIsRestingContact;
 
-    /// Two orthogonal vectors that span the tangential friction plane
+    // Two orthogonal vectors that span the tangential friction plane
     private final Vector3[] mFrictionVectors = new Vector3[2];
 
-    /// Cached penetration impulse
+    // Cached penetration impulse
     private float mPenetrationImpulse;
 
-    /// Cached first friction impulse
+    // Cached first friction impulse
     private float mFrictionImpulse1;
 
-    /// Cached second friction impulse
+    // Cached second friction impulse
     private float mFrictionImpulse2;
 
     // Constructor

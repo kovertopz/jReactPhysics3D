@@ -9,19 +9,19 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class Impulse {
 
-    /// Linear impulse applied to the first body
+    // Linear impulse applied to the first body
     public Vector3 linearImpulseBody1;
 
-    /// Linear impulse applied to the second body
+    // Linear impulse applied to the second body
     public Vector3 linearImpulseBody2;
 
-    /// Angular impulse applied to the first body
+    // Angular impulse applied to the first body
     public Vector3 angularImpulseBody1;
 
-    /// Angular impulse applied to the second body
+    // Angular impulse applied to the second body
     public Vector3 angularImpulseBody2;
 
-    /// Constructor
+    // Constructor
     public Impulse(Vector3 initLinearImpulseBody1, Vector3 initAngularImpulseBody1,
             Vector3 initLinearImpulseBody2, Vector3 initAngularImpulseBody2) {
         linearImpulseBody1 = new Vector3(initLinearImpulseBody1);
@@ -30,7 +30,7 @@ public class Impulse {
         angularImpulseBody2 = new Vector3(initAngularImpulseBody2);
     }
 
-    /// Copy-constructor
+    // Copy-constructor
     public Impulse(Impulse impulse) {
         linearImpulseBody1 = new Vector3(impulse.linearImpulseBody1);
         angularImpulseBody1 = new Vector3(impulse.angularImpulseBody1);

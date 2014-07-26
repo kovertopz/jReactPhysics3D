@@ -41,91 +41,91 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class DynamicsWorld extends CollisionWorld {
 
-    /// Timer of the physics engine
+    // Timer of the physics engine
     protected Timer mTimer;
 
-    /// Contact solver
+    // Contact solver
     protected ContactSolver mContactSolver;
 
-    /// Constraint solver
+    // Constraint solver
     protected ConstraintSolver mConstraintSolver;
 
-    /// Number of iterations for the velocity solver of the Sequential Impulses technique
+    // Number of iterations for the velocity solver of the Sequential Impulses technique
     protected int mNbVelocitySolverIterations;
 
-    /// Number of iterations for the position solver of the Sequential Impulses technique
+    // Number of iterations for the position solver of the Sequential Impulses technique
     protected int mNbPositionSolverIterations;
 
-    /// True if the spleeping technique for inactive bodies is enabled
+    // True if the spleeping technique for inactive bodies is enabled
     protected boolean mIsSleepingEnabled;
 
-    /// All the rigid bodies of the physics world
+    // All the rigid bodies of the physics world
     protected Set<RigidBody> mRigidBodies;
 
-    /// All the contact constraints
+    // All the contact constraints
     // TODO : Remove this variable (we will use the ones in the island now)
     protected List<ContactManifold> mContactManifolds;
 
-    /// All the joints of the world
+    // All the joints of the world
     protected Set<Joint> mJoints;
 
-    /// Gravity vector of the world
+    // Gravity vector of the world
     protected Vector3 mGravity;
 
-    /// True if the gravity force is on
+    // True if the gravity force is on
     protected boolean mIsGravityEnabled;
 
-    /// Array of constrained linear velocities (state of the linear velocities
-    /// after solving the constraints)
+    // Array of constrained linear velocities (state of the linear velocities
+    // after solving the constraints)
     protected Vector3[] mConstrainedLinearVelocities;
 
-    /// Array of constrained angular velocities (state of the angular velocities
-    /// after solving the constraints)
+    // Array of constrained angular velocities (state of the angular velocities
+    // after solving the constraints)
     protected Vector3[] mConstrainedAngularVelocities;
 
-    /// Split linear velocities for the position contact solver (split impulse)
+    // Split linear velocities for the position contact solver (split impulse)
     protected Vector3[] mSplitLinearVelocities;
 
-    /// Split angular velocities for the position contact solver (split impulse)
+    // Split angular velocities for the position contact solver (split impulse)
     protected Vector3[] mSplitAngularVelocities;
 
-    /// Array of constrained rigid bodies position (for position error correction)
+    // Array of constrained rigid bodies position (for position error correction)
     protected List<Vector3> mConstrainedPositions;
 
-    /// Array of constrained rigid bodies orientation (for position error correction)
+    // Array of constrained rigid bodies orientation (for position error correction)
     protected List<Quaternion> mConstrainedOrientations;
 
-    /// Map body to their index in the constrained velocities array
+    // Map body to their index in the constrained velocities array
     protected Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
 
-    /// Number of islands in the world
+    // Number of islands in the world
     protected int mNbIslands;
 
-    /// Current allocated capacity for the islands
+    // Current allocated capacity for the islands
     protected int mNbIslandsCapacity;
 
-    /// Array with all the islands of awaken bodies
+    // Array with all the islands of awaken bodies
     protected Island[] mIslands;
 
-    /// Current allocated capacity for the bodies
+    // Current allocated capacity for the bodies
     protected int mNbBodiesCapacity;
 
-    /// Sleep linear velocity threshold
+    // Sleep linear velocity threshold
     protected float mSleepLinearVelocity;
 
-    /// Sleep angular velocity threshold
+    // Sleep angular velocity threshold
     protected float mSleepAngularVelocity;
 
-    /// Time (in seconds) before a body is put to sleep if its velocity
-    /// becomes smaller than the sleep velocity.
+    // Time (in seconds) before a body is put to sleep if its velocity
+    // becomes smaller than the sleep velocity.
     protected float mTimeBeforeSleep;
 
-    /// Pointer to an event listener object
+    // Pointer to an event listener object
     protected EventListener mEventListener;
 
     // Integrate position and orientation of the rigid bodies.
-    /// The positions and orientations of the bodies are integrated using
-    /// the sympletic Euler time stepping scheme.
+    // The positions and orientations of the bodies are integrated using
+    // the sympletic Euler time stepping scheme.
     protected void integrateRigidBodiesPositions() {
 
         Profiler.startProfilingBlock("DynamicsWorld::integrateRigidBodiesPositions()");
@@ -204,7 +204,7 @@ public class DynamicsWorld extends CollisionWorld {
         }
     }
 
-    /// Update the position and orientation of a body
+    // Update the position and orientation of a body
     protected void updatePositionAndOrientationOfBody(RigidBody body, Vector3 newLinVelocity,
             Vector3 newAngVelocity) {
     }
@@ -264,10 +264,10 @@ public class DynamicsWorld extends CollisionWorld {
     }
 
     // Integrate the velocities of rigid bodies.
-    /// This method only set the temporary velocities but does not update
-    /// the actual velocitiy of the bodies. The velocities updated in this method
-    /// might violate the constraints and will be corrected in the constraint and
-    /// contact solver.
+    // This method only set the temporary velocities but does not update
+    // the actual velocitiy of the bodies. The velocities updated in this method
+    // might violate the constraints and will be corrected in the constraint and
+    // contact solver.
     protected void integrateRigidBodiesVelocities() {
 
         Profiler.startProfilingBlock("DynamicsWorld::integrateRigidBodiesVelocities()");
@@ -461,7 +461,7 @@ public class DynamicsWorld extends CollisionWorld {
         }
     }
 
-    /// Cleanup the constrained velocities array at each step
+    // Cleanup the constrained velocities array at each step
     protected void cleanupConstrainedVelocitiesArray() {
     }
 
@@ -477,12 +477,12 @@ public class DynamicsWorld extends CollisionWorld {
     }
 
     // Compute the islands of awake bodies.
-    /// An island is an isolated group of rigid bodies that have constraints (joints or contacts)
-    /// between each other. This method computes the islands at each time step as follows: For each
-    /// awake rigid body, we run a Depth First Search (DFS) through the constraint graph of that body
-    /// (graph where nodes are the bodies and where the edges are the constraints between the bodies) to
-    /// find all the bodies that are connected with it (the bodies that share joints or contacts with
-    /// it). Then, we create an island with this group of connected bodies.
+    // An island is an isolated group of rigid bodies that have constraints (joints or contacts)
+    // between each other. This method computes the islands at each time step as follows: For each
+    // awake rigid body, we run a Depth First Search (DFS) through the constraint graph of that body
+    // (graph where nodes are the bodies and where the edges are the constraints between the bodies) to
+    // find all the bodies that are connected with it (the bodies that share joints or contacts with
+    // it). Then, we create an island with this group of connected bodies.
     protected void computeIslands() {
 
         Profiler.startProfilingBlock("DynamicsWorld::computeIslands()");
@@ -650,8 +650,8 @@ public class DynamicsWorld extends CollisionWorld {
     }
 
     // Put bodies to sleep if needed.
-    /// For each island, if all the bodies have been almost still for a long enough period of
-    /// time, we put all the bodies of the island to sleep.
+    // For each island, if all the bodies have been almost still for a long enough period of
+    // time, we put all the bodies of the island to sleep.
     protected void updateSleepingBodies() {
 
         Profiler.startProfilingBlock("DynamicsWorld::updateSleepingBodies()");
@@ -801,7 +801,7 @@ public class DynamicsWorld extends CollisionWorld {
         return mRigidBodies.size();
     }
 
-    /// Return the number of joints in the world
+    // Return the number of joints in the world
     public int getNbJoints() {
         return mJoints.size();
     }
@@ -837,9 +837,9 @@ public class DynamicsWorld extends CollisionWorld {
     }
 
     // Set the sleep linear velocity.
-    /// When the velocity of a body becomes smaller than the sleep linear/angular
-    /// velocity for a given amount of time, the body starts sleeping and does not need
-    /// to be simulated anymore.
+    // When the velocity of a body becomes smaller than the sleep linear/angular
+    // velocity for a given amount of time, the body starts sleeping and does not need
+    // to be simulated anymore.
     public void setSleepLinearVelocity(float sleepLinearVelocity) {
         assert (sleepLinearVelocity >= 0.0f);
         mSleepLinearVelocity = sleepLinearVelocity;
@@ -851,9 +851,9 @@ public class DynamicsWorld extends CollisionWorld {
     }
 
     // Set the sleep angular velocity.
-    /// When the velocity of a body becomes smaller than the sleep linear/angular
-    /// velocity for a given amount of time, the body starts sleeping and does not need
-    /// to be simulated anymore.
+    // When the velocity of a body becomes smaller than the sleep linear/angular
+    // velocity for a given amount of time, the body starts sleeping and does not need
+    // to be simulated anymore.
     public void setSleepAngularVelocity(float sleepAngularVelocity) {
         assert (sleepAngularVelocity >= 0.0f);
         mSleepAngularVelocity = sleepAngularVelocity;
@@ -871,7 +871,7 @@ public class DynamicsWorld extends CollisionWorld {
     }
 
     // Set an event listener object to receive events callbacks.
-    /// If you use null as an argument, the events callbacks will be disabled.
+    // If you use null as an argument, the events callbacks will be disabled.
     public void setEventListener(EventListener eventListener) {
         mEventListener = eventListener;
     }

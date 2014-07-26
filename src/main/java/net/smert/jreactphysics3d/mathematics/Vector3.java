@@ -9,13 +9,13 @@ import net.smert.jreactphysics3d.configuration.Defaults;
  */
 public class Vector3 {
 
-    /// Component x
+    // Component x
     public float x;
 
-    /// Component y
+    // Component y
     public float y;
 
-    /// Component z
+    // Component z
     public float z;
 
     // Constructor of the class Vector3D

@@ -16,7 +16,7 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class BoxShape extends CollisionShape {
 
-    /// Extent sizes of the box in the x, y and z direction
+    // Extent sizes of the box in the x, y and z direction
     private final Vector3 mExtent;
 
     // Private copy-constructor
@@ -81,7 +81,7 @@ public class BoxShape extends CollisionShape {
     }
 
     // Return the local bounds of the shape in x, y and z directions
-    /// This method is used to compute the AABB of the box
+    // This method is used to compute the AABB of the box
     @Override
     public void getLocalBounds(Vector3 min, Vector3 max) {
 

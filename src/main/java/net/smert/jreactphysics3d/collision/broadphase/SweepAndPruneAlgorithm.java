@@ -17,31 +17,31 @@ import net.smert.jreactphysics3d.collision.shapes.AABB;
  */
 public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
-    /// Invalid array index
+    // Invalid array index
     protected static final int INVALID_INDEX = Integer.MAX_VALUE;
 
-    /// Number of sentinel end-points in the array of a given axis
+    // Number of sentinel end-points in the array of a given axis
     protected static final int NB_SENTINELS = 2;
 
-    /// Array that contains all the AABB boxes of the broad-phase
+    // Array that contains all the AABB boxes of the broad-phase
     protected BoxAABB[] mBoxes;
 
-    /// Array of end-points on the three axis
+    // Array of end-points on the three axis
     protected EndPoint[][] mEndPoints = {null, null, null};
 
-    /// Number of AABB boxes in the broad-phase
+    // Number of AABB boxes in the broad-phase
     protected int mNbBoxes;
 
-    /// Max number of boxes in the boxes array
+    // Max number of boxes in the boxes array
     protected int mNbMaxBoxes;
 
-    /// Indices that are not used by any boxes
+    // Indices that are not used by any boxes
     protected ArrayList<Integer> mFreeBoxIndices;
 
-    /// Map a body pointer to a box index
+    // Map a body pointer to a box index
     protected Map<CollisionBody, Integer> mMapBodyToBoxIndex;
 
-    /// Add an overlapping pair of AABBS
+    // Add an overlapping pair of AABBS
     protected void addPair(CollisionBody body1, CollisionBody body2) {
         // TODO: remove unused method
     }
@@ -192,22 +192,22 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     }
 
     // Check for 1D box intersection between two boxes that are sorted on the given axis.
-    /// Therefore, only one test is necessary here. We know that the
-    /// minimum of box1 cannot be larger that the maximum of box2 on the axis.
+    // Therefore, only one test is necessary here. We know that the
+    // minimum of box1 cannot be larger that the maximum of box2 on the axis.
     protected boolean testIntersect1DSortedAABBs(BoxAABB box1, AABBInt box2, EndPoint[] endPointsArray, int axis) {
         return !(endPointsArray[box1.max[axis]].value < box2.min[axis]);
     }
 
     // Check for 2D box intersection. This method is used when we know
-    /// that two boxes already overlap on one axis and when want to test
-    /// if they also overlap on the two others axis.
+    // that two boxes already overlap on one axis and when want to test
+    // if they also overlap on the two others axis.
     protected boolean testIntersect2D(BoxAABB box1, BoxAABB box2, int axis1, int axis2) {
         return !(box2.max[axis1] < box1.min[axis1] || box1.max[axis1] < box2.min[axis1]
                 || box2.max[axis2] < box1.min[axis2] || box1.max[axis2] < box2.min[axis2]);
     }
 
     // Notify the broad-phase that the AABB of an object has changed.
-    /// The input is an AABB with integer coordinates
+    // The input is an AABB with integer coordinates
     protected void updateObjectIntegerAABB(CollisionBody body, AABBInt aabbInt) {
 
         assert (aabbInt.min[0] > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
@@ -457,7 +457,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     }
 
     // Notify the broad-phase about a new object in the world
-    /// This method adds the AABB of the object ion to broad-phase
+    // This method adds the AABB of the object ion to broad-phase
     @Override
     public void addObject(CollisionBody body, AABB aabb) {
 

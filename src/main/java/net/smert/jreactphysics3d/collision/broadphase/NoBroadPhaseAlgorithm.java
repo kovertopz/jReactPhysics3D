@@ -14,7 +14,7 @@ import net.smert.jreactphysics3d.collision.shapes.AABB;
  */
 public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
 
-    /// All bodies of the world
+    // All bodies of the world
     protected Set<CollisionBody> mBodies;
 
     // Constructor

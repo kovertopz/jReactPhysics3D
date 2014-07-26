@@ -13,16 +13,16 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class OverlappingPair {
 
-    /// Pointer to the first body of the contact
+    // Pointer to the first body of the contact
     private CollisionBody mBody1;
 
-    /// Pointer to the second body of the contact
+    // Pointer to the second body of the contact
     private CollisionBody mBody2;
 
-    /// Persistent contact manifold
+    // Persistent contact manifold
     private ContactManifold mContactManifold;
 
-    /// Cached previous separating axis
+    // Cached previous separating axis
     private Vector3 mCachedSeparatingAxis;
 
     // Constructor

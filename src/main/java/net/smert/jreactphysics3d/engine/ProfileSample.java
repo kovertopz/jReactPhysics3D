@@ -8,7 +8,7 @@ package net.smert.jreactphysics3d.engine;
  */
 public class ProfileSample {
 
-    /// Constructor
+    // Constructor
     public ProfileSample(String name) {
 
         // Ask the profiler to start profiling a block of code

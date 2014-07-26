@@ -11,10 +11,10 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class AABB {
 
-    /// Minimum world coordinates of the AABB on the x,y and z axis
+    // Minimum world coordinates of the AABB on the x,y and z axis
     private Vector3 mMinCoordinates;
 
-    /// Maximum world coordinates of the AABB on the x,y and z axis
+    // Maximum world coordinates of the AABB on the x,y and z axis
     private Vector3 mMaxCoordinates;
 
     // Constructor
@@ -49,13 +49,13 @@ public class AABB {
         return mMaxCoordinates;
     }
 
-    /// Set the maximum coordinates of the AABB
+    // Set the maximum coordinates of the AABB
     public void setMax(Vector3 max) {
         mMaxCoordinates = max;
     }
 
     // Return true if the current AABB is overlapping with the AABB in argument.
-    /// Two AABBs overlap if they overlap in the three x, y and z axis at the same time
+    // Two AABBs overlap if they overlap in the three x, y and z axis at the same time
     public boolean testCollision(AABB aabb) {
         if (mMaxCoordinates.x < aabb.mMinCoordinates.x || aabb.mMaxCoordinates.x < mMinCoordinates.x) {
             return false;

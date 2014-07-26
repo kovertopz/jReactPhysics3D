@@ -1,9 +1,6 @@
 package net.smert.jreactphysics3d.mathematics;
 
 import net.smert.jreactphysics3d.configuration.Defaults;
-import net.smert.jreactphysics3d.mathematics.Matrix3x3;
-import net.smert.jreactphysics3d.mathematics.Quaternion;
-import net.smert.jreactphysics3d.mathematics.Vector3;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,10 +13,10 @@ import org.junit.Test;
  */
 public class TestQuaternion {
 
-    /// Identity Quaternion
+    // Identity Quaternion
     private Quaternion mIdentity;
 
-    /// First test quaternion
+    // First test quaternion
     private Quaternion mQuaternion1;
 
     @Before
@@ -40,7 +37,7 @@ public class TestQuaternion {
     }
 
     @Test
-    /// Test the constructors
+    // Test the constructors
     public void testConstructors() {
 
         Quaternion quaternion1 = new Quaternion(mQuaternion1);
@@ -64,7 +61,7 @@ public class TestQuaternion {
     }
 
     @Test
-    /// Test unit, length, normalize methods
+    // Test unit, length, normalize methods
     public void testUnitLengthNormalize() {
 
         // Test method that returns the length
@@ -83,7 +80,7 @@ public class TestQuaternion {
     }
 
     @Test
-    /// Test others methods
+    // Test others methods
     public void testOthersMethods() {
 
         // Test the method to set the values
@@ -180,7 +177,7 @@ public class TestQuaternion {
     }
 
     @Test
-    /// Test overloaded operators
+    // Test overloaded operators
     public void testOperators() {
 
         // Test addition

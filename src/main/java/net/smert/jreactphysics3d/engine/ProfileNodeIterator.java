@@ -7,10 +7,10 @@ package net.smert.jreactphysics3d.engine;
  */
 public class ProfileNodeIterator {
 
-    /// Current parent node
+    // Current parent node
     private ProfileNode mCurrentParentNode;
 
-    /// Current child node
+    // Current child node
     private ProfileNode mCurrentChildNode;
 
     // Constructor

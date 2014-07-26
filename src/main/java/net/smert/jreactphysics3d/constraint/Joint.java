@@ -11,28 +11,28 @@ import net.smert.jreactphysics3d.engine.ConstraintSolverData;
  */
 public abstract class Joint {
 
-    /// Pointer to the first body of the joint
+    // Pointer to the first body of the joint
     protected RigidBody mBody1;
 
-    /// Pointer to the second body of the joint
+    // Pointer to the second body of the joint
     protected RigidBody mBody2;
 
-    /// Type of the joint
+    // Type of the joint
     protected JointType mType;
 
-    /// Body 1 index in the velocity array to solve the constraint
+    // Body 1 index in the velocity array to solve the constraint
     protected int mIndexBody1;
 
-    /// Body 2 index in the velocity array to solve the constraint
+    // Body 2 index in the velocity array to solve the constraint
     protected int mIndexBody2;
 
-    /// Position correction technique used for the constraint (used for joints)
+    // Position correction technique used for the constraint (used for joints)
     protected JointsPositionCorrectionTechnique mPositionCorrectionTechnique;
 
-    /// True if the two bodies of the constraint are allowed to collide with each other
+    // True if the two bodies of the constraint are allowed to collide with each other
     protected boolean mIsCollisionEnabled;
 
-    /// True if the joint has already been added into an island
+    // True if the joint has already been added into an island
     protected boolean mIsAlreadyInIsland;
 
     // Constructor
@@ -82,16 +82,16 @@ public abstract class Joint {
         mIsAlreadyInIsland = isAlreadyInIsland;
     }
 
-    /// Initialize before solving the joint
+    // Initialize before solving the joint
     public abstract void initBeforeSolve(ConstraintSolverData constraintSolverData);
 
-    /// Warm start the joint (apply the previous impulse at the beginning of the step)
+    // Warm start the joint (apply the previous impulse at the beginning of the step)
     public abstract void warmstart(ConstraintSolverData constraintSolverData);
 
-    /// Solve the velocity constraint
+    // Solve the velocity constraint
     public abstract void solveVelocityConstraint(ConstraintSolverData constraintSolverData);
 
-    /// Solve the position constraint
+    // Solve the position constraint
     public abstract void solvePositionConstraint(ConstraintSolverData constraintSolverData);
 
 }

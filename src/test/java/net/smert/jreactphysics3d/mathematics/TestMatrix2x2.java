@@ -1,7 +1,5 @@
 package net.smert.jreactphysics3d.mathematics;
 
-import net.smert.jreactphysics3d.mathematics.Matrix2x2;
-import net.smert.jreactphysics3d.mathematics.Vector2;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,10 +12,10 @@ import org.junit.Test;
  */
 public class TestMatrix2x2 {
 
-    /// Identity transform
+    // Identity transform
     private Matrix2x2 mIdentity;
 
-    /// First example matrix
+    // First example matrix
     private Matrix2x2 mMatrix1;
 
     @Before
@@ -31,7 +29,7 @@ public class TestMatrix2x2 {
         Assert.assertThat(new Matrix2x2(), CoreMatchers.instanceOf(Matrix2x2.class));
     }
 
-    /// Test the constructors
+    // Test the constructors
     @Test
     public void testConstructors() {
 
@@ -61,7 +59,7 @@ public class TestMatrix2x2 {
         Assert.assertEquals(test4.m[1][1], 0, 0);
     }
 
-    /// Test the getter and setter methods
+    // Test the getter and setter methods
     @Test
     public void testGetSet() {
 
@@ -91,7 +89,7 @@ public class TestMatrix2x2 {
         Assert.assertEquals(row2.equals(new Vector2(-4, 5)), true);
     }
 
-    /// Test the identity methods
+    // Test the identity methods
     @Test
     public void testIdentity() {
 

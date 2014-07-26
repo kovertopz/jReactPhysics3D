@@ -11,15 +11,15 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class FixedJointInfo extends JointInfo {
 
-    /// Anchor point (in world-space coordinates)
+    // Anchor point (in world-space coordinates)
     public Vector3 anchorPointWorldSpace;
 
-    /// Constructor
+    // Constructor
     public FixedJointInfo(JointType constraintType) {
         super(constraintType);
     }
 
-    /// Constructor
+    // Constructor
     public FixedJointInfo(RigidBody rigidBody1, RigidBody rigidBody2, Vector3 initAnchorPointWorldSpace) {
         super(rigidBody1, rigidBody2, JointType.FIXEDJOINT);
 

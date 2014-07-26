@@ -10,10 +10,10 @@ import java.util.Objects;
  */
 public class Transform {
 
-    /// Position
+    // Position
     private Vector3 mPosition;
 
-    /// Orientation
+    // Orientation
     private Quaternion mOrientation;
 
     // Constructor

@@ -17,43 +17,43 @@ public class FixedJoint extends Joint {
     // Beta value for the bias factor of position correction
     private static final float BETA = 0.2f;
 
-    /// Anchor point of body 1 (in local-space coordinates of body 1)
+    // Anchor point of body 1 (in local-space coordinates of body 1)
     private Vector3 mLocalAnchorPointBody1;
 
-    /// Anchor point of body 2 (in local-space coordinates of body 2)
+    // Anchor point of body 2 (in local-space coordinates of body 2)
     private Vector3 mLocalAnchorPointBody2;
 
-    /// Vector from center of body 2 to anchor point in world-space
+    // Vector from center of body 2 to anchor point in world-space
     private Vector3 mR1World;
 
-    /// Vector from center of body 2 to anchor point in world-space
+    // Vector from center of body 2 to anchor point in world-space
     private Vector3 mR2World;
 
-    /// Inertia tensor of body 1 (in world-space coordinates)
+    // Inertia tensor of body 1 (in world-space coordinates)
     private Matrix3x3 mI1;
 
-    /// Inertia tensor of body 2 (in world-space coordinates)
+    // Inertia tensor of body 2 (in world-space coordinates)
     private Matrix3x3 mI2;
 
-    /// Accumulated impulse for the 3 translation constraints
+    // Accumulated impulse for the 3 translation constraints
     private Vector3 mImpulseTranslation;
 
-    /// Accumulate impulse for the 3 rotation constraints
+    // Accumulate impulse for the 3 rotation constraints
     private Vector3 mImpulseRotation;
 
-    /// Inverse mass matrix K=JM^-1J^-t of the 3 translation constraints (3x3 matrix)
+    // Inverse mass matrix K=JM^-1J^-t of the 3 translation constraints (3x3 matrix)
     private Matrix3x3 mInverseMassMatrixTranslation;
 
-    /// Inverse mass matrix K=JM^-1J^-t of the 3 rotation constraints (3x3 matrix)
+    // Inverse mass matrix K=JM^-1J^-t of the 3 rotation constraints (3x3 matrix)
     private Matrix3x3 mInverseMassMatrixRotation;
 
-    /// Bias vector for the 3 translation constraints
+    // Bias vector for the 3 translation constraints
     private Vector3 mBiasTranslation;
 
-    /// Bias vector for the 3 rotation constraints
+    // Bias vector for the 3 rotation constraints
     private Vector3 mBiasRotation;
 
-    /// Inverse of the initial orientation difference between the two bodies
+    // Inverse of the initial orientation difference between the two bodies
     private Quaternion mInitOrientationDifferenceInv;
 
     // Constructor

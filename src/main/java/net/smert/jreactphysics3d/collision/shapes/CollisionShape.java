@@ -12,13 +12,13 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public abstract class CollisionShape {
 
-    /// Type of the collision shape
+    // Type of the collision shape
     protected final CollisionShapeType mType;
 
-    /// Current number of similar created shapes
+    // Current number of similar created shapes
     protected int mNbSimilarCreatedShapes;
 
-    /// Margin used for the GJK collision detection algorithm
+    // Margin used for the GJK collision detection algorithm
     protected float mMargin;
 
     // Private copy-constructor
@@ -63,8 +63,8 @@ public abstract class CollisionShape {
     }
 
     // Equality operator between two collision shapes.
-    /// This methods returns true only if the two collision shapes are of the same type and
-    /// of the same dimensions.
+    // This methods returns true only if the two collision shapes are of the same type and
+    // of the same dimensions.
     public boolean operatorEquals(CollisionShape otherCollisionShape) {
 
         // If the two collisions shapes are not of the same type (same derived classes)
@@ -112,19 +112,19 @@ public abstract class CollisionShape {
     @Override
     public abstract CollisionShape clone();
 
-    /// Return the local inertia tensor of the collision shapes
+    // Return the local inertia tensor of the collision shapes
     public abstract void computeLocalInertiaTensor(Matrix3x3 tensor, float mass);
 
-    /// Return a local support point in a given direction with the object margin
+    // Return a local support point in a given direction with the object margin
     public abstract Vector3 getLocalSupportPointWithMargin(Vector3 direction);
 
-    /// Return a local support point in a given direction without the object margin
+    // Return a local support point in a given direction without the object margin
     public abstract Vector3 getLocalSupportPointWithoutMargin(Vector3 direction);
 
-    /// Return the local bounds of the shape in x, y and z directions
+    // Return the local bounds of the shape in x, y and z directions
     public abstract void getLocalBounds(Vector3 min, Vector3 max);
 
-    /// Test equality between two collision shapes of the same type (same derived classes).
+    // Test equality between two collision shapes of the same type (same derived classes).
     public abstract boolean isEqualTo(CollisionShape otherCollisionShape);
 
 }

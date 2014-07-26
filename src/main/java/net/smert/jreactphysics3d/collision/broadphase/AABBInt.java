@@ -9,10 +9,10 @@ import net.smert.jreactphysics3d.collision.shapes.AABB;
  */
 public class AABBInt {
 
-    /// Minimum values on the three axis
+    // Minimum values on the three axis
     public long[] min = new long[3];
 
-    /// Maximum values on the three axis
+    // Maximum values on the three axis
     public long[] max = new long[3];
 
     // Constructor that takes an AABB as input

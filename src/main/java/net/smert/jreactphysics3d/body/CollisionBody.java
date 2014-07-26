@@ -12,31 +12,31 @@ import net.smert.jreactphysics3d.mathematics.Transform;
  */
 public class CollisionBody extends Body {
 
-    /// Collision shape of the body
+    // Collision shape of the body
     protected CollisionShape mCollisionShape;
 
-    /// Position and orientation of the body
+    // Position and orientation of the body
     protected Transform mTransform;
 
-    /// Last position and orientation of the body
+    // Last position and orientation of the body
     protected Transform mOldTransform;
 
-    /// Interpolation factor used for the state interpolation
+    // Interpolation factor used for the state interpolation
     protected float mInterpolationFactor;
 
-    /// True if the body is able to move
+    // True if the body is able to move
     protected boolean mIsMotionEnabled;
 
-    /// True if the body can collide with others bodies
+    // True if the body can collide with others bodies
     protected boolean mIsCollisionEnabled;
 
-    /// AABB for Broad-Phase collision detection
+    // AABB for Broad-Phase collision detection
     protected AABB mAabb;
 
-    /// True if the body has moved during the last frame
+    // True if the body has moved during the last frame
     protected boolean mHasMoved;
 
-    /// First element of the linked list of contact manifolds involving this body
+    // First element of the linked list of contact manifolds involving this body
     protected ContactManifoldListElement mContactManifoldsList;
 
     // Constructor
@@ -79,7 +79,7 @@ public class CollisionBody extends Body {
     }
 
     // Update the old transform with the current one.
-    /// This is used to compute the interpolated position and orientation of the body
+    // This is used to compute the interpolated position and orientation of the body
     public void updateOldTransform() {
         mOldTransform = new Transform(mTransform);
     }

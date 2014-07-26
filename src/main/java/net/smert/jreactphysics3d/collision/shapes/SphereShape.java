@@ -14,7 +14,7 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class SphereShape extends CollisionShape {
 
-    /// Radius of the sphere
+    // Radius of the sphere
     private float mRadius;
 
     // Private copy-constructor

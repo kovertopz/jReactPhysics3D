@@ -8,19 +8,19 @@ package net.smert.jreactphysics3d.engine;
  */
 public class Timer {
 
-    /// Timestep dt of the physics engine (timestep > 0.0f)
+    // Timestep dt of the physics engine (timestep > 0.0f)
     private double mTimeStep;
 
-    /// Last time the timer has been updated
+    // Last time the timer has been updated
     private float mLastUpdateTime;
 
-    /// Time difference between the two last timer update() calls
+    // Time difference between the two last timer update() calls
     private float mDeltaTime;
 
-    /// Used to fix the time step and avoid strange time effects
+    // Used to fix the time step and avoid strange time effects
     private double mAccumulator;
 
-    /// True if the timer is running
+    // True if the timer is running
     private boolean mIsRunning;
 
     // Constructor

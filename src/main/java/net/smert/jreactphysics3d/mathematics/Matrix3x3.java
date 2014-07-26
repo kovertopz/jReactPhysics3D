@@ -10,7 +10,7 @@ import net.smert.jreactphysics3d.configuration.Defaults;
  */
 public class Matrix3x3 {
 
-    /// Rows of the matrix;
+    // Rows of the matrix;
     public float[][] m = new float[3][3];
 
     // Constructor of the class Matrix3x3
@@ -266,8 +266,8 @@ public class Matrix3x3 {
     }
 
     // Overloaded operator to return a row of the matrix.
-    /// This operator is also used to access a matrix value using the syntax
-    /// matrix[row][col].
+    // This operator is also used to access a matrix value using the syntax
+    // matrix[row][col].
     public Vector3 operatorSquareBrackets(int row) {
         return new Vector3(m[row][0], m[row][1], m[row][2]);
     }

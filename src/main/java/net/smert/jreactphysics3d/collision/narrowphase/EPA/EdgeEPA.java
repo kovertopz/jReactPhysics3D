@@ -9,11 +9,11 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class EdgeEPA {
 
-    /// Pointer to the triangle that contains this edge
+    // Pointer to the triangle that contains this edge
     private TriangleEPA mOwnerTriangle;
 
-    /// Index of the edge in the triangle (between 0 and 2).
-    /// The edge with index i connect triangle vertices i and (i+1 % 3)
+    // Index of the edge in the triangle (between 0 and 2).
+    // The edge with index i connect triangle vertices i and (i+1 % 3)
     private int mIndex;
 
     // Constructor

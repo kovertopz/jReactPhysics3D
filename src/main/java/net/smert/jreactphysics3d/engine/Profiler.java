@@ -10,16 +10,16 @@ import net.smert.jreactphysics3d.configuration.Defaults;
  */
 public class Profiler {
 
-    /// Root node of the profiler tree
+    // Root node of the profiler tree
     private static ProfileNode mRootNode;
 
-    /// Current node in the current execution
+    // Current node in the current execution
     private static ProfileNode mCurrentNode;
 
-    /// Frame counter
+    // Frame counter
     private static int mFrameCounter;
 
-    /// Starting profiling time
+    // Starting profiling time
     private static float mProfilingStartTime;
 
     // Recursively print the report of a given node of the profiler tree

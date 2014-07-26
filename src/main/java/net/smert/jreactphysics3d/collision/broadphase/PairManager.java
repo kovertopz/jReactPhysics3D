@@ -11,36 +11,36 @@ import net.smert.jreactphysics3d.collision.CollisionDetection;
  */
 public class PairManager {
 
-    /// Number of elements in the hash table
+    // Number of elements in the hash table
     private int mNbElementsHashTable;
 
-    /// Hash mask for the hash function
+    // Hash mask for the hash function
     private int mHashMask;
 
-    /// Number of overlapping pairs
+    // Number of overlapping pairs
     private int mNbOverlappingPairs;
 
-    /// Hash table that contains the offset of the first pair of the list of
-    /// pairs with the same hash value in the "overlappingPairs" array
+    // Hash table that contains the offset of the first pair of the list of
+    // pairs with the same hash value in the "overlappingPairs" array
     private int[] mHashTable;
 
-    /// Array that contains for each offset, the offset of the next pair with
-    /// the same hash value for a given same hash value
+    // Array that contains for each offset, the offset of the next pair with
+    // the same hash value for a given same hash value
     private int[] mOffsetNextPair;
 
-    /// Array that contains the overlapping pairs
+    // Array that contains the overlapping pairs
     private BodyPair[] mOverlappingPairs;
 
-    /// Invalid ID
+    // Invalid ID
     private static final int INVALID_INDEX = Integer.MAX_VALUE;
 
-    /// Reference to the collision detection
+    // Reference to the collision detection
     private final CollisionDetection mCollisionDetection;
 
     // This method returns an hash value for a 32 bits key.
-    /// using Thomas Wang's hash technique.
-    /// This hash function can be found at :
-    /// http://www.concentric.net/~ttwang/tech/inthash.htm
+    // using Thomas Wang's hash technique.
+    // This hash function can be found at :
+    // http://www.concentric.net/~ttwang/tech/inthash.htm
     private int computeHash32Bits(int key) {
         key += ~(key << 15);
         key ^= (key >> 10);
@@ -67,8 +67,8 @@ public class PairManager {
     }
 
     // Find a pair given two body IDs and an hash value.
-    /// This internal version is used to avoid computing multiple times in the
-    /// caller method
+    // This internal version is used to avoid computing multiple times in the
+    // caller method
     private BodyPair findPairWithHashValue(int id1, int id2, int hashValue) {
 
         // Check if the hash table has been allocated yet
@@ -301,9 +301,9 @@ public class PairManager {
     }
 
     // Add a pair of bodies in the pair manager and returns a pointer to that pair.
-    /// If the pair to add does not already exist in the set of
-    /// overlapping pairs, it will be created and if it already exists, we only
-    /// return a pointer to that pair.
+    // If the pair to add does not already exist in the set of
+    // overlapping pairs, it will be created and if it already exists, we only
+    // return a pointer to that pair.
     public BodyPair addPair(CollisionBody body1, CollisionBody body2) {
 
         // Sort the bodies to have the body with smallest ID first
@@ -367,7 +367,7 @@ public class PairManager {
     }
 
     // Remove a pair of bodies from the pair manager.
-    /// This method returns true if the pair has been found and removed.
+    // This method returns true if the pair has been found and removed.
     public boolean removePair(int id1, int id2) {
 
         // Sort the bodies IDs
