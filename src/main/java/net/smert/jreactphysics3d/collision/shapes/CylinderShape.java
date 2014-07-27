@@ -53,7 +53,7 @@ public class CylinderShape extends CollisionShape {
 
     @Override
     public CollisionShape clone() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new CylinderShape(this);
     }
 
     // Return the local inertia tensor of the cylinder
