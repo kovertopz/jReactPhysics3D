@@ -1,5 +1,6 @@
 package net.smert.jreactphysics3d.collision.broadphase;
 
+import java.util.Objects;
 import net.smert.jreactphysics3d.body.BodyIndexPair;
 import net.smert.jreactphysics3d.body.CollisionBody;
 
@@ -27,6 +28,29 @@ public class BodyPair {
 
         assert (indexPair.first != indexPair.second);
         return indexPair;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + Objects.hashCode(this.body1);
+        hash = 13 * hash + Objects.hashCode(this.body2);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final BodyPair other = (BodyPair) obj;
+        if (!Objects.equals(this.body1, other.body1)) {
+            return false;
+        }
+        return Objects.equals(this.body2, other.body2);
     }
 
 }
