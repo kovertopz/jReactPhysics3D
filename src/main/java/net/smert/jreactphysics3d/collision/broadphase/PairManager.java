@@ -236,16 +236,6 @@ public class PairManager {
         reallocatePairs();
     }
 
-    // Sort the bodies according to their IDs (smallest ID first)
-    private void sortBodiesUsingID(CollisionBody body1, CollisionBody body2) {
-        // TODO: remove unused method
-    }
-
-    // Sort the IDs (smallest ID first)
-    private void sortIDs(int id1, int id2) {
-        // TODO: remove unused method
-    }
-
     // Constructor of PairManager
     public PairManager(CollisionDetection collisionDetection) {
         mNbElementsHashTable = 0;
