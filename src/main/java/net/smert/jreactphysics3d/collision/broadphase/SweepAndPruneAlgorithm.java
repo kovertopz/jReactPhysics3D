@@ -210,9 +210,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     // The input is an AABB with integer coordinates
     protected void updateObjectIntegerAABB(CollisionBody body, AABBInt aabbInt) {
 
-        assert (aabbInt.min[0] > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (aabbInt.min[1] > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (aabbInt.min[2] > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
+        assert (aabbInt.min[0] > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
+        assert (aabbInt.min[1] > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
+        assert (aabbInt.min[2] > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
         assert (aabbInt.max[0] < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
         assert (aabbInt.max[1] < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
         assert (aabbInt.max[2] < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
@@ -463,9 +463,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
         int boxIndex;
 
-        assert (Utils.encodeFloatIntoInteger(aabb.getMin().x) > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (Utils.encodeFloatIntoInteger(aabb.getMin().y) > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
-        assert (Utils.encodeFloatIntoInteger(aabb.getMin().z) > Utils.encodeFloatIntoInteger(Float.MIN_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().x) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().y) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().z) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
         assert (Utils.encodeFloatIntoInteger(aabb.getMax().x) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
         assert (Utils.encodeFloatIntoInteger(aabb.getMax().y) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
         assert (Utils.encodeFloatIntoInteger(aabb.getMax().z) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
