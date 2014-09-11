@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.FloatBuffer;
 import net.smert.jreactphysics3d.common.openglframework.maths.Matrix3;
 import net.smert.jreactphysics3d.common.openglframework.maths.Matrix4;
@@ -191,8 +190,6 @@ public class Shader {
 
         assert (vertexShaderFilename.length() != 0 && fragmentShaderFilename.length() != 0);
 
-        System.out.println(fragmentShaderFilename);
-        System.out.println(vertexShaderFilename);
         String fragmentShaderCode = readShaderFromJAR(fragmentShaderFilename);
         String vertexShaderCode = readShaderFromJAR(vertexShaderFilename);
 
@@ -225,10 +222,6 @@ public class Shader {
                     System.err.println(GL20.glGetShaderInfoLog(mProgramObjectID, 8192));
                     throw new RuntimeException("Shader \"" + mFilenameVertexShader + "\" had validate errors!");
                 }
-            }
-
-            if (true) {
-                System.out.println("Shader \"" + mFilenameVertexShader + "\" was successfully loaded.");
             }
         }
 
