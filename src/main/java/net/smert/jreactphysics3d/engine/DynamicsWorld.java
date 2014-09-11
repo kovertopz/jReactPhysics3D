@@ -324,10 +324,10 @@ public class DynamicsWorld extends CollisionWorld {
                     //                 => v2 = v1 * (1 - c * dt)
                     float linDampingFactor = bodies[b].getLinearDamping();
                     float angDampingFactor = bodies[b].getAngularDamping();
-                    float linearDamping = Mathematics.clamp(1.0f - dt * linDampingFactor, 0.0f, 1.0f);
-                    float angularDamping = Mathematics.clamp(1.0f - dt * angDampingFactor, 0.0f, 1.0f);
-                    mConstrainedLinearVelocities[indexBody].operatorMultiplyEqual(Mathematics.clamp(linearDamping, 0.0f, 1.0f));
-                    mConstrainedAngularVelocities[indexBody].operatorMultiplyEqual(Mathematics.clamp(angularDamping, 0.0f, 1.0f));
+                    float linearDamping = Mathematics.Clamp(1.0f - dt * linDampingFactor, 0.0f, 1.0f);
+                    float angularDamping = Mathematics.Clamp(1.0f - dt * angDampingFactor, 0.0f, 1.0f);
+                    mConstrainedLinearVelocities[indexBody].operatorMultiplyEqual(Mathematics.Clamp(linearDamping, 0.0f, 1.0f));
+                    mConstrainedAngularVelocities[indexBody].operatorMultiplyEqual(Mathematics.Clamp(angularDamping, 0.0f, 1.0f));
 
                     // Update the old Transform of the body
                     bodies[b].updateOldTransform();

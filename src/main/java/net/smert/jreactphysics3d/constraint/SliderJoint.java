@@ -595,7 +595,7 @@ public class SliderJoint extends Joint {
             float maxMotorImpulse = mMaxMotorForce * constraintSolverData.timeStep;
             float deltaLambdaMotor = mInverseMassMatrixMotor * (-JvMotor - mMotorSpeed);
             float lambdaTemp = mImpulseMotor;
-            mImpulseMotor = Mathematics.clamp(mImpulseMotor + deltaLambdaMotor, -maxMotorImpulse, maxMotorImpulse);
+            mImpulseMotor = Mathematics.Clamp(mImpulseMotor + deltaLambdaMotor, -maxMotorImpulse, maxMotorImpulse);
             deltaLambdaMotor = mImpulseMotor - lambdaTemp;
 
             if (mBody1.isMotionEnabled()) {

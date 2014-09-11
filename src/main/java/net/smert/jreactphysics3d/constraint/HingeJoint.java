@@ -625,7 +625,7 @@ public class HingeJoint extends Joint {
             float maxMotorImpulse = mMaxMotorTorque * constraintSolverData.timeStep;
             float deltaLambdaMotor = mInverseMassMatrixLimitMotor * (-JvMotor - mMotorSpeed);
             float lambdaTemp = mImpulseMotor;
-            mImpulseMotor = Mathematics.clamp(mImpulseMotor + deltaLambdaMotor, -maxMotorImpulse, maxMotorImpulse);
+            mImpulseMotor = Mathematics.Clamp(mImpulseMotor + deltaLambdaMotor, -maxMotorImpulse, maxMotorImpulse);
             deltaLambdaMotor = mImpulseMotor - lambdaTemp;
 
             if (mBody1.isMotionEnabled()) {

@@ -102,12 +102,12 @@ public class Vector3 {
 
     // Return true if the vector is unit and false otherwise
     public boolean isUnit() {
-        return Mathematics.approxEqual(lengthSquare(), 1.0f, Defaults.MACHINE_EPSILON);
+        return Mathematics.ApproxEqual(lengthSquare(), 1.0f, Defaults.MACHINE_EPSILON);
     }
 
     // Return true if the vector is the zero vector
     public boolean isZero() {
-        return Mathematics.approxEqual(lengthSquare(), 0.0f, Defaults.MACHINE_EPSILON);
+        return Mathematics.ApproxEqual(lengthSquare(), 0.0f, Defaults.MACHINE_EPSILON);
     }
 
     // Overloaded operator for the equality condition
