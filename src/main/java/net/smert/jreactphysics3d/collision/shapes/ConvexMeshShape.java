@@ -28,9 +28,6 @@ public class ConvexMeshShape extends CollisionShape {
     // Array with the vertices of the mesh
     private List<Vector3> mVertices;
 
-    // Number of vertices in the mesh
-    private int mNbVertices;
-
     // Mesh minimum bounds in the three local x, y and z directions
     private Vector3 mMinBounds;
 
@@ -53,14 +50,11 @@ public class ConvexMeshShape extends CollisionShape {
 
         // TODO: Do real copying
         mVertices = shape.mVertices;
-        mNbVertices = shape.mNbVertices;
         mMinBounds = shape.mMinBounds;
         mMaxBounds = shape.mMaxBounds;
         mIsEdgesInformationUsed = shape.mIsEdgesInformationUsed;
         mEdgesAdjacencyList = shape.mEdgesAdjacencyList;
         mCachedSupportVertex = shape.mCachedSupportVertex;
-
-        assert (mNbVertices == mVertices.size());
     }
 
     // Recompute the bounds of the mesh
@@ -70,7 +64,7 @@ public class ConvexMeshShape extends CollisionShape {
         mMaxBounds.setToZero();
 
         // For each vertex of the mesh
-        for (int i = 0; i < mNbVertices; i++) {
+        for (int i = 0; i < mVertices.size(); i++) {
 
             if (mVertices.get(i).x > mMaxBounds.x) {
                 mMaxBounds.x = mVertices.get(i).x;
@@ -109,7 +103,6 @@ public class ConvexMeshShape extends CollisionShape {
         assert (stride > 0);
 
         mVertices = new ArrayList<>();
-        mNbVertices = nbVertices;
         mMinBounds = new Vector3();
         mMaxBounds = new Vector3();
         mIsEdgesInformationUsed = false;
@@ -119,9 +112,8 @@ public class ConvexMeshShape extends CollisionShape {
         int vertexPointer = 0;
 
         // Copy all the vertices into the internal array
-        for (int i = 0; i < mNbVertices; i++) {
-            mVertices.add(new Vector3(arrayVertices[vertexPointer + 0], arrayVertices[vertexPointer + 1], arrayVertices[vertexPointer + 2]));
-            vertexPointer += stride;
+        for (int i = 0; i < arrayVertices.length; i += stride) {
+            mVertices.add(new Vector3(arrayVertices[i + 0], arrayVertices[i + 1], arrayVertices[i + 2]));
         }
 
         // Recalculate the bounds of the mesh
@@ -135,7 +127,6 @@ public class ConvexMeshShape extends CollisionShape {
         super(CollisionShapeType.CONVEX_MESH, margin);
 
         mVertices = new ArrayList<>();
-        mNbVertices = 0;
         mMinBounds = new Vector3();
         mMaxBounds = new Vector3();
         mIsEdgesInformationUsed = false;
@@ -172,7 +163,6 @@ public class ConvexMeshShape extends CollisionShape {
 
         // Add the vertex in to vertices array
         mVertices.add(vertex);
-        mNbVertices++;
 
         // Update the bounds of the mesh
         if (vertex.x > mMaxBounds.x) {
@@ -256,12 +246,10 @@ public class ConvexMeshShape extends CollisionShape {
     @Override
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
 
-        assert (mNbVertices == mVertices.size());
-
         // If the edges information is used to speed up the collision detection
         if (mIsEdgesInformationUsed) {
 
-            assert (mEdgesAdjacencyList.size() == mNbVertices);
+            assert (mEdgesAdjacencyList.size() == mVertices.size());
 
             int maxVertex = mCachedSupportVertex;
             float maxDotProduct = direction.dot(mVertices.get(maxVertex));
@@ -301,7 +289,7 @@ public class ConvexMeshShape extends CollisionShape {
             int indexMaxDotProduct = 0;
 
             // For each vertex of the mesh
-            for (int i = 0; i < mNbVertices; i++) {
+            for (int i = 0; i < mVertices.size(); i++) {
 
                 // Compute the dot product of the current vertex
                 float dotProduct = direction.dot(mVertices.get(i));
@@ -332,9 +320,7 @@ public class ConvexMeshShape extends CollisionShape {
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         ConvexMeshShape otherShape = (ConvexMeshShape) otherCollisionShape;
 
-        assert (mNbVertices == mVertices.size());
-
-        if (mNbVertices != otherShape.mNbVertices) {
+        if (mVertices.size() != otherShape.mVertices.size()) {
             return false;
         }
 
@@ -351,7 +337,7 @@ public class ConvexMeshShape extends CollisionShape {
         }
 
         // Check that the vertices are the same
-        for (int i = 0; i < mNbVertices; i++) {
+        for (int i = 0; i < mVertices.size(); i++) {
             if (mVertices.get(i) != otherShape.mVertices.get(i)) {
                 return false;
             }
