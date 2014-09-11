@@ -203,40 +203,104 @@ public class Mesh extends Object3D {
         return hasUVTextureCoordinates() && (mTextures.size() > 0);
     }
 
+    private FloatBuffer verticesPointer;
+
     // Return a pointer to the vertices data
     public FloatBuffer getVerticesPointer() {
-        FloatBuffer fb = BufferUtils.createFloatBuffer(mVertices.size());
-        return fb;
+        if (verticesPointer == null) {
+            verticesPointer = BufferUtils.createFloatBuffer(mVertices.size() * 3);
+            for (Vector3 v : mVertices) {
+                verticesPointer.put(v.x);
+                verticesPointer.put(v.y);
+                verticesPointer.put(v.z);
+            }
+            verticesPointer.flip();
+        }
+
+        return verticesPointer;
     }
+
+    private FloatBuffer normalsPointer;
 
     // Return a pointer to the normals data
     public FloatBuffer getNormalsPointer() {
-        FloatBuffer fb = BufferUtils.createFloatBuffer(mNormals.size());
-        return fb;
+        if (normalsPointer == null) {
+            normalsPointer = BufferUtils.createFloatBuffer(mNormals.size() * 3);
+            for (Vector3 v : mNormals) {
+                normalsPointer.put(v.x);
+                normalsPointer.put(v.y);
+                normalsPointer.put(v.z);
+            }
+            normalsPointer.flip();
+        }
+
+        return normalsPointer;
     }
+
+    private ByteBuffer colorsPointer;
 
     // Return a pointer to the colors data
     public ByteBuffer getColorsPointer() {
-        ByteBuffer bb = BufferUtils.createByteBuffer(mColors.size());
-        return bb;
+        if (colorsPointer == null) {
+            colorsPointer = BufferUtils.createByteBuffer(mColors.size() * 4);
+            for (Color c : mColors) {
+                colorsPointer.put((byte) c.r);
+                colorsPointer.put((byte) c.g);
+                colorsPointer.put((byte) c.b);
+                colorsPointer.put((byte) c.a);
+            }
+            colorsPointer.flip();
+        }
+
+        return colorsPointer;
     }
+
+    private FloatBuffer tangentsPointer;
 
     // Return a pointer to the tangents data
     public FloatBuffer getTangentsPointer() {
-        FloatBuffer fb = BufferUtils.createFloatBuffer(mTangents.size());
-        return fb;
+        if (tangentsPointer == null) {
+            tangentsPointer = BufferUtils.createFloatBuffer(mTangents.size() * 3);
+            for (Vector3 v : mTangents) {
+                tangentsPointer.put(v.x);
+                tangentsPointer.put(v.y);
+                tangentsPointer.put(v.z);
+            }
+            tangentsPointer.flip();
+        }
+
+        return tangentsPointer;
     }
+
+    private FloatBuffer textureCoordinatesPointer;
 
     // Return a pointer to the UV texture coordinates data
     public FloatBuffer getUVTextureCoordinatesPointer() {
-        FloatBuffer fb = BufferUtils.createFloatBuffer(mUVs.size());
-        return fb;
+        if (textureCoordinatesPointer == null) {
+            textureCoordinatesPointer = BufferUtils.createFloatBuffer(mUVs.size() * 2);
+            for (Vector2 v : mUVs) {
+                textureCoordinatesPointer.put(v.x);
+                textureCoordinatesPointer.put(v.y);
+            }
+            textureCoordinatesPointer.flip();
+        }
+
+        return textureCoordinatesPointer;
     }
+
+    private IntBuffer indicesPointer;
 
     // Return a pointer to the vertex indicies data
     public IntBuffer getIndicesPointer() {
-        IntBuffer ib = BufferUtils.createIntBuffer(mIndices.size());
-        return ib;
+        if (indicesPointer == null) {
+            indicesPointer = BufferUtils.createIntBuffer(mIndices.size());
+            for (Integer i : mIndices) {
+                indicesPointer.put(i);
+            }
+            indicesPointer.flip();
+        }
+
+        return indicesPointer;
     }
 
     // Return a reference to a texture of the mesh
@@ -277,30 +341,30 @@ public class Mesh extends Object3D {
         for (int i = 0; i < getNbFaces(); i++) {
 
             // Get the three vertices index of the current face
-            int v1 = getVertexIndexInFace(i, 0);
-            int v2 = getVertexIndexInFace(i, 1);
-            int v3 = getVertexIndexInFace(i, 2);
+            int i1 = getVertexIndexInFace(i, 0);
+            int i2 = getVertexIndexInFace(i, 1);
+            int i3 = getVertexIndexInFace(i, 2);
 
-            assert (v1 < getNbVertices());
-            assert (v2 < getNbVertices());
-            assert (v3 < getNbVertices());
+            assert (i1 < getNbVertices());
+            assert (i2 < getNbVertices());
+            assert (i3 < getNbVertices());
 
             // Compute the normal of the face
-            Vector3 p = getVertex(v1);
-            Vector3 q = getVertex(v2);
-            Vector3 r = getVertex(v3);
+            Vector3 p = getVertex(i1);
+            Vector3 q = getVertex(i2);
+            Vector3 r = getVertex(i3);
             Vector3 normal = (q.operatorSubtract(p)).cross(r.operatorSubtract(p)).normalize();
 
             // Add the face surface normal to the sum of normals at
             // each vertex of the face
-            mNormals.get(v1).operatorAddEqual(normal);
-            mNormals.get(v2).operatorAddEqual(normal);
-            mNormals.get(v3).operatorAddEqual(normal);
+            mNormals.get(i1).operatorAddEqual(normal);
+            mNormals.get(i2).operatorAddEqual(normal);
+            mNormals.get(i3).operatorAddEqual(normal);
         }
 
         // Normalize the normal at each vertex
         for (int i = 0; i < getNbVertices(); i++) {
-            mNormals.add(i, mNormals.get(i).normalize());
+            mNormals.get(i).normalize();
         }
     }
 

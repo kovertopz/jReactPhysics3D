@@ -28,8 +28,6 @@ public class MeshReaderWriter {
     }
 
     protected static void parse(String line) {
-        System.out.println(line);
-
         String[] words = line.split(" ");
         int numberOfWords = words.length;
 
@@ -151,12 +149,9 @@ public class MeshReaderWriter {
                 uvs.add(new Vector2(v1, v2));
                 break;
         }
-
     }
 
     protected static void readMeshFromJAR(String file) {
-        System.out.println(file);
-
         // Open the file
         try {
             InputStream inputstream = MeshReaderWriter.class.getResourceAsStream(file);

@@ -41,7 +41,7 @@ public class VisualContactPoint extends Object3D {
         if (!mIsMeshInitialized) {
 
             // Load the mesh from a file
-            MeshReaderWriter.loadMeshFromFile("../meshes/sphere.obj", mMesh);
+            MeshReaderWriter.loadMeshFromFile("../meshes/cone.obj", mMesh);
 
             // Calculate the normals of the mesh
             mMesh.calculateNormals();
@@ -76,15 +76,15 @@ public class VisualContactPoint extends Object3D {
         shader.setMatrix3x3Uniform("normalMatrix", normalMatrix);
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
+        //GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
         if (mMesh.hasTexture()) {
             GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         }
 
-        GL11.glVertexPointer(3, GL11.GL_FLOAT, mMesh.getVerticesPointer());
-        GL11.glNormalPointer(GL11.GL_FLOAT, mMesh.getNormalsPointer());
+        GL11.glVertexPointer(3, 0, mMesh.getVerticesPointer());
+        //GL11.glNormalPointer(0, mMesh.getNormalsPointer());
         if (mMesh.hasTexture()) {
-            GL11.glTexCoordPointer(2, GL11.GL_FLOAT, mMesh.getUVTextureCoordinatesPointer());
+            GL11.glTexCoordPointer(2, 0, mMesh.getUVTextureCoordinatesPointer());
         }
 
         // For each part of the mesh

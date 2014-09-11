@@ -29,11 +29,11 @@ import org.lwjgl.opengl.GL11;
 public class Scene {
 
     private static final int NB_BOXES = 3;
-    private static final int NB_SPHERES = 3;
+    private static final int NB_SPHERES = 1;
     private static final int NB_CONES = 3;
     private static final int NB_CYLINDERS = 3;
-    private static final int NB_CAPSULES = 3;
-    private static final int NB_MESHES = 3;
+    private static final int NB_CAPSULES = 1;
+    private static final int NB_MESHES = 0;
     private Vector3 BOX_SIZE = new Vector3(2, 2, 2);
     private static final float SPHERE_RADIUS = 1.5f;
     private static final float CONE_RADIUS = 2.0f;
@@ -243,17 +243,17 @@ public class Scene {
                     radius * (float) Math.sin(angle));
 
             // Create a convex mesh and a corresponding rigid in the dynamics world
-            //ConvexMesh mesh = new ConvexMesh(position, MESH_MASS, mDynamicsWorld);
+            ConvexMesh mesh = new ConvexMesh(position, MESH_MASS, mDynamicsWorld);
 
             // The mesh is a moving rigid body
-            //mesh.getRigidBody().enableMotion(true);
+            mesh.getRigidBody().enableMotion(true);
 
             // Change the material properties of the rigid body
-            //Material material = mesh.getRigidBody().getMaterial();
-            //material.setBounciness(0.2f);
+            Material material = mesh.getRigidBody().getMaterial();
+            material.setBounciness(0.2f);
 
             // Add the mesh the list of sphere in the scene
-            //mConvexMeshes.add(mesh);
+            mConvexMeshes.add(mesh);
         }
 
         // Create the floor

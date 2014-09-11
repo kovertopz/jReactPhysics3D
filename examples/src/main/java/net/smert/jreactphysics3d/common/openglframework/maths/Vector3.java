@@ -180,4 +180,9 @@ public class Vector3 {
         return (float) Math.sqrt(lengthSquared());
     }
 
+    @Override
+    public String toString() {
+        return "{" + x + " " + y + " " + z + "}";
+    }
+
 }

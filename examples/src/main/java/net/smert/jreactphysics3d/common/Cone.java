@@ -98,10 +98,10 @@ public class Cone extends Mesh {
             GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
         }
 
-        GL11.glVertexPointer(3, GL11.GL_FLOAT, getVerticesPointer());
-        GL11.glNormalPointer(GL11.GL_FLOAT, getNormalsPointer());
+        GL11.glVertexPointer(3, 0, getVerticesPointer());
+        GL11.glNormalPointer(0, getNormalsPointer());
         if (hasTexture()) {
-            GL11.glTexCoordPointer(2, GL11.GL_FLOAT, getUVTextureCoordinatesPointer());
+            GL11.glTexCoordPointer(2, 0, getUVTextureCoordinatesPointer());
         }
 
         // For each part of the mesh
