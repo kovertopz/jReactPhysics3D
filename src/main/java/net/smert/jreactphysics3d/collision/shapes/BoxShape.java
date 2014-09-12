@@ -39,7 +39,7 @@ public class BoxShape extends CollisionShape {
 
     // Return the extents of the box
     public Vector3 getExtent() {
-        return Vector3.operatorAdd(mExtent, new Vector3(mMargin, mMargin, mMargin));
+        return new Vector3(mExtent).add(new Vector3(mMargin, mMargin, mMargin));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class BoxShape extends CollisionShape {
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
-        Vector3 realExtent = Vector3.operatorAdd(mExtent, new Vector3(mMargin, mMargin, mMargin));
+        Vector3 realExtent = new Vector3(mExtent).add(new Vector3(mMargin, mMargin, mMargin));
         float xSquare = realExtent.getX() * realExtent.getX();
         float ySquare = realExtent.getY() * realExtent.getY();
         float zSquare = realExtent.getZ() * realExtent.getZ();

@@ -31,7 +31,7 @@ public class AABB {
 
     // Return the center point of the AABB in world coordinates
     public Vector3 getCenter() {
-        return Vector3.operatorAdd(mMinCoordinates, mMaxCoordinates).multiply(0.5f);
+        return new Vector3(mMinCoordinates).add(mMaxCoordinates).multiply(0.5f);
     }
 
     // Return the minimum coordinates of the AABB

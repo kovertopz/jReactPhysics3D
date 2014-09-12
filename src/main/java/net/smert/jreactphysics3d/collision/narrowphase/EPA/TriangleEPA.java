@@ -92,9 +92,9 @@ public class TriangleEPA {
     // Compute the point of an object closest to the origin
     public Vector3 computeClosestPointOfObject(Vector3[] supportPointsOfObject) {
         Vector3 p0 = supportPointsOfObject[mIndicesVertices[0]];
-        return Vector3.operatorAdd(p0, Vector3.operatorMultiply(1.0f / mDet,
-                Vector3.operatorAdd(
-                        Vector3.operatorMultiply(mLambda1, new Vector3(supportPointsOfObject[mIndicesVertices[1]]).subtract(p0)),
+        return new Vector3(p0).add(Vector3.operatorMultiply(1.0f / mDet,
+                new Vector3(
+                        Vector3.operatorMultiply(mLambda1, new Vector3(supportPointsOfObject[mIndicesVertices[1]]).subtract(p0))).add(
                         Vector3.operatorMultiply(mLambda2, new Vector3(supportPointsOfObject[mIndicesVertices[2]]).subtract(p0)))));
     }
 
@@ -126,8 +126,8 @@ public class TriangleEPA {
         // If the determinant is positive
         if (mDet > 0.0f) {
             // Compute the closest point v
-            mClosestPoint = Vector3.operatorAdd(p0, Vector3.operatorMultiply(1.0f / mDet,
-                    Vector3.operatorAdd(Vector3.operatorMultiply(mLambda1, v1), Vector3.operatorMultiply(mLambda2, v2))));
+            mClosestPoint = new Vector3(p0).add(Vector3.operatorMultiply(1.0f / mDet,
+                    new Vector3(Vector3.operatorMultiply(mLambda1, v1)).add(Vector3.operatorMultiply(mLambda2, v2))));
 
             // Compute the square distance of closest point to the origin
             mDistSquare = mClosestPoint.dot(mClosestPoint);

@@ -208,7 +208,7 @@ public class SliderJoint extends Joint {
         mR2 = orientationBody2.operatorMultiply(mLocalAnchorPointBody2);
 
         // Compute the vector u (difference between anchor points)
-        Vector3 u = new Vector3(new Vector3(Vector3.operatorAdd(x2, mR2)).subtract(x1)).subtract(mR1);
+        Vector3 u = new Vector3(new Vector3(new Vector3(x2).add(mR2)).subtract(x1)).subtract(mR1);
 
         // Compute the two orthogonal vectors to the slider axis in world-space
         mSliderAxisWorld = orientationBody1.operatorMultiply(mSliderAxisBody1);
@@ -235,7 +235,7 @@ public class SliderJoint extends Joint {
         mR2CrossN1 = mR2.cross(mN1);
         mR2CrossN2 = mR2.cross(mN2);
         mR2CrossSliderAxis = mR2.cross(mSliderAxisWorld);
-        Vector3 r1PlusU = Vector3.operatorAdd(mR1, u);
+        Vector3 r1PlusU = new Vector3(mR1).add(u);
         mR1PlusUCrossN1 = (r1PlusU).cross(mN1);
         mR1PlusUCrossN2 = (r1PlusU).cross(mN2);
         mR1PlusUCrossSliderAxis = (r1PlusU).cross(mSliderAxisWorld);
@@ -400,12 +400,12 @@ public class SliderJoint extends Joint {
         if (mBody2.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
-            Vector3 linearImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(new Vector3(mN1).invert(), mImpulseTranslation.x),
-                    Vector3.operatorMultiply(mN2, mImpulseTranslation.y));
-            Vector3 angularImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), mImpulseTranslation.x),
-                    Vector3.operatorMultiply(mR2CrossN2, mImpulseTranslation.y));
+            Vector3 linearImpulseBody2 = new Vector3(
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), mImpulseTranslation.x)).add(
+                            Vector3.operatorMultiply(mN2, mImpulseTranslation.y));
+            Vector3 angularImpulseBody2 = new Vector3(
+                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), mImpulseTranslation.x)).add(
+                            Vector3.operatorMultiply(mR2CrossN2, mImpulseTranslation.y));
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
             angularImpulseBody2.add(mImpulseRotation);
@@ -467,12 +467,12 @@ public class SliderJoint extends Joint {
         if (mBody2.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
-            Vector3 linearImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(new Vector3(mN1).invert(), deltaLambda.x),
-                    Vector3.operatorMultiply(mN2, deltaLambda.y));
-            Vector3 angularImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), deltaLambda.x),
-                    Vector3.operatorMultiply(mR2CrossN2, deltaLambda.y));
+            Vector3 linearImpulseBody2 = new Vector3(
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), deltaLambda.x)).add(
+                            Vector3.operatorMultiply(mN2, deltaLambda.y));
+            Vector3 angularImpulseBody2 = new Vector3(
+                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), deltaLambda.x)).add(
+                            Vector3.operatorMultiply(mR2CrossN2, deltaLambda.y));
 
             // Apply the impulse to the body
             v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
@@ -646,7 +646,7 @@ public class SliderJoint extends Joint {
         mR2 = q2.operatorMultiply(mLocalAnchorPointBody2);
 
         // Compute the vector u (difference between anchor points)
-        Vector3 u = new Vector3(new Vector3(Vector3.operatorAdd(x2, mR2)).subtract(x1)).subtract(mR1);
+        Vector3 u = new Vector3(new Vector3(new Vector3(x2).add(mR2)).subtract(x1)).subtract(mR1);
 
         // Compute the two orthogonal vectors to the slider axis in world-space
         mSliderAxisWorld = q1.operatorMultiply(mSliderAxisBody1);
@@ -665,7 +665,7 @@ public class SliderJoint extends Joint {
         mR2CrossN1 = mR2.cross(mN1);
         mR2CrossN2 = mR2.cross(mN2);
         mR2CrossSliderAxis = mR2.cross(mSliderAxisWorld);
-        Vector3 r1PlusU = Vector3.operatorAdd(mR1, u);
+        Vector3 r1PlusU = new Vector3(mR1).add(u);
         mR1PlusUCrossN1 = (r1PlusU).cross(mN1);
         mR1PlusUCrossN2 = (r1PlusU).cross(mN2);
         mR1PlusUCrossSliderAxis = (r1PlusU).cross(mSliderAxisWorld);
@@ -729,12 +729,12 @@ public class SliderJoint extends Joint {
         if (mBody2.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
-            Vector3 linearImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(new Vector3(mN1).invert(), lambdaTranslation.x),
-                    Vector3.operatorMultiply(mN2, lambdaTranslation.y));
-            Vector3 angularImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), lambdaTranslation.x),
-                    Vector3.operatorMultiply(mR2CrossN2, lambdaTranslation.y));
+            Vector3 linearImpulseBody2 = new Vector3(
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), lambdaTranslation.x)).add(
+                            Vector3.operatorMultiply(mN2, lambdaTranslation.y));
+            Vector3 angularImpulseBody2 = new Vector3(
+                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), lambdaTranslation.x)).add(
+                            Vector3.operatorMultiply(mR2CrossN2, lambdaTranslation.y));
 
             // Apply the impulse to the body
             Vector3 v2 = Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2);
@@ -961,8 +961,8 @@ public class SliderJoint extends Joint {
         Quaternion q2 = mBody2.getTransform().getOrientation();
 
         // Compute the two anchor points in world-space coordinates
-        Vector3 anchorBody1 = Vector3.operatorAdd(x1, q1.operatorMultiply(mLocalAnchorPointBody1));
-        Vector3 anchorBody2 = Vector3.operatorAdd(x2, q2.operatorMultiply(mLocalAnchorPointBody2));
+        Vector3 anchorBody1 = new Vector3(x1).add(q1.operatorMultiply(mLocalAnchorPointBody1));
+        Vector3 anchorBody2 = new Vector3(x2).add(q2.operatorMultiply(mLocalAnchorPointBody2));
 
         // Compute the vector u (difference between anchor points)
         Vector3 u = new Vector3(anchorBody2).subtract(anchorBody1);

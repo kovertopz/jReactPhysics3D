@@ -101,8 +101,8 @@ public abstract class CollisionShape {
                 worldAxis.getColumn(2).dot(maxBounds));
 
         // Compute the minimum and maximum coordinates of the rotated extents
-        Vector3 minCoordinates = Vector3.operatorAdd(transform.getPosition(), worldMinBounds);
-        Vector3 maxCoordinates = Vector3.operatorAdd(transform.getPosition(), worldMaxBounds);
+        Vector3 minCoordinates = new Vector3(transform.getPosition()).add(worldMinBounds);
+        Vector3 maxCoordinates = new Vector3(transform.getPosition()).add(worldMaxBounds);
 
         // Update the AABB with the new minimum and maximum coordinates
         aabb.setMin(minCoordinates);

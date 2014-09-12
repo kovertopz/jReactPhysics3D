@@ -112,7 +112,7 @@ public class BallAndSocketJoint extends Joint {
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             float biasFactor = (BETA / constraintSolverData.timeStep);
             mBiasVector = Vector3.operatorMultiply(
-                    biasFactor, new Vector3(new Vector3(Vector3.operatorAdd(x2, mR2World)).subtract(x1)).subtract(mR1World));
+                    biasFactor, new Vector3(new Vector3(new Vector3(x2).add(mR2World)).subtract(x1)).subtract(mR1World));
         }
 
         // If warm-starting is not enabled
@@ -174,7 +174,7 @@ public class BallAndSocketJoint extends Joint {
         float inverseMassBody2 = mBody2.getMassInverse();
 
         // Compute J*v
-        Vector3 Jv = new Vector3(new Vector3(Vector3.operatorAdd(v2, w2.cross(mR2World))).subtract(v1)).subtract(w1.cross(mR1World));
+        Vector3 Jv = new Vector3(new Vector3(new Vector3(v2).add(w2.cross(mR2World))).subtract(v1)).subtract(w1.cross(mR1World));
 
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambda = Matrix3x3.operatorMultiply(
@@ -260,7 +260,7 @@ public class BallAndSocketJoint extends Joint {
         }
 
         // Compute the constraint error (value of the C(x) function)
-        Vector3 constraintError = new Vector3(new Vector3(Vector3.operatorAdd(x2, mR2World)).subtract(x1)).subtract(mR1World);
+        Vector3 constraintError = new Vector3(new Vector3(new Vector3(x2).add(mR2World)).subtract(x1)).subtract(mR1World);
 
         // Compute the Lagrange multiplier lambda
         // TODO : Do not solve the system by computing the inverse each time and multiplying with the

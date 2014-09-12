@@ -44,7 +44,7 @@ public class SphereShape extends CollisionShape {
 
         // Update the AABB with the new minimum and maximum coordinates
         aabb.setMin(new Vector3(transform.getPosition()).subtract(extents));
-        aabb.setMax(Vector3.operatorAdd(transform.getPosition(), extents));
+        aabb.setMax(new Vector3(transform.getPosition()).add(extents));
     }
 
     @Override

@@ -93,12 +93,12 @@ public class CapsuleShape extends CollisionShape {
 
             // Support point top sphere
             Vector3 centerTopSphere = new Vector3(0.0f, mHalfHeight, 0.0f);
-            Vector3 topSpherePoint = Vector3.operatorAdd(centerTopSphere, unitDirection).multiply(mRadius);
+            Vector3 topSpherePoint = new Vector3(centerTopSphere).add(unitDirection).multiply(mRadius);
             float dotProductTop = topSpherePoint.dot(direction);
 
             // Support point bottom sphere
             Vector3 centerBottomSphere = new Vector3(0.0f, -mHalfHeight, 0.0f);
-            Vector3 bottomSpherePoint = Vector3.operatorAdd(centerBottomSphere, unitDirection).multiply(mRadius);
+            Vector3 bottomSpherePoint = new Vector3(centerBottomSphere).add(unitDirection).multiply(mRadius);
             float dotProductBottom = bottomSpherePoint.dot(direction);
 
             // Return the point with the maximum dot product

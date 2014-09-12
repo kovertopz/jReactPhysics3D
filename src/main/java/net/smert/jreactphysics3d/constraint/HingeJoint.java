@@ -329,7 +329,7 @@ public class HingeJoint extends Joint {
         float biasFactor = (BETA / constraintSolverData.timeStep);
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             mBTranslation = Vector3.operatorMultiply(
-                    biasFactor, new Vector3(new Vector3(Vector3.operatorAdd(x2, mR2World)).subtract(x1)).subtract(mR1World));
+                    biasFactor, new Vector3(new Vector3(new Vector3(x2).add(mR2World)).subtract(x1)).subtract(mR1World));
         }
 
         // Compute the inverse mass matrix K=JM^-1J^t for the 2 rotation constraints (2x2 matrix)
@@ -486,7 +486,7 @@ public class HingeJoint extends Joint {
          */
         // Compute J*v
         Vector3 JvTranslation = new Vector3(
-                new Vector3(Vector3.operatorAdd(v2, w2.cross(mR2World))).subtract(v1)).subtract(w1.cross(mR1World));
+                new Vector3(new Vector3(v2).add(w2.cross(mR2World))).subtract(v1)).subtract(w1.cross(mR1World));
 
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambdaTranslation = Matrix3x3.operatorMultiply(
@@ -538,9 +538,9 @@ public class HingeJoint extends Joint {
         if (mBody2.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
-            Vector3 angularImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(mB2CrossA1, deltaLambdaRotation.x),
-                    Vector3.operatorMultiply(mC2CrossA1, deltaLambdaRotation.y));
+            Vector3 angularImpulseBody2 = new Vector3(
+                    Vector3.operatorMultiply(mB2CrossA1, deltaLambdaRotation.x)).add(
+                            Vector3.operatorMultiply(mC2CrossA1, deltaLambdaRotation.y));
 
             // Apply the impulse to the body
             w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
@@ -727,7 +727,7 @@ public class HingeJoint extends Joint {
 
         // Compute position error for the 3 translation constraints
         Vector3 errorTranslation = new Vector3(
-                new Vector3(Vector3.operatorAdd(x2, mR2World)).subtract(x1)).subtract(mR1World);
+                new Vector3(new Vector3(x2).add(mR2World)).subtract(x1)).subtract(mR1World);
 
         // Compute the Lagrange multiplier lambda
         Vector3 lambdaTranslation = Matrix3x3.operatorMultiply(
@@ -816,9 +816,9 @@ public class HingeJoint extends Joint {
         if (mBody2.isMotionEnabled()) {
 
             // Compute the impulse
-            Vector3 angularImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(mB2CrossA1, lambdaRotation.x),
-                    Vector3.operatorMultiply(mC2CrossA1, lambdaRotation.y));
+            Vector3 angularImpulseBody2 = new Vector3(
+                    Vector3.operatorMultiply(mB2CrossA1, lambdaRotation.x)).add(
+                            Vector3.operatorMultiply(mC2CrossA1, lambdaRotation.y));
 
             // Compute the pseudo velocity
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);

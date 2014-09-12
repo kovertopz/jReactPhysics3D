@@ -165,7 +165,7 @@ public class DynamicsWorld extends CollisionWorld {
                     Quaternion currentOrientation = bodies[b].getTransform().getOrientation();
 
                     // Compute the new position of the body
-                    Vector3 newPosition = Vector3.operatorAdd(currentPosition, Vector3.operatorMultiply(newLinVelocity, dt));
+                    Vector3 newPosition = new Vector3(currentPosition).add(Vector3.operatorMultiply(newLinVelocity, dt));
                     Quaternion newOrientation = currentOrientation.operatorAdd(
                             new Quaternion(0.0f, newAngVelocity).operatorMultiply(currentOrientation).operatorMultiply(0.5f).operatorMultiply(dt));
 
@@ -295,9 +295,9 @@ public class DynamicsWorld extends CollisionWorld {
                 if (bodies[b].isMotionEnabled()) {
 
                     // Integrate the external force to get the new velocity of the body
-                    mConstrainedLinearVelocities[indexBody] = Vector3.operatorAdd(bodies[b].getLinearVelocity(),
+                    mConstrainedLinearVelocities[indexBody] = new Vector3(bodies[b].getLinearVelocity()).add(
                             Vector3.operatorMultiply(dt * bodies[b].getMassInverse(), bodies[b].getExternalForce()));
-                    mConstrainedAngularVelocities[indexBody] = Vector3.operatorAdd(bodies[b].getAngularVelocity(),
+                    mConstrainedAngularVelocities[indexBody] = new Vector3(bodies[b].getAngularVelocity()).add(
                             Matrix3x3.operatorMultiply(
                                     Matrix3x3.operatorMultiply(dt, bodies[b].getInertiaTensorInverseWorld()), bodies[b].getExternalTorque()));
 

@@ -128,7 +128,7 @@ public class Transform {
 
     // Operator of multiplication of a transform with another one
     public Transform operatorMultiply(Transform transform2) {
-        return new Transform(Vector3.operatorAdd(mPosition, Matrix3x3.operatorMultiply(mOrientation.getMatrix(), transform2.mPosition)),
+        return new Transform(new Vector3(mPosition).add(Matrix3x3.operatorMultiply(mOrientation.getMatrix(), transform2.mPosition)),
                 mOrientation.operatorMultiply(transform2.mOrientation));
     }
 

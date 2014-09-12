@@ -184,7 +184,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(Vector3.operatorMultiply(collisionShape1.getMargin() / dist, v));
-                pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
+                pB = body2Tobody1.getInverse().operatorMultiply(new Vector3(pB).add(Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
                 Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), new Vector3(v).normalize().invert());
@@ -219,7 +219,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(Vector3.operatorMultiply(collisionShape1.getMargin() / dist, v));
-                pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
+                pB = body2Tobody1.getInverse().operatorMultiply(new Vector3(pB).add(Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
                 Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), new Vector3(v).normalize().invert());
@@ -252,7 +252,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(Vector3.operatorMultiply(collisionShape1.getMargin() / dist, v));
-                pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
+                pB = body2Tobody1.getInverse().operatorMultiply(new Vector3(pB).add(Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
                 Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), new Vector3(v).normalize().invert());
@@ -292,7 +292,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(Vector3.operatorMultiply(collisionShape1.getMargin() / dist, v));
-                pB = body2Tobody1.getInverse().operatorMultiply(Vector3.operatorAdd(pB, Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
+                pB = body2Tobody1.getInverse().operatorMultiply(new Vector3(pB).add(Vector3.operatorMultiply(collisionShape2.getMargin() / dist, v)));
 
                 // Compute the contact info
                 Vector3 normal = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), new Vector3(v).normalize().invert());

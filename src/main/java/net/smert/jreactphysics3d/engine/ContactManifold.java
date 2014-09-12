@@ -329,7 +329,7 @@ public class ContactManifold {
             } else {
                 // Compute the distance of the two contact points in the plane
                 // orthogonal to the contact normal
-                Vector3 projOfPoint1 = Vector3.operatorAdd(mContactPoints[i].getWorldPointOnBody1(),
+                Vector3 projOfPoint1 = new Vector3(mContactPoints[i].getWorldPointOnBody1()).add(
                         Vector3.operatorMultiply(mContactPoints[i].getNormal(), distanceNormal));
                 Vector3 projDifference = new Vector3(mContactPoints[i].getWorldPointOnBody2()).subtract(projOfPoint1);
 

@@ -232,7 +232,7 @@ public class ConvexMeshShape extends CollisionShape {
         unitDirection.normalize();
 
         // Add the margin to the support point and return it
-        return Vector3.operatorAdd(supportPoint, unitDirection).multiply(mMargin);
+        return new Vector3(supportPoint).add(unitDirection).multiply(mMargin);
     }
 
     // Return a local support point in a given direction without the object margin.
