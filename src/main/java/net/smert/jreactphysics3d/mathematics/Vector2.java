@@ -140,10 +140,8 @@ public class Vector2 {
 
     // Return one unit orthogonal vector of the current vector
     public Vector2 setUnitOrthogonal() {
-
         float len = length();
         assert (len > Defaults.MACHINE_EPSILON);
-
         return new Vector2(-y / len, x / len);
     }
 
@@ -181,6 +179,7 @@ public class Vector2 {
 
     @Override
     public boolean equals(Object obj) {
+
         if (obj == null) {
             return false;
         }
