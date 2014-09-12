@@ -418,7 +418,7 @@ public class HingeJoint extends Joint {
 
         // Compute the impulse P=J^T * lambda for the 2 rotation constraints
         Vector3 rotationImpulse = Vector3.operatorSubtract(
-                Vector3.operatorMultiply(Vector3.operatorNegative(mB2CrossA1), mImpulseRotation.x),
+                Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), mImpulseRotation.x),
                 Vector3.operatorMultiply(mC2CrossA1, mImpulseRotation.y));
 
         // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
@@ -430,7 +430,7 @@ public class HingeJoint extends Joint {
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 3 translation constraints
-            Vector3 linearImpulseBody1 = Vector3.operatorNegative(mImpulseTranslation);
+            Vector3 linearImpulseBody1 = new Vector3(mImpulseTranslation).invert();
             Vector3 angularImpulseBody1 = mImpulseTranslation.cross(mR1World);
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
@@ -450,16 +450,16 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 3 translation constraints
             Vector3 linearImpulseBody2 = mImpulseTranslation;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(mImpulseTranslation.cross(mR2World));
+            Vector3 angularImpulseBody2 = new Vector3(mImpulseTranslation.cross(mR2World)).invert();
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
-            angularImpulseBody2.add(Vector3.operatorNegative(rotationImpulse));
+            angularImpulseBody2.add(new Vector3(rotationImpulse).invert());
 
             // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
-            angularImpulseBody2.add(Vector3.operatorNegative(limitsImpulse));
+            angularImpulseBody2.add(new Vector3(limitsImpulse).invert());
 
             // Compute the impulse P=J^T * lambda for the motor constraint
-            angularImpulseBody2.add(Vector3.operatorNegative(motorImpulse));
+            angularImpulseBody2.add(new Vector3(motorImpulse).invert());
 
             // Apply the impulse to the body
             v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
@@ -490,13 +490,13 @@ public class HingeJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambdaTranslation = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixTranslation, Vector3.operatorSubtract(Vector3.operatorNegative(JvTranslation), mBTranslation));
+                mInverseMassMatrixTranslation, Vector3.operatorSubtract(new Vector3(JvTranslation).invert(), mBTranslation));
         mImpulseTranslation.add(deltaLambdaTranslation);
 
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda
-            Vector3 linearImpulseBody1 = Vector3.operatorNegative(deltaLambdaTranslation);
+            Vector3 linearImpulseBody1 = new Vector3(deltaLambdaTranslation).invert();
             Vector3 angularImpulseBody1 = deltaLambdaTranslation.cross(mR1World);
 
             // Apply the impulse to the body
@@ -507,7 +507,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody2 = deltaLambdaTranslation;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(deltaLambdaTranslation.cross(mR2World));
+            Vector3 angularImpulseBody2 = new Vector3(deltaLambdaTranslation.cross(mR2World)).invert();
 
             // Apply the impulse to the body
             v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
@@ -529,7 +529,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
             Vector3 angularImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mB2CrossA1), deltaLambdaRotation.x),
+                    Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), deltaLambdaRotation.x),
                     Vector3.operatorMultiply(mC2CrossA1, deltaLambdaRotation.y));
 
             // Apply the impulse to the body
@@ -731,13 +731,13 @@ public class HingeJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda
         Vector3 lambdaTranslation = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixTranslation, (Vector3.operatorNegative(errorTranslation)));
+                mInverseMassMatrixTranslation, (new Vector3(errorTranslation).invert()));
 
         // Apply the impulse to the bodies of the joint
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse
-            Vector3 linearImpulseBody1 = Vector3.operatorNegative(lambdaTranslation);
+            Vector3 linearImpulseBody1 = new Vector3(lambdaTranslation).invert();
             Vector3 angularImpulseBody1 = lambdaTranslation.cross(mR1World);
 
             // Compute the pseudo velocity
@@ -753,7 +753,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse
             Vector3 linearImpulseBody2 = lambdaTranslation;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(lambdaTranslation.cross(mR2World));
+            Vector3 angularImpulseBody2 = new Vector3(lambdaTranslation.cross(mR2World)).invert();
 
             // Compute the pseudo velocity
             Vector3 v2 = Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2);
@@ -803,7 +803,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
             Vector3 angularImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mB2CrossA1), lambdaRotation.x),
+                    Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), lambdaRotation.x),
                     Vector3.operatorMultiply(mC2CrossA1, lambdaRotation.y));
 
             // Compute the pseudo velocity

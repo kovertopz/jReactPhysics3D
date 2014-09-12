@@ -119,7 +119,7 @@ public class Simplex {
 
                 // Compute the distance between two points in the possible simplex set
                 mDiffLength[i][mLastFound] = Vector3.operatorSubtract(mPoints[i], mPoints[mLastFound]);
-                mDiffLength[mLastFound][i] = Vector3.operatorNegative(mDiffLength[i][mLastFound]);
+                mDiffLength[mLastFound][i] = new Vector3(mDiffLength[i][mLastFound]).invert();
 
                 // Compute the squared length of the vector
                 // distances from points in the possible simplex set

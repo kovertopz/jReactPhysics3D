@@ -193,10 +193,9 @@ public class TestVector3 {
         Assert.assertEquals(vector4.equals(new Vector3(5, 20, 11)), true);
 
         // Negative operator
-        Vector3 vector5 = new Vector3(-34, 5, 422);
-        Vector3 negative = Vector3.operatorNegative(vector5);
+        Vector3 vector5 = new Vector3(-34, 5, 422).invert();
 
-        Assert.assertEquals(negative.equals(new Vector3(34, -5, -422)), true);
+        Assert.assertEquals(vector5.equals(new Vector3(34, -5, -422)), true);
     }
 
 }

@@ -100,7 +100,7 @@ public class Transform {
     public Transform getInverse() {
         Quaternion invQuaternion = mOrientation.getInverse();
         Matrix3x3 invMatrix = invQuaternion.getMatrix();
-        return new Transform(Matrix3x3.operatorMultiply(invMatrix, Vector3.operatorNegative(mPosition)), invQuaternion);
+        return new Transform(Matrix3x3.operatorMultiply(invMatrix, new Vector3(mPosition).invert()), invQuaternion);
     }
 
     // Return an interpolated transform

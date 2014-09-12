@@ -172,19 +172,19 @@ public class EPAAlgorithm {
                 // Compute the support point in the direction of v1
                 suppPointsA[2] = collisionShape1.getLocalSupportPointWithMargin(v1);
                 suppPointsB[2] = body2Tobody1.operatorMultiply(
-                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(v1))));
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v1).invert())));
                 points[2] = Vector3.operatorSubtract(suppPointsA[2], suppPointsB[2]);
 
                 // Compute the support point in the direction of v2
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(v2);
                 suppPointsB[3] = body2Tobody1.operatorMultiply(
-                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(v2))));
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v2).invert())));
                 points[3] = Vector3.operatorSubtract(suppPointsA[3], suppPointsB[3]);
 
                 // Compute the support point in the direction of v3
                 suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(v3);
                 suppPointsB[4] = body2Tobody1.operatorMultiply(
-                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(v3))));
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v3).invert())));
                 points[4] = Vector3.operatorSubtract(suppPointsA[4], suppPointsB[4]);
 
                 // Now we have an hexahedron (two tetrahedron glued together). We can simply keep the
@@ -280,9 +280,9 @@ public class EPAAlgorithm {
                 // Compute the two new vertices to obtain a hexahedron
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(n);
                 suppPointsB[3] = body2Tobody1.operatorMultiply(
-                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(n))));
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(n).invert())));
                 points[3] = Vector3.operatorSubtract(suppPointsA[3], suppPointsB[3]);
-                suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(Vector3.operatorNegative(n));
+                suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(new Vector3(n).invert());
                 suppPointsB[4] = body2Tobody1.operatorMultiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, n)));
                 points[4] = Vector3.operatorSubtract(suppPointsA[4], suppPointsB[4]);
@@ -355,7 +355,8 @@ public class EPAAlgorithm {
                 // difference (A-B) in the closest point direction
                 suppPointsA[nbVertices] = collisionShape1.getLocalSupportPointWithMargin(triangle.getClosestPoint());
                 suppPointsB[nbVertices] = body2Tobody1.operatorMultiply(
-                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, Vector3.operatorNegative(triangle.getClosestPoint()))));
+                        collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2,
+                                        new Vector3(triangle.getClosestPoint()).invert())));
                 points[nbVertices] = Vector3.operatorSubtract(suppPointsA[nbVertices], suppPointsB[nbVertices]);
 
                 int indexNewVertex = nbVertices;

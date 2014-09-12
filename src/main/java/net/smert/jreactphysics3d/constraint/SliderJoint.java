@@ -377,14 +377,14 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mN1), mImpulseTranslation.x),
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), mImpulseTranslation.x),
                     Vector3.operatorMultiply(mN2, mImpulseTranslation.y));
             Vector3 angularImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mR1PlusUCrossN1), mImpulseTranslation.x),
+                    Vector3.operatorMultiply(new Vector3(mR1PlusUCrossN1).invert(), mImpulseTranslation.x),
                     Vector3.operatorMultiply(mR1PlusUCrossN2, mImpulseTranslation.y));
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            angularImpulseBody1.add(Vector3.operatorNegative(mImpulseRotation));
+            angularImpulseBody1.add(new Vector3(mImpulseRotation).invert());
 
             // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
             linearImpulseBody1.add(linearImpulseLimits);
@@ -401,21 +401,21 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mN1), mImpulseTranslation.x),
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), mImpulseTranslation.x),
                     Vector3.operatorMultiply(mN2, mImpulseTranslation.y));
             Vector3 angularImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mR2CrossN1), mImpulseTranslation.x),
+                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), mImpulseTranslation.x),
                     Vector3.operatorMultiply(mR2CrossN2, mImpulseTranslation.y));
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
             angularImpulseBody2.add(mImpulseRotation);
 
             // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
-            linearImpulseBody2.add(Vector3.operatorNegative(linearImpulseLimits));
+            linearImpulseBody2.add(new Vector3(linearImpulseLimits).invert());
             angularImpulseBody2.add(Vector3.operatorMultiply(-impulseLimits, mR2CrossSliderAxis));
 
             // Compute the impulse P=J^T * lambda for the motor constraint
-            linearImpulseBody2.add(Vector3.operatorNegative(impulseMotor));
+            linearImpulseBody2.add(new Vector3(impulseMotor).invert());
 
             // Apply the impulse to the body
             v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
@@ -454,10 +454,10 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mN1), deltaLambda.x),
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), deltaLambda.x),
                     Vector3.operatorMultiply(mN2, deltaLambda.y));
             Vector3 angularImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mR1PlusUCrossN1), deltaLambda.x),
+                    Vector3.operatorMultiply(new Vector3(mR1PlusUCrossN1).invert(), deltaLambda.x),
                     Vector3.operatorMultiply(mR1PlusUCrossN2, deltaLambda.y));
 
             // Apply the impulse to the body
@@ -468,10 +468,10 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mN1), deltaLambda.x),
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), deltaLambda.x),
                     Vector3.operatorMultiply(mN2, deltaLambda.y));
             Vector3 angularImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mR2CrossN1), deltaLambda.x),
+                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), deltaLambda.x),
                     Vector3.operatorMultiply(mR2CrossN2, deltaLambda.y));
 
             // Apply the impulse to the body
@@ -487,13 +487,13 @@ public class SliderJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 deltaLambda2 = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixRotationConstraint, Vector3.operatorSubtract(Vector3.operatorNegative(JvRotation), mBRotation));
+                mInverseMassMatrixRotationConstraint, Vector3.operatorSubtract(new Vector3(JvRotation).invert(), mBRotation));
         mImpulseRotation.add(deltaLambda2);
 
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            Vector3 angularImpulseBody1 = Vector3.operatorNegative(deltaLambda2);
+            Vector3 angularImpulseBody1 = new Vector3(deltaLambda2).invert();
 
             // Apply the impulse to the body
             w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
@@ -711,10 +711,10 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mN1), lambdaTranslation.x),
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), lambdaTranslation.x),
                     Vector3.operatorMultiply(mN2, lambdaTranslation.y));
             Vector3 angularImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mR1PlusUCrossN1), lambdaTranslation.x),
+                    Vector3.operatorMultiply(new Vector3(mR1PlusUCrossN1).invert(), lambdaTranslation.x),
                     Vector3.operatorMultiply(mR1PlusUCrossN2, lambdaTranslation.y));
 
             // Apply the impulse to the body
@@ -730,10 +730,10 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mN1), lambdaTranslation.x),
+                    Vector3.operatorMultiply(new Vector3(mN1).invert(), lambdaTranslation.x),
                     Vector3.operatorMultiply(mN2, lambdaTranslation.y));
             Vector3 angularImpulseBody2 = Vector3.operatorAdd(
-                    Vector3.operatorMultiply(Vector3.operatorNegative(mR2CrossN1), lambdaTranslation.x),
+                    Vector3.operatorMultiply(new Vector3(mR2CrossN1).invert(), lambdaTranslation.x),
                     Vector3.operatorMultiply(mR2CrossN2, lambdaTranslation.y));
 
             // Apply the impulse to the body
@@ -770,12 +770,12 @@ public class SliderJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 lambdaRotation = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixRotationConstraint, Vector3.operatorNegative(errorRotation));
+                mInverseMassMatrixRotationConstraint, new Vector3(errorRotation).invert());
 
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            Vector3 angularImpulseBody1 = Vector3.operatorNegative(lambdaRotation);
+            Vector3 angularImpulseBody1 = new Vector3(lambdaRotation).invert();
 
             // Apply the impulse to the body
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);

@@ -115,6 +115,14 @@ public class Vector3 {
         return this;
     }
 
+    // Overloaded operator for the negative of a vector
+    public Vector3 invert() {
+        x = -x;
+        y = -y;
+        z = -z;
+        return this;
+    }
+
     // Overloaded operator for multiplication with a number with assignment
     public Vector3 multiply(float number) {
         x *= number;
@@ -204,11 +212,6 @@ public class Vector3 {
     // Overloaded operator for substraction
     public static Vector3 operatorSubtract(Vector3 vector1, Vector3 vector2) {
         return new Vector3(vector1.x - vector2.x, vector1.y - vector2.y, vector1.z - vector2.z);
-    }
-
-    // Overloaded operator for the negative of a vector
-    public static Vector3 operatorNegative(Vector3 vector) {
-        return new Vector3(-vector.x, -vector.y, -vector.z);
     }
 
     // Overloaded operator for multiplication with a number

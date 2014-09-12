@@ -183,11 +183,11 @@ public class FixedJoint extends Joint {
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 3 translation constraints
-            Vector3 linearImpulseBody1 = Vector3.operatorNegative(mImpulseTranslation);
+            Vector3 linearImpulseBody1 = new Vector3(mImpulseTranslation).invert();
             Vector3 angularImpulseBody1 = mImpulseTranslation.cross(mR1World);
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            angularImpulseBody1.add(Vector3.operatorNegative(mImpulseRotation));
+            angularImpulseBody1.add(new Vector3(mImpulseRotation).invert());
 
             // Apply the impulse to the body
             v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
@@ -197,7 +197,7 @@ public class FixedJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 3 translation constraints
             Vector3 linearImpulseBody2 = mImpulseTranslation;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(mImpulseTranslation.cross(mR2World));
+            Vector3 angularImpulseBody2 = new Vector3(mImpulseTranslation.cross(mR2World)).invert();
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
             angularImpulseBody2.add(mImpulseRotation);
@@ -231,13 +231,13 @@ public class FixedJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambda = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixTranslation, Vector3.operatorSubtract(Vector3.operatorNegative(JvTranslation), mBiasTranslation));
+                mInverseMassMatrixTranslation, Vector3.operatorSubtract(new Vector3(JvTranslation).invert(), mBiasTranslation));
         mImpulseTranslation.add(deltaLambda);
 
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda
-            Vector3 linearImpulseBody1 = Vector3.operatorNegative(deltaLambda);
+            Vector3 linearImpulseBody1 = new Vector3(deltaLambda).invert();
             Vector3 angularImpulseBody1 = deltaLambda.cross(mR1World);
 
             // Apply the impulse to the body
@@ -248,7 +248,7 @@ public class FixedJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody2 = deltaLambda;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(deltaLambda.cross(mR2World));
+            Vector3 angularImpulseBody2 = new Vector3(deltaLambda.cross(mR2World)).invert();
 
             // Apply the impulse to the body
             v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
@@ -263,13 +263,13 @@ public class FixedJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 deltaLambda2 = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixRotation, Vector3.operatorSubtract(Vector3.operatorNegative(JvRotation), mBiasRotation));
+                mInverseMassMatrixRotation, Vector3.operatorSubtract(new Vector3(JvRotation).invert(), mBiasRotation));
         mImpulseRotation.add(deltaLambda2);
 
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            Vector3 angularImpulseBody1 = Vector3.operatorNegative(deltaLambda2);
+            Vector3 angularImpulseBody1 = new Vector3(deltaLambda2).invert();
 
             // Apply the impulse to the body
             w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
@@ -349,13 +349,13 @@ public class FixedJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda
         Vector3 lambdaTranslation = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixTranslation, Vector3.operatorNegative(errorTranslation));
+                mInverseMassMatrixTranslation, new Vector3(errorTranslation).invert());
 
         // Apply the impulse to the bodies of the joint
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse
-            Vector3 linearImpulseBody1 = Vector3.operatorNegative(lambdaTranslation);
+            Vector3 linearImpulseBody1 = new Vector3(lambdaTranslation).invert();
             Vector3 angularImpulseBody1 = lambdaTranslation.cross(mR1World);
 
             // Compute the pseudo velocity
@@ -371,7 +371,7 @@ public class FixedJoint extends Joint {
 
             // Compute the impulse
             Vector3 linearImpulseBody2 = lambdaTranslation;
-            Vector3 angularImpulseBody2 = Vector3.operatorNegative(lambdaTranslation.cross(mR2World));
+            Vector3 angularImpulseBody2 = new Vector3(lambdaTranslation.cross(mR2World)).invert();
 
             // Compute the pseudo velocity
             Vector3 v2 = Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2);
@@ -407,13 +407,13 @@ public class FixedJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 lambdaRotation = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixRotation, Vector3.operatorNegative(errorRotation));
+                mInverseMassMatrixRotation, new Vector3(errorRotation).invert());
 
         // Apply the impulse to the bodies of the joint
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            Vector3 angularImpulseBody1 = Vector3.operatorNegative(lambdaRotation);
+            Vector3 angularImpulseBody1 = new Vector3(lambdaRotation).invert();
 
             // Compute the pseudo velocity
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
