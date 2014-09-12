@@ -141,7 +141,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody1 = new Vector3(mImpulse).invert();
-            Vector3 angularImpulseBody1 = mImpulse.cross(mR1World);
+            Vector3 angularImpulseBody1 = new Vector3(mImpulse).cross(mR1World);
 
             // Apply the impulse to the body
             v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
@@ -151,7 +151,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody2 = mImpulse;
-            Vector3 angularImpulseBody2 = new Vector3(mImpulse.cross(mR2World)).invert();
+            Vector3 angularImpulseBody2 = new Vector3(new Vector3(mImpulse).cross(mR2World)).invert();
 
             // Apply the impulse to the body
             v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
@@ -174,7 +174,7 @@ public class BallAndSocketJoint extends Joint {
         float inverseMassBody2 = mBody2.getMassInverse();
 
         // Compute J*v
-        Vector3 Jv = new Vector3(new Vector3(new Vector3(v2).add(w2.cross(mR2World))).subtract(v1)).subtract(w1.cross(mR1World));
+        Vector3 Jv = new Vector3(new Vector3(new Vector3(v2).add(new Vector3(w2).cross(mR2World))).subtract(v1)).subtract(new Vector3(w1).cross(mR1World));
 
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambda = Matrix3x3.operatorMultiply(
@@ -185,7 +185,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody1 = new Vector3(deltaLambda).invert();
-            Vector3 angularImpulseBody1 = deltaLambda.cross(mR1World);
+            Vector3 angularImpulseBody1 = new Vector3(deltaLambda).cross(mR1World);
 
             // Apply the impulse to the body
             v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
@@ -195,7 +195,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody2 = deltaLambda;
-            Vector3 angularImpulseBody2 = new Vector3(deltaLambda.cross(mR2World)).invert();
+            Vector3 angularImpulseBody2 = new Vector3(deltaLambda).cross(mR2World).invert();
 
             // Apply the impulse to the body
             v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
@@ -272,7 +272,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse
             Vector3 linearImpulseBody1 = new Vector3(lambda).invert();
-            Vector3 angularImpulseBody1 = lambda.cross(mR1World);
+            Vector3 angularImpulseBody1 = new Vector3(lambda).cross(mR1World);
 
             // Compute the pseudo velocity
             Vector3 v1 = new Vector3(linearImpulseBody1).multiply(inverseMassBody1);
@@ -287,7 +287,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the impulse
             Vector3 linearImpulseBody2 = lambda;
-            Vector3 angularImpulseBody2 = new Vector3(lambda.cross(mR2World)).invert();
+            Vector3 angularImpulseBody2 = new Vector3(lambda).cross(mR2World).invert();
 
             // Compute the pseudo velocity
             Vector3 v2 = new Vector3(linearImpulseBody2).multiply(inverseMassBody2);

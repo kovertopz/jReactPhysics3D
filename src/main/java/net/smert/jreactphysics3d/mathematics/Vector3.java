@@ -88,14 +88,14 @@ public class Vector3 {
         return x * x + y * y + z * z;
     }
 
-    // Return the axis with the minimal value
-    public int getMinAxis() {
-        return (x < y ? (x < z ? 0 : 2) : (y < z ? 1 : 2));
-    }
-
     // Return the axis with the maximal value
     public int getMaxAxis() {
         return (x < y ? (y < z ? 2 : 1) : (x < z ? 2 : 0));
+    }
+
+    // Return the axis with the minimal value
+    public int getMinAxis() {
+        return (x < y ? (x < z ? 0 : 2) : (y < z ? 1 : 2));
     }
 
     // Return the corresponding absolute value vector
@@ -111,6 +111,15 @@ public class Vector3 {
         x += vector.x;
         y += vector.y;
         z += vector.z;
+        return this;
+    }
+
+    // Cross product of two vectors (public)
+    public Vector3 cross(Vector3 vector) {
+        set(
+                y * vector.z - z * vector.y,
+                z * vector.x - x * vector.z,
+                x * vector.y - y * vector.x);
         return this;
     }
 
@@ -158,6 +167,7 @@ public class Vector3 {
         return this;
     }
 
+    // Assignment operator
     public Vector3 set(Vector3 vector) {
         assert (vector != this);
         x = vector.x;
@@ -172,7 +182,7 @@ public class Vector3 {
         float len, lenInv;
 
         // Get the minimum element of the vector
-        Vector3f abs = new Vector3f(Math.abs(x), Math.abs(y), Math.abs(z));
+        Vector3 abs = new Vector3(this).abs();
         int minElement = abs.getMinAxis();
 
         if (minElement == 0) {
@@ -221,16 +231,6 @@ public class Vector3 {
         y = 0.0f;
         z = 0.0f;
         return this;
-    }
-
-    /**
-     * Good above here
-     */
-    // Cross product of two vectors (public)
-    public Vector3 cross(Vector3 vector) {
-        return new Vector3(y * vector.z - z * vector.y,
-                z * vector.x - x * vector.z,
-                x * vector.y - y * vector.x);
     }
 
     @Override

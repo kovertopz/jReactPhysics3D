@@ -292,9 +292,9 @@ public class HingeJoint extends Joint {
         mA1.normalize();
         a2.normalize();
         Vector3 b2 = new Vector3(a2).setUnitOrthogonal();
-        Vector3 c2 = a2.cross(b2);
-        mB2CrossA1 = b2.cross(mA1);
-        mC2CrossA1 = c2.cross(mA1);
+        Vector3 c2 = new Vector3(a2).cross(b2);
+        mB2CrossA1 = new Vector3(b2).cross(mA1);
+        mC2CrossA1 = new Vector3(c2).cross(mA1);
 
         // Compute the corresponding skew-symmetric matrices
         Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
@@ -431,7 +431,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 3 translation constraints
             Vector3 linearImpulseBody1 = new Vector3(mImpulseTranslation).invert();
-            Vector3 angularImpulseBody1 = mImpulseTranslation.cross(mR1World);
+            Vector3 angularImpulseBody1 = new Vector3(mImpulseTranslation).cross(mR1World);
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
             angularImpulseBody1.add(rotationImpulse);
@@ -450,7 +450,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 3 translation constraints
             Vector3 linearImpulseBody2 = mImpulseTranslation;
-            Vector3 angularImpulseBody2 = new Vector3(mImpulseTranslation.cross(mR2World)).invert();
+            Vector3 angularImpulseBody2 = new Vector3(mImpulseTranslation).cross(mR2World).invert();
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
             angularImpulseBody2.add(new Vector3(rotationImpulse).invert());
@@ -486,7 +486,7 @@ public class HingeJoint extends Joint {
          */
         // Compute J*v
         Vector3 JvTranslation = new Vector3(
-                new Vector3(new Vector3(v2).add(w2.cross(mR2World))).subtract(v1)).subtract(w1.cross(mR1World));
+                new Vector3(new Vector3(v2).add(new Vector3(w2).cross(mR2World))).subtract(v1)).subtract(new Vector3(w1).cross(mR1World));
 
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambdaTranslation = Matrix3x3.operatorMultiply(
@@ -497,7 +497,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody1 = new Vector3(deltaLambdaTranslation).invert();
-            Vector3 angularImpulseBody1 = deltaLambdaTranslation.cross(mR1World);
+            Vector3 angularImpulseBody1 = new Vector3(deltaLambdaTranslation).cross(mR1World);
 
             // Apply the impulse to the body
             v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
@@ -507,7 +507,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda
             Vector3 linearImpulseBody2 = deltaLambdaTranslation;
-            Vector3 angularImpulseBody2 = new Vector3(deltaLambdaTranslation.cross(mR2World)).invert();
+            Vector3 angularImpulseBody2 = new Vector3(deltaLambdaTranslation).cross(mR2World).invert();
 
             // Apply the impulse to the body
             v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
@@ -690,9 +690,9 @@ public class HingeJoint extends Joint {
         mA1.normalize();
         a2.normalize();
         Vector3 b2 = new Vector3(a2).setUnitOrthogonal();
-        Vector3 c2 = a2.cross(b2);
-        mB2CrossA1 = b2.cross(mA1);
-        mC2CrossA1 = c2.cross(mA1);
+        Vector3 c2 = new Vector3(a2).cross(b2);
+        mB2CrossA1 = new Vector3(b2).cross(mA1);
+        mC2CrossA1 = new Vector3(c2).cross(mA1);
 
         // Compute the corresponding skew-symmetric matrices
         Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
@@ -738,7 +738,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse
             Vector3 linearImpulseBody1 = new Vector3(lambdaTranslation).invert();
-            Vector3 angularImpulseBody1 = lambdaTranslation.cross(mR1World);
+            Vector3 angularImpulseBody1 = new Vector3(lambdaTranslation).cross(mR1World);
 
             // Compute the pseudo velocity
             Vector3 v1 = new Vector3(linearImpulseBody1).multiply(inverseMassBody1);
@@ -753,7 +753,7 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse
             Vector3 linearImpulseBody2 = lambdaTranslation;
-            Vector3 angularImpulseBody2 = new Vector3(lambdaTranslation.cross(mR2World)).invert();
+            Vector3 angularImpulseBody2 = new Vector3(lambdaTranslation).cross(mR2World).invert();
 
             // Compute the pseudo velocity
             Vector3 v2 = new Vector3(linearImpulseBody2).multiply(inverseMassBody2);

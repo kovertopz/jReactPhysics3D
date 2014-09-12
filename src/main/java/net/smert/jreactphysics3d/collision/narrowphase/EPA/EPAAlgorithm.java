@@ -165,7 +165,7 @@ public class EPAAlgorithm {
                 Matrix3x3 rotationMat = rotationQuat.getMatrix();
 
                 // Compute the vector v1, v2, v3
-                Vector3 v1 = d.cross(new Vector3(minAxis == 0 ? 1.0f : 0.0f, minAxis == 1 ? 1.0f : 0.0f, minAxis == 2 ? 1.0f : 0.0f));
+                Vector3 v1 = new Vector3(d).cross(new Vector3(minAxis == 0 ? 1.0f : 0.0f, minAxis == 1 ? 1.0f : 0.0f, minAxis == 2 ? 1.0f : 0.0f));
                 Vector3 v2 = Matrix3x3.operatorMultiply(rotationMat, v1);
                 Vector3 v3 = Matrix3x3.operatorMultiply(rotationMat, v2);
 
@@ -275,7 +275,7 @@ public class EPAAlgorithm {
                 // Compute the normal of the triangle
                 Vector3 v1 = new Vector3(points[1]).subtract(points[0]);
                 Vector3 v2 = new Vector3(points[2]).subtract(points[0]);
-                Vector3 n = v1.cross(v2);
+                Vector3 n = new Vector3(v1).cross(v2);
 
                 // Compute the two new vertices to obtain a hexahedron
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(n);

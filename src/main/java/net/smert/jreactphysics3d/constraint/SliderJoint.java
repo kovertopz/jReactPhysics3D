@@ -214,7 +214,7 @@ public class SliderJoint extends Joint {
         mSliderAxisWorld = orientationBody1.operatorMultiply(mSliderAxisBody1);
         mSliderAxisWorld.normalize();
         mN1 = new Vector3(mSliderAxisWorld).setUnitOrthogonal();
-        mN2 = mSliderAxisWorld.cross(mN1);
+        mN2 = new Vector3(mSliderAxisWorld).cross(mN1);
 
         // Check if the limit constraints are violated or not
         float uDotSliderAxis = u.dot(mSliderAxisWorld);
@@ -232,13 +232,13 @@ public class SliderJoint extends Joint {
         }
 
         // Compute the cross products used in the Jacobians
-        mR2CrossN1 = mR2.cross(mN1);
-        mR2CrossN2 = mR2.cross(mN2);
-        mR2CrossSliderAxis = mR2.cross(mSliderAxisWorld);
+        mR2CrossN1 = new Vector3(mR2).cross(mN1);
+        mR2CrossN2 = new Vector3(mR2).cross(mN2);
+        mR2CrossSliderAxis = new Vector3(mR2).cross(mSliderAxisWorld);
         Vector3 r1PlusU = new Vector3(mR1).add(u);
-        mR1PlusUCrossN1 = (r1PlusU).cross(mN1);
-        mR1PlusUCrossN2 = (r1PlusU).cross(mN2);
-        mR1PlusUCrossSliderAxis = (r1PlusU).cross(mSliderAxisWorld);
+        mR1PlusUCrossN1 = new Vector3(r1PlusU).cross(mN1);
+        mR1PlusUCrossN2 = new Vector3(r1PlusU).cross(mN2);
+        mR1PlusUCrossSliderAxis = new Vector3(r1PlusU).cross(mSliderAxisWorld);
 
         // Compute the inverse of the mass matrix K=JM^-1J^t for the 2 translation
         // constraints (2x2 matrix)
@@ -652,7 +652,7 @@ public class SliderJoint extends Joint {
         mSliderAxisWorld = q1.operatorMultiply(mSliderAxisBody1);
         mSliderAxisWorld.normalize();
         mN1 = new Vector3(mSliderAxisWorld).setUnitOrthogonal();
-        mN2 = mSliderAxisWorld.cross(mN1);
+        mN2 = new Vector3(mSliderAxisWorld).cross(mN1);
 
         // Check if the limit constraints are violated or not
         float uDotSliderAxis = u.dot(mSliderAxisWorld);
@@ -662,13 +662,13 @@ public class SliderJoint extends Joint {
         mIsUpperLimitViolated = upperLimitError <= 0.0f;
 
         // Compute the cross products used in the Jacobians
-        mR2CrossN1 = mR2.cross(mN1);
-        mR2CrossN2 = mR2.cross(mN2);
-        mR2CrossSliderAxis = mR2.cross(mSliderAxisWorld);
+        mR2CrossN1 = new Vector3(mR2).cross(mN1);
+        mR2CrossN2 = new Vector3(mR2).cross(mN2);
+        mR2CrossSliderAxis = new Vector3(mR2).cross(mSliderAxisWorld);
         Vector3 r1PlusU = new Vector3(mR1).add(u);
-        mR1PlusUCrossN1 = (r1PlusU).cross(mN1);
-        mR1PlusUCrossN2 = (r1PlusU).cross(mN2);
-        mR1PlusUCrossSliderAxis = (r1PlusU).cross(mSliderAxisWorld);
+        mR1PlusUCrossN1 = new Vector3(r1PlusU).cross(mN1);
+        mR1PlusUCrossN2 = new Vector3(r1PlusU).cross(mN2);
+        mR1PlusUCrossSliderAxis = new Vector3(r1PlusU).cross(mSliderAxisWorld);
 
         /**
          * --------------- Translation Constraints ---------------

@@ -140,28 +140,28 @@ public class ContactManifold {
             // Compute the area
             Vector3 vector1 = new Vector3(newPoint).subtract(mContactPoints[1].getLocalPointOnBody1());
             Vector3 vector2 = new Vector3(mContactPoints[3].getLocalPointOnBody1()).subtract(mContactPoints[2].getLocalPointOnBody1());
-            Vector3 crossProduct = vector1.cross(vector2);
+            Vector3 crossProduct = new Vector3(vector1).cross(vector2);
             area0 = crossProduct.lengthSquare();
         }
         if (indexMaxPenetration != 1) {
             // Compute the area
             Vector3 vector1 = new Vector3(newPoint).subtract(mContactPoints[0].getLocalPointOnBody1());
             Vector3 vector2 = new Vector3(mContactPoints[3].getLocalPointOnBody1()).subtract(mContactPoints[2].getLocalPointOnBody1());
-            Vector3 crossProduct = vector1.cross(vector2);
+            Vector3 crossProduct = new Vector3(vector1).cross(vector2);
             area1 = crossProduct.lengthSquare();
         }
         if (indexMaxPenetration != 2) {
             // Compute the area
             Vector3 vector1 = new Vector3(newPoint).subtract(mContactPoints[0].getLocalPointOnBody1());
             Vector3 vector2 = new Vector3(mContactPoints[3].getLocalPointOnBody1()).subtract(mContactPoints[1].getLocalPointOnBody1());
-            Vector3 crossProduct = vector1.cross(vector2);
+            Vector3 crossProduct = new Vector3(vector1).cross(vector2);
             area2 = crossProduct.lengthSquare();
         }
         if (indexMaxPenetration != 3) {
             // Compute the area
             Vector3 vector1 = new Vector3(newPoint).subtract(mContactPoints[0].getLocalPointOnBody1());
             Vector3 vector2 = new Vector3(mContactPoints[2].getLocalPointOnBody1()).subtract(mContactPoints[1].getLocalPointOnBody1());
-            Vector3 crossProduct = vector1.cross(vector2);
+            Vector3 crossProduct = new Vector3(vector1).cross(vector2);
             area3 = crossProduct.lengthSquare();
         }
 

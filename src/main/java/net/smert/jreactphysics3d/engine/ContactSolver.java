@@ -145,10 +145,10 @@ public class ContactSolver {
 
                 // Compute the velocity difference
                 Vector3 deltaV = new Vector3(
-                        new Vector3(new Vector3(v2).add(w2.cross(contactPoint.r2))).subtract(v1)).subtract(w1.cross(contactPoint.r1));
+                        new Vector3(new Vector3(v2).add(new Vector3(w2).cross(contactPoint.r2))).subtract(v1)).subtract(new Vector3(w1).cross(contactPoint.r1));
 
-                contactPoint.r1CrossN.set(contactPoint.r1.cross(contactPoint.normal));
-                contactPoint.r2CrossN.set(contactPoint.r2.cross(contactPoint.normal));
+                contactPoint.r1CrossN.set(new Vector3(contactPoint.r1).cross(contactPoint.normal));
+                contactPoint.r2CrossN.set(new Vector3(contactPoint.r2).cross(contactPoint.normal));
 
                 // Compute the inverse mass matrix K for the penetration constraint
                 float massPenetration = 0.0f;
@@ -168,10 +168,10 @@ public class ContactSolver {
                     // Compute the friction vectors
                     computeFrictionVectors(deltaV, contactPoint);
 
-                    contactPoint.r1CrossT1.set(contactPoint.r1.cross(contactPoint.frictionVector1));
-                    contactPoint.r1CrossT2.set(contactPoint.r1.cross(contactPoint.frictionVector2));
-                    contactPoint.r2CrossT1.set(contactPoint.r2.cross(contactPoint.frictionVector1));
-                    contactPoint.r2CrossT2.set(contactPoint.r2.cross(contactPoint.frictionVector2));
+                    contactPoint.r1CrossT1.set(new Vector3(contactPoint.r1).cross(contactPoint.frictionVector1));
+                    contactPoint.r1CrossT2.set(new Vector3(contactPoint.r1).cross(contactPoint.frictionVector2));
+                    contactPoint.r2CrossT1.set(new Vector3(contactPoint.r2).cross(contactPoint.frictionVector1));
+                    contactPoint.r2CrossT2.set(new Vector3(contactPoint.r2).cross(contactPoint.frictionVector2));
 
                     // Compute the inverse mass matrix K for the friction
                     // constraints at each contact point
@@ -227,17 +227,17 @@ public class ContactSolver {
                 manifold.normal.normalize();
 
                 Vector3 deltaVFrictionPoint = new Vector3(
-                        new Vector3(new Vector3(v2).add(w2.cross(manifold.r2Friction))).subtract(v1)).subtract(w1.cross(manifold.r1Friction));
+                        new Vector3(new Vector3(v2).add(new Vector3(w2).cross(manifold.r2Friction))).subtract(v1)).subtract(new Vector3(w1).cross(manifold.r1Friction));
 
                 // Compute the friction vectors
                 computeFrictionVectors(deltaVFrictionPoint, manifold);
 
                 // Compute the inverse mass matrix K for the friction constraints at the center of
                 // the contact manifold
-                manifold.r1CrossT1.set(manifold.r1Friction.cross(manifold.frictionVector1));
-                manifold.r1CrossT2.set(manifold.r1Friction.cross(manifold.frictionVector2));
-                manifold.r2CrossT1.set(manifold.r2Friction.cross(manifold.frictionVector1));
-                manifold.r2CrossT2.set(manifold.r2Friction.cross(manifold.frictionVector2));
+                manifold.r1CrossT1.set(new Vector3(manifold.r1Friction).cross(manifold.frictionVector1));
+                manifold.r1CrossT2.set(new Vector3(manifold.r1Friction).cross(manifold.frictionVector2));
+                manifold.r2CrossT1.set(new Vector3(manifold.r2Friction).cross(manifold.frictionVector1));
+                manifold.r2CrossT2.set(new Vector3(manifold.r2Friction).cross(manifold.frictionVector2));
                 float friction1Mass = 0.0f;
                 float friction2Mass = 0.0f;
                 if (manifold.isBody1Moving) {
@@ -338,7 +338,7 @@ public class ContactSolver {
 
         // The second friction vector is computed by the cross product of the firs
         // friction vector and the contact normal
-        contact.frictionVector2.set(contact.normal.cross(contact.frictionVector1).normalize());
+        contact.frictionVector2.set(new Vector3(contact.normal).cross(contact.frictionVector1).normalize());
     }
 
     // Compute the two unit orthogonal vectors "t1" and "t2" that span the tangential friction plane
@@ -366,7 +366,7 @@ public class ContactSolver {
 
         // The second friction vector is computed by the cross product of the firs
         // friction vector and the contact normal
-        contactPoint.frictionVector2.set(contactPoint.normal.cross(contactPoint.frictionVector1).normalize());
+        contactPoint.frictionVector2.set(new Vector3(contactPoint.normal).cross(contactPoint.frictionVector1).normalize());
     }
 
     // Compute a penetration constraint impulse
@@ -739,7 +739,7 @@ public class ContactSolver {
                  */
                 // Compute J*v
                 Vector3 deltaV = new Vector3(
-                        new Vector3(new Vector3(v2).add(w2.cross(contactPoint.r2))).subtract(v1)).subtract(w1.cross(contactPoint.r1));
+                        new Vector3(new Vector3(v2).add(new Vector3(w2).cross(contactPoint.r2))).subtract(v1)).subtract(new Vector3(w1).cross(contactPoint.r1));
                 float deltaVDotN = deltaV.dot(contactPoint.normal);
                 float Jv = deltaVDotN;
 
@@ -779,7 +779,7 @@ public class ContactSolver {
                     Vector3 v2Split = mSplitLinearVelocities[contactManifold.indexBody2];
                     Vector3 w2Split = mSplitAngularVelocities[contactManifold.indexBody2];
                     Vector3 deltaVSplit = new Vector3(
-                            new Vector3(new Vector3(v2Split).add(w2Split.cross(contactPoint.r2))).subtract(v1Split)).subtract(w1Split.cross(contactPoint.r1));
+                            new Vector3(new Vector3(v2Split).add(new Vector3(w2Split).cross(contactPoint.r2))).subtract(v1Split)).subtract(new Vector3(w1Split).cross(contactPoint.r1));
                     float JvSplit = deltaVSplit.dot(contactPoint.normal);
                     float deltaLambdaSplit = -(JvSplit + biasPenetrationDepth) * contactPoint.inversePenetrationMass;
                     float lambdaTempSplit = contactPoint.penetrationSplitImpulse;
@@ -800,7 +800,7 @@ public class ContactSolver {
                      */
                     // Compute J*v
                     deltaV = new Vector3(
-                            new Vector3(new Vector3(v2).add(w2.cross(contactPoint.r2))).subtract(v1)).subtract(w1.cross(contactPoint.r1));
+                            new Vector3(new Vector3(v2).add(new Vector3(w2).cross(contactPoint.r2))).subtract(v1)).subtract(new Vector3(w1).cross(contactPoint.r1));
                     Jv = deltaV.dot(contactPoint.frictionVector1);
 
                     // Compute the Lagrange multiplier lambda
@@ -823,7 +823,7 @@ public class ContactSolver {
                      */
                     // Compute J*v
                     deltaV = new Vector3(
-                            new Vector3(new Vector3(v2).add(w2.cross(contactPoint.r2))).subtract(v1)).subtract(w1.cross(contactPoint.r1));
+                            new Vector3(new Vector3(v2).add(new Vector3(w2).cross(contactPoint.r2))).subtract(v1)).subtract(new Vector3(w1).cross(contactPoint.r1));
                     Jv = deltaV.dot(contactPoint.frictionVector2);
 
                     // Compute the Lagrange multiplier lambda
@@ -851,7 +851,7 @@ public class ContactSolver {
                  */
                 // Compute J*v
                 Vector3 deltaV = new Vector3(
-                        new Vector3(new Vector3(v2).add(w2.cross(contactManifold.r2Friction))).subtract(v1)).subtract(w1.cross(contactManifold.r1Friction));
+                        new Vector3(new Vector3(v2).add(new Vector3(w2).cross(contactManifold.r2Friction))).subtract(v1)).subtract(new Vector3(w1).cross(contactManifold.r1Friction));
                 float Jv = deltaV.dot(contactManifold.frictionVector1);
 
                 // Compute the Lagrange multiplier lambda
@@ -881,7 +881,7 @@ public class ContactSolver {
                  */
                 // Compute J*v
                 deltaV = new Vector3(
-                        new Vector3(new Vector3(v2).add(w2.cross(contactManifold.r2Friction))).subtract(v1)).subtract(w1.cross(contactManifold.r1Friction));
+                        new Vector3(new Vector3(v2).add(new Vector3(w2).cross(contactManifold.r2Friction))).subtract(v1)).subtract(new Vector3(w1).cross(contactManifold.r1Friction));
                 Jv = deltaV.dot(contactManifold.frictionVector2);
 
                 // Compute the Lagrange multiplier lambda
