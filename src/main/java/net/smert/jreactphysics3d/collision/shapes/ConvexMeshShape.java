@@ -60,8 +60,8 @@ public class ConvexMeshShape extends CollisionShape {
     // Recompute the bounds of the mesh
     private void recalculateBounds() {
 
-        mMinBounds.setToZero();
-        mMaxBounds.setToZero();
+        mMinBounds.zero();
+        mMaxBounds.zero();
 
         // For each vertex of the mesh
         for (int i = 0; i < mVertices.size(); i++) {
@@ -89,8 +89,8 @@ public class ConvexMeshShape extends CollisionShape {
         }
 
         // Add the object margin to the bounds
-        mMaxBounds.operatorAddEqual(new Vector3(mMargin, mMargin, mMargin));
-        mMinBounds.operatorSubtractEqual(new Vector3(mMargin, mMargin, mMargin));
+        mMaxBounds.add(new Vector3(mMargin, mMargin, mMargin));
+        mMinBounds.subtract(new Vector3(mMargin, mMargin, mMargin));
     }
 
     // Constructor to initialize with a array of 3D vertices.
@@ -207,7 +207,7 @@ public class ConvexMeshShape extends CollisionShape {
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
-        Vector3 realExtent = Vector3.operatorSubtract(mMaxBounds, mMinBounds).operatorMultiplyEqual(0.5f);
+        Vector3 realExtent = Vector3.operatorSubtract(mMaxBounds, mMinBounds).multiply(0.5f);
         assert (realExtent.getX() > 0 && realExtent.getY() > 0 && realExtent.getZ() > 0);
         float xSquare = realExtent.getX() * realExtent.getX();
         float ySquare = realExtent.getY() * realExtent.getY();
@@ -227,12 +227,12 @@ public class ConvexMeshShape extends CollisionShape {
         // Get the unit direction vector
         Vector3 unitDirection = direction;
         if (direction.lengthSquare() < Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
-            unitDirection.setAllValues(1.0f, 1.0f, 1.0f);
+            unitDirection.set(1.0f, 1.0f, 1.0f);
         }
         unitDirection.normalize();
 
         // Add the margin to the support point and return it
-        return Vector3.operatorAdd(supportPoint, unitDirection).operatorMultiplyEqual(mMargin);
+        return Vector3.operatorAdd(supportPoint, unitDirection).multiply(mMargin);
     }
 
     // Return a local support point in a given direction without the object margin.
@@ -311,8 +311,8 @@ public class ConvexMeshShape extends CollisionShape {
     // Return the local bounds of the shape in x, y and z directions
     @Override
     public void getLocalBounds(Vector3 min, Vector3 max) {
-        min.setAllValues(mMinBounds.getX(), mMinBounds.getY(), mMinBounds.getZ());
-        max.setAllValues(mMaxBounds.getX(), mMaxBounds.getY(), mMaxBounds.getZ());
+        min.set(mMinBounds.getX(), mMinBounds.getY(), mMinBounds.getZ());
+        max.set(mMaxBounds.getX(), mMaxBounds.getY(), mMaxBounds.getZ());
     }
 
     // Test equality between two cone shapes

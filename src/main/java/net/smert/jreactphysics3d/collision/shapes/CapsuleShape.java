@@ -93,12 +93,12 @@ public class CapsuleShape extends CollisionShape {
 
             // Support point top sphere
             Vector3 centerTopSphere = new Vector3(0.0f, mHalfHeight, 0.0f);
-            Vector3 topSpherePoint = Vector3.operatorAdd(centerTopSphere, unitDirection).operatorMultiplyEqual(mRadius);
+            Vector3 topSpherePoint = Vector3.operatorAdd(centerTopSphere, unitDirection).multiply(mRadius);
             float dotProductTop = topSpherePoint.dot(direction);
 
             // Support point bottom sphere
             Vector3 centerBottomSphere = new Vector3(0.0f, -mHalfHeight, 0.0f);
-            Vector3 bottomSpherePoint = Vector3.operatorAdd(centerBottomSphere, unitDirection).operatorMultiplyEqual(mRadius);
+            Vector3 bottomSpherePoint = Vector3.operatorAdd(centerBottomSphere, unitDirection).multiply(mRadius);
             float dotProductBottom = bottomSpherePoint.dot(direction);
 
             // Return the point with the maximum dot product
@@ -137,10 +137,10 @@ public class CapsuleShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.setAllValues(mRadius, mHalfHeight + mRadius, mRadius);
+        max.set(mRadius, mHalfHeight + mRadius, mRadius);
 
         // Minimum bounds
-        min.setAllValues(-mRadius, -max.getY(), -mRadius);
+        min.set(-mRadius, -max.getY(), -mRadius);
     }
 
     // Test equality between two capsule shapes

@@ -156,8 +156,8 @@ public class DynamicsWorld extends CollisionWorld {
                     // to update the position)
                     if (mContactSolver.isSplitImpulseActive()) {
 
-                        newLinVelocity.operatorAddEqual(mSplitLinearVelocities[indexArray]);
-                        newAngVelocity.operatorAddEqual(mSplitAngularVelocities[indexArray]);
+                        newLinVelocity.add(mSplitLinearVelocities[indexArray]);
+                        newAngVelocity.add(mSplitAngularVelocities[indexArray]);
                     }
 
                     // Get current position and orientation of the body
@@ -199,8 +199,8 @@ public class DynamicsWorld extends CollisionWorld {
 
         // For each body of the world
         for (RigidBody it : mRigidBodies) {
-            it.getExternalForce().setToZero();
-            it.getExternalTorque().setToZero();
+            it.getExternalForce().zero();
+            it.getExternalTorque().zero();
         }
     }
 
@@ -305,7 +305,7 @@ public class DynamicsWorld extends CollisionWorld {
                     if (bodies[b].isGravityEnabled() && mIsGravityEnabled) {
 
                         // Integrate the gravity force
-                        mConstrainedLinearVelocities[indexBody].operatorAddEqual(Vector3.operatorMultiply(
+                        mConstrainedLinearVelocities[indexBody].add(Vector3.operatorMultiply(
                                 dt * bodies[b].getMassInverse() * bodies[b].getMass(), mGravity));
                     }
 
@@ -326,8 +326,8 @@ public class DynamicsWorld extends CollisionWorld {
                     float angDampingFactor = bodies[b].getAngularDamping();
                     float linearDamping = Mathematics.Clamp(1.0f - dt * linDampingFactor, 0.0f, 1.0f);
                     float angularDamping = Mathematics.Clamp(1.0f - dt * angDampingFactor, 0.0f, 1.0f);
-                    mConstrainedLinearVelocities[indexBody].operatorMultiplyEqual(Mathematics.Clamp(linearDamping, 0.0f, 1.0f));
-                    mConstrainedAngularVelocities[indexBody].operatorMultiplyEqual(Mathematics.Clamp(angularDamping, 0.0f, 1.0f));
+                    mConstrainedLinearVelocities[indexBody].multiply(Mathematics.Clamp(linearDamping, 0.0f, 1.0f));
+                    mConstrainedAngularVelocities[indexBody].multiply(Mathematics.Clamp(angularDamping, 0.0f, 1.0f));
 
                     // Update the old Transform of the body
                     bodies[b].updateOldTransform();

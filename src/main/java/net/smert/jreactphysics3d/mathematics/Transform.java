@@ -72,7 +72,7 @@ public class Transform {
                 openglMatrix[1], openglMatrix[5], openglMatrix[9],
                 openglMatrix[2], openglMatrix[6], openglMatrix[10]);
         mOrientation = new Quaternion(matrix);
-        mPosition.setAllValues(openglMatrix[12], openglMatrix[13], openglMatrix[14]);
+        mPosition.set(openglMatrix[12], openglMatrix[13], openglMatrix[14]);
     }
 
     // Get the OpenGL matrix of the transform
@@ -106,7 +106,7 @@ public class Transform {
     // Return an interpolated transform
     public static Transform interpolateTransforms(Transform oldTransform, Transform newTransform, float interpolationFactor) {
 
-        Vector3 interPosition = Vector3.operatorMultiply(oldTransform.mPosition, 1.0f - interpolationFactor).operatorAddEqual(Vector3.operatorMultiply(newTransform.mPosition, interpolationFactor));
+        Vector3 interPosition = Vector3.operatorMultiply(oldTransform.mPosition, 1.0f - interpolationFactor).add(Vector3.operatorMultiply(newTransform.mPosition, interpolationFactor));
 
         Quaternion interOrientation = Quaternion.slerp(oldTransform.mOrientation,
                 newTransform.mOrientation,
@@ -123,7 +123,7 @@ public class Transform {
     // Return the transformed vector
     public Vector3 operatorMultiply(Vector3 vector) {
         Matrix3x3 matrix = mOrientation.getMatrix();
-        return Matrix3x3.operatorMultiply(matrix, vector).operatorAddEqual(mPosition);
+        return Matrix3x3.operatorMultiply(matrix, vector).add(mPosition);
     }
 
     // Operator of multiplication of a transform with another one

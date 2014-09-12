@@ -325,7 +325,7 @@ public class HingeJoint extends Joint {
         }
 
         // Compute the bias "b" of the translation constraints
-        mBTranslation.setToZero();
+        mBTranslation.zero();
         float biasFactor = (BETA / constraintSolverData.timeStep);
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             mBTranslation = Vector3.operatorMultiply(
@@ -365,7 +365,7 @@ public class HingeJoint extends Joint {
         if (!constraintSolverData.isWarmStartingActive) {
 
             // Reset all the accumulated impulses
-            mImpulseTranslation.setToZero();
+            mImpulseTranslation.zero();
             mImpulseRotation.setToZero();
             mImpulseLowerLimit = 0.0f;
             mImpulseUpperLimit = 0.0f;
@@ -434,17 +434,17 @@ public class HingeJoint extends Joint {
             Vector3 angularImpulseBody1 = mImpulseTranslation.cross(mR1World);
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
-            angularImpulseBody1.operatorAddEqual(rotationImpulse);
+            angularImpulseBody1.add(rotationImpulse);
 
             // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
-            angularImpulseBody1.operatorAddEqual(limitsImpulse);
+            angularImpulseBody1.add(limitsImpulse);
 
             // Compute the impulse P=J^T * lambda for the motor constraint
-            angularImpulseBody1.operatorAddEqual(motorImpulse);
+            angularImpulseBody1.add(motorImpulse);
 
             // Apply the impulse to the body
-            v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -453,17 +453,17 @@ public class HingeJoint extends Joint {
             Vector3 angularImpulseBody2 = Vector3.operatorNegative(mImpulseTranslation.cross(mR2World));
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
-            angularImpulseBody2.operatorAddEqual(Vector3.operatorNegative(rotationImpulse));
+            angularImpulseBody2.add(Vector3.operatorNegative(rotationImpulse));
 
             // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
-            angularImpulseBody2.operatorAddEqual(Vector3.operatorNegative(limitsImpulse));
+            angularImpulseBody2.add(Vector3.operatorNegative(limitsImpulse));
 
             // Compute the impulse P=J^T * lambda for the motor constraint
-            angularImpulseBody2.operatorAddEqual(Vector3.operatorNegative(motorImpulse));
+            angularImpulseBody2.add(Vector3.operatorNegative(motorImpulse));
 
             // Apply the impulse to the body
-            v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
     }
 
@@ -491,7 +491,7 @@ public class HingeJoint extends Joint {
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambdaTranslation = Matrix3x3.operatorMultiply(
                 mInverseMassMatrixTranslation, Vector3.operatorSubtract(Vector3.operatorNegative(JvTranslation), mBTranslation));
-        mImpulseTranslation.operatorAddEqual(deltaLambdaTranslation);
+        mImpulseTranslation.add(deltaLambdaTranslation);
 
         if (mBody1.isMotionEnabled()) {
 
@@ -500,8 +500,8 @@ public class HingeJoint extends Joint {
             Vector3 angularImpulseBody1 = deltaLambdaTranslation.cross(mR1World);
 
             // Apply the impulse to the body
-            v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -510,8 +510,8 @@ public class HingeJoint extends Joint {
             Vector3 angularImpulseBody2 = Vector3.operatorNegative(deltaLambdaTranslation.cross(mR2World));
 
             // Apply the impulse to the body
-            v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
 
         /**
@@ -533,7 +533,7 @@ public class HingeJoint extends Joint {
                     Vector3.operatorMultiply(mC2CrossA1, deltaLambdaRotation.y));
 
             // Apply the impulse to the body
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -543,7 +543,7 @@ public class HingeJoint extends Joint {
                     Vector3.operatorMultiply(mC2CrossA1, deltaLambdaRotation.y));
 
             // Apply the impulse to the body
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
 
         /**
@@ -569,7 +569,7 @@ public class HingeJoint extends Joint {
                     Vector3 angularImpulseBody1 = Vector3.operatorMultiply(-deltaLambdaLower, mA1);
 
                     // Apply the impulse to the body
-                    w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+                    w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
                 }
                 if (mBody2.isMotionEnabled()) {
 
@@ -577,7 +577,7 @@ public class HingeJoint extends Joint {
                     Vector3 angularImpulseBody2 = Vector3.operatorMultiply(deltaLambdaLower, mA1);
 
                     // Apply the impulse to the body
-                    w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+                    w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
                 }
             }
 
@@ -599,7 +599,7 @@ public class HingeJoint extends Joint {
                     Vector3 angularImpulseBody1 = Vector3.operatorMultiply(deltaLambdaUpper, mA1);
 
                     // Apply the impulse to the body
-                    w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+                    w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
                 }
                 if (mBody2.isMotionEnabled()) {
 
@@ -607,7 +607,7 @@ public class HingeJoint extends Joint {
                     Vector3 angularImpulseBody2 = Vector3.operatorMultiply(-deltaLambdaUpper, mA1);
 
                     // Apply the impulse to the body
-                    w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+                    w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
                 }
             }
         }
@@ -634,7 +634,7 @@ public class HingeJoint extends Joint {
                 Vector3 angularImpulseBody1 = Vector3.operatorMultiply(-deltaLambdaMotor, mA1);
 
                 // Apply the impulse to the body
-                w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+                w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
             }
             if (mBody2.isMotionEnabled()) {
 
@@ -642,7 +642,7 @@ public class HingeJoint extends Joint {
                 Vector3 angularImpulseBody2 = Vector3.operatorMultiply(deltaLambdaMotor, mA1);
 
                 // Apply the impulse to the body
-                w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+                w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
             }
         }
     }
@@ -745,7 +745,7 @@ public class HingeJoint extends Joint {
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
-            x1.operatorAddEqual(v1);
+            x1.add(v1);
             q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
             q1.normalize();
         }
@@ -760,7 +760,7 @@ public class HingeJoint extends Joint {
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
-            x2.operatorAddEqual(v2);
+            x2.add(v2);
             q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
             q2.normalize();
         }

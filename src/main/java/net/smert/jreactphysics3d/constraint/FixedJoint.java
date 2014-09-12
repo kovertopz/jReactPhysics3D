@@ -129,7 +129,7 @@ public class FixedJoint extends Joint {
 
         // Compute the bias "b" of the constraint for the 3 translation constraints
         float biasFactor = (BETA / constraintSolverData.timeStep);
-        mBiasTranslation.setToZero();
+        mBiasTranslation.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             mBiasTranslation = Vector3.operatorMultiply(
                     biasFactor, Vector3.operatorSubtract(Vector3.operatorSubtract(Vector3.operatorAdd(x2, mR2World), x1), mR1World));
@@ -149,7 +149,7 @@ public class FixedJoint extends Joint {
         }
 
         // Compute the bias "b" for the 3 rotation constraints
-        mBiasRotation.setToZero();
+        mBiasRotation.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             Quaternion currentOrientationDifference = orientationBody2.operatorMultiply(orientationBody1.getInverse());
             currentOrientationDifference.normalize();
@@ -161,8 +161,8 @@ public class FixedJoint extends Joint {
         if (!constraintSolverData.isWarmStartingActive) {
 
             // Reset the accumulated impulses
-            mImpulseTranslation.setToZero();
-            mImpulseRotation.setToZero();
+            mImpulseTranslation.zero();
+            mImpulseRotation.zero();
         }
     }
 
@@ -187,11 +187,11 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody1 = mImpulseTranslation.cross(mR1World);
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            angularImpulseBody1.operatorAddEqual(Vector3.operatorNegative(mImpulseRotation));
+            angularImpulseBody1.add(Vector3.operatorNegative(mImpulseRotation));
 
             // Apply the impulse to the body
-            v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -200,11 +200,11 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody2 = Vector3.operatorNegative(mImpulseTranslation.cross(mR2World));
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            angularImpulseBody2.operatorAddEqual(mImpulseRotation);
+            angularImpulseBody2.add(mImpulseRotation);
 
             // Apply the impulse to the body
-            v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
     }
 
@@ -232,7 +232,7 @@ public class FixedJoint extends Joint {
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambda = Matrix3x3.operatorMultiply(
                 mInverseMassMatrixTranslation, Vector3.operatorSubtract(Vector3.operatorNegative(JvTranslation), mBiasTranslation));
-        mImpulseTranslation.operatorAddEqual(deltaLambda);
+        mImpulseTranslation.add(deltaLambda);
 
         if (mBody1.isMotionEnabled()) {
 
@@ -241,8 +241,8 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody1 = deltaLambda.cross(mR1World);
 
             // Apply the impulse to the body
-            v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -251,8 +251,8 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody2 = Vector3.operatorNegative(deltaLambda.cross(mR2World));
 
             // Apply the impulse to the body
-            v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
 
         /**
@@ -264,7 +264,7 @@ public class FixedJoint extends Joint {
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 deltaLambda2 = Matrix3x3.operatorMultiply(
                 mInverseMassMatrixRotation, Vector3.operatorSubtract(Vector3.operatorNegative(JvRotation), mBiasRotation));
-        mImpulseRotation.operatorAddEqual(deltaLambda2);
+        mImpulseRotation.add(deltaLambda2);
 
         if (mBody1.isMotionEnabled()) {
 
@@ -272,7 +272,7 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody1 = Vector3.operatorNegative(deltaLambda2);
 
             // Apply the impulse to the body
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -280,7 +280,7 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody2 = deltaLambda2;
 
             // Apply the impulse to the body
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
     }
 
@@ -363,7 +363,7 @@ public class FixedJoint extends Joint {
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
-            x1.operatorAddEqual(v1);
+            x1.add(v1);
             q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
             q1.normalize();
         }
@@ -378,7 +378,7 @@ public class FixedJoint extends Joint {
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
-            x2.operatorAddEqual(v2);
+            x2.add(v2);
             q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
             q2.normalize();
         }

@@ -264,8 +264,8 @@ public class Quaternion {
     public Quaternion operatorMultiply(Quaternion quaternion) {
         return new Quaternion(w * quaternion.w - getVectorV().dot(quaternion.getVectorV()),
                 Vector3.operatorMultiply(w, quaternion.getVectorV())
-                .operatorAddEqual(Vector3.operatorMultiply(quaternion.w, getVectorV()))
-                .operatorAddEqual(getVectorV().cross(quaternion.getVectorV())));
+                .add(Vector3.operatorMultiply(quaternion.w, getVectorV()))
+                .add(getVectorV().cross(quaternion.getVectorV())));
     }
 
     // Overloaded operator for the multiplication with a vector.
@@ -320,7 +320,7 @@ public class Quaternion {
         rotationAxis = rotationAxis.getUnit();
 
         // Set the rotation axis values
-        axis.setAllValues(rotationAxis.x, rotationAxis.y, rotationAxis.z);
+        axis.set(rotationAxis.x, rotationAxis.y, rotationAxis.z);
     }
 
     // Return the orientation matrix corresponding to this quaternion

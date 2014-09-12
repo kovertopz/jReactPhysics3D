@@ -232,7 +232,7 @@ public class Simplex {
                 }
 
                 // Closest point v = sum(lambda_i * points[i])
-                v.operatorAddEqual(Vector3.operatorMultiply(mDet[subset][i], mPoints[i]));
+                v.add(Vector3.operatorMultiply(mDet[subset][i], mPoints[i]));
             }
         }
 
@@ -363,8 +363,8 @@ public class Simplex {
     //      with lambda_i = deltaX_i / deltaX
     public void computeClosestPointsOfAandB(Vector3 pA, Vector3 pB) {
         float deltaX = 0.0f;
-        pA.setAllValues(0.0f, 0.0f, 0.0f);
-        pB.setAllValues(0.0f, 0.0f, 0.0f);
+        pA.set(0.0f, 0.0f, 0.0f);
+        pB.set(0.0f, 0.0f, 0.0f);
         int i;
         int bit;
 
@@ -373,15 +373,15 @@ public class Simplex {
             // If the current point is part of the simplex
             if (overlap(mBitsCurrentSimplex, bit)) {
                 deltaX += mDet[mBitsCurrentSimplex][i];
-                pA.operatorAddEqual(Vector3.operatorMultiply(mDet[mBitsCurrentSimplex][i], mSuppPointsA[i]));
-                pB.operatorAddEqual(Vector3.operatorMultiply(mDet[mBitsCurrentSimplex][i], mSuppPointsB[i]));
+                pA.add(Vector3.operatorMultiply(mDet[mBitsCurrentSimplex][i], mSuppPointsA[i]));
+                pB.add(Vector3.operatorMultiply(mDet[mBitsCurrentSimplex][i], mSuppPointsB[i]));
             }
         }
 
         assert (deltaX > 0.0f);
         float factor = 1.0f / deltaX;
-        pA.operatorMultiplyEqual(factor);
-        pB.operatorMultiplyEqual(factor);
+        pA.multiply(factor);
+        pB.multiply(factor);
     }
 
     // Compute the closest point "v" to the origin of the current simplex.

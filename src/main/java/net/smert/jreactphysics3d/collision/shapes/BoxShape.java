@@ -23,7 +23,7 @@ public class BoxShape extends CollisionShape {
     private BoxShape(BoxShape shape) {
         super(shape);
         mExtent = new Vector3();
-        mExtent.setAllValues(shape.mExtent.getX(), shape.mExtent.getY(), shape.mExtent.getZ());
+        mExtent.set(shape.mExtent.getX(), shape.mExtent.getY(), shape.mExtent.getZ());
     }
 
     // Constructor
@@ -86,11 +86,11 @@ public class BoxShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.setAllValues(mExtent.getX(), mExtent.getY(), mExtent.getZ());
-        max.operatorAddEqual(new Vector3(mMargin, mMargin, mMargin));
+        max.set(mExtent.getX(), mExtent.getY(), mExtent.getZ());
+        max.add(new Vector3(mMargin, mMargin, mMargin));
 
         // Minimum bounds
-        min.setAllValues(-max.getX(), -max.getY(), -max.getZ());
+        min.set(-max.getX(), -max.getY(), -max.getZ());
     }
 
     // Test equality between two box shapes

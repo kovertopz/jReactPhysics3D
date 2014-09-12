@@ -142,8 +142,8 @@ public class RigidBody extends CollisionBody {
         }
 
         // Add the force and torque
-        mExternalForce.operatorAddEqual(force);
-        mExternalTorque.operatorAddEqual(Vector3.operatorSubtract(point, mTransform.getPosition()).cross(force));
+        mExternalForce.add(force);
+        mExternalTorque.add(Vector3.operatorSubtract(point, mTransform.getPosition()).cross(force));
     }
 
     // Apply an external force to the body at its gravity center.
@@ -162,7 +162,7 @@ public class RigidBody extends CollisionBody {
         }
 
         // Add the force
-        mExternalForce.operatorAddEqual(force);
+        mExternalForce.add(force);
     }
 
     // Apply an external torque to the body.
@@ -182,7 +182,7 @@ public class RigidBody extends CollisionBody {
         }
 
         // Add the torque
-        mExternalTorque.operatorAddEqual(torque);
+        mExternalTorque.add(torque);
     }
 
     // Return the local inertia tensor of the body (in body coordinates)
@@ -321,10 +321,10 @@ public class RigidBody extends CollisionBody {
     public void setIsSleeping(boolean isSleeping) {
 
         if (isSleeping) {
-            mLinearVelocity.setToZero();
-            mAngularVelocity.setToZero();
-            mExternalForce.setToZero();
-            mExternalTorque.setToZero();
+            mLinearVelocity.zero();
+            mAngularVelocity.zero();
+            mExternalForce.zero();
+            mExternalTorque.zero();
         }
 
         super.setIsSleeping(isSleeping);

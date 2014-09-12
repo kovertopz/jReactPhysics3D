@@ -86,7 +86,7 @@ public class ConeShape extends CollisionShape {
         if (direction.lengthSquare() > Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
             unitVec = direction.getUnit();
         }
-        supportPoint.operatorAddEqual(unitVec.operatorMultiplyEqual(mMargin));
+        supportPoint.add(unitVec.multiply(mMargin));
 
         return supportPoint;
     }

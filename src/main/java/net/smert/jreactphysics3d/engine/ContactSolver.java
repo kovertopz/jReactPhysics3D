@@ -128,7 +128,7 @@ public class ContactSolver {
 
             // If we solve the friction constraints at the center of the contact manifold
             if (mIsSolveFrictionAtContactManifoldCenterActive) {
-                manifold.normal.setToZero();
+                manifold.normal.zero();
             }
 
             // Get the velocities of the bodies
@@ -217,7 +217,7 @@ public class ContactSolver {
 
                 // If we solve the friction constraints at the center of the contact manifold
                 if (mIsSolveFrictionAtContactManifoldCenterActive) {
-                    manifold.normal.operatorAddEqual(contactPoint.normal);
+                    manifold.normal.add(contactPoint.normal);
                 }
             }
 
@@ -266,15 +266,15 @@ public class ContactSolver {
 
         // Update the velocities of the bodies by applying the impulse P
         if (manifold.isBody1Moving) {
-            mLinearVelocities[manifold.indexBody1].operatorAddEqual(
+            mLinearVelocities[manifold.indexBody1].add(
                     Vector3.operatorMultiply(manifold.massInverseBody1, impulse.linearImpulseBody1));
-            mAngularVelocities[manifold.indexBody1].operatorAddEqual(
+            mAngularVelocities[manifold.indexBody1].add(
                     Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody1, impulse.angularImpulseBody1));
         }
         if (manifold.isBody2Moving) {
-            mLinearVelocities[manifold.indexBody2].operatorAddEqual(
+            mLinearVelocities[manifold.indexBody2].add(
                     Vector3.operatorMultiply(manifold.massInverseBody2, impulse.linearImpulseBody2));
-            mAngularVelocities[manifold.indexBody2].operatorAddEqual(
+            mAngularVelocities[manifold.indexBody2].add(
                     Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody2, impulse.angularImpulseBody2));
         }
     }
@@ -284,15 +284,15 @@ public class ContactSolver {
 
         // Update the velocities of the bodies by applying the impulse P
         if (manifold.isBody1Moving) {
-            mSplitLinearVelocities[manifold.indexBody1].operatorAddEqual(
+            mSplitLinearVelocities[manifold.indexBody1].add(
                     Vector3.operatorMultiply(manifold.massInverseBody1, impulse.linearImpulseBody1));
-            mSplitAngularVelocities[manifold.indexBody1].operatorAddEqual(
+            mSplitAngularVelocities[manifold.indexBody1].add(
                     Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody1, impulse.angularImpulseBody1));
         }
         if (manifold.isBody2Moving) {
-            mSplitLinearVelocities[manifold.indexBody2].operatorAddEqual(
+            mSplitLinearVelocities[manifold.indexBody2].add(
                     Vector3.operatorMultiply(manifold.massInverseBody2, impulse.linearImpulseBody2));
-            mSplitAngularVelocities[manifold.indexBody2].operatorAddEqual(
+            mSplitAngularVelocities[manifold.indexBody2].add(
                     Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody2, impulse.angularImpulseBody2));
         }
     }
@@ -496,8 +496,8 @@ public class ContactSolver {
 
             // If we solve the friction constraints at the center of the contact manifold
             if (mIsSolveFrictionAtContactManifoldCenterActive) {
-                internalManifold.frictionPointBody1.setToZero();
-                internalManifold.frictionPointBody2.setToZero();
+                internalManifold.frictionPointBody1.zero();
+                internalManifold.frictionPointBody2.zero();
             }
 
             // For each  contact point of the contact manifold
@@ -529,16 +529,16 @@ public class ContactSolver {
 
                 // If we solve the friction constraints at the center of the contact manifold
                 if (mIsSolveFrictionAtContactManifoldCenterActive) {
-                    internalManifold.frictionPointBody1.operatorAddEqual(p1);
-                    internalManifold.frictionPointBody2.operatorAddEqual(p2);
+                    internalManifold.frictionPointBody1.add(p1);
+                    internalManifold.frictionPointBody2.add(p2);
                 }
             }
 
             // If we solve the friction constraints at the center of the contact manifold
             if (mIsSolveFrictionAtContactManifoldCenterActive) {
 
-                internalManifold.frictionPointBody1.operatorDivideEqual(internalManifold.nbContacts);
-                internalManifold.frictionPointBody2.operatorDivideEqual((float) internalManifold.nbContacts);
+                internalManifold.frictionPointBody1.divide(internalManifold.nbContacts);
+                internalManifold.frictionPointBody2.divide((float) internalManifold.nbContacts);
                 internalManifold.r1Friction.set(Vector3.operatorSubtract(internalManifold.frictionPointBody1, x1));
                 internalManifold.r2Friction.set(Vector3.operatorSubtract(internalManifold.frictionPointBody2, x2));
                 internalManifold.oldFrictionVector1.set(new Vector3(externalManifold.getFrictionVector1()));

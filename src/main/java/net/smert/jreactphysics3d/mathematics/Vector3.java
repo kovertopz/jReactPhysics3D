@@ -18,7 +18,7 @@ public class Vector3 {
     // Component z
     float z;
 
-    // Constructor of the class Vector3D
+    // Constructor
     public Vector3() {
         x = 0.0f;
         y = 0.0f;
@@ -39,55 +39,53 @@ public class Vector3 {
         z = vector.z;
     }
 
-    // Set the vector to zero
-    public void setToZero() {
-        x = 0;
-        y = 0;
-        z = 0;
+    // Return true if the vector is unit and false otherwise
+    public boolean isUnit() {
+        return Mathematics.ApproxEqual(lengthSquare(), 1.0f, Defaults.MACHINE_EPSILON);
     }
 
-    // Set all the values of the vector
-    public void setAllValues(float newX, float newY, float newZ) {
-        x = newX;
-        y = newY;
-        z = newZ;
+    // Return true if the vector is the zero vector
+    public boolean isZero() {
+        return Mathematics.ApproxEqual(lengthSquare(), 0.0f, Defaults.MACHINE_EPSILON);
+    }
+
+    // Scalar product of two vectors (public)
+    public float dot(Vector3 vector) {
+        return x * vector.x + y * vector.y + z * vector.z;
+    }
+
+    // Overloaded operator for value access
+    public float get(int index) {
+        if (index == 0) {
+            return x;
+        } else if (index == 1) {
+            return y;
+        } else if (index == 2) {
+            return z;
+        }
+        throw new IllegalArgumentException("Unknown index: " + index);
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getZ() {
+        return z;
     }
 
     // Return the length of the vector
     public float length() {
-        return (float) Math.sqrt(x * x + y * y + z * z);
+        return Mathematics.Sqrt(x * x + y * y + z * z);
     }
 
     // Return the square of the length of the vector
     public float lengthSquare() {
         return x * x + y * y + z * z;
-    }
-
-    // Scalar product of two vectors (public)
-    public float dot(Vector3 vector) {
-        return (x * vector.x + y * vector.y + z * vector.z);
-    }
-
-    // Cross product of two vectors (public)
-    public Vector3 cross(Vector3 vector) {
-        return new Vector3(y * vector.z - z * vector.y,
-                z * vector.x - x * vector.z,
-                x * vector.y - y * vector.x);
-    }
-
-    // Normalize the vector
-    public void normalize() {
-        float lengthVector = length();
-        assert (lengthVector > Defaults.MACHINE_EPSILON);
-        float lengthInv = 1.0f / lengthVector;
-        x *= lengthInv;
-        y *= lengthInv;
-        z *= lengthInv;
-    }
-
-    // Return the corresponding absolute value vector
-    public Vector3 getAbsoluteVector() {
-        return new Vector3(Math.abs(x), Math.abs(y), Math.abs(z));
     }
 
     // Return the axis with the minimal value
@@ -100,52 +98,16 @@ public class Vector3 {
         return (x < y ? (y < z ? 2 : 1) : (x < z ? 2 : 0));
     }
 
-    // Return true if the vector is unit and false otherwise
-    public boolean isUnit() {
-        return Mathematics.ApproxEqual(lengthSquare(), 1.0f, Defaults.MACHINE_EPSILON);
-    }
-
-    // Return true if the vector is the zero vector
-    public boolean isZero() {
-        return Mathematics.ApproxEqual(lengthSquare(), 0.0f, Defaults.MACHINE_EPSILON);
-    }
-
-    // Overloaded operator for the equality condition
-    public boolean operatorEquals(Vector3 vector) {
-        return (x == vector.x && y == vector.y && z == vector.z);
-    }
-
-    // Overloaded operator for the is different condition
-    public boolean operatorNotEquals(Vector3 vector) {
-        return !(operatorEquals(vector));
-    }
-
     // Overloaded operator for addition with assignment
-    public Vector3 operatorAddEqual(Vector3 vector) {
+    public Vector3 add(Vector3 vector) {
         x += vector.x;
         y += vector.y;
         z += vector.z;
         return this;
     }
 
-    // Overloaded operator for substraction with assignment
-    public Vector3 operatorSubtractEqual(Vector3 vector) {
-        x -= vector.x;
-        y -= vector.y;
-        z -= vector.z;
-        return this;
-    }
-
-    // Overloaded operator for multiplication with a number with assignment
-    public Vector3 operatorMultiplyEqual(float number) {
-        x *= number;
-        y *= number;
-        z *= number;
-        return this;
-    }
-
     // Overloaded operator for division by a number with assignment
-    public Vector3 operatorDivideEqual(float number) {
+    public Vector3 divide(float number) {
         assert (number > Defaults.MACHINE_EPSILON);
         x /= number;
         y /= number;
@@ -153,16 +115,85 @@ public class Vector3 {
         return this;
     }
 
-    // Overloaded operator for value access
-    public float operatorSquareBrackets(int index) {
-        if (index == 0) {
-            return x;
-        } else if (index == 1) {
-            return y;
-        } else if (index == 2) {
-            return z;
-        }
-        throw new IllegalArgumentException("Unknown index: " + index);
+    // Overloaded operator for multiplication with a number with assignment
+    public Vector3 multiply(float number) {
+        x *= number;
+        y *= number;
+        z *= number;
+        return this;
+    }
+
+    // Normalize the vector
+    public Vector3 normalize() {
+        float len = length();
+        assert (len > Defaults.MACHINE_EPSILON);
+        float lenInv = 1.0f / len;
+        x *= lenInv;
+        y *= lenInv;
+        z *= lenInv;
+        return this;
+    }
+
+    // Set all the values of the vector
+    public Vector3 set(float newX, float newY, float newZ) {
+        x = newX;
+        y = newY;
+        z = newZ;
+        return this;
+    }
+
+    public Vector3 set(Vector3 vector) {
+        assert (vector != this);
+        x = vector.x;
+        y = vector.y;
+        z = vector.z;
+        return this;
+    }
+
+    public Vector3 setX(float newX) {
+        x = newX;
+        return this;
+    }
+
+    public Vector3 setY(float newY) {
+        y = newY;
+        return this;
+    }
+
+    public Vector3 setZ(float newZ) {
+        z = newZ;
+        return this;
+    }
+
+    // Overloaded operator for substraction with assignment
+    public Vector3 subtract(Vector3 vector) {
+        x -= vector.x;
+        y -= vector.y;
+        z -= vector.z;
+        return this;
+    }
+
+    // Set the vector to zero
+    public Vector3 zero() {
+        x = 0.0f;
+        y = 0.0f;
+        z = 0.0f;
+        return this;
+    }
+
+    /**
+     * Good above here
+     */
+    // Cross product of two vectors (public)
+    public Vector3 cross(Vector3 vector) {
+        return new Vector3(y * vector.z - z * vector.y,
+                z * vector.x - x * vector.z,
+                x * vector.y - y * vector.x);
+    }
+
+    // Return the corresponding absolute value vector
+    public Vector3 getAbsoluteVector() {
+        return new Vector3(Math.abs(x), Math.abs(y), Math.abs(z));
     }
 
     // Overloaded operator for addition
@@ -197,15 +228,6 @@ public class Vector3 {
     }
 
     // Assignment operator
-    public Vector3 operatorEqual(Vector3 vector) {
-        if (vector != this) {
-            x = vector.x;
-            y = vector.y;
-            z = vector.z;
-        }
-        return this;
-    }
-
     // Return the corresponding unit vector
     public Vector3 getUnit() {
         float lengthVector = length();
@@ -227,11 +249,11 @@ public class Vector3 {
         int minElement = vectorAbs.getMinAxis();
 
         if (minElement == 0) {
-            return new Vector3(0.0f, -z, y).operatorDivideEqual((float) Math.sqrt(y * y + z * z));
+            return new Vector3(0.0f, -z, y).divide((float) Math.sqrt(y * y + z * z));
         } else if (minElement == 1) {
-            return new Vector3(-z, 0.0f, x).operatorDivideEqual((float) Math.sqrt(x * x + z * z));
+            return new Vector3(-z, 0.0f, x).divide((float) Math.sqrt(x * x + z * z));
         } else {
-            return new Vector3(-y, x, 0.0f).operatorDivideEqual((float) Math.sqrt(x * x + y * y));
+            return new Vector3(-y, x, 0.0f).divide((float) Math.sqrt(x * x + y * y));
         }
 
     }
@@ -266,46 +288,6 @@ public class Vector3 {
     @Override
     public String toString() {
         return "(x= " + x + ", y= " + y + ", z= " + z + ")";
-    }
-
-    public void set(Vector3 v) {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public float getZ() {
-        return z;
-    }
-
-    public Vector3 set(float newX, float newY, float newZ) {
-        x = newX;
-        y = newY;
-        z = newZ;
-        return this;
-    }
-
-    public Vector3 setX(float newX) {
-        x = newX;
-        return this;
-    }
-
-    public Vector3 setY(float newY) {
-        y = newY;
-        return this;
-    }
-
-    public Vector3 setZ(float newZ) {
-        z = newZ;
-        return this;
     }
 
 }

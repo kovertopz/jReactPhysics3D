@@ -50,14 +50,14 @@ public class TestVector3 {
 
         // Test method to set values
         Vector3 newVector2 = new Vector3();
-        newVector2.setAllValues(6.1f, 7.2f, 8.6f);
+        newVector2.set(6.1f, 7.2f, 8.6f);
 
         Assert.assertEquals(newVector2.x, 6.1f, 0);
         Assert.assertEquals(newVector2.y, 7.2f, 0);
         Assert.assertEquals(newVector2.z, 8.6f, 0);
 
         // Test method to set to zero
-        newVector2.setToZero();
+        newVector2.zero();
 
         Assert.assertEquals(newVector2.equals(new Vector3(0, 0, 0)), true);
     }
@@ -157,9 +157,9 @@ public class TestVector3 {
     public void testOperators() {
 
         // Test the [] operator
-        Assert.assertEquals(mVector345.operatorSquareBrackets(0), 3, 0);
-        Assert.assertEquals(mVector345.operatorSquareBrackets(1), 4, 0);
-        Assert.assertEquals(mVector345.operatorSquareBrackets(2), 5, 0);
+        Assert.assertEquals(mVector345.get(0), 3, 0);
+        Assert.assertEquals(mVector345.get(1), 4, 0);
+        Assert.assertEquals(mVector345.get(2), 5, 0);
 
         // Assignment operator
         Vector3 newVector = new Vector3(6, 4, 2);
@@ -167,20 +167,14 @@ public class TestVector3 {
 
         Assert.assertEquals(newVector.equals(new Vector3(7, 8, 9)), true);
 
-        // Equality, inequality operators
-        Assert.assertEquals(new Vector3(5, 7, 3).operatorEquals(new Vector3(5, 7, 3)), true);
-        Assert.assertEquals(new Vector3(63, 64, 24).operatorNotEquals(new Vector3(63, 64, 5)), true);
-        Assert.assertEquals(new Vector3(63, 64, 24).operatorNotEquals(new Vector3(12, 64, 24)), true);
-        Assert.assertEquals(new Vector3(63, 64, 24).operatorNotEquals(new Vector3(63, 8, 24)), true);
-
         // Addition, substraction
         Assert.assertEquals(Vector3.operatorAdd(new Vector3(63, 24, 5), new Vector3(3, 4, 2)).equals(new Vector3(66, 28, 7)), true);
         Assert.assertEquals(Vector3.operatorSubtract(new Vector3(63, 24, 5), new Vector3(3, 4, 2)).equals(new Vector3(60, 20, 3)), true);
 
         Vector3 vector1 = new Vector3(6, 33, 62);
         Vector3 vector2 = new Vector3(7, 68, 35);
-        vector1.operatorAddEqual(new Vector3(5, 10, 12));
-        vector2.operatorSubtractEqual(new Vector3(10, 21, 5));
+        vector1.add(new Vector3(5, 10, 12));
+        vector2.subtract(new Vector3(10, 21, 5));
 
         Assert.assertEquals(vector1.equals(new Vector3(11, 43, 74)), true);
         Assert.assertEquals(vector2.equals(new Vector3(-3, 47, 30)), true);
@@ -192,8 +186,8 @@ public class TestVector3 {
 
         Vector3 vector3 = new Vector3(6, 33, 62);
         Vector3 vector4 = new Vector3(15, 60, 33);
-        vector3.operatorMultiplyEqual(10);
-        vector4.operatorDivideEqual(3);
+        vector3.multiply(10);
+        vector4.divide(3);
 
         Assert.assertEquals(vector3.equals(new Vector3(60, 330, 620)), true);
         Assert.assertEquals(vector4.equals(new Vector3(5, 20, 11)), true);

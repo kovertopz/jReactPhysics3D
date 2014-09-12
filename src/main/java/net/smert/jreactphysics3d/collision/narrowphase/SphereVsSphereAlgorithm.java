@@ -39,8 +39,8 @@ public class SphereVsSphereAlgorithm extends NarrowPhaseAlgorithm {
         if (squaredDistanceBetweenCenters <= sumRadius * sumRadius) {
             Vector3 centerSphere2InBody1LocalSpace = transform1.getInverse().operatorMultiply(transform2.getPosition());
             Vector3 centerSphere1InBody2LocalSpace = transform2.getInverse().operatorMultiply(transform1.getPosition());
-            Vector3 intersectionOnBody1 = centerSphere2InBody1LocalSpace.getUnit().operatorMultiplyEqual(sphereShape1.getRadius());
-            Vector3 intersectionOnBody2 = centerSphere1InBody2LocalSpace.getUnit().operatorMultiplyEqual(sphereShape2.getRadius());
+            Vector3 intersectionOnBody1 = centerSphere2InBody1LocalSpace.getUnit().multiply(sphereShape1.getRadius());
+            Vector3 intersectionOnBody2 = centerSphere1InBody2LocalSpace.getUnit().multiply(sphereShape2.getRadius());
             float penetrationDepth = sumRadius - (float) Math.sqrt(squaredDistanceBetweenCenters);
 
             // Create the contact info object

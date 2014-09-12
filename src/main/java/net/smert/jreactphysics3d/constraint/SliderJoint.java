@@ -290,7 +290,7 @@ public class SliderJoint extends Joint {
         }
 
         // Compute the bias "b" of the rotation constraint
-        mBRotation.setToZero();
+        mBRotation.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             Quaternion currentOrientationDifference = orientationBody2.operatorMultiply(orientationBody1.getInverse());
             currentOrientationDifference.normalize();
@@ -345,7 +345,7 @@ public class SliderJoint extends Joint {
 
             // Reset all the accumulated impulses
             mImpulseTranslation.setToZero();
-            mImpulseRotation.setToZero();
+            mImpulseRotation.zero();
             mImpulseLowerLimit = 0.0f;
             mImpulseUpperLimit = 0.0f;
             mImpulseMotor = 0.0f;
@@ -384,18 +384,18 @@ public class SliderJoint extends Joint {
                     Vector3.operatorMultiply(mR1PlusUCrossN2, mImpulseTranslation.y));
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            angularImpulseBody1.operatorAddEqual(Vector3.operatorNegative(mImpulseRotation));
+            angularImpulseBody1.add(Vector3.operatorNegative(mImpulseRotation));
 
             // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
-            linearImpulseBody1.operatorAddEqual(linearImpulseLimits);
-            angularImpulseBody1.operatorAddEqual(Vector3.operatorMultiply(impulseLimits, mR1PlusUCrossSliderAxis));
+            linearImpulseBody1.add(linearImpulseLimits);
+            angularImpulseBody1.add(Vector3.operatorMultiply(impulseLimits, mR1PlusUCrossSliderAxis));
 
             // Compute the impulse P=J^T * lambda for the motor constraint
-            linearImpulseBody1.operatorAddEqual(impulseMotor);
+            linearImpulseBody1.add(impulseMotor);
 
             // Apply the impulse to the body
-            v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -408,18 +408,18 @@ public class SliderJoint extends Joint {
                     Vector3.operatorMultiply(mR2CrossN2, mImpulseTranslation.y));
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            angularImpulseBody2.operatorAddEqual(mImpulseRotation);
+            angularImpulseBody2.add(mImpulseRotation);
 
             // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
-            linearImpulseBody2.operatorAddEqual(Vector3.operatorNegative(linearImpulseLimits));
-            angularImpulseBody2.operatorAddEqual(Vector3.operatorMultiply(-impulseLimits, mR2CrossSliderAxis));
+            linearImpulseBody2.add(Vector3.operatorNegative(linearImpulseLimits));
+            angularImpulseBody2.add(Vector3.operatorMultiply(-impulseLimits, mR2CrossSliderAxis));
 
             // Compute the impulse P=J^T * lambda for the motor constraint
-            linearImpulseBody2.operatorAddEqual(Vector3.operatorNegative(impulseMotor));
+            linearImpulseBody2.add(Vector3.operatorNegative(impulseMotor));
 
             // Apply the impulse to the body
-            v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
     }
 
@@ -461,8 +461,8 @@ public class SliderJoint extends Joint {
                     Vector3.operatorMultiply(mR1PlusUCrossN2, deltaLambda.y));
 
             // Apply the impulse to the body
-            v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -475,8 +475,8 @@ public class SliderJoint extends Joint {
                     Vector3.operatorMultiply(mR2CrossN2, deltaLambda.y));
 
             // Apply the impulse to the body
-            v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
 
         /**
@@ -488,7 +488,7 @@ public class SliderJoint extends Joint {
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 deltaLambda2 = Matrix3x3.operatorMultiply(
                 mInverseMassMatrixRotationConstraint, Vector3.operatorSubtract(Vector3.operatorNegative(JvRotation), mBRotation));
-        mImpulseRotation.operatorAddEqual(deltaLambda2);
+        mImpulseRotation.add(deltaLambda2);
 
         if (mBody1.isMotionEnabled()) {
 
@@ -496,7 +496,7 @@ public class SliderJoint extends Joint {
             Vector3 angularImpulseBody1 = Vector3.operatorNegative(deltaLambda2);
 
             // Apply the impulse to the body
-            w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -504,7 +504,7 @@ public class SliderJoint extends Joint {
             Vector3 angularImpulseBody2 = deltaLambda2;
 
             // Apply the impulse to the body
-            w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
 
         /**
@@ -532,8 +532,8 @@ public class SliderJoint extends Joint {
                     Vector3 angularImpulseBody1 = Vector3.operatorMultiply(-deltaLambdaLower, mR1PlusUCrossSliderAxis);
 
                     // Apply the impulse to the body
-                    v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
-                    w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+                    v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+                    w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
                 }
                 if (mBody2.isMotionEnabled()) {
 
@@ -542,8 +542,8 @@ public class SliderJoint extends Joint {
                     Vector3 angularImpulseBody2 = Vector3.operatorMultiply(deltaLambdaLower, mR2CrossSliderAxis);
 
                     // Apply the impulse to the body
-                    v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
-                    w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+                    v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+                    w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
                 }
             }
 
@@ -567,8 +567,8 @@ public class SliderJoint extends Joint {
                     Vector3 angularImpulseBody1 = Vector3.operatorMultiply(deltaLambdaUpper, mR1PlusUCrossSliderAxis);
 
                     // Apply the impulse to the body
-                    v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
-                    w1.operatorAddEqual(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+                    v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+                    w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
                 }
                 if (mBody2.isMotionEnabled()) {
 
@@ -577,8 +577,8 @@ public class SliderJoint extends Joint {
                     Vector3 angularImpulseBody2 = Vector3.operatorMultiply(-deltaLambdaUpper, mR2CrossSliderAxis);
 
                     // Apply the impulse to the body
-                    v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
-                    w2.operatorAddEqual(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+                    v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+                    w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
                 }
             }
         }
@@ -604,7 +604,7 @@ public class SliderJoint extends Joint {
                 Vector3 linearImpulseBody1 = Vector3.operatorMultiply(deltaLambdaMotor, mSliderAxisWorld);
 
                 // Apply the impulse to the body
-                v1.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+                v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
             }
             if (mBody2.isMotionEnabled()) {
 
@@ -612,7 +612,7 @@ public class SliderJoint extends Joint {
                 Vector3 linearImpulseBody2 = Vector3.operatorMultiply(-deltaLambdaMotor, mSliderAxisWorld);
 
                 // Apply the impulse to the body
-                v2.operatorAddEqual(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+                v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
             }
         }
     }
@@ -722,7 +722,7 @@ public class SliderJoint extends Joint {
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
-            x1.operatorAddEqual(v1);
+            x1.add(v1);
             q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
             q1.normalize();
         }
@@ -741,7 +741,7 @@ public class SliderJoint extends Joint {
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
-            x2.operatorAddEqual(v2);
+            x2.add(v2);
             q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
             q2.normalize();
         }
@@ -832,7 +832,7 @@ public class SliderJoint extends Joint {
                     Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
                     // Update the body position/orientation
-                    x1.operatorAddEqual(v1);
+                    x1.add(v1);
                     q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
                     q1.normalize();
                 }
@@ -847,7 +847,7 @@ public class SliderJoint extends Joint {
                     Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
                     // Update the body position/orientation
-                    x2.operatorAddEqual(v2);
+                    x2.add(v2);
                     q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
                     q2.normalize();
                 }
@@ -870,7 +870,7 @@ public class SliderJoint extends Joint {
                     Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
                     // Update the body position/orientation
-                    x1.operatorAddEqual(v1);
+                    x1.add(v1);
                     q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
                     q1.normalize();
                 }
@@ -885,7 +885,7 @@ public class SliderJoint extends Joint {
                     Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
                     // Update the body position/orientation
-                    x2.operatorAddEqual(v2);
+                    x2.add(v2);
                     q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
                     q2.normalize();
                 }

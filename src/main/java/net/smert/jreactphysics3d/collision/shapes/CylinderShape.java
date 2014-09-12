@@ -78,7 +78,7 @@ public class CylinderShape extends CollisionShape {
         if (direction.lengthSquare() > Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
             unitVec = direction.getUnit();
         }
-        supportPoint.operatorAddEqual(unitVec.operatorMultiplyEqual(mMargin));
+        supportPoint.add(unitVec.multiply(mMargin));
 
         return supportPoint;
     }
@@ -98,7 +98,7 @@ public class CylinderShape extends CollisionShape {
             } else {
                 supportPoint.setY(mHalfHeight);
             }
-            supportPoint.operatorAddEqual(w.operatorMultiplyEqual(mRadius / lengthW));
+            supportPoint.add(w.multiply(mRadius / lengthW));
         } else {
             if (uDotv < 0.0f) {
                 supportPoint.setY(-mHalfHeight);
