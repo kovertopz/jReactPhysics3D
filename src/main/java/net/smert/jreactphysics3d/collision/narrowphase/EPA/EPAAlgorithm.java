@@ -152,7 +152,7 @@ public class EPAAlgorithm {
                 Vector3 d = Vector3.operatorSubtract(points[1], points[0]).getUnit();
 
                 // Choose the coordinate axis from the minimal absolute component of the vector d
-                int minAxis = d.getAbsoluteVector().getMinAxis();
+                int minAxis = new Vector3(d).abs().getMinAxis();
 
                 // Compute sin(60)
                 float sin60 = (float) Math.sqrt(3.0f) * 0.5f;

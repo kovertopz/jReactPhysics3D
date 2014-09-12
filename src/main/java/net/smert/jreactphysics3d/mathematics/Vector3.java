@@ -98,6 +98,14 @@ public class Vector3 {
         return (x < y ? (y < z ? 2 : 1) : (x < z ? 2 : 0));
     }
 
+    // Return the corresponding absolute value vector
+    public Vector3 abs() {
+        x = Math.abs(x);
+        y = Math.abs(y);
+        z = Math.abs(z);
+        return this;
+    }
+
     // Overloaded operator for addition with assignment
     public Vector3 add(Vector3 vector) {
         x += vector.x;
@@ -197,11 +205,6 @@ public class Vector3 {
         return new Vector3(y * vector.z - z * vector.y,
                 z * vector.x - x * vector.z,
                 x * vector.y - y * vector.x);
-    }
-
-    // Return the corresponding absolute value vector
-    public Vector3 getAbsoluteVector() {
-        return new Vector3(Math.abs(x), Math.abs(y), Math.abs(z));
     }
 
     // Overloaded operator for addition

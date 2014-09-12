@@ -136,8 +136,8 @@ public class TestVector3 {
     public void testOthersMethods() {
 
         // Test the method that returns the absolute vector
-        Assert.assertEquals(new Vector3(4, 5, 6).getAbsoluteVector().equals(new Vector3(4, 5, 6)), true);
-        Assert.assertEquals(new Vector3(-7, -24, -12).getAbsoluteVector().equals(new Vector3(7, 24, 12)), true);
+        Assert.assertEquals(new Vector3(4, 5, 6).abs().equals(new Vector3(4, 5, 6)), true);
+        Assert.assertEquals(new Vector3(-7, -24, -12).abs().equals(new Vector3(7, 24, 12)), true);
 
         // Test the method that returns the minimal element
         Assert.assertEquals(new Vector3(6, 35, 82).getMinAxis(), 0, 0);
