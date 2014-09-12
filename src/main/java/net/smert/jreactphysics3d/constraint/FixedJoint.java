@@ -131,8 +131,8 @@ public class FixedJoint extends Joint {
         float biasFactor = (BETA / constraintSolverData.timeStep);
         mBiasTranslation.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
-            mBiasTranslation = Vector3.operatorMultiply(
-                    biasFactor, new Vector3(new Vector3(new Vector3(x2).add(mR2World)).subtract(x1)).subtract(mR1World));
+            mBiasTranslation = new Vector3(
+                    new Vector3(new Vector3(new Vector3(x2).add(mR2World)).subtract(x1)).subtract(mR1World)).multiply(biasFactor);
         }
 
         // Compute the inverse of the mass matrix K=JM^-1J^t for the 3 rotation
@@ -154,7 +154,7 @@ public class FixedJoint extends Joint {
             Quaternion currentOrientationDifference = orientationBody2.operatorMultiply(orientationBody1.getInverse());
             currentOrientationDifference.normalize();
             Quaternion qError = currentOrientationDifference.operatorMultiply(mInitOrientationDifferenceInv);
-            mBiasRotation = Vector3.operatorMultiply(biasFactor * 2.0f, qError.getVectorV());
+            mBiasRotation = new Vector3(qError.getVectorV()).multiply(biasFactor * 2.0f);
         }
 
         // If warm-starting is not enabled
@@ -190,7 +190,7 @@ public class FixedJoint extends Joint {
             angularImpulseBody1.add(new Vector3(mImpulseRotation).invert());
 
             // Apply the impulse to the body
-            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
             w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
@@ -203,7 +203,7 @@ public class FixedJoint extends Joint {
             angularImpulseBody2.add(mImpulseRotation);
 
             // Apply the impulse to the body
-            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
             w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
     }
@@ -241,7 +241,7 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody1 = deltaLambda.cross(mR1World);
 
             // Apply the impulse to the body
-            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
             w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
@@ -251,7 +251,7 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody2 = new Vector3(deltaLambda.cross(mR2World)).invert();
 
             // Apply the impulse to the body
-            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
             w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
 
@@ -359,7 +359,7 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody1 = lambdaTranslation.cross(mR1World);
 
             // Compute the pseudo velocity
-            Vector3 v1 = Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1);
+            Vector3 v1 = new Vector3(linearImpulseBody1).multiply(inverseMassBody1);
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
@@ -374,7 +374,7 @@ public class FixedJoint extends Joint {
             Vector3 angularImpulseBody2 = new Vector3(lambdaTranslation.cross(mR2World)).invert();
 
             // Compute the pseudo velocity
-            Vector3 v2 = Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2);
+            Vector3 v2 = new Vector3(linearImpulseBody2).multiply(inverseMassBody2);
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
@@ -403,7 +403,7 @@ public class FixedJoint extends Joint {
         Quaternion currentOrientationDifference = q2.operatorMultiply(q1.getInverse());
         currentOrientationDifference.normalize();
         Quaternion qError = currentOrientationDifference.operatorMultiply(mInitOrientationDifferenceInv);
-        Vector3 errorRotation = Vector3.operatorMultiply(2.0f, qError.getVectorV());
+        Vector3 errorRotation = new Vector3(qError.getVectorV()).multiply(2.0f);
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 lambdaRotation = Matrix3x3.operatorMultiply(

@@ -233,16 +233,6 @@ public class Vector3 {
                 x * vector.y - y * vector.x);
     }
 
-    // Overloaded operator for multiplication with a number
-    public static Vector3 operatorMultiply(Vector3 vector, float number) {
-        return new Vector3(number * vector.x, number * vector.y, number * vector.z);
-    }
-
-    // Overloaded operator for multiplication with a number
-    public static Vector3 operatorMultiply(float number, Vector3 vector) {
-        return operatorMultiply(vector, number);
-    }
-
     @Override
     public int hashCode() {
         int hash = 5;

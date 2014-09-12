@@ -111,8 +111,8 @@ public class BallAndSocketJoint extends Joint {
         mBiasVector.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             float biasFactor = (BETA / constraintSolverData.timeStep);
-            mBiasVector = Vector3.operatorMultiply(
-                    biasFactor, new Vector3(new Vector3(new Vector3(x2).add(mR2World)).subtract(x1)).subtract(mR1World));
+            mBiasVector = new Vector3(
+                    new Vector3(new Vector3(new Vector3(x2).add(mR2World)).subtract(x1)).subtract(mR1World)).multiply(biasFactor);
         }
 
         // If warm-starting is not enabled
@@ -144,7 +144,7 @@ public class BallAndSocketJoint extends Joint {
             Vector3 angularImpulseBody1 = mImpulse.cross(mR1World);
 
             // Apply the impulse to the body
-            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
             w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
@@ -154,7 +154,7 @@ public class BallAndSocketJoint extends Joint {
             Vector3 angularImpulseBody2 = new Vector3(mImpulse.cross(mR2World)).invert();
 
             // Apply the impulse to the body
-            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
             w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
     }
@@ -188,7 +188,7 @@ public class BallAndSocketJoint extends Joint {
             Vector3 angularImpulseBody1 = deltaLambda.cross(mR1World);
 
             // Apply the impulse to the body
-            v1.add(Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1));
+            v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
             w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
         }
         if (mBody2.isMotionEnabled()) {
@@ -198,7 +198,7 @@ public class BallAndSocketJoint extends Joint {
             Vector3 angularImpulseBody2 = new Vector3(deltaLambda.cross(mR2World)).invert();
 
             // Apply the impulse to the body
-            v2.add(Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2));
+            v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
             w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
         }
     }
@@ -275,7 +275,7 @@ public class BallAndSocketJoint extends Joint {
             Vector3 angularImpulseBody1 = lambda.cross(mR1World);
 
             // Compute the pseudo velocity
-            Vector3 v1 = Vector3.operatorMultiply(inverseMassBody1, linearImpulseBody1);
+            Vector3 v1 = new Vector3(linearImpulseBody1).multiply(inverseMassBody1);
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
@@ -290,7 +290,7 @@ public class BallAndSocketJoint extends Joint {
             Vector3 angularImpulseBody2 = new Vector3(lambda.cross(mR2World)).invert();
 
             // Compute the pseudo velocity
-            Vector3 v2 = Vector3.operatorMultiply(inverseMassBody2, linearImpulseBody2);
+            Vector3 v2 = new Vector3(linearImpulseBody2).multiply(inverseMassBody2);
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation

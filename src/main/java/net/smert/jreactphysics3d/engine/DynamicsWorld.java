@@ -165,7 +165,7 @@ public class DynamicsWorld extends CollisionWorld {
                     Quaternion currentOrientation = bodies[b].getTransform().getOrientation();
 
                     // Compute the new position of the body
-                    Vector3 newPosition = new Vector3(currentPosition).add(Vector3.operatorMultiply(newLinVelocity, dt));
+                    Vector3 newPosition = new Vector3(currentPosition).add(new Vector3(newLinVelocity).multiply(dt));
                     Quaternion newOrientation = currentOrientation.operatorAdd(
                             new Quaternion(0.0f, newAngVelocity).operatorMultiply(currentOrientation).operatorMultiply(0.5f).operatorMultiply(dt));
 
@@ -296,7 +296,7 @@ public class DynamicsWorld extends CollisionWorld {
 
                     // Integrate the external force to get the new velocity of the body
                     mConstrainedLinearVelocities[indexBody] = new Vector3(bodies[b].getLinearVelocity()).add(
-                            Vector3.operatorMultiply(dt * bodies[b].getMassInverse(), bodies[b].getExternalForce()));
+                            new Vector3(bodies[b].getExternalForce()).multiply(dt * bodies[b].getMassInverse()));
                     mConstrainedAngularVelocities[indexBody] = new Vector3(bodies[b].getAngularVelocity()).add(
                             Matrix3x3.operatorMultiply(
                                     Matrix3x3.operatorMultiply(dt, bodies[b].getInertiaTensorInverseWorld()), bodies[b].getExternalTorque()));
@@ -305,8 +305,8 @@ public class DynamicsWorld extends CollisionWorld {
                     if (bodies[b].isGravityEnabled() && mIsGravityEnabled) {
 
                         // Integrate the gravity force
-                        mConstrainedLinearVelocities[indexBody].add(Vector3.operatorMultiply(
-                                dt * bodies[b].getMassInverse() * bodies[b].getMass(), mGravity));
+                        mConstrainedLinearVelocities[indexBody].add(new Vector3(
+                                mGravity).multiply(dt * bodies[b].getMassInverse() * bodies[b].getMass()));
                     }
 
                     // Apply the velocity damping

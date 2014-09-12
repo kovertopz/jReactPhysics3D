@@ -263,8 +263,8 @@ public class Quaternion {
     // Overloaded operator for the multiplication of two quaternions
     public Quaternion operatorMultiply(Quaternion quaternion) {
         return new Quaternion(w * quaternion.w - getVectorV().dot(quaternion.getVectorV()),
-                Vector3.operatorMultiply(w, quaternion.getVectorV())
-                .add(Vector3.operatorMultiply(quaternion.w, getVectorV()))
+                new Vector3(quaternion.getVectorV()).multiply(w)
+                .add(new Vector3(getVectorV()).multiply(quaternion.w))
                 .add(getVectorV().cross(quaternion.getVectorV())));
     }
 

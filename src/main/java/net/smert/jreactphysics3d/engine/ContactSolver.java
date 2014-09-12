@@ -267,13 +267,13 @@ public class ContactSolver {
         // Update the velocities of the bodies by applying the impulse P
         if (manifold.isBody1Moving) {
             mLinearVelocities[manifold.indexBody1].add(
-                    Vector3.operatorMultiply(manifold.massInverseBody1, impulse.linearImpulseBody1));
+                    new Vector3(impulse.linearImpulseBody1).multiply(manifold.massInverseBody1));
             mAngularVelocities[manifold.indexBody1].add(
                     Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody1, impulse.angularImpulseBody1));
         }
         if (manifold.isBody2Moving) {
             mLinearVelocities[manifold.indexBody2].add(
-                    Vector3.operatorMultiply(manifold.massInverseBody2, impulse.linearImpulseBody2));
+                    new Vector3(impulse.linearImpulseBody2).multiply(manifold.massInverseBody2));
             mAngularVelocities[manifold.indexBody2].add(
                     Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody2, impulse.angularImpulseBody2));
         }
@@ -285,13 +285,13 @@ public class ContactSolver {
         // Update the velocities of the bodies by applying the impulse P
         if (manifold.isBody1Moving) {
             mSplitLinearVelocities[manifold.indexBody1].add(
-                    Vector3.operatorMultiply(manifold.massInverseBody1, impulse.linearImpulseBody1));
+                    new Vector3(impulse.linearImpulseBody1).multiply(manifold.massInverseBody1));
             mSplitAngularVelocities[manifold.indexBody1].add(
                     Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody1, impulse.angularImpulseBody1));
         }
         if (manifold.isBody2Moving) {
             mSplitLinearVelocities[manifold.indexBody2].add(
-                    Vector3.operatorMultiply(manifold.massInverseBody2, impulse.linearImpulseBody2));
+                    new Vector3(impulse.linearImpulseBody2).multiply(manifold.massInverseBody2));
             mSplitAngularVelocities[manifold.indexBody2].add(
                     Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody2, impulse.angularImpulseBody2));
         }
@@ -320,7 +320,7 @@ public class ContactSolver {
         assert (contact.normal.length() > 0.0f);
 
         // Compute the velocity difference vector in the tangential plane
-        Vector3 normalVelocity = Vector3.operatorMultiply(deltaVelocity.dot(contact.normal), contact.normal);
+        Vector3 normalVelocity = new Vector3(contact.normal).multiply(deltaVelocity.dot(contact.normal));
         Vector3 tangentVelocity = new Vector3(deltaVelocity).subtract(normalVelocity);
 
         // If the velocty difference in the tangential plane is not zero
@@ -348,7 +348,7 @@ public class ContactSolver {
         assert (contactPoint.normal.length() > 0.0f);
 
         // Compute the velocity difference vector in the tangential plane
-        Vector3 normalVelocity = Vector3.operatorMultiply(deltaVelocity.dot(contactPoint.normal), contactPoint.normal);
+        Vector3 normalVelocity = new Vector3(contactPoint.normal).multiply(deltaVelocity.dot(contactPoint.normal));
         Vector3 tangentVelocity = new Vector3(deltaVelocity).subtract(normalVelocity);
 
         // If the velocty difference in the tangential plane is not zero
@@ -372,28 +372,28 @@ public class ContactSolver {
     // Compute a penetration constraint impulse
     private Impulse computePenetrationImpulse(float deltaLambda, ContactPointSolver contactPoint) {
         return new Impulse(
-                Vector3.operatorMultiply(new Vector3(contactPoint.normal).invert(), deltaLambda),
-                Vector3.operatorMultiply(new Vector3(contactPoint.r1CrossN).invert(), deltaLambda),
-                Vector3.operatorMultiply(contactPoint.normal, deltaLambda),
-                Vector3.operatorMultiply(contactPoint.r2CrossN, deltaLambda));
+                new Vector3(new Vector3(contactPoint.normal).invert()).multiply(deltaLambda),
+                new Vector3(new Vector3(contactPoint.r1CrossN).invert()).multiply(deltaLambda),
+                new Vector3(contactPoint.normal).multiply(deltaLambda),
+                new Vector3(contactPoint.r2CrossN).multiply(deltaLambda));
     }
 
     // Compute the first friction constraint impulse
     private Impulse computeFriction1Impulse(float deltaLambda, ContactPointSolver contactPoint) {
         return new Impulse(
-                Vector3.operatorMultiply(new Vector3(contactPoint.frictionVector1).invert(), deltaLambda),
-                Vector3.operatorMultiply(new Vector3(contactPoint.r1CrossT1).invert(), deltaLambda),
-                Vector3.operatorMultiply(contactPoint.frictionVector1, deltaLambda),
-                Vector3.operatorMultiply(contactPoint.r2CrossT1, deltaLambda));
+                new Vector3(new Vector3(contactPoint.frictionVector1).invert()).multiply(deltaLambda),
+                new Vector3(new Vector3(contactPoint.r1CrossT1).invert()).multiply(deltaLambda),
+                new Vector3(contactPoint.frictionVector1).multiply(deltaLambda),
+                new Vector3(contactPoint.r2CrossT1).multiply(deltaLambda));
     }
 
     // Compute the second friction constraint impulse
     private Impulse computeFriction2Impulse(float deltaLambda, ContactPointSolver contactPoint) {
         return new Impulse(
-                Vector3.operatorMultiply(new Vector3(contactPoint.frictionVector2).invert(), deltaLambda),
-                Vector3.operatorMultiply(new Vector3(contactPoint.r1CrossT2).invert(), deltaLambda),
-                Vector3.operatorMultiply(contactPoint.frictionVector2, deltaLambda),
-                Vector3.operatorMultiply(contactPoint.r2CrossT2, deltaLambda));
+                new Vector3(new Vector3(contactPoint.frictionVector2).invert()).multiply(deltaLambda),
+                new Vector3(new Vector3(contactPoint.r1CrossT2).invert()).multiply(deltaLambda),
+                new Vector3(contactPoint.frictionVector2).multiply(deltaLambda),
+                new Vector3(contactPoint.r2CrossT2).multiply(deltaLambda));
     }
 
     // Constructor
@@ -607,8 +607,8 @@ public class ContactSolver {
                         // Project the old friction impulses (with old friction vectors) into
                         // the new friction vectors to get the new friction impulses
                         Vector3 oldFrictionImpulse = new Vector3(
-                                Vector3.operatorMultiply(contactPoint.friction1Impulse, contactPoint.oldFrictionVector1)).add(
-                                        Vector3.operatorMultiply(contactPoint.friction2Impulse, contactPoint.oldFrictionVector2));
+                                new Vector3(contactPoint.oldFrictionVector1).multiply(contactPoint.friction1Impulse)).add(
+                                        new Vector3(contactPoint.oldFrictionVector2).multiply(contactPoint.friction2Impulse));
                         contactPoint.friction1Impulse = oldFrictionImpulse.dot(contactPoint.frictionVector1);
                         contactPoint.friction2Impulse = oldFrictionImpulse.dot(contactPoint.frictionVector2);
 
@@ -646,8 +646,8 @@ public class ContactSolver {
                 // Project the old friction impulses (with old friction vectors) into the new friction
                 // vectors to get the new friction impulses
                 Vector3 oldFrictionImpulse = new Vector3(
-                        Vector3.operatorMultiply(contactManifold.friction1Impulse, contactManifold.oldFrictionVector1)).add(
-                                Vector3.operatorMultiply(contactManifold.friction2Impulse, contactManifold.oldFrictionVector2));
+                        new Vector3(contactManifold.oldFrictionVector1).multiply(contactManifold.friction1Impulse)).add(
+                                new Vector3(contactManifold.oldFrictionVector2).multiply(contactManifold.friction2Impulse));
                 contactManifold.friction1Impulse = oldFrictionImpulse.dot(contactManifold.frictionVector1);
                 contactManifold.friction2Impulse = oldFrictionImpulse.dot(contactManifold.frictionVector2);
 
@@ -655,14 +655,14 @@ public class ContactSolver {
                  * ------ First friction constraint at the center of the contact manifold ------
                  */
                 // Compute the impulse P = J^T * lambda
-                Vector3 linearImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.frictionVector1).invert(), contactManifold.friction1Impulse);
-                Vector3 angularImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.r1CrossT1).invert(), contactManifold.friction1Impulse);
-                Vector3 linearImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.frictionVector1, contactManifold.friction1Impulse);
-                Vector3 angularImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.r2CrossT1, contactManifold.friction1Impulse);
+                Vector3 linearImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.frictionVector1).invert()).multiply(contactManifold.friction1Impulse);
+                Vector3 angularImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.r1CrossT1).invert()).multiply(contactManifold.friction1Impulse);
+                Vector3 linearImpulseBody2 = new Vector3(
+                        contactManifold.frictionVector1).multiply(contactManifold.friction1Impulse);
+                Vector3 angularImpulseBody2 = new Vector3(
+                        contactManifold.r2CrossT1).multiply(contactManifold.friction1Impulse);
                 Impulse impulseFriction1 = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
 
                 // Apply the impulses to the bodies of the constraint
@@ -672,14 +672,14 @@ public class ContactSolver {
                  * ------ Second friction constraint at the center of the contact manifold -----
                  */
                 // Compute the impulse P = J^T * lambda
-                linearImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.frictionVector2).invert(), contactManifold.friction2Impulse);
-                angularImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.r1CrossT2).invert(), contactManifold.friction2Impulse);
-                linearImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.frictionVector2, contactManifold.friction2Impulse);
-                angularImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.r2CrossT2, contactManifold.friction2Impulse);
+                linearImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.frictionVector2).invert()).multiply(contactManifold.friction2Impulse);
+                angularImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.r1CrossT2).invert()).multiply(contactManifold.friction2Impulse);
+                linearImpulseBody2 = new Vector3(
+                        contactManifold.frictionVector2).multiply(contactManifold.friction2Impulse);
+                angularImpulseBody2 = new Vector3(
+                        contactManifold.r2CrossT2).multiply(contactManifold.friction2Impulse);
                 Impulse impulseFriction2 = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
 
                 // Apply the impulses to the bodies of the constraint
@@ -690,11 +690,11 @@ public class ContactSolver {
                  */
                 // Compute the impulse P = J^T * lambda
                 linearImpulseBody1 = new Vector3();
-                angularImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.normal).invert(), contactManifold.frictionTwistImpulse);
+                angularImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.normal).invert()).multiply(contactManifold.frictionTwistImpulse);
                 linearImpulseBody2 = new Vector3();
-                angularImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.normal, contactManifold.frictionTwistImpulse);
+                angularImpulseBody2 = new Vector3(
+                        contactManifold.normal).multiply(contactManifold.frictionTwistImpulse);
                 Impulse impulseTwistFriction = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
 
                 // Apply the impulses to the bodies of the constraint
@@ -863,14 +863,14 @@ public class ContactSolver {
                 deltaLambda = contactManifold.friction1Impulse - lambdaTemp;
 
                 // Compute the impulse P=J^T * lambda
-                Vector3 linearImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.frictionVector1).invert(), deltaLambda);
-                Vector3 angularImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.r1CrossT1).invert(), deltaLambda);
-                Vector3 linearImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.frictionVector1, deltaLambda);
-                Vector3 angularImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.r2CrossT1, deltaLambda);
+                Vector3 linearImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.frictionVector1).invert()).multiply(deltaLambda);
+                Vector3 angularImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.r1CrossT1).invert()).multiply(deltaLambda);
+                Vector3 linearImpulseBody2 = new Vector3(
+                        contactManifold.frictionVector1).multiply(deltaLambda);
+                Vector3 angularImpulseBody2 = new Vector3(
+                        contactManifold.r2CrossT1).multiply(deltaLambda);
                 Impulse impulseFriction1 = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
 
                 // Apply the impulses to the bodies of the constraint
@@ -894,14 +894,14 @@ public class ContactSolver {
                 deltaLambda = contactManifold.friction2Impulse - lambdaTemp;
 
                 // Compute the impulse P=J^T * lambda
-                linearImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.frictionVector2).invert(), deltaLambda);
-                angularImpulseBody1 = Vector3.operatorMultiply(
-                        new Vector3(contactManifold.r1CrossT2).invert(), deltaLambda);
-                linearImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.frictionVector2, deltaLambda);
-                angularImpulseBody2 = Vector3.operatorMultiply(
-                        contactManifold.r2CrossT2, deltaLambda);
+                linearImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.frictionVector2).invert()).multiply(deltaLambda);
+                angularImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.r1CrossT2).invert()).multiply(deltaLambda);
+                linearImpulseBody2 = new Vector3(
+                        contactManifold.frictionVector2).multiply(deltaLambda);
+                angularImpulseBody2 = new Vector3(
+                        contactManifold.r2CrossT2).multiply(deltaLambda);
                 Impulse impulseFriction2 = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
 
                 // Apply the impulses to the bodies of the constraint
@@ -923,9 +923,9 @@ public class ContactSolver {
 
                 // Compute the impulse P=J^T * lambda
                 linearImpulseBody1 = new Vector3();
-                angularImpulseBody1 = Vector3.operatorMultiply(new Vector3(contactManifold.normal).invert(), deltaLambda);
+                angularImpulseBody1 = new Vector3(new Vector3(contactManifold.normal).invert()).multiply(deltaLambda);
                 linearImpulseBody2 = new Vector3();
-                angularImpulseBody2 = Vector3.operatorMultiply(contactManifold.normal, deltaLambda);
+                angularImpulseBody2 = new Vector3(contactManifold.normal).multiply(deltaLambda);
                 Impulse impulseTwistFriction = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
 
                 // Apply the impulses to the bodies of the constraint

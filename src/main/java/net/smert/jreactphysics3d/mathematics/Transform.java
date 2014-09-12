@@ -106,7 +106,8 @@ public class Transform {
     // Return an interpolated transform
     public static Transform interpolateTransforms(Transform oldTransform, Transform newTransform, float interpolationFactor) {
 
-        Vector3 interPosition = Vector3.operatorMultiply(oldTransform.mPosition, 1.0f - interpolationFactor).add(Vector3.operatorMultiply(newTransform.mPosition, interpolationFactor));
+        Vector3 interPosition = new Vector3(oldTransform.mPosition).multiply(1.0f - interpolationFactor)
+                .add(new Vector3(newTransform.mPosition).multiply(interpolationFactor));
 
         Quaternion interOrientation = Quaternion.slerp(oldTransform.mOrientation,
                 newTransform.mOrientation,

@@ -180,8 +180,7 @@ public class TestVector3 {
         Assert.assertEquals(vector2.equals(new Vector3(-3, 47, 30)), true);
 
         // Multiplication, division
-        Assert.assertEquals(Vector3.operatorMultiply(new Vector3(63, 24, 5), 3).equals(new Vector3(189, 72, 15)), true);
-        Assert.assertEquals(Vector3.operatorMultiply(3, new Vector3(63, 24, 5)).equals(new Vector3(189, 72, 15)), true);
+        Assert.assertEquals(new Vector3(63, 24, 5).multiply(3).equals(new Vector3(189, 72, 15)), true);
         Assert.assertEquals(new Vector3(14, 8, 50).divide(2).equals(new Vector3(7, 4, 25)), true);
 
         Vector3 vector3 = new Vector3(6, 33, 62);

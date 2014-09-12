@@ -232,14 +232,14 @@ public class Simplex {
                 }
 
                 // Closest point v = sum(lambda_i * points[i])
-                v.add(Vector3.operatorMultiply(mDet[subset][i], mPoints[i]));
+                v.add(new Vector3(mPoints[i]).multiply(mDet[subset][i]));
             }
         }
 
         assert (deltaX > 0.0f);
 
         // Return the closet point "v" in the convex hull for the given subset
-        return Vector3.operatorMultiply(1.0f / deltaX, v);
+        return new Vector3(v).multiply(1.0f / deltaX);
     }
 
     public Simplex() {
@@ -373,8 +373,8 @@ public class Simplex {
             // If the current point is part of the simplex
             if (overlap(mBitsCurrentSimplex, bit)) {
                 deltaX += mDet[mBitsCurrentSimplex][i];
-                pA.add(Vector3.operatorMultiply(mDet[mBitsCurrentSimplex][i], mSuppPointsA[i]));
-                pB.add(Vector3.operatorMultiply(mDet[mBitsCurrentSimplex][i], mSuppPointsB[i]));
+                pA.add(new Vector3(mSuppPointsA[i]).multiply(mDet[mBitsCurrentSimplex][i]));
+                pB.add(new Vector3(mSuppPointsB[i]).multiply(mDet[mBitsCurrentSimplex][i]));
             }
         }
 
