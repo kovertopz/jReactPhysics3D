@@ -317,7 +317,7 @@ public class Quaternion {
         Vector3 rotationAxis = new Vector3(quaternion.x, quaternion.y, quaternion.z);
 
         // Normalize the rotation axis
-        rotationAxis = rotationAxis.getUnit();
+        rotationAxis.normalize();
 
         // Set the rotation axis values
         axis.set(rotationAxis.x, rotationAxis.y, rotationAxis.z);

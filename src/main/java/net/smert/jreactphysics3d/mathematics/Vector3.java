@@ -233,18 +233,6 @@ public class Vector3 {
         return operatorMultiply(vector, number);
     }
 
-    // Assignment operator
-    // Return the corresponding unit vector
-    public Vector3 getUnit() {
-        float lengthVector = length();
-
-        assert (lengthVector > Defaults.MACHINE_EPSILON);
-
-        // Compute and return the unit vector
-        float lengthInv = 1.0f / lengthVector;
-        return new Vector3(x * lengthInv, y * lengthInv, z * lengthInv);
-    }
-
     // Return one unit orthogonal vector of the current vector
     public Vector3 getOneUnitOrthogonalVector() {
 

@@ -89,7 +89,7 @@ public class CapsuleShape extends CollisionShape {
         // If the direction vector is not the zero vector
         if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
 
-            Vector3 unitDirection = direction.getUnit();
+            Vector3 unitDirection = new Vector3(direction).normalize();
 
             // Support point top sphere
             Vector3 centerTopSphere = new Vector3(0.0f, mHalfHeight, 0.0f);

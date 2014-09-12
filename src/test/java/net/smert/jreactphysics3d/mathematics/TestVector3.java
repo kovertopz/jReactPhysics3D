@@ -79,9 +79,9 @@ public class TestVector3 {
         Assert.assertEquals(new Vector3(0, 1, 0).isUnit(), true);
         Assert.assertEquals(new Vector3(0, 0, 1).isUnit(), true);
         Assert.assertEquals(!mVector345.isUnit(), true);
-        Assert.assertEquals(new Vector3(5, 0, 0).getUnit().equals(new Vector3(1, 0, 0)), true);
-        Assert.assertEquals(new Vector3(0, 5, 0).getUnit().equals(new Vector3(0, 1, 0)), true);
-        Assert.assertEquals(new Vector3(0, 0, 5).getUnit().equals(new Vector3(0, 0, 1)), true);
+        Assert.assertEquals(new Vector3(5, 0, 0).normalize().equals(new Vector3(1, 0, 0)), true);
+        Assert.assertEquals(new Vector3(0, 5, 0).normalize().equals(new Vector3(0, 1, 0)), true);
+        Assert.assertEquals(new Vector3(0, 0, 5).normalize().equals(new Vector3(0, 0, 1)), true);
 
         Assert.assertEquals(!mVector345.isZero(), true);
         Assert.assertEquals(mVectorZero.isZero(), true);

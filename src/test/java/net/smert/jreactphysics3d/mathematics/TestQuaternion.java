@@ -140,7 +140,7 @@ public class TestQuaternion {
         // Test the method that returns the rotation angle and axis
         Vector3 axis = new Vector3();
         float[] angle = new float[1];
-        Vector3 originalAxis = new Vector3(2, 3, 4).getUnit();
+        Vector3 originalAxis = new Vector3(2, 3, 4).normalize();
         mQuaternion1.getRotationAngleAxis(angle, axis);
 
         Assert.assertEquals(axis.x, originalAxis.x, 10e-6f);

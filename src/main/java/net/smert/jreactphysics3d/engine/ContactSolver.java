@@ -338,7 +338,7 @@ public class ContactSolver {
 
         // The second friction vector is computed by the cross product of the firs
         // friction vector and the contact normal
-        contact.frictionVector2.set(contact.normal.cross(contact.frictionVector1).getUnit());
+        contact.frictionVector2.set(contact.normal.cross(contact.frictionVector1).normalize());
     }
 
     // Compute the two unit orthogonal vectors "t1" and "t2" that span the tangential friction plane
@@ -366,7 +366,7 @@ public class ContactSolver {
 
         // The second friction vector is computed by the cross product of the firs
         // friction vector and the contact normal
-        contactPoint.frictionVector2.set(contactPoint.normal.cross(contactPoint.frictionVector1).getUnit());
+        contactPoint.frictionVector2.set(contactPoint.normal.cross(contactPoint.frictionVector1).normalize());
     }
 
     // Compute a penetration constraint impulse

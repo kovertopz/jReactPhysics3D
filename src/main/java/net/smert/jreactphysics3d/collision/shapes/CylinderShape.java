@@ -76,7 +76,7 @@ public class CylinderShape extends CollisionShape {
         // Add the margin to the support point
         Vector3 unitVec = new Vector3(0.0f, 1.0f, 0.0f);
         if (direction.lengthSquare() > Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
-            unitVec = direction.getUnit();
+            unitVec = new Vector3(direction).normalize();
         }
         supportPoint.add(unitVec.multiply(mMargin));
 

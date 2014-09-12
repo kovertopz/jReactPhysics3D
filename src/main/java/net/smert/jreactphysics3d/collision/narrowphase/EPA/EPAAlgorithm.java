@@ -149,7 +149,7 @@ public class EPAAlgorithm {
                 // v1, v2 and v3.
 
                 // Direction of the segment
-                Vector3 d = Vector3.operatorSubtract(points[1], points[0]).getUnit();
+                Vector3 d = Vector3.operatorSubtract(points[1], points[0]).normalize();
 
                 // Choose the coordinate axis from the minimal absolute component of the vector d
                 int minAxis = new Vector3(d).abs().getMinAxis();
@@ -401,7 +401,7 @@ public class EPAAlgorithm {
         v = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), triangle.getClosestPoint());
         Vector3 pALocal = triangle.computeClosestPointOfObject(suppPointsA);
         Vector3 pBLocal = body2Tobody1.getInverse().operatorMultiply(triangle.computeClosestPointOfObject(suppPointsB));
-        Vector3 normal = v.getUnit();
+        Vector3 normal = new Vector3(v).normalize();
         float penetrationDepth = v.length();
         assert (penetrationDepth > 0.0f);
 

@@ -69,7 +69,7 @@ public class SphereShape extends CollisionShape {
         if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
 
             // Return the support point of the sphere in the given direction
-            return direction.getUnit().multiply(mMargin);
+            return new Vector3(direction).normalize().multiply(mMargin);
         }
 
         // If the direction vector is the zero vector we return a point on the
