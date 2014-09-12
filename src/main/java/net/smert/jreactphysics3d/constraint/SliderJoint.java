@@ -213,7 +213,7 @@ public class SliderJoint extends Joint {
         // Compute the two orthogonal vectors to the slider axis in world-space
         mSliderAxisWorld = orientationBody1.operatorMultiply(mSliderAxisBody1);
         mSliderAxisWorld.normalize();
-        mN1 = mSliderAxisWorld.getOneUnitOrthogonalVector();
+        mN1 = new Vector3(mSliderAxisWorld).setUnitOrthogonal();
         mN2 = mSliderAxisWorld.cross(mN1);
 
         // Check if the limit constraints are violated or not
@@ -651,7 +651,7 @@ public class SliderJoint extends Joint {
         // Compute the two orthogonal vectors to the slider axis in world-space
         mSliderAxisWorld = q1.operatorMultiply(mSliderAxisBody1);
         mSliderAxisWorld.normalize();
-        mN1 = mSliderAxisWorld.getOneUnitOrthogonalVector();
+        mN1 = new Vector3(mSliderAxisWorld).setUnitOrthogonal();
         mN2 = mSliderAxisWorld.cross(mN1);
 
         // Check if the limit constraints are violated or not

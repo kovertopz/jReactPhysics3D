@@ -166,6 +166,32 @@ public class Vector3 {
         return this;
     }
 
+    // Return one unit orthogonal vector of the current vector
+    public Vector3 setUnitOrthogonal() {
+
+        float len, lenInv;
+
+        // Get the minimum element of the vector
+        Vector3f abs = new Vector3f(Math.abs(x), Math.abs(y), Math.abs(z));
+        int minElement = abs.getMinAxis();
+
+        if (minElement == 0) {
+            len = Mathematics.Sqrt(y * y + z * z);
+            lenInv = 1.0f / len;
+            set(0.0f, -z, y).multiply(lenInv);
+        } else if (minElement == 1) {
+            len = Mathematics.Sqrt(x * x + z * z);
+            lenInv = 1.0f / len;
+            set(-z, 0.0f, x).multiply(lenInv);
+        } else {
+            len = Mathematics.Sqrt(x * x + y * y);
+            lenInv = 1.0f / len;
+            set(-y, x, 0.0f).multiply(lenInv);
+        }
+
+        return this;
+    }
+
     public Vector3 setX(float newX) {
         x = newX;
         return this;
@@ -222,34 +248,9 @@ public class Vector3 {
         return new Vector3(number * vector.x, number * vector.y, number * vector.z);
     }
 
-    // Overloaded operator for division by a number
-    public static Vector3 operatorDivide(Vector3 vector, float number) {
-        assert (number > Defaults.MACHINE_EPSILON);
-        return new Vector3(vector.x / number, vector.y / number, vector.z / number);
-    }
-
     // Overloaded operator for multiplication with a number
     public static Vector3 operatorMultiply(float number, Vector3 vector) {
         return operatorMultiply(vector, number);
-    }
-
-    // Return one unit orthogonal vector of the current vector
-    public Vector3 getOneUnitOrthogonalVector() {
-
-        assert (length() > Defaults.MACHINE_EPSILON);
-
-        // Get the minimum element of the vector
-        Vector3 vectorAbs = new Vector3(Math.abs(x), Math.abs(y), Math.abs(z));
-        int minElement = vectorAbs.getMinAxis();
-
-        if (minElement == 0) {
-            return new Vector3(0.0f, -z, y).divide((float) Math.sqrt(y * y + z * z));
-        } else if (minElement == 1) {
-            return new Vector3(-z, 0.0f, x).divide((float) Math.sqrt(x * x + z * z));
-        } else {
-            return new Vector3(-y, x, 0.0f).divide((float) Math.sqrt(x * x + y * y));
-        }
-
     }
 
     @Override

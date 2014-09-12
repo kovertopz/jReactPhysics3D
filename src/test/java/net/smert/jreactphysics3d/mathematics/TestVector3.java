@@ -182,7 +182,7 @@ public class TestVector3 {
         // Multiplication, division
         Assert.assertEquals(Vector3.operatorMultiply(new Vector3(63, 24, 5), 3).equals(new Vector3(189, 72, 15)), true);
         Assert.assertEquals(Vector3.operatorMultiply(3, new Vector3(63, 24, 5)).equals(new Vector3(189, 72, 15)), true);
-        Assert.assertEquals(Vector3.operatorDivide(new Vector3(14, 8, 50), 2).equals(new Vector3(7, 4, 25)), true);
+        Assert.assertEquals(new Vector3(14, 8, 50).divide(2).equals(new Vector3(7, 4, 25)), true);
 
         Vector3 vector3 = new Vector3(6, 33, 62);
         Vector3 vector4 = new Vector3(15, 60, 33);

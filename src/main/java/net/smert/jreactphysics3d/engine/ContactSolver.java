@@ -329,11 +329,11 @@ public class ContactSolver {
 
             // Compute the first friction vector in the direction of the tangent
             // velocity difference
-            contact.frictionVector1.set(Vector3.operatorDivide(tangentVelocity, lengthTangenVelocity));
+            contact.frictionVector1.set(new Vector3(tangentVelocity).divide(lengthTangenVelocity));
         } else {
 
             // Get any orthogonal vector to the normal as the first friction vector
-            contact.frictionVector1.set(contact.normal.getOneUnitOrthogonalVector());
+            contact.frictionVector1.set(new Vector3(contact.normal).setUnitOrthogonal());
         }
 
         // The second friction vector is computed by the cross product of the firs
@@ -357,11 +357,11 @@ public class ContactSolver {
 
             // Compute the first friction vector in the direction of the tangent
             // velocity difference
-            contactPoint.frictionVector1.set(Vector3.operatorDivide(tangentVelocity, lengthTangenVelocity));
+            contactPoint.frictionVector1.set(new Vector3(tangentVelocity).divide(lengthTangenVelocity));
         } else {
 
             // Get any orthogonal vector to the normal as the first friction vector
-            contactPoint.frictionVector1.set(contactPoint.normal.getOneUnitOrthogonalVector());
+            contactPoint.frictionVector1.set(new Vector3(contactPoint.normal).setUnitOrthogonal());
         }
 
         // The second friction vector is computed by the cross product of the firs

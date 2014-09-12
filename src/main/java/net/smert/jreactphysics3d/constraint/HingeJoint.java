@@ -291,7 +291,7 @@ public class HingeJoint extends Joint {
         Vector3 a2 = orientationBody2.operatorMultiply(mHingeLocalAxisBody2);
         mA1.normalize();
         a2.normalize();
-        Vector3 b2 = a2.getOneUnitOrthogonalVector();
+        Vector3 b2 = new Vector3(a2).setUnitOrthogonal();
         Vector3 c2 = a2.cross(b2);
         mB2CrossA1 = b2.cross(mA1);
         mC2CrossA1 = c2.cross(mA1);
@@ -689,7 +689,7 @@ public class HingeJoint extends Joint {
         Vector3 a2 = q2.operatorMultiply(mHingeLocalAxisBody2);
         mA1.normalize();
         a2.normalize();
-        Vector3 b2 = a2.getOneUnitOrthogonalVector();
+        Vector3 b2 = new Vector3(a2).setUnitOrthogonal();
         Vector3 c2 = a2.cross(b2);
         mB2CrossA1 = b2.cross(mA1);
         mC2CrossA1 = c2.cross(mA1);
