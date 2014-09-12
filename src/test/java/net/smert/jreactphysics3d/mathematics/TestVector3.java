@@ -169,7 +169,7 @@ public class TestVector3 {
 
         // Addition, substraction
         Assert.assertEquals(Vector3.operatorAdd(new Vector3(63, 24, 5), new Vector3(3, 4, 2)).equals(new Vector3(66, 28, 7)), true);
-        Assert.assertEquals(Vector3.operatorSubtract(new Vector3(63, 24, 5), new Vector3(3, 4, 2)).equals(new Vector3(60, 20, 3)), true);
+        Assert.assertEquals(new Vector3(63, 24, 5).subtract(new Vector3(3, 4, 2)).equals(new Vector3(60, 20, 3)), true);
 
         Vector3 vector1 = new Vector3(6, 33, 62);
         Vector3 vector2 = new Vector3(7, 68, 35);

@@ -207,7 +207,7 @@ public class ConvexMeshShape extends CollisionShape {
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
-        Vector3 realExtent = Vector3.operatorSubtract(mMaxBounds, mMinBounds).multiply(0.5f);
+        Vector3 realExtent = new Vector3(mMaxBounds).subtract(mMinBounds).multiply(0.5f);
         assert (realExtent.getX() > 0 && realExtent.getY() > 0 && realExtent.getZ() > 0);
         float xSquare = realExtent.getX() * realExtent.getX();
         float ySquare = realExtent.getY() * realExtent.getY();

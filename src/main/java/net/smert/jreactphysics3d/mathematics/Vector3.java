@@ -238,11 +238,6 @@ public class Vector3 {
         return new Vector3(vector1.x + vector2.x, vector1.y + vector2.y, vector1.z + vector2.z);
     }
 
-    // Overloaded operator for substraction
-    public static Vector3 operatorSubtract(Vector3 vector1, Vector3 vector2) {
-        return new Vector3(vector1.x - vector2.x, vector1.y - vector2.y, vector1.z - vector2.z);
-    }
-
     // Overloaded operator for multiplication with a number
     public static Vector3 operatorMultiply(Vector3 vector, float number) {
         return new Vector3(number * vector.x, number * vector.y, number * vector.z);

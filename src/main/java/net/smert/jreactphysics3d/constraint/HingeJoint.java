@@ -329,7 +329,7 @@ public class HingeJoint extends Joint {
         float biasFactor = (BETA / constraintSolverData.timeStep);
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             mBTranslation = Vector3.operatorMultiply(
-                    biasFactor, Vector3.operatorSubtract(Vector3.operatorSubtract(Vector3.operatorAdd(x2, mR2World), x1), mR1World));
+                    biasFactor, new Vector3(new Vector3(Vector3.operatorAdd(x2, mR2World)).subtract(x1)).subtract(mR1World));
         }
 
         // Compute the inverse mass matrix K=JM^-1J^t for the 2 rotation constraints (2x2 matrix)
@@ -417,9 +417,9 @@ public class HingeJoint extends Joint {
         float inverseMassBody2 = mBody2.getMassInverse();
 
         // Compute the impulse P=J^T * lambda for the 2 rotation constraints
-        Vector3 rotationImpulse = Vector3.operatorSubtract(
-                Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), mImpulseRotation.x),
-                Vector3.operatorMultiply(mC2CrossA1, mImpulseRotation.y));
+        Vector3 rotationImpulse = new Vector3(
+                Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), mImpulseRotation.x)).subtract(
+                        Vector3.operatorMultiply(mC2CrossA1, mImpulseRotation.y));
 
         // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
         Vector3 limitsImpulse = Vector3.operatorMultiply(mImpulseUpperLimit - mImpulseLowerLimit, mA1);
@@ -485,12 +485,12 @@ public class HingeJoint extends Joint {
          * --------------- Translation Constraints ---------------
          */
         // Compute J*v
-        Vector3 JvTranslation = Vector3.operatorSubtract(
-                Vector3.operatorSubtract(Vector3.operatorAdd(v2, w2.cross(mR2World)), v1), w1.cross(mR1World));
+        Vector3 JvTranslation = new Vector3(
+                new Vector3(Vector3.operatorAdd(v2, w2.cross(mR2World))).subtract(v1)).subtract(w1.cross(mR1World));
 
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambdaTranslation = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixTranslation, Vector3.operatorSubtract(new Vector3(JvTranslation).invert(), mBTranslation));
+                mInverseMassMatrixTranslation, new Vector3(new Vector3(JvTranslation).invert()).subtract(mBTranslation));
         mImpulseTranslation.add(deltaLambdaTranslation);
 
         if (mBody1.isMotionEnabled()) {
@@ -528,9 +528,9 @@ public class HingeJoint extends Joint {
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
-            Vector3 angularImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), deltaLambdaRotation.x),
-                    Vector3.operatorMultiply(mC2CrossA1, deltaLambdaRotation.y));
+            Vector3 angularImpulseBody1 = new Vector3(
+                    Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), deltaLambdaRotation.x)).subtract(
+                            Vector3.operatorMultiply(mC2CrossA1, deltaLambdaRotation.y));
 
             // Apply the impulse to the body
             w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
@@ -555,7 +555,7 @@ public class HingeJoint extends Joint {
             if (mIsLowerLimitViolated) {
 
                 // Compute J*v for the lower limit constraint
-                float JvLowerLimit = Vector3.operatorSubtract(w2, w1).dot(mA1);
+                float JvLowerLimit = new Vector3(w2).subtract(w1).dot(mA1);
 
                 // Compute the Lagrange multiplier lambda for the lower limit constraint
                 float deltaLambdaLower = mInverseMassMatrixLimitMotor * (-JvLowerLimit - mBLowerLimit);
@@ -585,7 +585,7 @@ public class HingeJoint extends Joint {
             if (mIsUpperLimitViolated) {
 
                 // Compute J*v for the upper limit constraint
-                float JvUpperLimit = -Vector3.operatorSubtract(w2, w1).dot(mA1);
+                float JvUpperLimit = -new Vector3(w2).subtract(w1).dot(mA1);
 
                 // Compute the Lagrange multiplier lambda for the upper limit constraint
                 float deltaLambdaUpper = mInverseMassMatrixLimitMotor * (-JvUpperLimit - mBUpperLimit);
@@ -619,7 +619,7 @@ public class HingeJoint extends Joint {
         if (mIsMotorEnabled) {
 
             // Compute J*v for the motor
-            float JvMotor = mA1.dot(Vector3.operatorSubtract(w1, w2));
+            float JvMotor = mA1.dot(new Vector3(w1).subtract(w2));
 
             // Compute the Lagrange multiplier lambda for the motor
             float maxMotorImpulse = mMaxMotorTorque * constraintSolverData.timeStep;
@@ -726,8 +726,8 @@ public class HingeJoint extends Joint {
         }
 
         // Compute position error for the 3 translation constraints
-        Vector3 errorTranslation = Vector3.operatorSubtract(
-                Vector3.operatorSubtract(Vector3.operatorAdd(x2, mR2World), x1), mR1World);
+        Vector3 errorTranslation = new Vector3(
+                new Vector3(Vector3.operatorAdd(x2, mR2World)).subtract(x1)).subtract(mR1World);
 
         // Compute the Lagrange multiplier lambda
         Vector3 lambdaTranslation = Matrix3x3.operatorMultiply(
@@ -802,9 +802,9 @@ public class HingeJoint extends Joint {
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
-            Vector3 angularImpulseBody1 = Vector3.operatorSubtract(
-                    Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), lambdaRotation.x),
-                    Vector3.operatorMultiply(mC2CrossA1, lambdaRotation.y));
+            Vector3 angularImpulseBody1 = new Vector3(
+                    Vector3.operatorMultiply(new Vector3(mB2CrossA1).invert(), lambdaRotation.x)).subtract(
+                            Vector3.operatorMultiply(mC2CrossA1, lambdaRotation.y));
 
             // Compute the pseudo velocity
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);

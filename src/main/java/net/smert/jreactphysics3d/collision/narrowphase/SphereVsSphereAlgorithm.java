@@ -29,7 +29,7 @@ public class SphereVsSphereAlgorithm extends NarrowPhaseAlgorithm {
         SphereShape sphereShape2 = (SphereShape) collisionShape2;
 
         // Compute the distance between the centers
-        Vector3 vectorBetweenCenters = Vector3.operatorSubtract(transform2.getPosition(), transform1.getPosition());
+        Vector3 vectorBetweenCenters = new Vector3(transform2.getPosition()).subtract(transform1.getPosition());
         float squaredDistanceBetweenCenters = vectorBetweenCenters.lengthSquare();
 
         // Compute the sum of the radius

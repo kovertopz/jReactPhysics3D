@@ -85,7 +85,7 @@ public class TriangleEPA {
 
     // Return true if the triangle is visible from a given vertex
     public boolean isVisibleFromVertex(Vector3[] vertices, int index) {
-        Vector3 closestToVert = Vector3.operatorSubtract(vertices[index], mClosestPoint);
+        Vector3 closestToVert = new Vector3(vertices[index]).subtract(mClosestPoint);
         return (mClosestPoint.dot(closestToVert) > 0.0f);
     }
 
@@ -94,8 +94,8 @@ public class TriangleEPA {
         Vector3 p0 = supportPointsOfObject[mIndicesVertices[0]];
         return Vector3.operatorAdd(p0, Vector3.operatorMultiply(1.0f / mDet,
                 Vector3.operatorAdd(
-                        Vector3.operatorMultiply(mLambda1, Vector3.operatorSubtract(supportPointsOfObject[mIndicesVertices[1]], p0)),
-                        Vector3.operatorMultiply(mLambda2, Vector3.operatorSubtract(supportPointsOfObject[mIndicesVertices[2]], p0)))));
+                        Vector3.operatorMultiply(mLambda1, new Vector3(supportPointsOfObject[mIndicesVertices[1]]).subtract(p0)),
+                        Vector3.operatorMultiply(mLambda2, new Vector3(supportPointsOfObject[mIndicesVertices[2]]).subtract(p0)))));
     }
 
     // Access operator
@@ -108,8 +108,8 @@ public class TriangleEPA {
     public boolean computeClosestPoint(Vector3[] vertices) {
         Vector3 p0 = vertices[mIndicesVertices[0]];
 
-        Vector3 v1 = Vector3.operatorSubtract(vertices[mIndicesVertices[1]], p0);
-        Vector3 v2 = Vector3.operatorSubtract(vertices[mIndicesVertices[2]], p0);
+        Vector3 v1 = new Vector3(vertices[mIndicesVertices[1]]).subtract(p0);
+        Vector3 v2 = new Vector3(vertices[mIndicesVertices[2]]).subtract(p0);
         float v1Dotv1 = v1.dot(v1);
         float v1Dotv2 = v1.dot(v2);
         float v2Dotv2 = v2.dot(v2);

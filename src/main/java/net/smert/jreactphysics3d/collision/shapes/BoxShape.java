@@ -34,7 +34,7 @@ public class BoxShape extends CollisionShape {
         assert (extent.getY() > 0.0f && extent.getY() > margin);
         assert (extent.getZ() > 0.0f && extent.getZ() > margin);
 
-        mExtent = Vector3.operatorSubtract(extent, new Vector3(margin, margin, margin));
+        mExtent = new Vector3(extent).subtract(new Vector3(margin, margin, margin));
     }
 
     // Return the extents of the box

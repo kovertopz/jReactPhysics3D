@@ -118,7 +118,7 @@ public class Simplex {
             if (overlap(mBitsCurrentSimplex, bit)) {
 
                 // Compute the distance between two points in the possible simplex set
-                mDiffLength[i][mLastFound] = Vector3.operatorSubtract(mPoints[i], mPoints[mLastFound]);
+                mDiffLength[i][mLastFound] = new Vector3(mPoints[i]).subtract(mPoints[mLastFound]);
                 mDiffLength[mLastFound][i] = new Vector3(mDiffLength[i][mLastFound]).invert();
 
                 // Compute the squared length of the vector

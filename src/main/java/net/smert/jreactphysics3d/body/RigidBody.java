@@ -143,7 +143,7 @@ public class RigidBody extends CollisionBody {
 
         // Add the force and torque
         mExternalForce.add(force);
-        mExternalTorque.add(Vector3.operatorSubtract(point, mTransform.getPosition()).cross(force));
+        mExternalTorque.add(new Vector3(point).subtract(mTransform.getPosition()).cross(force));
     }
 
     // Apply an external force to the body at its gravity center.

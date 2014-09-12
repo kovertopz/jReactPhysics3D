@@ -132,7 +132,7 @@ public class FixedJoint extends Joint {
         mBiasTranslation.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
             mBiasTranslation = Vector3.operatorMultiply(
-                    biasFactor, Vector3.operatorSubtract(Vector3.operatorSubtract(Vector3.operatorAdd(x2, mR2World), x1), mR1World));
+                    biasFactor, new Vector3(new Vector3(Vector3.operatorAdd(x2, mR2World)).subtract(x1)).subtract(mR1World));
         }
 
         // Compute the inverse of the mass matrix K=JM^-1J^t for the 3 rotation
@@ -226,12 +226,12 @@ public class FixedJoint extends Joint {
          * --------------- Translation Constraints ---------------
          */
         // Compute J*v for the 3 translation constraints
-        Vector3 JvTranslation = Vector3.operatorSubtract(
-                Vector3.operatorSubtract(Vector3.operatorAdd(v2, w2.cross(mR2World)), v1), w1.cross(mR1World));
+        Vector3 JvTranslation = new Vector3(
+                new Vector3(Vector3.operatorAdd(v2, w2.cross(mR2World))).subtract(v1)).subtract(w1.cross(mR1World));
 
         // Compute the Lagrange multiplier lambda
         Vector3 deltaLambda = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixTranslation, Vector3.operatorSubtract(new Vector3(JvTranslation).invert(), mBiasTranslation));
+                mInverseMassMatrixTranslation, new Vector3(new Vector3(JvTranslation).invert()).subtract(mBiasTranslation));
         mImpulseTranslation.add(deltaLambda);
 
         if (mBody1.isMotionEnabled()) {
@@ -259,11 +259,11 @@ public class FixedJoint extends Joint {
          * --------------- Rotation Constraints ---------------
          */
         // Compute J*v for the 3 rotation constraints
-        Vector3 JvRotation = Vector3.operatorSubtract(w2, w1);
+        Vector3 JvRotation = new Vector3(w2).subtract(w1);
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 deltaLambda2 = Matrix3x3.operatorMultiply(
-                mInverseMassMatrixRotation, Vector3.operatorSubtract(new Vector3(JvRotation).invert(), mBiasRotation));
+                mInverseMassMatrixRotation, new Vector3(new Vector3(JvRotation).invert()).subtract(mBiasRotation));
         mImpulseRotation.add(deltaLambda2);
 
         if (mBody1.isMotionEnabled()) {
@@ -344,8 +344,8 @@ public class FixedJoint extends Joint {
         }
 
         // Compute position error for the 3 translation constraints
-        Vector3 errorTranslation = Vector3.operatorSubtract(
-                Vector3.operatorSubtract(Vector3.operatorAdd(x2, mR2World), x1), mR1World);
+        Vector3 errorTranslation = new Vector3(
+                new Vector3(Vector3.operatorAdd(x2, mR2World)).subtract(x1)).subtract(mR1World);
 
         // Compute the Lagrange multiplier lambda
         Vector3 lambdaTranslation = Matrix3x3.operatorMultiply(

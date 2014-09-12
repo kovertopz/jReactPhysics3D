@@ -138,29 +138,29 @@ public class ContactManifold {
 
         if (indexMaxPenetration != 0) {
             // Compute the area
-            Vector3 vector1 = Vector3.operatorSubtract(newPoint, mContactPoints[1].getLocalPointOnBody1());
-            Vector3 vector2 = Vector3.operatorSubtract(mContactPoints[3].getLocalPointOnBody1(), mContactPoints[2].getLocalPointOnBody1());
+            Vector3 vector1 = new Vector3(newPoint).subtract(mContactPoints[1].getLocalPointOnBody1());
+            Vector3 vector2 = new Vector3(mContactPoints[3].getLocalPointOnBody1()).subtract(mContactPoints[2].getLocalPointOnBody1());
             Vector3 crossProduct = vector1.cross(vector2);
             area0 = crossProduct.lengthSquare();
         }
         if (indexMaxPenetration != 1) {
             // Compute the area
-            Vector3 vector1 = Vector3.operatorSubtract(newPoint, mContactPoints[0].getLocalPointOnBody1());
-            Vector3 vector2 = Vector3.operatorSubtract(mContactPoints[3].getLocalPointOnBody1(), mContactPoints[2].getLocalPointOnBody1());
+            Vector3 vector1 = new Vector3(newPoint).subtract(mContactPoints[0].getLocalPointOnBody1());
+            Vector3 vector2 = new Vector3(mContactPoints[3].getLocalPointOnBody1()).subtract(mContactPoints[2].getLocalPointOnBody1());
             Vector3 crossProduct = vector1.cross(vector2);
             area1 = crossProduct.lengthSquare();
         }
         if (indexMaxPenetration != 2) {
             // Compute the area
-            Vector3 vector1 = Vector3.operatorSubtract(newPoint, mContactPoints[0].getLocalPointOnBody1());
-            Vector3 vector2 = Vector3.operatorSubtract(mContactPoints[3].getLocalPointOnBody1(), mContactPoints[1].getLocalPointOnBody1());
+            Vector3 vector1 = new Vector3(newPoint).subtract(mContactPoints[0].getLocalPointOnBody1());
+            Vector3 vector2 = new Vector3(mContactPoints[3].getLocalPointOnBody1()).subtract(mContactPoints[1].getLocalPointOnBody1());
             Vector3 crossProduct = vector1.cross(vector2);
             area2 = crossProduct.lengthSquare();
         }
         if (indexMaxPenetration != 3) {
             // Compute the area
-            Vector3 vector1 = Vector3.operatorSubtract(newPoint, mContactPoints[0].getLocalPointOnBody1());
-            Vector3 vector2 = Vector3.operatorSubtract(mContactPoints[2].getLocalPointOnBody1(), mContactPoints[1].getLocalPointOnBody1());
+            Vector3 vector1 = new Vector3(newPoint).subtract(mContactPoints[0].getLocalPointOnBody1());
+            Vector3 vector2 = new Vector3(mContactPoints[2].getLocalPointOnBody1()).subtract(mContactPoints[1].getLocalPointOnBody1());
             Vector3 crossProduct = vector1.cross(vector2);
             area3 = crossProduct.lengthSquare();
         }
@@ -273,7 +273,7 @@ public class ContactManifold {
 
             // Check if the new point point does not correspond to a same contact point
             // already in the manifold.
-            float distance = Vector3.operatorSubtract(mContactPoints[i].getWorldPointOnBody1(), contact.getWorldPointOnBody1()).lengthSquare();
+            float distance = new Vector3(mContactPoints[i].getWorldPointOnBody1()).subtract(contact.getWorldPointOnBody1()).lengthSquare();
             if (distance <= Defaults.PERSISTENT_CONTACT_DIST_THRESHOLD * Defaults.PERSISTENT_CONTACT_DIST_THRESHOLD) {
 
                 // Delete the new contact
@@ -310,7 +310,7 @@ public class ContactManifold {
         for (int i = 0; i < mNbContactPoints; i++) {
             mContactPoints[i].setWorldPointOnBody1(transform1.operatorMultiply(mContactPoints[i].getLocalPointOnBody1()));
             mContactPoints[i].setWorldPointOnBody2(transform2.operatorMultiply(mContactPoints[i].getLocalPointOnBody2()));
-            mContactPoints[i].setPenetrationDepth(Vector3.operatorSubtract(mContactPoints[i].getWorldPointOnBody1(),
+            mContactPoints[i].setPenetrationDepth(new Vector3(mContactPoints[i].getWorldPointOnBody1()).subtract(
                     mContactPoints[i].getWorldPointOnBody2()).dot(mContactPoints[i].getNormal()));
         }
 
@@ -331,7 +331,7 @@ public class ContactManifold {
                 // orthogonal to the contact normal
                 Vector3 projOfPoint1 = Vector3.operatorAdd(mContactPoints[i].getWorldPointOnBody1(),
                         Vector3.operatorMultiply(mContactPoints[i].getNormal(), distanceNormal));
-                Vector3 projDifference = Vector3.operatorSubtract(mContactPoints[i].getWorldPointOnBody2(), projOfPoint1);
+                Vector3 projDifference = new Vector3(mContactPoints[i].getWorldPointOnBody2()).subtract(projOfPoint1);
 
                 // If the orthogonal distance is larger than the valid distance
                 // threshold, we remove the contact

@@ -62,25 +62,25 @@ public class EPAAlgorithm {
     private int isOriginInTetrahedron(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4) {
 
         // Check vertex 1
-        Vector3 normal1 = Vector3.operatorSubtract(p2, p1).cross(Vector3.operatorSubtract(p3, p1));
+        Vector3 normal1 = new Vector3(p2).subtract(p1).cross(new Vector3(p3).subtract(p1));
         if (normal1.dot(p1) > 0.0f == normal1.dot(p4) > 0.0f) {
             return 4;
         }
 
         // Check vertex 2
-        Vector3 normal2 = Vector3.operatorSubtract(p4, p2).cross(Vector3.operatorSubtract(p3, p2));
+        Vector3 normal2 = new Vector3(p4).subtract(p2).cross(new Vector3(p3).subtract(p2));
         if (normal2.dot(p2) > 0.0f == normal2.dot(p1) > 0.0f) {
             return 1;
         }
 
         // Check vertex 3
-        Vector3 normal3 = Vector3.operatorSubtract(p4, p3).cross(Vector3.operatorSubtract(p1, p3));
+        Vector3 normal3 = new Vector3(p4).subtract(p3).cross(new Vector3(p1).subtract(p3));
         if (normal3.dot(p3) > 0.0f == normal3.dot(p2) > 0.0f) {
             return 2;
         }
 
         // Check vertex 4
-        Vector3 normal4 = Vector3.operatorSubtract(p2, p4).cross(Vector3.operatorSubtract(p1, p4));
+        Vector3 normal4 = new Vector3(p2).subtract(p4).cross(new Vector3(p1).subtract(p4));
         if (normal4.dot(p4) > 0.0f == normal4.dot(p3) > 0.0f) {
             return 3;
         }
@@ -149,7 +149,7 @@ public class EPAAlgorithm {
                 // v1, v2 and v3.
 
                 // Direction of the segment
-                Vector3 d = Vector3.operatorSubtract(points[1], points[0]).normalize();
+                Vector3 d = new Vector3(points[1]).subtract(points[0]).normalize();
 
                 // Choose the coordinate axis from the minimal absolute component of the vector d
                 int minAxis = new Vector3(d).abs().getMinAxis();
@@ -173,19 +173,19 @@ public class EPAAlgorithm {
                 suppPointsA[2] = collisionShape1.getLocalSupportPointWithMargin(v1);
                 suppPointsB[2] = body2Tobody1.operatorMultiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v1).invert())));
-                points[2] = Vector3.operatorSubtract(suppPointsA[2], suppPointsB[2]);
+                points[2] = new Vector3(suppPointsA[2]).subtract(suppPointsB[2]);
 
                 // Compute the support point in the direction of v2
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(v2);
                 suppPointsB[3] = body2Tobody1.operatorMultiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v2).invert())));
-                points[3] = Vector3.operatorSubtract(suppPointsA[3], suppPointsB[3]);
+                points[3] = new Vector3(suppPointsA[3]).subtract(suppPointsB[3]);
 
                 // Compute the support point in the direction of v3
                 suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(v3);
                 suppPointsB[4] = body2Tobody1.operatorMultiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v3).invert())));
-                points[4] = Vector3.operatorSubtract(suppPointsA[4], suppPointsB[4]);
+                points[4] = new Vector3(suppPointsA[4]).subtract(suppPointsB[4]);
 
                 // Now we have an hexahedron (two tetrahedron glued together). We can simply keep the
                 // tetrahedron that contains the origin in order that the initial polytope of the
@@ -273,19 +273,19 @@ public class EPAAlgorithm {
                 // normal of the triangle.
 
                 // Compute the normal of the triangle
-                Vector3 v1 = Vector3.operatorSubtract(points[1], points[0]);
-                Vector3 v2 = Vector3.operatorSubtract(points[2], points[0]);
+                Vector3 v1 = new Vector3(points[1]).subtract(points[0]);
+                Vector3 v2 = new Vector3(points[2]).subtract(points[0]);
                 Vector3 n = v1.cross(v2);
 
                 // Compute the two new vertices to obtain a hexahedron
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(n);
                 suppPointsB[3] = body2Tobody1.operatorMultiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(n).invert())));
-                points[3] = Vector3.operatorSubtract(suppPointsA[3], suppPointsB[3]);
+                points[3] = new Vector3(suppPointsA[3]).subtract(suppPointsB[3]);
                 suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(new Vector3(n).invert());
                 suppPointsB[4] = body2Tobody1.operatorMultiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, n)));
-                points[4] = Vector3.operatorSubtract(suppPointsA[4], suppPointsB[4]);
+                points[4] = new Vector3(suppPointsA[4]).subtract(suppPointsB[4]);
 
                 // Construct the triangle faces
                 TriangleEPA face0 = triangleStore.newTriangle(points, 0, 1, 3);
@@ -357,7 +357,7 @@ public class EPAAlgorithm {
                 suppPointsB[nbVertices] = body2Tobody1.operatorMultiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2,
                                         new Vector3(triangle.getClosestPoint()).invert())));
-                points[nbVertices] = Vector3.operatorSubtract(suppPointsA[nbVertices], suppPointsB[nbVertices]);
+                points[nbVertices] = new Vector3(suppPointsA[nbVertices]).subtract(suppPointsB[nbVertices]);
 
                 int indexNewVertex = nbVertices;
                 nbVertices++;
