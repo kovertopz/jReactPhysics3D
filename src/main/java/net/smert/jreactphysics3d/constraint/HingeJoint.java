@@ -356,9 +356,9 @@ public class HingeJoint extends Joint {
         }
 
         // Compute the bias "b" of the rotation constraints
-        mBRotation.setToZero();
+        mBRotation.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
-            mBRotation = Vector2.operatorMultiply(biasFactor, new Vector2(mA1.dot(b2), mA1.dot(c2)));
+            mBRotation = new Vector2(mA1.dot(b2), mA1.dot(c2)).multiply(biasFactor);
         }
 
         // If warm-starting is not enabled
@@ -366,7 +366,7 @@ public class HingeJoint extends Joint {
 
             // Reset all the accumulated impulses
             mImpulseTranslation.zero();
-            mImpulseRotation.setToZero();
+            mImpulseRotation.zero();
             mImpulseLowerLimit = 0.0f;
             mImpulseUpperLimit = 0.0f;
             mImpulseMotor = 0.0f;
@@ -418,8 +418,8 @@ public class HingeJoint extends Joint {
 
         // Compute the impulse P=J^T * lambda for the 2 rotation constraints
         Vector3 rotationImpulse = new Vector3(
-                new Vector3(new Vector3(mB2CrossA1).invert()).multiply(mImpulseRotation.x)).subtract(
-                        new Vector3(mC2CrossA1).multiply(mImpulseRotation.y));
+                new Vector3(new Vector3(mB2CrossA1).invert()).multiply(mImpulseRotation.getX())).subtract(
+                        new Vector3(mC2CrossA1).multiply(mImpulseRotation.getY()));
 
         // Compute the impulse P=J^T * lambda for the lower and upper limits constraints
         Vector3 limitsImpulse = new Vector3(mA1).multiply(mImpulseUpperLimit - mImpulseLowerLimit);
@@ -522,15 +522,15 @@ public class HingeJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda for the 2 rotation constraints
         Vector2 deltaLambdaRotation = Matrix2x2.operatorMultiply(
-                mInverseMassMatrixRotation, Vector2.operatorSubtract(Vector2.operatorNegative(JvRotation), mBRotation));
-        mImpulseRotation.operatorAddEqual(deltaLambdaRotation);
+                mInverseMassMatrixRotation, new Vector2(JvRotation).invert().subtract(mBRotation));
+        mImpulseRotation.add(deltaLambdaRotation);
 
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
             Vector3 angularImpulseBody1 = new Vector3(
-                    new Vector3(new Vector3(mB2CrossA1).invert()).multiply(deltaLambdaRotation.x)).subtract(
-                            new Vector3(mC2CrossA1).multiply(deltaLambdaRotation.y));
+                    new Vector3(new Vector3(mB2CrossA1).invert()).multiply(deltaLambdaRotation.getX())).subtract(
+                            new Vector3(mC2CrossA1).multiply(deltaLambdaRotation.getY()));
 
             // Apply the impulse to the body
             w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
@@ -539,8 +539,8 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 rotation constraints
             Vector3 angularImpulseBody2 = new Vector3(
-                    new Vector3(mB2CrossA1).multiply(deltaLambdaRotation.x)).add(
-                            new Vector3(mC2CrossA1).multiply(deltaLambdaRotation.y));
+                    new Vector3(mB2CrossA1).multiply(deltaLambdaRotation.getX())).add(
+                            new Vector3(mC2CrossA1).multiply(deltaLambdaRotation.getY()));
 
             // Apply the impulse to the body
             w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
@@ -796,15 +796,15 @@ public class HingeJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector2 lambdaRotation = Matrix2x2.operatorMultiply(
-                mInverseMassMatrixRotation, Vector2.operatorNegative(errorRotation));
+                mInverseMassMatrixRotation, new Vector2(errorRotation).invert());
 
         // Apply the impulse to the bodies of the joint
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
             Vector3 angularImpulseBody1 = new Vector3(
-                    new Vector3(new Vector3(mB2CrossA1).invert()).multiply(lambdaRotation.x)).subtract(
-                            new Vector3(mC2CrossA1).multiply(lambdaRotation.y));
+                    new Vector3(new Vector3(mB2CrossA1).invert()).multiply(lambdaRotation.getX())).subtract(
+                            new Vector3(mC2CrossA1).multiply(lambdaRotation.getY()));
 
             // Compute the pseudo velocity
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
@@ -817,8 +817,8 @@ public class HingeJoint extends Joint {
 
             // Compute the impulse
             Vector3 angularImpulseBody2 = new Vector3(
-                    new Vector3(mB2CrossA1).multiply(lambdaRotation.x)).add(
-                            new Vector3(mC2CrossA1).multiply(lambdaRotation.y));
+                    new Vector3(mB2CrossA1).multiply(lambdaRotation.getX())).add(
+                            new Vector3(mC2CrossA1).multiply(lambdaRotation.getY()));
 
             // Compute the pseudo velocity
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);

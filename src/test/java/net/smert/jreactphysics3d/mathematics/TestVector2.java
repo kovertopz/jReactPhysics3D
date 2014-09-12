@@ -47,13 +47,13 @@ public class TestVector2 {
 
         // Test method to set values
         Vector2 newVector2 = new Vector2();
-        newVector2.setAllValues(6.1f, 7.2f);
+        newVector2.set(6.1f, 7.2f);
 
         Assert.assertEquals(newVector2.x, 6.1f, 0);
         Assert.assertEquals(newVector2.y, 7.2f, 0);
 
         // Test method to set to zero
-        newVector2.setToZero();
+        newVector2.zero();
 
         Assert.assertEquals(newVector2.equals(new Vector2(0, 0)), true);
     }
@@ -73,8 +73,8 @@ public class TestVector2 {
         Assert.assertEquals(new Vector2(1, 0).isUnit(), true);
         Assert.assertEquals(new Vector2(0, 1).isUnit(), true);
         Assert.assertEquals(!mVector34.isUnit(), true);
-        Assert.assertEquals(new Vector2(5, 0).getUnit().equals(new Vector2(1, 0)), true);
-        Assert.assertEquals(new Vector2(0, 5).getUnit().equals(new Vector2(0, 1)), true);
+        Assert.assertEquals(new Vector2(5, 0).normalize().equals(new Vector2(1, 0)), true);
+        Assert.assertEquals(new Vector2(0, 5).normalize().equals(new Vector2(0, 1)), true);
 
         Assert.assertEquals(!mVector34.isZero(), true);
         Assert.assertEquals(mVectorZero.isZero(), true);
@@ -114,8 +114,8 @@ public class TestVector2 {
     public void testOthersMethods() {
 
         // Test the method that returns the absolute vector
-        Assert.assertEquals(new Vector2(4, 5).getAbsoluteVector().equals(new Vector2(4, 5)), true);
-        Assert.assertEquals(new Vector2(-7, -24).getAbsoluteVector().equals(new Vector2(7, 24)), true);
+        Assert.assertEquals(new Vector2(4, 5).abs().equals(new Vector2(4, 5)), true);
+        Assert.assertEquals(new Vector2(-7, -24).abs().equals(new Vector2(7, 24)), true);
 
         // Test the method that returns the minimal element
         Assert.assertEquals(new Vector2(6, 35).getMinAxis(), 0, 0);
@@ -135,49 +135,41 @@ public class TestVector2 {
     public void testOperators() {
 
         // Test the [] operator
-        Assert.assertEquals(mVector34.operatorSquareBrackets(0), 3, 0);
-        Assert.assertEquals(mVector34.operatorSquareBrackets(1), 4, 0);
+        Assert.assertEquals(mVector34.get(0), 3, 0);
+        Assert.assertEquals(mVector34.get(1), 4, 0);
 
         // Assignment operator
-        Vector2 newVector = new Vector2(6, 4);
-        newVector = new Vector2(7, 8);
+        Vector2 newVector = new Vector2(7, 8);
 
         Assert.assertEquals(newVector.equals(new Vector2(7, 8)), true);
-
-        // Equality, inequality operators
-        Assert.assertEquals(new Vector2(5, 7).operatorEquals(new Vector2(5, 7)), true);
-        Assert.assertEquals(new Vector2(63, 64).operatorNotEquals(new Vector2(63, 84)), true);
-        Assert.assertEquals(new Vector2(63, 64).operatorNotEquals(new Vector2(12, 64)), true);
 
         // Addition, substraction
         Vector2 vector1 = new Vector2(6, 33);
         Vector2 vector2 = new Vector2(7, 68);
-        Assert.assertEquals(Vector2.operatorAdd(new Vector2(63, 24), new Vector2(3, 4)).equals(new Vector2(66, 28)), true);
-        Assert.assertEquals(Vector2.operatorSubtract(new Vector2(63, 24), new Vector2(3, 4)).equals(new Vector2(60, 20)), true);
-        vector1.operatorAddEqual(new Vector2(5, 10));
-        vector2.operatorSubtractEqual(new Vector2(10, 21));
+        Assert.assertEquals(new Vector2(63, 24).add(new Vector2(3, 4)).equals(new Vector2(66, 28)), true);
+        Assert.assertEquals(new Vector2(63, 24).subtract(new Vector2(3, 4)).equals(new Vector2(60, 20)), true);
+        vector1.add(new Vector2(5, 10));
+        vector2.subtract(new Vector2(10, 21));
 
-        Assert.assertEquals(vector1.operatorEquals(new Vector2(11, 43)), true);
-        Assert.assertEquals(vector2.operatorEquals(new Vector2(-3, 47)), true);
+        Assert.assertEquals(vector1.equals(new Vector2(11, 43)), true);
+        Assert.assertEquals(vector2.equals(new Vector2(-3, 47)), true);
 
         // Multiplication, division
-        Assert.assertEquals(Vector2.operatorMultiply(new Vector2(63, 24), 3).equals(new Vector2(189, 72)), true);
-        Assert.assertEquals(Vector2.operatorMultiply(3, new Vector2(63, 24)).equals(new Vector2(189, 72)), true);
-        Assert.assertEquals(Vector2.operatorDivide(new Vector2(14, 8), 2).equals(new Vector2(7, 4)), true);
+        Assert.assertEquals(new Vector2(63, 24).multiply(3).equals(new Vector2(189, 72)), true);
+        Assert.assertEquals(new Vector2(14, 8).divide(2).equals(new Vector2(7, 4)), true);
 
         Vector2 vector3 = new Vector2(6, 33);
         Vector2 vector4 = new Vector2(15, 60);
-        vector3.operatorMultiplyEqual(10);
-        vector4.operatorDivideEqual(3);
+        vector3.multiply(10);
+        vector4.divide(3);
 
         Assert.assertEquals(vector3.equals(new Vector2(60, 330)), true);
         Assert.assertEquals(vector4.equals(new Vector2(5, 20)), true);
 
         // Negative operator
-        Vector2 vector5 = new Vector2(-34, 5);
-        Vector2 negative = Vector2.operatorNegative(vector5);
+        Vector2 vector5 = new Vector2(-34, 5).invert();
 
-        Assert.assertEquals(negative.equals(new Vector2(34, -5)), true);
+        Assert.assertEquals(vector5.equals(new Vector2(34, -5)), true);
     }
 
 }

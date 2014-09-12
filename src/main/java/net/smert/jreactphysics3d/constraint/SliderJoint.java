@@ -268,12 +268,12 @@ public class SliderJoint extends Joint {
         }
 
         // Compute the bias "b" of the translation constraint
-        mBTranslation.setToZero();
+        mBTranslation.zero();
         float biasFactor = (BETA / constraintSolverData.timeStep);
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
-            mBTranslation.x = u.dot(mN1);
-            mBTranslation.y = u.dot(mN2);
-            mBTranslation.operatorMultiplyEqual(biasFactor);
+            mBTranslation.setX(u.dot(mN1));
+            mBTranslation.setY(u.dot(mN2));
+            mBTranslation.multiply(biasFactor);
         }
 
         // Compute the inverse of the mass matrix K=JM^-1J^t for the 3 rotation
@@ -344,7 +344,7 @@ public class SliderJoint extends Joint {
         if (!constraintSolverData.isWarmStartingActive) {
 
             // Reset all the accumulated impulses
-            mImpulseTranslation.setToZero();
+            mImpulseTranslation.zero();
             mImpulseRotation.zero();
             mImpulseLowerLimit = 0.0f;
             mImpulseUpperLimit = 0.0f;
@@ -377,11 +377,11 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody1 = new Vector3(
-                    new Vector3(new Vector3(mN1).invert()).multiply(mImpulseTranslation.x)).subtract(
-                            new Vector3(mN2).multiply(mImpulseTranslation.y));
+                    new Vector3(new Vector3(mN1).invert()).multiply(mImpulseTranslation.getX())).subtract(
+                            new Vector3(mN2).multiply(mImpulseTranslation.getY()));
             Vector3 angularImpulseBody1 = new Vector3(
-                    new Vector3(new Vector3(mR1PlusUCrossN1).invert()).multiply(mImpulseTranslation.x)).subtract(
-                            new Vector3(mR1PlusUCrossN2).multiply(mImpulseTranslation.y));
+                    new Vector3(new Vector3(mR1PlusUCrossN1).invert()).multiply(mImpulseTranslation.getX())).subtract(
+                            new Vector3(mR1PlusUCrossN2).multiply(mImpulseTranslation.getY()));
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
             angularImpulseBody1.add(new Vector3(mImpulseRotation).invert());
@@ -401,11 +401,11 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody2 = new Vector3(
-                    new Vector3(new Vector3(mN1).invert()).multiply(mImpulseTranslation.x)).add(
-                            new Vector3(mN2).multiply(mImpulseTranslation.y));
+                    new Vector3(new Vector3(mN1).invert()).multiply(mImpulseTranslation.getX())).add(
+                            new Vector3(mN2).multiply(mImpulseTranslation.getY()));
             Vector3 angularImpulseBody2 = new Vector3(
-                    new Vector3(new Vector3(mR2CrossN1).invert()).multiply(mImpulseTranslation.x)).add(
-                            new Vector3(mR2CrossN2).multiply(mImpulseTranslation.y));
+                    new Vector3(new Vector3(mR2CrossN1).invert()).multiply(mImpulseTranslation.getX())).add(
+                            new Vector3(mR2CrossN2).multiply(mImpulseTranslation.getY()));
 
             // Compute the impulse P=J^T * lambda for the 3 rotation constraints
             angularImpulseBody2.add(mImpulseRotation);
@@ -447,18 +447,18 @@ public class SliderJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda for the 2 translation constraints
         Vector2 deltaLambda = Matrix2x2.operatorMultiply(
-                mInverseMassMatrixTranslationConstraint, Vector2.operatorSubtract(Vector2.operatorNegative(JvTranslation), mBTranslation));
-        mImpulseTranslation.operatorAddEqual(deltaLambda);
+                mInverseMassMatrixTranslationConstraint, new Vector2(JvTranslation).invert().subtract(mBTranslation));
+        mImpulseTranslation.add(deltaLambda);
 
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody1 = new Vector3(
-                    new Vector3(new Vector3(mN1).invert()).multiply(deltaLambda.x)).subtract(
-                            new Vector3(mN2).multiply(deltaLambda.y));
+                    new Vector3(new Vector3(mN1).invert()).multiply(deltaLambda.getX())).subtract(
+                            new Vector3(mN2).multiply(deltaLambda.getY()));
             Vector3 angularImpulseBody1 = new Vector3(
-                    new Vector3(new Vector3(mR1PlusUCrossN1).invert()).multiply(deltaLambda.x)).subtract(
-                            new Vector3(mR1PlusUCrossN2).multiply(deltaLambda.y));
+                    new Vector3(new Vector3(mR1PlusUCrossN1).invert()).multiply(deltaLambda.getX())).subtract(
+                            new Vector3(mR1PlusUCrossN2).multiply(deltaLambda.getY()));
 
             // Apply the impulse to the body
             v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
@@ -468,11 +468,11 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody2 = new Vector3(
-                    new Vector3(new Vector3(mN1).invert()).multiply(deltaLambda.x)).add(
-                            new Vector3(mN2).multiply(deltaLambda.y));
+                    new Vector3(new Vector3(mN1).invert()).multiply(deltaLambda.getX())).add(
+                            new Vector3(mN2).multiply(deltaLambda.getY()));
             Vector3 angularImpulseBody2 = new Vector3(
-                    new Vector3(new Vector3(mR2CrossN1).invert()).multiply(deltaLambda.x)).add(
-                            new Vector3(mR2CrossN2).multiply(deltaLambda.y));
+                    new Vector3(new Vector3(mR2CrossN1).invert()).multiply(deltaLambda.getX())).add(
+                            new Vector3(mR2CrossN2).multiply(deltaLambda.getY()));
 
             // Apply the impulse to the body
             v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
@@ -705,17 +705,17 @@ public class SliderJoint extends Joint {
 
         // Compute the Lagrange multiplier lambda for the 2 translation constraints
         Vector2 lambdaTranslation = Matrix2x2.operatorMultiply(
-                mInverseMassMatrixTranslationConstraint, Vector2.operatorNegative(translationError));
+                mInverseMassMatrixTranslationConstraint, new Vector2(translationError).invert());
 
         if (mBody1.isMotionEnabled()) {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody1 = new Vector3(
-                    new Vector3(new Vector3(mN1).invert()).multiply(lambdaTranslation.x)).subtract(
-                            new Vector3(mN2).multiply(lambdaTranslation.y));
+                    new Vector3(new Vector3(mN1).invert()).multiply(lambdaTranslation.getX())).subtract(
+                            new Vector3(mN2).multiply(lambdaTranslation.getY()));
             Vector3 angularImpulseBody1 = new Vector3(
-                    new Vector3(new Vector3(mR1PlusUCrossN1).invert()).multiply(lambdaTranslation.x)).subtract(
-                            new Vector3(mR1PlusUCrossN2).multiply(lambdaTranslation.y));
+                    new Vector3(new Vector3(mR1PlusUCrossN1).invert()).multiply(lambdaTranslation.getX())).subtract(
+                            new Vector3(mR1PlusUCrossN2).multiply(lambdaTranslation.getY()));
 
             // Apply the impulse to the body
             Vector3 v1 = new Vector3(linearImpulseBody1).multiply(inverseMassBody1);
@@ -730,11 +730,11 @@ public class SliderJoint extends Joint {
 
             // Compute the impulse P=J^T * lambda for the 2 translation constraints
             Vector3 linearImpulseBody2 = new Vector3(
-                    new Vector3(new Vector3(mN1).invert()).multiply(lambdaTranslation.x)).add(
-                            new Vector3(mN2).multiply(lambdaTranslation.y));
+                    new Vector3(new Vector3(mN1).invert()).multiply(lambdaTranslation.getX())).add(
+                            new Vector3(mN2).multiply(lambdaTranslation.getY()));
             Vector3 angularImpulseBody2 = new Vector3(
-                    new Vector3(new Vector3(mR2CrossN1).invert()).multiply(lambdaTranslation.x)).add(
-                            new Vector3(mR2CrossN2).multiply(lambdaTranslation.y));
+                    new Vector3(new Vector3(mR2CrossN1).invert()).multiply(lambdaTranslation.getX())).add(
+                            new Vector3(mR2CrossN2).multiply(lambdaTranslation.getY()));
 
             // Apply the impulse to the body
             Vector3 v2 = new Vector3(linearImpulseBody2).multiply(inverseMassBody2);
