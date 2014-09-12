@@ -398,9 +398,7 @@ public class Simplex {
             if (isSubset(subset, mBitsCurrentSimplex) && isValidSubset(subset | mLastFoundBit)) {
                 mBitsCurrentSimplex = subset | mLastFoundBit;              // Add the last added point to the current simplex
                 Vector3 u = computeClosestPointForSubset(mBitsCurrentSimplex);    // Compute the closest point in the simplex
-                v.x = u.x;
-                v.y = u.y;
-                v.z = u.z;
+                v.set(u);
                 return true;
             }
         }
@@ -410,9 +408,7 @@ public class Simplex {
             mBitsCurrentSimplex = mLastFoundBit;                  // Set the current simplex to the set that contains only the last added point
             mMaxLengthSquare = mPointsLengthSquare[mLastFound];    // Update the maximum square length
             Vector3 u = mPoints[mLastFound];                              // The closest point of the simplex "v" is the last added point
-            v.x = u.x;
-            v.y = u.y;
-            v.z = u.z;
+            v.set(u);
             return true;
         }
 
@@ -432,9 +428,7 @@ public class Simplex {
                 if (distSquare < minDistSquare) {
                     minDistSquare = distSquare;
                     mBitsCurrentSimplex = bit;
-                    v.x = u.x;
-                    v.y = u.y;
-                    v.z = u.z;
+                    v.set(u);
                 }
             }
         }

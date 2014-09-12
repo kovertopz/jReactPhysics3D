@@ -463,12 +463,12 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
         int boxIndex;
 
-        assert (Utils.encodeFloatIntoInteger(aabb.getMin().x) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
-        assert (Utils.encodeFloatIntoInteger(aabb.getMin().y) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
-        assert (Utils.encodeFloatIntoInteger(aabb.getMin().z) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
-        assert (Utils.encodeFloatIntoInteger(aabb.getMax().x) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
-        assert (Utils.encodeFloatIntoInteger(aabb.getMax().y) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
-        assert (Utils.encodeFloatIntoInteger(aabb.getMax().z) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().getX()) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().getY()) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMin().getZ()) > Utils.encodeFloatIntoInteger(-Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMax().getX()) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMax().getY()) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
+        assert (Utils.encodeFloatIntoInteger(aabb.getMax().getZ()) < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
 
         // If the index of the first free box is valid (means that
         // there is a bucket in the middle of the array that doesn't

@@ -159,7 +159,7 @@ public class EPAAlgorithm {
 
                 // Create a rotation quaternion to rotate the vector v1 to get the vectors
                 // v2 and v3
-                Quaternion rotationQuat = new Quaternion(d.x * sin60, d.y * sin60, d.z * sin60, 0.5f);
+                Quaternion rotationQuat = new Quaternion(d.getX() * sin60, d.getY() * sin60, d.getZ() * sin60, 0.5f);
 
                 // Construct the corresponding rotation matrix
                 Matrix3x3 rotationMat = rotationQuat.getMatrix();

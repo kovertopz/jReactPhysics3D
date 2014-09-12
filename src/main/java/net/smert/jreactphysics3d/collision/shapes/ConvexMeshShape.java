@@ -66,25 +66,25 @@ public class ConvexMeshShape extends CollisionShape {
         // For each vertex of the mesh
         for (int i = 0; i < mVertices.size(); i++) {
 
-            if (mVertices.get(i).x > mMaxBounds.x) {
-                mMaxBounds.x = mVertices.get(i).x;
+            if (mVertices.get(i).getX() > mMaxBounds.getX()) {
+                mMaxBounds.setX(mVertices.get(i).getX());
             }
-            if (mVertices.get(i).x < mMinBounds.x) {
-                mMinBounds.x = mVertices.get(i).x;
-            }
-
-            if (mVertices.get(i).y > mMaxBounds.y) {
-                mMaxBounds.y = mVertices.get(i).y;
-            }
-            if (mVertices.get(i).y < mMinBounds.y) {
-                mMinBounds.y = mVertices.get(i).y;
+            if (mVertices.get(i).getX() < mMinBounds.getX()) {
+                mMinBounds.setX(mVertices.get(i).getX());
             }
 
-            if (mVertices.get(i).z > mMaxBounds.z) {
-                mMaxBounds.z = mVertices.get(i).z;
+            if (mVertices.get(i).getY() > mMaxBounds.getY()) {
+                mMaxBounds.setY(mVertices.get(i).getY());
             }
-            if (mVertices.get(i).z < mMinBounds.z) {
-                mMinBounds.z = mVertices.get(i).z;
+            if (mVertices.get(i).getY() < mMinBounds.getY()) {
+                mMinBounds.setY(mVertices.get(i).getY());
+            }
+
+            if (mVertices.get(i).getZ() > mMaxBounds.getZ()) {
+                mMaxBounds.setZ(mVertices.get(i).getZ());
+            }
+            if (mVertices.get(i).getZ() < mMinBounds.getZ()) {
+                mMinBounds.setZ(mVertices.get(i).getZ());
             }
         }
 
@@ -165,23 +165,23 @@ public class ConvexMeshShape extends CollisionShape {
         mVertices.add(vertex);
 
         // Update the bounds of the mesh
-        if (vertex.x > mMaxBounds.x) {
-            mMaxBounds.x = vertex.x;
+        if (vertex.getX() > mMaxBounds.getX()) {
+            mMaxBounds.setX(vertex.getX());
         }
-        if (vertex.x < mMinBounds.x) {
-            mMinBounds.x = vertex.x;
+        if (vertex.getX() < mMinBounds.getX()) {
+            mMinBounds.setX(vertex.getX());
         }
-        if (vertex.y > mMaxBounds.y) {
-            mMaxBounds.y = vertex.y;
+        if (vertex.getY() > mMaxBounds.getY()) {
+            mMaxBounds.setY(vertex.getY());
         }
-        if (vertex.y < mMinBounds.y) {
-            mMinBounds.y = vertex.y;
+        if (vertex.getY() < mMinBounds.getY()) {
+            mMinBounds.setY(vertex.getY());
         }
-        if (vertex.z > mMaxBounds.z) {
-            mMaxBounds.z = vertex.z;
+        if (vertex.getZ() > mMaxBounds.getZ()) {
+            mMaxBounds.setZ(vertex.getZ());
         }
-        if (vertex.z < mMinBounds.z) {
-            mMinBounds.z = vertex.z;
+        if (vertex.getZ() < mMinBounds.getZ()) {
+            mMinBounds.setZ(vertex.getZ());
         }
     }
 
@@ -208,10 +208,10 @@ public class ConvexMeshShape extends CollisionShape {
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
         Vector3 realExtent = Vector3.operatorSubtract(mMaxBounds, mMinBounds).operatorMultiplyEqual(0.5f);
-        assert (realExtent.x > 0 && realExtent.y > 0 && realExtent.z > 0);
-        float xSquare = realExtent.x * realExtent.x;
-        float ySquare = realExtent.y * realExtent.y;
-        float zSquare = realExtent.z * realExtent.z;
+        assert (realExtent.getX() > 0 && realExtent.getY() > 0 && realExtent.getZ() > 0);
+        float xSquare = realExtent.getX() * realExtent.getX();
+        float ySquare = realExtent.getY() * realExtent.getY();
+        float zSquare = realExtent.getZ() * realExtent.getZ();
         tensor.setAllValues(factor * (ySquare + zSquare), 0.0f, 0.0f,
                 0.0f, factor * (xSquare + zSquare), 0.0f,
                 0.0f, 0.0f, factor * (xSquare + ySquare));
@@ -311,8 +311,8 @@ public class ConvexMeshShape extends CollisionShape {
     // Return the local bounds of the shape in x, y and z directions
     @Override
     public void getLocalBounds(Vector3 min, Vector3 max) {
-        min.setAllValues(mMinBounds.x, mMinBounds.y, mMinBounds.z);
-        max.setAllValues(mMaxBounds.x, mMaxBounds.y, mMaxBounds.z);
+        min.setAllValues(mMinBounds.getX(), mMinBounds.getY(), mMinBounds.getZ());
+        max.setAllValues(mMaxBounds.getX(), mMaxBounds.getY(), mMaxBounds.getZ());
     }
 
     // Test equality between two cone shapes

@@ -99,13 +99,13 @@ public class ConeShape extends CollisionShape {
         float sinThetaTimesLengthV = mSinTheta * v.length();
         Vector3 supportPoint;
 
-        if (v.y > sinThetaTimesLengthV) {
+        if (v.getY() > sinThetaTimesLengthV) {
             supportPoint = new Vector3(0.0f, mHalfHeight, 0.0f);
         } else {
-            float projectedLength = (float) Math.sqrt(v.x * v.x + v.z * v.z);
+            float projectedLength = (float) Math.sqrt(v.getX() * v.getX() + v.getZ() * v.getZ());
             if (projectedLength > Defaults.MACHINE_EPSILON) {
                 float d = mRadius / projectedLength;
-                supportPoint = new Vector3(v.x * d, -mHalfHeight, v.z * d);
+                supportPoint = new Vector3(v.getX() * d, -mHalfHeight, v.getZ() * d);
             } else {
                 supportPoint = new Vector3(0.0f, -mHalfHeight, 0.0f);
             }
@@ -119,14 +119,14 @@ public class ConeShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.x = mRadius + mMargin;
-        max.y = mHalfHeight + mMargin;
-        max.z = max.x;
+        max.setX(mRadius + mMargin);
+        max.setY(mHalfHeight + mMargin);
+        max.setZ(max.getX());
 
         // Minimum bounds
-        min.x = -max.x;
-        min.y = -max.y;
-        min.z = min.x;
+        min.setX(-max.getX());
+        min.setY(-max.getY());
+        min.setZ(min.getX());
     }
 
     // Test equality between two cone shapes

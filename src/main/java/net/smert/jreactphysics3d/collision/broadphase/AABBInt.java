@@ -17,13 +17,13 @@ public class AABBInt {
 
     // Constructor that takes an AABB as input
     public AABBInt(AABB aabb) {
-        min[0] = Utils.encodeFloatIntoInteger(aabb.getMin().x);
-        min[1] = Utils.encodeFloatIntoInteger(aabb.getMin().y);
-        min[2] = Utils.encodeFloatIntoInteger(aabb.getMin().z);
+        min[0] = Utils.encodeFloatIntoInteger(aabb.getMin().getX());
+        min[1] = Utils.encodeFloatIntoInteger(aabb.getMin().getY());
+        min[2] = Utils.encodeFloatIntoInteger(aabb.getMin().getZ());
 
-        max[0] = Utils.encodeFloatIntoInteger(aabb.getMax().x);
-        max[1] = Utils.encodeFloatIntoInteger(aabb.getMax().y);
-        max[2] = Utils.encodeFloatIntoInteger(aabb.getMax().z);
+        max[0] = Utils.encodeFloatIntoInteger(aabb.getMax().getX());
+        max[1] = Utils.encodeFloatIntoInteger(aabb.getMax().getY());
+        max[2] = Utils.encodeFloatIntoInteger(aabb.getMax().getZ());
     }
 
     // Constructor that set all the axis with an minimum and maximum value

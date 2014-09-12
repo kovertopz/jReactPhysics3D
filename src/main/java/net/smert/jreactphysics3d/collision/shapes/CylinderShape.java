@@ -88,22 +88,22 @@ public class CylinderShape extends CollisionShape {
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
 
         Vector3 supportPoint = new Vector3();
-        float uDotv = direction.y;
-        Vector3 w = new Vector3(direction.x, 0.0f, direction.z);
-        float lengthW = (float) Math.sqrt(direction.x * direction.x + direction.z * direction.z);
+        float uDotv = direction.getY();
+        Vector3 w = new Vector3(direction.getX(), 0.0f, direction.getZ());
+        float lengthW = (float) Math.sqrt(direction.getX() * direction.getX() + direction.getZ() * direction.getZ());
 
         if (lengthW > Defaults.MACHINE_EPSILON) {
             if (uDotv < 0.0f) {
-                supportPoint.y = -mHalfHeight;
+                supportPoint.setY(-mHalfHeight);
             } else {
-                supportPoint.y = mHalfHeight;
+                supportPoint.setY(mHalfHeight);
             }
             supportPoint.operatorAddEqual(w.operatorMultiplyEqual(mRadius / lengthW));
         } else {
             if (uDotv < 0.0f) {
-                supportPoint.y = -mHalfHeight;
+                supportPoint.setY(-mHalfHeight);
             } else {
-                supportPoint.y = mHalfHeight;
+                supportPoint.setY(mHalfHeight);
             }
         }
 
@@ -115,14 +115,14 @@ public class CylinderShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.x = mRadius + mMargin;
-        max.y = mHalfHeight + mMargin;
-        max.z = max.x;
+        max.setX(mRadius + mMargin);
+        max.setY(mHalfHeight + mMargin);
+        max.setZ(max.getX());
 
         // Minimum bounds
-        min.x = -max.x;
-        min.y = -max.y;
-        min.z = min.x;
+        min.setX(-max.getX());
+        min.setY(-max.getY());
+        min.setZ(min.getX());
     }
 
     // Test equality between two cylinder shapes

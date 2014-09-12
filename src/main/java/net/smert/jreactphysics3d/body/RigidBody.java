@@ -102,9 +102,7 @@ public class RigidBody extends CollisionBody {
         // If the body is able to move
         if (mIsMotionEnabled) {
             // Update the linear velocity of the current body state
-            mLinearVelocity.x = linearVelocity.x;
-            mLinearVelocity.y = linearVelocity.y;
-            mLinearVelocity.z = linearVelocity.z;
+            mLinearVelocity.set(linearVelocity);
         }
     }
 
@@ -114,9 +112,7 @@ public class RigidBody extends CollisionBody {
     }
 
     public void setAngularVelocity(Vector3 angularVelocity) {
-        mAngularVelocity.x = angularVelocity.x;
-        mAngularVelocity.y = angularVelocity.y;
-        mAngularVelocity.z = angularVelocity.z;
+        mAngularVelocity.set(angularVelocity);
     }
 
     public Vector3 getExternalForce() {

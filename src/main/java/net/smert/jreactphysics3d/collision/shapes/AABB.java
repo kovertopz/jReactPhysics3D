@@ -57,13 +57,13 @@ public class AABB {
     // Return true if the current AABB is overlapping with the AABB in argument.
     // Two AABBs overlap if they overlap in the three x, y and z axis at the same time
     public boolean testCollision(AABB aabb) {
-        if (mMaxCoordinates.x < aabb.mMinCoordinates.x || aabb.mMaxCoordinates.x < mMinCoordinates.x) {
+        if (mMaxCoordinates.getX() < aabb.mMinCoordinates.getX() || aabb.mMaxCoordinates.getX() < mMinCoordinates.getX()) {
             return false;
         }
-        if (mMaxCoordinates.y < aabb.mMinCoordinates.y || aabb.mMaxCoordinates.y < mMinCoordinates.y) {
+        if (mMaxCoordinates.getY() < aabb.mMinCoordinates.getY() || aabb.mMaxCoordinates.getY() < mMinCoordinates.getY()) {
             return false;
         }
-        return mMaxCoordinates.z >= aabb.mMinCoordinates.z && aabb.mMaxCoordinates.z >= mMinCoordinates.z;
+        return mMaxCoordinates.getZ() >= aabb.mMinCoordinates.getZ() && aabb.mMaxCoordinates.getZ() >= mMinCoordinates.getZ();
     }
 
 }

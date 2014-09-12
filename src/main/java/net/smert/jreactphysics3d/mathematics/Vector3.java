@@ -10,13 +10,13 @@ import net.smert.jreactphysics3d.configuration.Defaults;
 public class Vector3 {
 
     // Component x
-    public float x;
+    float x;
 
     // Component y
-    public float y;
+    float y;
 
     // Component z
-    public float z;
+    float z;
 
     // Constructor of the class Vector3D
     public Vector3() {
@@ -272,6 +272,40 @@ public class Vector3 {
         x = v.x;
         y = v.y;
         z = v.z;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getZ() {
+        return z;
+    }
+
+    public Vector3 set(float newX, float newY, float newZ) {
+        x = newX;
+        y = newY;
+        z = newZ;
+        return this;
+    }
+
+    public Vector3 setX(float newX) {
+        x = newX;
+        return this;
+    }
+
+    public Vector3 setY(float newY) {
+        y = newY;
+        return this;
+    }
+
+    public Vector3 setZ(float newZ) {
+        z = newZ;
+        return this;
     }
 
 }

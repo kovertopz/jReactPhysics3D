@@ -355,7 +355,7 @@ public class Scene {
                     ContactPoint point = it.getContactPoint(i);
 
                     net.smert.jreactphysics3d.mathematics.Vector3 pos = point.getWorldPointOnBody1();
-                    Vector3 position = new Vector3(pos.x, pos.y, pos.z);
+                    Vector3 position = new Vector3(pos.getX(), pos.getY(), pos.getZ());
                     VisualContactPoint visualPoint = new VisualContactPoint(position);
                     mContactPoints.add(visualPoint);
                 }

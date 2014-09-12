@@ -23,16 +23,16 @@ public class BoxShape extends CollisionShape {
     private BoxShape(BoxShape shape) {
         super(shape);
         mExtent = new Vector3();
-        mExtent.setAllValues(shape.mExtent.x, shape.mExtent.y, shape.mExtent.z);
+        mExtent.setAllValues(shape.mExtent.getX(), shape.mExtent.getY(), shape.mExtent.getZ());
     }
 
     // Constructor
     public BoxShape(Vector3 extent, float margin) {
         super(CollisionShapeType.BOX, margin);
 
-        assert (extent.x > 0.0f && extent.x > margin);
-        assert (extent.y > 0.0f && extent.y > margin);
-        assert (extent.z > 0.0f && extent.z > margin);
+        assert (extent.getX() > 0.0f && extent.getX() > margin);
+        assert (extent.getY() > 0.0f && extent.getY() > margin);
+        assert (extent.getZ() > 0.0f && extent.getZ() > margin);
 
         mExtent = Vector3.operatorSubtract(extent, new Vector3(margin, margin, margin));
     }
@@ -52,9 +52,9 @@ public class BoxShape extends CollisionShape {
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
         Vector3 realExtent = Vector3.operatorAdd(mExtent, new Vector3(mMargin, mMargin, mMargin));
-        float xSquare = realExtent.x * realExtent.x;
-        float ySquare = realExtent.y * realExtent.y;
-        float zSquare = realExtent.z * realExtent.z;
+        float xSquare = realExtent.getX() * realExtent.getX();
+        float ySquare = realExtent.getY() * realExtent.getY();
+        float zSquare = realExtent.getZ() * realExtent.getZ();
         tensor.setAllValues(factor * (ySquare + zSquare), 0.0f, 0.0f,
                 0.0f, factor * (xSquare + zSquare), 0.0f,
                 0.0f, 0.0f, factor * (xSquare + ySquare));
@@ -66,18 +66,18 @@ public class BoxShape extends CollisionShape {
 
         assert (mMargin > 0.0f);
 
-        return new Vector3(direction.x < 0.0f ? -mExtent.x - mMargin : mExtent.x + mMargin,
-                direction.y < 0.0f ? -mExtent.y - mMargin : mExtent.y + mMargin,
-                direction.z < 0.0f ? -mExtent.z - mMargin : mExtent.z + mMargin);
+        return new Vector3(direction.getX() < 0.0f ? -mExtent.getX() - mMargin : mExtent.getX() + mMargin,
+                direction.getY() < 0.0f ? -mExtent.getY() - mMargin : mExtent.getY() + mMargin,
+                direction.getZ() < 0.0f ? -mExtent.getZ() - mMargin : mExtent.getZ() + mMargin);
     }
 
     // Return a local support point in a given direction without the objec margin
     @Override
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
 
-        return new Vector3(direction.x < 0.0f ? -mExtent.x : mExtent.x,
-                direction.y < 0.0f ? -mExtent.y : mExtent.y,
-                direction.z < 0.0f ? -mExtent.z : mExtent.z);
+        return new Vector3(direction.getX() < 0.0f ? -mExtent.getX() : mExtent.getX(),
+                direction.getY() < 0.0f ? -mExtent.getY() : mExtent.getY(),
+                direction.getZ() < 0.0f ? -mExtent.getZ() : mExtent.getZ());
     }
 
     // Return the local bounds of the shape in x, y and z directions
@@ -86,11 +86,11 @@ public class BoxShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.setAllValues(mExtent.x, mExtent.y, mExtent.z);
+        max.setAllValues(mExtent.getX(), mExtent.getY(), mExtent.getZ());
         max.operatorAddEqual(new Vector3(mMargin, mMargin, mMargin));
 
         // Minimum bounds
-        min.setAllValues(-max.x, -max.y, -max.z);
+        min.setAllValues(-max.getX(), -max.getY(), -max.getZ());
     }
 
     // Test equality between two box shapes

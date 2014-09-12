@@ -91,14 +91,14 @@ public class SphereShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.x = mRadius;
-        max.y = max.x;
-        max.z = max.x;
+        max.setX(mRadius);
+        max.setY(max.getX());
+        max.setZ(max.getX());
 
         // Minimum bounds
-        min.x = -mRadius;
-        min.y = min.x;
-        min.z = min.x;
+        min.setX(-mRadius);
+        min.setY(min.getX());
+        min.setZ(min.getX());
     }
 
     // Test equality between two sphere shapes

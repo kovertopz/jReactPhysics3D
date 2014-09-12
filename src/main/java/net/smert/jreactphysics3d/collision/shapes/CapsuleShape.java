@@ -120,7 +120,7 @@ public class CapsuleShape extends CollisionShape {
 
         // If the dot product of the direction and the local Y axis (dotProduct = direction.y)
         // is positive
-        if (direction.y > 0.0f) {
+        if (direction.getY() > 0.0f) {
 
             // Return the top sphere center point
             return new Vector3(0.0f, mHalfHeight, 0.0f);
@@ -137,14 +137,10 @@ public class CapsuleShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.x = mRadius;
-        max.y = mHalfHeight + mRadius;
-        max.z = mRadius;
+        max.setAllValues(mRadius, mHalfHeight + mRadius, mRadius);
 
         // Minimum bounds
-        min.x = -mRadius;
-        min.y = -max.y;
-        min.z = min.x;
+        min.setAllValues(-mRadius, -max.getY(), -mRadius);
     }
 
     // Test equality between two capsule shapes
