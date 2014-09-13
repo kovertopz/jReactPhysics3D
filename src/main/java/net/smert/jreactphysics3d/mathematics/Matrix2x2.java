@@ -1,6 +1,5 @@
 package net.smert.jreactphysics3d.mathematics;
 
-import java.util.Arrays;
 import net.smert.jreactphysics3d.configuration.Defaults;
 
 /**
@@ -10,228 +9,194 @@ import net.smert.jreactphysics3d.configuration.Defaults;
  */
 public class Matrix2x2 {
 
-    // Rows of the matrix;
-    public float[][] m = new float[2][2];
+    // Rows of the matrix (m[row][column])
+    float m00;
+    float m10;
+    float m01;
+    float m11;
 
-    // Constructor of the class Matrix2x2
+    // Constructor
     public Matrix2x2() {
-
-        // Initialize all values in the matrix to zero
-        setAllValues(0.0f, 0.0f, 0.0f, 0.0f);
+        zero();
     }
 
     // Constructor
     public Matrix2x2(float value) {
-        setAllValues(value, value, value, value);
+        set(value, value, value, value);
     }
 
     // Constructor with arguments
     public Matrix2x2(float a1, float a2, float b1, float b2) {
-
-        // Initialize the matrix with the values
-        setAllValues(a1, a2, b1, b2);
+        set(a1, a2, b1, b2);
     }
 
     // Copy-constructor
     public Matrix2x2(Matrix2x2 matrix) {
-        setAllValues(matrix.m[0][0], matrix.m[0][1],
-                matrix.m[1][0], matrix.m[1][1]);
-    }
-
-    // Method to set all the values in the matrix
-    public final void setAllValues(float a1, float a2,
-            float b1, float b2) {
-        m[0][0] = a1;
-        m[0][1] = a2;
-        m[1][0] = b1;
-        m[1][1] = b2;
-    }
-
-    // Set the matrix to zero
-    public void setToZero() {
-        m[0][0] = 0.0f;
-        m[0][1] = 0.0f;
-        m[1][0] = 0.0f;
-        m[1][1] = 0.0f;
-    }
-
-    // Return a column
-    public Vector2 getColumn(int i) {
-        assert (i >= 0 && i < 2);
-        return new Vector2(m[0][i], m[1][i]);
-    }
-
-    // Return a row
-    public Vector2 getRow(int i) {
-        assert (i >= 0 && i < 2);
-        return new Vector2(m[i][0], m[i][1]);
-    }
-
-    // Return the transpose matrix
-    public Matrix2x2 getTranspose() {
-
-        // Return the transpose matrix
-        return new Matrix2x2(m[0][0], m[1][0],
-                m[0][1], m[1][1]);
+        set(matrix);
     }
 
     // Return the determinant of the matrix
     public float getDeterminant() {
-
-        // Compute and return the determinant of the matrix
-        return m[0][0] * m[1][1] - m[1][0] * m[0][1];
+        return m00 * m11 - m10 * m01;
     }
 
     // Return the trace of the matrix
     public float getTrace() {
-
-        // Compute and return the trace
-        return (m[0][0] + m[1][1]);
-    }
-
-    // Set the matrix to the identity matrix
-    public void setToIdentity() {
-        m[0][0] = 1.0f;
-        m[0][1] = 0.0f;
-        m[1][0] = 0.0f;
-        m[1][1] = 1.0f;
-    }
-
-    // Return the 2x2 identity matrix
-    public static Matrix2x2 identity() {
-
-        // Return the isdentity matrix
-        return new Matrix2x2(1.0f, 0.0f, 0.0f, 1.0f);
+        return m00 + m11;
     }
 
     // Return the matrix with absolute values
-    public Matrix2x2 getAbsoluteMatrix() {
-        return new Matrix2x2(Math.abs(m[0][0]), Math.abs(m[0][1]),
-                Math.abs(m[1][0]), Math.abs(m[1][1]));
-    }
-
-    // Overloaded operator for addition
-    public static Matrix2x2 operatorAdd(Matrix2x2 matrix1, Matrix2x2 matrix2) {
-        return new Matrix2x2(matrix1.m[0][0] + matrix2.m[0][0],
-                matrix1.m[0][1] + matrix2.m[0][1],
-                matrix1.m[1][0] + matrix2.m[1][0],
-                matrix1.m[1][1] + matrix2.m[1][1]);
-    }
-
-    // Overloaded operator for substraction
-    public static Matrix2x2 operatorSubtract(Matrix2x2 matrix1, Matrix2x2 matrix2) {
-        return new Matrix2x2(matrix1.m[0][0] - matrix2.m[0][0],
-                matrix1.m[0][1] - matrix2.m[0][1],
-                matrix1.m[1][0] - matrix2.m[1][0],
-                matrix1.m[1][1] - matrix2.m[1][1]);
-    }
-
-    // Overloaded operator for the negative of the matrix
-    public static Matrix2x2 operatorNegative(Matrix2x2 matrix) {
-        return new Matrix2x2(-matrix.m[0][0], -matrix.m[0][1],
-                -matrix.m[1][0], -matrix.m[1][1]);
-    }
-
-    // Overloaded operator for multiplication with a number
-    public static Matrix2x2 operatorMultiply(float nb, Matrix2x2 matrix) {
-        return new Matrix2x2(matrix.m[0][0] * nb, matrix.m[0][1] * nb,
-                matrix.m[1][0] * nb, matrix.m[1][1] * nb);
-    }
-
-    // Overloaded operator for multiplication with a matrix
-    public static Matrix2x2 operatorMultiply(Matrix2x2 matrix, float nb) {
-        return operatorMultiply(nb, matrix);
-    }
-
-    // Overloaded operator for matrix multiplication
-    public static Matrix2x2 operatorMultiply(Matrix2x2 matrix1, Matrix2x2 matrix2) {
-        return new Matrix2x2(matrix1.m[0][0] * matrix2.m[0][0] + matrix1.m[0][1]
-                * matrix2.m[1][0],
-                matrix1.m[0][0] * matrix2.m[0][1] + matrix1.m[0][1]
-                * matrix2.m[1][1],
-                matrix1.m[1][0] * matrix2.m[0][0] + matrix1.m[1][1]
-                * matrix2.m[1][0],
-                matrix1.m[1][0] * matrix2.m[0][1] + matrix1.m[1][1]
-                * matrix2.m[1][1]);
-    }
-
-    // Overloaded operator for multiplication with a vector
-    public static Vector2 operatorMultiply(Matrix2x2 matrix, Vector2 vector) {
-        return new Vector2(matrix.m[0][0] * vector.x + matrix.m[0][1] * vector.y,
-                matrix.m[1][0] * vector.x + matrix.m[1][1] * vector.y);
-    }
-
-    // Overloaded operator for equality condition
-    public boolean operatorEquals(Matrix2x2 matrix) {
-        return (m[0][0] == matrix.m[0][0] && m[0][1] == matrix.m[0][1]
-                && m[1][0] == matrix.m[1][0] && m[1][1] == matrix.m[1][1]);
-    }
-
-    // Overloaded operator for the is different condition
-    public boolean operatorNotEquals(Matrix2x2 matrix) {
-        return !(operatorEquals(matrix));
+    public Matrix2x2 abs() {
+        m00 = Math.abs(m00);
+        m01 = Math.abs(m01);
+        m10 = Math.abs(m10);
+        m11 = Math.abs(m11);
+        return this;
     }
 
     // Overloaded operator for addition with assignment
-    public Matrix2x2 operatorAddEqual(Matrix2x2 matrix) {
-        m[0][0] += matrix.m[0][0];
-        m[0][1] += matrix.m[0][1];
-        m[1][0] += matrix.m[1][0];
-        m[1][1] += matrix.m[1][1];
+    public Matrix2x2 add(Matrix2x2 matrix) {
+        m00 += matrix.m00;
+        m01 += matrix.m01;
+        m10 += matrix.m10;
+        m11 += matrix.m11;
         return this;
     }
 
-    // Overloaded operator for substraction with assignment
-    public Matrix2x2 operatorSubtractEqual(Matrix2x2 matrix) {
-        m[0][0] -= matrix.m[0][0];
-        m[0][1] -= matrix.m[0][1];
-        m[1][0] -= matrix.m[1][0];
-        m[1][1] -= matrix.m[1][1];
+    // Set the matrix to the identity matrix
+    public Matrix2x2 identity() {
+        m00 = 1.0f;
+        m01 = 0.0f;
+        m10 = 0.0f;
+        m11 = 1.0f;
         return this;
-    }
-
-    // Overloaded operator for multiplication with a number with assignment
-    public Matrix2x2 operatorMultiplyEqual(float nb) {
-        m[0][0] *= nb;
-        m[0][1] *= nb;
-        m[1][0] *= nb;
-        m[1][1] *= nb;
-        return this;
-    }
-
-    // Overloaded operator to return a row of the matrix.
-    // This operator is also used to access a matrix value using the syntax
-    // matrix[row][col].
-    public Vector2 operatorSquareBrackets(int row) {
-        return new Vector2(m[row][0], m[row][1]);
     }
 
     // Return the inverse matrix
-    public Matrix2x2 getInverse() {
+    public Matrix2x2 inverse() {
 
         // Compute the determinant of the matrix
         float determinant = getDeterminant();
 
         // Check if the determinant is equal to zero
         assert (Math.abs(determinant) > Defaults.MACHINE_EPSILON);
-
         float invDeterminant = 1.0f / determinant;
 
-        Matrix2x2 tempMatrix = new Matrix2x2(m[1][1], -m[0][1], -m[1][0], m[0][0]);
+        set(m11, -m01, -m10, m00);
 
         // Return the inverse matrix
-        return Matrix2x2.operatorMultiply(invDeterminant, tempMatrix);
+        return multiply(invDeterminant);
+    }
+
+    // Overloaded operator for the negative of the matrix
+    public Matrix2x2 invert() {
+        m00 = -m00;
+        m01 = -m01;
+        m10 = -m10;
+        m11 = -m11;
+        return this;
+    }
+
+    // Overloaded operator for multiplication with a number with assignment
+    public Matrix2x2 multiply(float number) {
+        m00 *= number;
+        m01 *= number;
+        m10 *= number;
+        m11 *= number;
+        return this;
+    }
+
+    // Overloaded operator for matrix multiplication
+    public Matrix2x2 multiply(Matrix2x2 matrix) {
+        set(
+                m00 * matrix.m00 + m01 * matrix.m10,
+                m00 * matrix.m01 + m01 * matrix.m11,
+                m10 * matrix.m00 + m11 * matrix.m10,
+                m10 * matrix.m01 + m11 * matrix.m11);
+        return this;
+    }
+
+    // Method to set all the values in the matrix
+    public Matrix2x2 set(float a1, float a2, float b1, float b2) {
+        m00 = a1;
+        m01 = a2;
+        m10 = b1;
+        m11 = b2;
+        return this;
+    }
+
+    public Matrix2x2 set(Matrix2x2 matrix) {
+        m00 = matrix.m00;
+        m01 = matrix.m01;
+        m10 = matrix.m10;
+        m11 = matrix.m11;
+        return this;
+    }
+
+    // Overloaded operator for substraction with assignment
+    public Matrix2x2 subtract(Matrix2x2 matrix) {
+        m00 -= matrix.m00;
+        m01 -= matrix.m01;
+        m10 -= matrix.m10;
+        m11 -= matrix.m11;
+        return this;
+    }
+
+    // Return the transpose matrix
+    public Matrix2x2 transpose() {
+        set(m00, m10, m01, m11);
+        return this;
+    }
+
+    // Set the matrix to zero
+    public Matrix2x2 zero() {
+        m00 = 0.0f;
+        m01 = 0.0f;
+        m10 = 0.0f;
+        m11 = 0.0f;
+        return this;
+    }
+
+    // Return a column
+    public Vector2 getColumn(int index) {
+        if (index == 0) {
+            return new Vector2(m00, m10);
+        } else if (index == 1) {
+            return new Vector2(m01, m11);
+        }
+        throw new IllegalArgumentException("Unknown column index: " + index);
+    }
+
+    // Return a row
+    public Vector2 getRow(int index) {
+        if (index == 0) {
+            return new Vector2(m00, m01);
+        } else if (index == 1) {
+            return new Vector2(m10, m11);
+        }
+        throw new IllegalArgumentException("Unknown row index: " + index);
+    }
+
+    // Overloaded operator for multiplication with a vector
+    public Vector2 multiply(Vector2 vector, Vector2 vectorOut) {
+        return vectorOut.set(
+                m00 * vector.x + m01 * vector.y,
+                m10 * vector.x + m11 * vector.y);
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 79 * hash + Arrays.deepHashCode(this.m);
+        int hash = 5;
+        hash = 23 * hash + Float.floatToIntBits(this.m00);
+        hash = 23 * hash + Float.floatToIntBits(this.m10);
+        hash = 23 * hash + Float.floatToIntBits(this.m01);
+        hash = 23 * hash + Float.floatToIntBits(this.m11);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
+
         if (obj == null) {
             return false;
         }
@@ -239,13 +204,22 @@ public class Matrix2x2 {
             return false;
         }
         final Matrix2x2 other = (Matrix2x2) obj;
-        return Arrays.deepEquals(this.m, other.m);
+        if (Float.floatToIntBits(this.m00) != Float.floatToIntBits(other.m00)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.m10) != Float.floatToIntBits(other.m10)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.m01) != Float.floatToIntBits(other.m01)) {
+            return false;
+        }
+        return Float.floatToIntBits(this.m11) == Float.floatToIntBits(other.m11);
     }
 
     @Override
     public String toString() {
-        return "(00= " + m[0][0] + ", 01= " + m[0][1]
-                + ", 10= " + m[1][0] + ", 11= " + m[1][1] + ")";
+        return "(00= " + m00 + ", 01= " + m01
+                + ", 10= " + m10 + ", 11= " + m11 + ")";
     }
 
 }

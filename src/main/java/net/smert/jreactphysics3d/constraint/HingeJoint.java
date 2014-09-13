@@ -353,9 +353,9 @@ public class HingeJoint extends Joint {
         float el21 = mC2CrossA1.dot(I1B2CrossA1) + mC2CrossA1.dot(I2B2CrossA1);
         float el22 = mC2CrossA1.dot(I1C2CrossA1) + mC2CrossA1.dot(I2C2CrossA1);
         Matrix2x2 matrixKRotation = new Matrix2x2(el11, el12, el21, el22);
-        mInverseMassMatrixRotation.setToZero();
+        mInverseMassMatrixRotation.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotation = matrixKRotation.getInverse();
+            mInverseMassMatrixRotation = new Matrix2x2(matrixKRotation).inverse();
         }
 
         // Compute the bias "b" of the rotation constraints
@@ -524,8 +524,8 @@ public class HingeJoint extends Joint {
         Vector2 JvRotation = new Vector2(-mB2CrossA1.dot(w1) + mB2CrossA1.dot(w2), -mC2CrossA1.dot(w1) + mC2CrossA1.dot(w2));
 
         // Compute the Lagrange multiplier lambda for the 2 rotation constraints
-        Vector2 deltaLambdaRotation = Matrix2x2.operatorMultiply(
-                mInverseMassMatrixRotation, new Vector2(JvRotation).invert().subtract(mBRotation));
+        Vector2 deltaLambdaRotation = new Vector2();
+        mInverseMassMatrixRotation.multiply(new Vector2(JvRotation).invert().subtract(mBRotation), deltaLambdaRotation);
         mImpulseRotation.add(deltaLambdaRotation);
 
         if (mBody1.isMotionEnabled()) {
@@ -790,17 +790,17 @@ public class HingeJoint extends Joint {
         float el21 = mC2CrossA1.dot(I1B2CrossA1) + mC2CrossA1.dot(I2B2CrossA1);
         float el22 = mC2CrossA1.dot(I1C2CrossA1) + mC2CrossA1.dot(I2C2CrossA1);
         Matrix2x2 matrixKRotation = new Matrix2x2(el11, el12, el21, el22);
-        mInverseMassMatrixRotation.setToZero();
+        mInverseMassMatrixRotation.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotation = matrixKRotation.getInverse();
+            mInverseMassMatrixRotation = new Matrix2x2(matrixKRotation).inverse();
         }
 
         // Compute the position error for the 3 rotation constraints
         Vector2 errorRotation = new Vector2(mA1.dot(b2), mA1.dot(c2));
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
-        Vector2 lambdaRotation = Matrix2x2.operatorMultiply(
-                mInverseMassMatrixRotation, new Vector2(errorRotation).invert());
+        Vector2 lambdaRotation = new Vector2();
+        mInverseMassMatrixRotation.multiply(new Vector2(errorRotation).invert(), lambdaRotation);
 
         // Apply the impulse to the bodies of the joint
         if (mBody1.isMotionEnabled()) {

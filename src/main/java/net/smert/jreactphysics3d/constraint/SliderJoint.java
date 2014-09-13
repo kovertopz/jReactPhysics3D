@@ -262,9 +262,9 @@ public class SliderJoint extends Joint {
         float el21 = mR1PlusUCrossN2.dot(I1R1PlusUCrossN1) + mR2CrossN2.dot(I2R2CrossN1);
         float el22 = sumInverseMass + mR1PlusUCrossN2.dot(I1R1PlusUCrossN2) + mR2CrossN2.dot(I2R2CrossN2);
         Matrix2x2 matrixKTranslation = new Matrix2x2(el11, el12, el21, el22);
-        mInverseMassMatrixTranslationConstraint.setToZero();
+        mInverseMassMatrixTranslationConstraint.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixTranslationConstraint = matrixKTranslation.getInverse();
+            mInverseMassMatrixTranslationConstraint = new Matrix2x2(matrixKTranslation).inverse();
         }
 
         // Compute the bias "b" of the translation constraint
@@ -448,8 +448,8 @@ public class SliderJoint extends Joint {
         Vector2 JvTranslation = new Vector2(el1, el2);
 
         // Compute the Lagrange multiplier lambda for the 2 translation constraints
-        Vector2 deltaLambda = Matrix2x2.operatorMultiply(
-                mInverseMassMatrixTranslationConstraint, new Vector2(JvTranslation).invert().subtract(mBTranslation));
+        Vector2 deltaLambda = new Vector2();
+        mInverseMassMatrixTranslationConstraint.multiply(new Vector2(JvTranslation).invert().subtract(mBTranslation), deltaLambda);
         mImpulseTranslation.add(deltaLambda);
 
         if (mBody1.isMotionEnabled()) {
@@ -697,17 +697,17 @@ public class SliderJoint extends Joint {
         float el21 = mR1PlusUCrossN2.dot(I1R1PlusUCrossN1) + mR2CrossN2.dot(I2R2CrossN1);
         float el22 = sumInverseMass + mR1PlusUCrossN2.dot(I1R1PlusUCrossN2) + mR2CrossN2.dot(I2R2CrossN2);
         Matrix2x2 matrixKTranslation = new Matrix2x2(el11, el12, el21, el22);
-        mInverseMassMatrixTranslationConstraint.setToZero();
+        mInverseMassMatrixTranslationConstraint.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixTranslationConstraint = matrixKTranslation.getInverse();
+            mInverseMassMatrixTranslationConstraint = new Matrix2x2(matrixKTranslation).inverse();
         }
 
         // Compute the position error for the 2 translation constraints
         Vector2 translationError = new Vector2(u.dot(mN1), u.dot(mN2));
 
         // Compute the Lagrange multiplier lambda for the 2 translation constraints
-        Vector2 lambdaTranslation = Matrix2x2.operatorMultiply(
-                mInverseMassMatrixTranslationConstraint, new Vector2(translationError).invert());
+        Vector2 lambdaTranslation = new Vector2();
+        mInverseMassMatrixTranslationConstraint.multiply(new Vector2(translationError).invert(), lambdaTranslation);
 
         if (mBody1.isMotionEnabled()) {
 

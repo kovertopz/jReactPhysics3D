@@ -20,7 +20,7 @@ public class TestMatrix2x2 {
 
     @Before
     public void beforeEachTest() {
-        mIdentity = Matrix2x2.identity();
+        mIdentity = new Matrix2x2().identity();
         mMatrix1 = new Matrix2x2(2, 24, -4, 5);
     }
 
@@ -35,17 +35,17 @@ public class TestMatrix2x2 {
 
         Matrix2x2 test1 = new Matrix2x2(5);
 
-        Assert.assertEquals(test1.m[0][0], 5, 0);
-        Assert.assertEquals(test1.m[0][1], 5, 0);
-        Assert.assertEquals(test1.m[1][0], 5, 0);
-        Assert.assertEquals(test1.m[1][1], 5, 0);
+        Assert.assertEquals(test1.m00, 5, 0);
+        Assert.assertEquals(test1.m01, 5, 0);
+        Assert.assertEquals(test1.m10, 5, 0);
+        Assert.assertEquals(test1.m11, 5, 0);
 
         Matrix2x2 test2 = new Matrix2x2(2, 3, 4, 5);
 
-        Assert.assertEquals(test2.m[0][0], 2, 0);
-        Assert.assertEquals(test2.m[0][1], 3, 0);
-        Assert.assertEquals(test2.m[1][0], 4, 0);
-        Assert.assertEquals(test2.m[1][1], 5, 0);
+        Assert.assertEquals(test2.m00, 2, 0);
+        Assert.assertEquals(test2.m01, 3, 0);
+        Assert.assertEquals(test2.m10, 4, 0);
+        Assert.assertEquals(test2.m11, 5, 0);
 
         Matrix2x2 test3 = new Matrix2x2(mMatrix1);
 
@@ -53,10 +53,10 @@ public class TestMatrix2x2 {
 
         Matrix2x2 test4 = new Matrix2x2();
 
-        Assert.assertEquals(test4.m[0][0], 0, 0);
-        Assert.assertEquals(test4.m[0][1], 0, 0);
-        Assert.assertEquals(test4.m[1][0], 0, 0);
-        Assert.assertEquals(test4.m[1][1], 0, 0);
+        Assert.assertEquals(test4.m00, 0, 0);
+        Assert.assertEquals(test4.m01, 0, 0);
+        Assert.assertEquals(test4.m10, 0, 0);
+        Assert.assertEquals(test4.m11, 0, 0);
     }
 
     // Test the getter and setter methods
@@ -65,12 +65,12 @@ public class TestMatrix2x2 {
 
         // Test method to set all the values
         Matrix2x2 test1 = new Matrix2x2();
-        test1.setAllValues(2, 24, -4, 5);
+        test1.set(2, 24, -4, 5);
 
         Assert.assertEquals(test1.equals(mMatrix1), true);
 
         // Test method to set to zero
-        test1.setToZero();
+        test1.zero();
 
         Assert.assertEquals(test1.equals(new Matrix2x2()), true);
 
@@ -93,24 +93,24 @@ public class TestMatrix2x2 {
     @Test
     public void testIdentity() {
 
-        Matrix2x2 test1 = Matrix2x2.identity();
+        Matrix2x2 test1 = new Matrix2x2().identity();
 
-        Assert.assertEquals(test1.m[0][0], 1, 0);
-        Assert.assertEquals(test1.m[0][1], 0, 0);
-        Assert.assertEquals(test1.m[1][0], 0, 0);
-        Assert.assertEquals(test1.m[1][1], 1, 0);
+        Assert.assertEquals(test1.m00, 1, 0);
+        Assert.assertEquals(test1.m01, 0, 0);
+        Assert.assertEquals(test1.m10, 0, 0);
+        Assert.assertEquals(test1.m11, 1, 0);
 
         Matrix2x2 test2 = new Matrix2x2();
-        test2.setToIdentity();
+        test2.identity();
 
-        Assert.assertEquals(test2.equals(Matrix2x2.identity()), true);
+        Assert.assertEquals(test2.equals(new Matrix2x2().identity()), true);
     }
 
     @Test
     public void testOthersMethods() {
 
         // Test transpose
-        Matrix2x2 test1 = mMatrix1.getTranspose();
+        Matrix2x2 test1 = new Matrix2x2(mMatrix1).transpose();
 
         Assert.assertEquals(test1.equals(new Matrix2x2(2, -4, 24, 5)), true);
 
@@ -126,26 +126,26 @@ public class TestMatrix2x2 {
         Assert.assertEquals(mIdentity.getDeterminant(), 1, 0);
 
         // Test inverse
-        Matrix2x2 inverseMatrix1 = new Matrix2x2(1, 2, 3, 4).getInverse();
+        Matrix2x2 inverseMatrix1 = new Matrix2x2(1, 2, 3, 4).inverse();
 
-        Assert.assertEquals(inverseMatrix1.m[0][0], -2, 0);
-        Assert.assertEquals(inverseMatrix1.m[0][1], 1, 0);
-        Assert.assertEquals(inverseMatrix1.m[1][0], 1.5f, 0);
-        Assert.assertEquals(inverseMatrix1.m[1][1], -0.5f, 0);
+        Assert.assertEquals(inverseMatrix1.m00, -2, 0);
+        Assert.assertEquals(inverseMatrix1.m01, 1, 0);
+        Assert.assertEquals(inverseMatrix1.m10, 1.5f, 0);
+        Assert.assertEquals(inverseMatrix1.m11, -0.5f, 0);
 
-        Matrix2x2 inverseMatrix2 = mMatrix1.getInverse();
+        Matrix2x2 inverseMatrix2 = new Matrix2x2(mMatrix1).inverse();
 
-        Assert.assertEquals(inverseMatrix2.m[0][0], 0.047169811f, 10e-6f);
-        Assert.assertEquals(inverseMatrix2.m[0][1], -0.226415094f, 10e-6f);
-        Assert.assertEquals(inverseMatrix2.m[1][0], 0.037735849f, 10e-6f);
-        Assert.assertEquals(inverseMatrix2.m[1][1], 0.018867925f, 10e-6f);
+        Assert.assertEquals(inverseMatrix2.m00, 0.047169811f, 10e-6f);
+        Assert.assertEquals(inverseMatrix2.m01, -0.226415094f, 10e-6f);
+        Assert.assertEquals(inverseMatrix2.m10, 0.037735849f, 10e-6f);
+        Assert.assertEquals(inverseMatrix2.m11, 0.018867925f, 10e-6f);
 
         // Test absolute matrix
-        Assert.assertEquals(test2.getAbsoluteMatrix().equals(new Matrix2x2(24, 64, 253, 35)), true);
+        Assert.assertEquals(test2.abs().equals(new Matrix2x2(24, 64, 253, 35)), true);
 
         Matrix2x2 test3 = new Matrix2x2(-2, -3, -4, -5);
 
-        Assert.assertEquals(test3.getAbsoluteMatrix().equals(new Matrix2x2(2, 3, 4, 5)), true);
+        Assert.assertEquals(test3.abs().equals(new Matrix2x2(2, 3, 4, 5)), true);
     }
 
     @Test
@@ -155,39 +155,37 @@ public class TestMatrix2x2 {
         Matrix2x2 matrix2 = new Matrix2x2(-2, 3, -5, 10);
 
         // Test addition
-        Matrix2x2 addition1 = Matrix2x2.operatorAdd(matrix1, matrix2);
+        Matrix2x2 addition1 = new Matrix2x2(matrix1).add(matrix2);
         Matrix2x2 addition2 = new Matrix2x2(matrix1);
-        addition2.operatorAddEqual(matrix2);
+        addition2.add(matrix2);
 
         Assert.assertEquals(addition1.equals(new Matrix2x2(0, 6, -1, 15)), true);
         Assert.assertEquals(addition2.equals(new Matrix2x2(0, 6, -1, 15)), true);
 
         // Test substraction
-        Matrix2x2 substraction1 = Matrix2x2.operatorSubtract(matrix1, matrix2);
+        Matrix2x2 substraction1 = new Matrix2x2(matrix1).subtract(matrix2);
         Matrix2x2 substraction2 = new Matrix2x2(matrix1);
-        substraction2.operatorSubtractEqual(matrix2);
+        substraction2.subtract(matrix2);
 
         Assert.assertEquals(substraction1.equals(new Matrix2x2(4, 0, 9, -5)), true);
         Assert.assertEquals(substraction2.equals(new Matrix2x2(4, 0, 9, -5)), true);
 
         // Test negative operator
-        Matrix2x2 negative = Matrix2x2.operatorNegative(matrix1);
+        Matrix2x2 negative = new Matrix2x2(matrix1).invert();
 
         Assert.assertEquals(negative.equals(new Matrix2x2(-2, -3, -4, -5)), true);
 
         // Test multiplication with a number
-        Matrix2x2 multiplication1 = Matrix2x2.operatorMultiply(3, matrix1);
-        Matrix2x2 multiplication2 = Matrix2x2.operatorMultiply(matrix1, 3);
+        Matrix2x2 multiplication1 = new Matrix2x2(matrix1).multiply(3);
         Matrix2x2 multiplication3 = new Matrix2x2(matrix1);
-        multiplication3.operatorMultiplyEqual(3);
+        multiplication3.multiply(3);
 
         Assert.assertEquals(multiplication1.equals(new Matrix2x2(6, 9, 12, 15)), true);
-        Assert.assertEquals(multiplication2.equals(new Matrix2x2(6, 9, 12, 15)), true);
         Assert.assertEquals(multiplication3.equals(new Matrix2x2(6, 9, 12, 15)), true);
 
         // Test multiplication with a matrix
-        Matrix2x2 multiplication4 = Matrix2x2.operatorMultiply(matrix1, matrix2);
-        Matrix2x2 multiplication5 = Matrix2x2.operatorMultiply(matrix2, matrix1);
+        Matrix2x2 multiplication4 = new Matrix2x2(matrix1).multiply(matrix2);
+        Matrix2x2 multiplication5 = new Matrix2x2(matrix2).multiply(matrix1);
 
         Assert.assertEquals(multiplication4.equals(new Matrix2x2(-19, 36, -33, 62)), true);
         Assert.assertEquals(multiplication5.equals(new Matrix2x2(8, 9, 30, 35)), true);
@@ -195,28 +193,30 @@ public class TestMatrix2x2 {
         // Test multiplication with a vector
         Vector2 vector1 = new Vector2(3, -32);
         Vector2 vector2 = new Vector2(-31, -422);
-        Vector2 test1 = Matrix2x2.operatorMultiply(matrix1, vector1);
-        Vector2 test2 = Matrix2x2.operatorMultiply(matrix2, vector2);
+        Vector2 test1 = new Vector2();
+        matrix1.multiply(vector1, test1);
+        Vector2 test2 = new Vector2();
+        matrix2.multiply(vector2, test2);
 
         Assert.assertEquals(test1.equals(new Vector2(-90, -148)), true);
         Assert.assertEquals(test2.equals(new Vector2(-1204, -4065)), true);
 
         // Test equality operators
-        Assert.assertEquals(new Matrix2x2(34, 38, 43, 64).operatorEquals(new Matrix2x2(34, 38, 43, 64)), true);
-        Assert.assertEquals(new Matrix2x2(34, 64, 43, 7).operatorNotEquals(new Matrix2x2(34, 38, 43, 64)), true);
+        Assert.assertEquals(new Matrix2x2(34, 38, 43, 64).equals(new Matrix2x2(34, 38, 43, 64)), true);
+        Assert.assertEquals(new Matrix2x2(34, 64, 43, 7).equals(new Matrix2x2(34, 38, 43, 64)), false);
 
         // Test operator to read a value
-        Assert.assertEquals(mMatrix1.m[0][0], 2, 0);
-        Assert.assertEquals(mMatrix1.m[0][1], 24, 0);
-        Assert.assertEquals(mMatrix1.m[1][0], -4, 0);
-        Assert.assertEquals(mMatrix1.m[1][1], 5, 0);
+        Assert.assertEquals(mMatrix1.m00, 2, 0);
+        Assert.assertEquals(mMatrix1.m01, 24, 0);
+        Assert.assertEquals(mMatrix1.m10, -4, 0);
+        Assert.assertEquals(mMatrix1.m11, 5, 0);
 
         // Test operator to set a value
         Matrix2x2 test3 = new Matrix2x2();
-        test3.m[0][0] = 2;
-        test3.m[0][1] = 24;
-        test3.m[1][0] = -4f;
-        test3.m[1][1] = 5;
+        test3.m00 = 2;
+        test3.m01 = 24;
+        test3.m10 = -4f;
+        test3.m11 = 5;
 
         Assert.assertEquals(test3.equals(mMatrix1), true);
     }
