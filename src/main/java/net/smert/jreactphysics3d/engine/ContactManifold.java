@@ -308,8 +308,8 @@ public class ContactManifold {
 
         // Update the world coordinates and penetration depth of the contact points in the manifold
         for (int i = 0; i < mNbContactPoints; i++) {
-            mContactPoints[i].setWorldPointOnBody1(transform1.multiply(mContactPoints[i].getLocalPointOnBody1()));
-            mContactPoints[i].setWorldPointOnBody2(transform2.multiply(mContactPoints[i].getLocalPointOnBody2()));
+            mContactPoints[i].setWorldPointOnBody1(transform1.multiply(mContactPoints[i].getLocalPointOnBody1(), new Vector3()));
+            mContactPoints[i].setWorldPointOnBody2(transform2.multiply(mContactPoints[i].getLocalPointOnBody2(), new Vector3()));
             mContactPoints[i].setPenetrationDepth(new Vector3(mContactPoints[i].getWorldPointOnBody1()).subtract(
                     mContactPoints[i].getWorldPointOnBody2()).dot(mContactPoints[i].getNormal()));
         }

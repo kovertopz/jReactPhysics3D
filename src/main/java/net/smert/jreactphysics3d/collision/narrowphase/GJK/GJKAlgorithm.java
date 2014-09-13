@@ -54,13 +54,13 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
         transform1.getOrientation().getMatrix(rotation1);
         Matrix3x3 rotation2 = new Matrix3x3();
         transform2.getOrientation().getMatrix(rotation2);
-        rotation2 = rotation2.getTranspose();
-        Matrix3x3 rotateToBody2 = Matrix3x3.operatorMultiply(rotation2, rotation1);
+        Matrix3x3 rotateToBody2 = new Matrix3x3(rotation2.transpose()).multiply(rotation1);
 
         do {
             // Compute the support points for the enlarged object A and B
             suppA = collisionShape1.getLocalSupportPointWithMargin(new Vector3(v).invert());
-            suppB = body2ToBody1.multiply(collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, v)));
+            suppB = body2ToBody1.multiply(
+                    collisionShape2.getLocalSupportPointWithMargin(rotateToBody2.multiply(v, new Vector3())), new Vector3());
 
             // Compute the support point for the Minkowski difference A-B
             w = new Vector3(suppA).subtract(suppB);
@@ -143,8 +143,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
         transform1.getOrientation().getMatrix(rotation1);
         Matrix3x3 rotation2 = new Matrix3x3();
         transform2.getOrientation().getMatrix(rotation2);
-        rotation2 = rotation2.getTranspose();
-        Matrix3x3 rotateToBody2 = Matrix3x3.operatorMultiply(rotation2, rotation1);
+        Matrix3x3 rotateToBody2 = new Matrix3x3(rotation2.transpose()).multiply(rotation1);
 
         // Initialize the margin (sum of margins of both objects)
         float margin = collisionShape1.getMargin() + collisionShape2.getMargin();
@@ -164,7 +163,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
             // Compute the support points for original objects (without margins) A and B
             suppA = collisionShape1.getLocalSupportPointWithoutMargin(new Vector3(v).invert());
-            suppB = body2Tobody1.multiply(collisionShape2.getLocalSupportPointWithoutMargin(Matrix3x3.operatorMultiply(rotateToBody2, v)));
+            suppB = body2Tobody1.multiply(collisionShape2.getLocalSupportPointWithoutMargin(rotateToBody2.multiply(v, new Vector3())), new Vector3());
 
             // Compute the support point for the Minkowski difference A-B
             w = new Vector3(suppA).subtract(suppB);
@@ -192,11 +191,11 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
-                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
+                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)), new Vector3());
 
                 // Compute the contact info
                 transform1.getOrientation().getMatrix(rotation1);
-                Vector3 normal = Matrix3x3.operatorMultiply(rotation1, new Vector3(v).normalize().invert());
+                Vector3 normal = rotation1.multiply(new Vector3(v).normalize().invert(), new Vector3());
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
@@ -228,11 +227,11 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
-                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
+                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)), new Vector3());
 
                 // Compute the contact info
                 transform1.getOrientation().getMatrix(rotation1);
-                Vector3 normal = Matrix3x3.operatorMultiply(rotation1, new Vector3(v).normalize().invert());
+                Vector3 normal = rotation1.multiply(new Vector3(v).normalize().invert(), new Vector3());
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
@@ -262,11 +261,11 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
-                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
+                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)), new Vector3());
 
                 // Compute the contact info
                 transform1.getOrientation().getMatrix(rotation1);
-                Vector3 normal = Matrix3x3.operatorMultiply(rotation1, new Vector3(v).normalize().invert());
+                Vector3 normal = rotation1.multiply(new Vector3(v).normalize().invert(), new Vector3());
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)
@@ -303,11 +302,11 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
-                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
+                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)), new Vector3());
 
                 // Compute the contact info
                 transform1.getOrientation().getMatrix(rotation1);
-                Vector3 normal = Matrix3x3.operatorMultiply(rotation1, new Vector3(v).normalize().invert());
+                Vector3 normal = rotation1.multiply(new Vector3(v).normalize().invert(), new Vector3());
                 float penetrationDepth = margin - dist;
 
                 // Reject the contact if the penetration depth is negative (due too numerical errors)

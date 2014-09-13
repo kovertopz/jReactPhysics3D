@@ -73,7 +73,9 @@ public class Transform {
         orientation.inverse();
         position.invert();
         Matrix3x3 invMatrix = orientation.getMatrix(new Matrix3x3());
-        position.set(Matrix3x3.operatorMultiply(invMatrix, position));
+        Vector3 invPosition = new Vector3();
+        invMatrix.multiply(position, invPosition);
+        position.set(invPosition);
         return this;
     }
 
@@ -81,7 +83,9 @@ public class Transform {
     public Transform multiply(Transform transform) {
         Matrix3x3 matrix = orientation.getMatrix(new Matrix3x3());
         orientation.multiply(transform.orientation);
-        position.add(Matrix3x3.operatorMultiply(matrix, transform.position));
+        Vector3 newPosition = new Vector3();
+        matrix.multiply(transform.position, newPosition);
+        position.add(newPosition);
         return this;
     }
 
@@ -131,9 +135,9 @@ public class Transform {
     }
 
     // Return the transformed vector
-    public Vector3 multiply(Vector3 vector) {
+    public Vector3 multiply(Vector3 vector, Vector3 vectorOut) {
         Matrix3x3 matrix = orientation.getMatrix(new Matrix3x3());
-        return Matrix3x3.operatorMultiply(matrix, vector).add(position);
+        return matrix.multiply(vector, vectorOut).add(position);
     }
 
     // Return an interpolated transform

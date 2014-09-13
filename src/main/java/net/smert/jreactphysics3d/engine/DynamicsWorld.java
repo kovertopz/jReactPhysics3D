@@ -298,8 +298,8 @@ public class DynamicsWorld extends CollisionWorld {
                     mConstrainedLinearVelocities[indexBody] = new Vector3(bodies[b].getLinearVelocity()).add(
                             new Vector3(bodies[b].getExternalForce()).multiply(dt * bodies[b].getMassInverse()));
                     mConstrainedAngularVelocities[indexBody] = new Vector3(bodies[b].getAngularVelocity()).add(
-                            Matrix3x3.operatorMultiply(
-                                    Matrix3x3.operatorMultiply(dt, bodies[b].getInertiaTensorInverseWorld()), bodies[b].getExternalTorque()));
+                            new Matrix3x3(bodies[b].getInertiaTensorInverseWorld()).multiply(dt).multiply(
+                                    bodies[b].getExternalTorque(), new Vector3()));
 
                     // If the gravity has to be applied to this rigid body
                     if (bodies[b].isGravityEnabled() && mIsGravityEnabled) {

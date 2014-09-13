@@ -154,11 +154,11 @@ public class ContactSolver {
                 float massPenetration = 0.0f;
                 if (manifold.isBody1Moving) {
                     massPenetration += manifold.massInverseBody1
-                            + (Matrix3x3.operatorMultiply(I1, contactPoint.r1CrossN).cross(contactPoint.r1)).dot(contactPoint.normal);
+                            + (I1.multiply(contactPoint.r1CrossN, new Vector3()).cross(contactPoint.r1)).dot(contactPoint.normal);
                 }
                 if (manifold.isBody2Moving) {
                     massPenetration += manifold.massInverseBody2
-                            + (Matrix3x3.operatorMultiply(I2, contactPoint.r2CrossN).cross(contactPoint.r2)).dot(contactPoint.normal);
+                            + (I2.multiply(contactPoint.r2CrossN, new Vector3()).cross(contactPoint.r2)).dot(contactPoint.normal);
                 }
                 contactPoint.inversePenetrationMass = massPenetration > 0.0f ? (1.0f / massPenetration) : 0.0f;
 
@@ -179,15 +179,15 @@ public class ContactSolver {
                     float friction2Mass = 0.0f;
                     if (manifold.isBody1Moving) {
                         friction1Mass += manifold.massInverseBody1
-                                + (Matrix3x3.operatorMultiply(I1, contactPoint.r1CrossT1).cross(contactPoint.r1)).dot(contactPoint.frictionVector1);
+                                + (I1.multiply(contactPoint.r1CrossT1, new Vector3()).cross(contactPoint.r1)).dot(contactPoint.frictionVector1);
                         friction2Mass += manifold.massInverseBody1
-                                + (Matrix3x3.operatorMultiply(I1, contactPoint.r1CrossT2).cross(contactPoint.r1)).dot(contactPoint.frictionVector2);
+                                + (I1.multiply(contactPoint.r1CrossT2, new Vector3()).cross(contactPoint.r1)).dot(contactPoint.frictionVector2);
                     }
                     if (manifold.isBody2Moving) {
                         friction1Mass += manifold.massInverseBody2
-                                + (Matrix3x3.operatorMultiply(I2, contactPoint.r2CrossT1).cross(contactPoint.r2)).dot(contactPoint.frictionVector1);
+                                + (I2.multiply(contactPoint.r2CrossT1, new Vector3()).cross(contactPoint.r2)).dot(contactPoint.frictionVector1);
                         friction2Mass += manifold.massInverseBody2
-                                + (Matrix3x3.operatorMultiply(I2, contactPoint.r2CrossT2).cross(contactPoint.r2)).dot(contactPoint.frictionVector2);
+                                + (I2.multiply(contactPoint.r2CrossT2, new Vector3()).cross(contactPoint.r2)).dot(contactPoint.frictionVector2);
                     }
                     contactPoint.inverseFriction1Mass = friction1Mass > 0.0f ? (1.0f / friction1Mass) : 0.0f;
                     contactPoint.inverseFriction2Mass = friction2Mass > 0.0f ? (1.0f / friction2Mass) : 0.0f;
@@ -242,18 +242,18 @@ public class ContactSolver {
                 float friction2Mass = 0.0f;
                 if (manifold.isBody1Moving) {
                     friction1Mass += manifold.massInverseBody1
-                            + (Matrix3x3.operatorMultiply(I1, manifold.r1CrossT1).cross(manifold.r1Friction)).dot(manifold.frictionVector1);
+                            + (I1.multiply(manifold.r1CrossT1, new Vector3()).cross(manifold.r1Friction)).dot(manifold.frictionVector1);
                     friction2Mass += manifold.massInverseBody1
-                            + (Matrix3x3.operatorMultiply(I1, manifold.r1CrossT2).cross(manifold.r1Friction)).dot(manifold.frictionVector2);
+                            + (I1.multiply(manifold.r1CrossT2, new Vector3()).cross(manifold.r1Friction)).dot(manifold.frictionVector2);
                 }
                 if (manifold.isBody2Moving) {
                     friction1Mass += manifold.massInverseBody2
-                            + (Matrix3x3.operatorMultiply(I2, manifold.r2CrossT1).cross(manifold.r2Friction)).dot(manifold.frictionVector1);
+                            + (I2.multiply(manifold.r2CrossT1, new Vector3()).cross(manifold.r2Friction)).dot(manifold.frictionVector1);
                     friction2Mass += manifold.massInverseBody2
-                            + (Matrix3x3.operatorMultiply(I2, manifold.r2CrossT2).cross(manifold.r2Friction)).dot(manifold.frictionVector2);
+                            + (I2.multiply(manifold.r2CrossT2, new Vector3()).cross(manifold.r2Friction)).dot(manifold.frictionVector2);
                 }
-                float frictionTwistMass = manifold.normal.dot(Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody1, manifold.normal))
-                        + manifold.normal.dot(Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody2, manifold.normal));
+                float frictionTwistMass = manifold.normal.dot(manifold.inverseInertiaTensorBody1.multiply(manifold.normal, new Vector3()))
+                        + manifold.normal.dot(manifold.inverseInertiaTensorBody2.multiply(manifold.normal, new Vector3()));
                 manifold.inverseFriction1Mass = friction1Mass > 0.0f ? (1.0f / friction1Mass) : 0.0f;
                 manifold.inverseFriction2Mass = friction2Mass > 0.0f ? (1.0f / friction2Mass) : 0.0f;
                 manifold.inverseTwistFrictionMass = frictionTwistMass > 0.0f ? 1.0f / frictionTwistMass : 0.0f;
@@ -269,13 +269,13 @@ public class ContactSolver {
             mLinearVelocities[manifold.indexBody1].add(
                     new Vector3(impulse.linearImpulseBody1).multiply(manifold.massInverseBody1));
             mAngularVelocities[manifold.indexBody1].add(
-                    Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody1, impulse.angularImpulseBody1));
+                    manifold.inverseInertiaTensorBody1.multiply(impulse.angularImpulseBody1, new Vector3()));
         }
         if (manifold.isBody2Moving) {
             mLinearVelocities[manifold.indexBody2].add(
                     new Vector3(impulse.linearImpulseBody2).multiply(manifold.massInverseBody2));
             mAngularVelocities[manifold.indexBody2].add(
-                    Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody2, impulse.angularImpulseBody2));
+                    manifold.inverseInertiaTensorBody2.multiply(impulse.angularImpulseBody2, new Vector3()));
         }
     }
 
@@ -287,13 +287,13 @@ public class ContactSolver {
             mSplitLinearVelocities[manifold.indexBody1].add(
                     new Vector3(impulse.linearImpulseBody1).multiply(manifold.massInverseBody1));
             mSplitAngularVelocities[manifold.indexBody1].add(
-                    Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody1, impulse.angularImpulseBody1));
+                    manifold.inverseInertiaTensorBody1.multiply(impulse.angularImpulseBody1, new Vector3()));
         }
         if (manifold.isBody2Moving) {
             mSplitLinearVelocities[manifold.indexBody2].add(
                     new Vector3(impulse.linearImpulseBody2).multiply(manifold.massInverseBody2));
             mSplitAngularVelocities[manifold.indexBody2].add(
-                    Matrix3x3.operatorMultiply(manifold.inverseInertiaTensorBody2, impulse.angularImpulseBody2));
+                    manifold.inverseInertiaTensorBody2.multiply(impulse.angularImpulseBody2, new Vector3()));
         }
     }
 

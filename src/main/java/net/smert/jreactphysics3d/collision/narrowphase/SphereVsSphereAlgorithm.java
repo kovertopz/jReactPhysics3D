@@ -37,8 +37,8 @@ public class SphereVsSphereAlgorithm extends NarrowPhaseAlgorithm {
 
         // If the sphere collision shapes intersect
         if (squaredDistanceBetweenCenters <= sumRadius * sumRadius) {
-            Vector3 centerSphere2InBody1LocalSpace = new Transform(transform1).inverse().multiply(transform2.getPosition());
-            Vector3 centerSphere1InBody2LocalSpace = new Transform(transform2).inverse().multiply(transform1.getPosition());
+            Vector3 centerSphere2InBody1LocalSpace = new Transform(transform1).inverse().multiply(transform2.getPosition(), new Vector3());
+            Vector3 centerSphere1InBody2LocalSpace = new Transform(transform2).inverse().multiply(transform1.getPosition(), new Vector3());
             Vector3 intersectionOnBody1 = centerSphere2InBody1LocalSpace.normalize().multiply(sphereShape1.getRadius());
             Vector3 intersectionOnBody2 = centerSphere1InBody2LocalSpace.normalize().multiply(sphereShape2.getRadius());
             float penetrationDepth = sumRadius - (float) Math.sqrt(squaredDistanceBetweenCenters);

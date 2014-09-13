@@ -52,8 +52,8 @@ public class BallAndSocketJoint extends Joint {
         mImpulse = new Vector3();
 
         // Compute the local-space anchor point for each body
-        mLocalAnchorPointBody1 = new Transform(mBody1.getTransform()).inverse().multiply(jointInfo.anchorPointWorldSpace);
-        mLocalAnchorPointBody2 = new Transform(mBody2.getTransform()).inverse().multiply(jointInfo.anchorPointWorldSpace);
+        mLocalAnchorPointBody1 = new Transform(mBody1.getTransform()).inverse().multiply(jointInfo.anchorPointWorldSpace, new Vector3());
+        mLocalAnchorPointBody2 = new Transform(mBody2.getTransform()).inverse().multiply(jointInfo.anchorPointWorldSpace, new Vector3());
     }
 
     // Initialize before solving the constraint
@@ -95,11 +95,11 @@ public class BallAndSocketJoint extends Joint {
                 0.0f, 0.0f, inverseMassBodies);
         if (mBody1.isMotionEnabled()) {
             massMatrix.add(
-                    Matrix3x3.operatorMultiply(skewSymmetricMatrixU1, Matrix3x3.operatorMultiply(mI1, skewSymmetricMatrixU1.getTranspose())));
+                    new Matrix3x3(skewSymmetricMatrixU1).multiply(new Matrix3x3(mI1).multiply(new Matrix3x3(skewSymmetricMatrixU1).transpose())));
         }
         if (mBody2.isMotionEnabled()) {
             massMatrix.add(
-                    Matrix3x3.operatorMultiply(skewSymmetricMatrixU2, Matrix3x3.operatorMultiply(mI2, skewSymmetricMatrixU2.getTranspose())));
+                    new Matrix3x3(skewSymmetricMatrixU2).multiply(new Matrix3x3(mI2).multiply(new Matrix3x3(skewSymmetricMatrixU2).transpose())));
         }
 
         // Compute the inverse mass matrix K^-1
@@ -146,7 +146,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Apply the impulse to the body
             v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
-            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            w1.add(mI1.multiply(angularImpulseBody1, new Vector3()));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -156,7 +156,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Apply the impulse to the body
             v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
-            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            w2.add(mI2.multiply(angularImpulseBody2, new Vector3()));
         }
     }
 
@@ -178,8 +178,8 @@ public class BallAndSocketJoint extends Joint {
         Vector3 Jv = new Vector3(new Vector3(new Vector3(v2).add(new Vector3(w2).cross(mR2World))).subtract(v1)).subtract(new Vector3(w1).cross(mR1World));
 
         // Compute the Lagrange multiplier lambda
-        Vector3 deltaLambda = Matrix3x3.operatorMultiply(
-                mInverseMassMatrix, new Vector3(new Vector3(Jv).invert()).subtract(mBiasVector));
+        Vector3 deltaLambda = mInverseMassMatrix.multiply(
+                new Vector3(new Vector3(Jv).invert()).subtract(mBiasVector), new Vector3());
         mImpulse.add(deltaLambda);
 
         if (mBody1.isMotionEnabled()) {
@@ -190,7 +190,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Apply the impulse to the body
             v1.add(new Vector3(linearImpulseBody1).multiply(inverseMassBody1));
-            w1.add(Matrix3x3.operatorMultiply(mI1, angularImpulseBody1));
+            w1.add(mI1.multiply(angularImpulseBody1, new Vector3()));
         }
         if (mBody2.isMotionEnabled()) {
 
@@ -200,7 +200,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Apply the impulse to the body
             v2.add(new Vector3(linearImpulseBody2).multiply(inverseMassBody2));
-            w2.add(Matrix3x3.operatorMultiply(mI2, angularImpulseBody2));
+            w2.add(mI2.multiply(angularImpulseBody2, new Vector3()));
         }
     }
 
@@ -248,12 +248,12 @@ public class BallAndSocketJoint extends Joint {
                 0.0f, inverseMassBodies, 0.0f,
                 0.0f, 0.0f, inverseMassBodies);
         if (mBody1.isMotionEnabled()) {
-            massMatrix.add(Matrix3x3.operatorMultiply(
-                    skewSymmetricMatrixU1, Matrix3x3.operatorMultiply(mI1, skewSymmetricMatrixU1.getTranspose())));
+            massMatrix.add(new Matrix3x3(
+                    skewSymmetricMatrixU1).multiply(new Matrix3x3(mI1).multiply(new Matrix3x3(skewSymmetricMatrixU1).transpose())));
         }
         if (mBody2.isMotionEnabled()) {
-            massMatrix.add(Matrix3x3.operatorMultiply(
-                    skewSymmetricMatrixU2, Matrix3x3.operatorMultiply(mI2, skewSymmetricMatrixU2.getTranspose())));
+            massMatrix.add(new Matrix3x3(
+                    skewSymmetricMatrixU2).multiply(new Matrix3x3(mI2).multiply(new Matrix3x3(skewSymmetricMatrixU2).transpose())));
         }
         mInverseMassMatrix.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
@@ -266,7 +266,7 @@ public class BallAndSocketJoint extends Joint {
         // Compute the Lagrange multiplier lambda
         // TODO : Do not solve the system by computing the inverse each time and multiplying with the
         //        right-hand side vector but instead use a method to directly solve the linear system.
-        Vector3 lambda = Matrix3x3.operatorMultiply(mInverseMassMatrix, new Vector3(constraintError).invert());
+        Vector3 lambda = mInverseMassMatrix.multiply(new Vector3(constraintError).invert(), new Vector3());
 
         // Apply the impulse to the bodies of the joint (directly update the position/orientation)
         if (mBody1.isMotionEnabled()) {
@@ -277,7 +277,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the pseudo velocity
             Vector3 v1 = new Vector3(linearImpulseBody1).multiply(inverseMassBody1);
-            Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
+            Vector3 w1 = mI1.multiply(angularImpulseBody1, new Vector3());
 
             // Update the body position/orientation
             x1.add(v1);
@@ -292,7 +292,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Compute the pseudo velocity
             Vector3 v2 = new Vector3(linearImpulseBody2).multiply(inverseMassBody2);
-            Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
+            Vector3 w2 = mI2.multiply(angularImpulseBody2, new Vector3());
 
             // Update the body position/orientation
             x2.add(v2);

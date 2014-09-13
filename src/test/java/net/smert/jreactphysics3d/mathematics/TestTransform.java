@@ -86,8 +86,8 @@ public class TestTransform {
 
         Transform inverseTransform = new Transform(mTransform1).inverse();
         Vector3 vector = new Vector3(2, 3, 4);
-        Vector3 tempVector = mTransform1.multiply(vector);
-        Vector3 tempVector2 = inverseTransform.multiply(tempVector);
+        Vector3 tempVector = mTransform1.multiply(vector, new Vector3());
+        Vector3 tempVector2 = inverseTransform.multiply(tempVector, new Vector3());
 
         Assert.assertEquals(tempVector2.x, vector.x, 10e-6f);
         Assert.assertEquals(tempVector2.y, vector.y, 10e-6f);
@@ -189,8 +189,8 @@ public class TestTransform {
 
         // Multiplication
         Vector3 vector = new Vector3(7, 53, 5);
-        Vector3 vector2 = mTransform2.multiply(mTransform1.multiply(vector));
-        Vector3 vector3 = new Transform(mTransform2).multiply(mTransform1).multiply(vector);
+        Vector3 vector2 = mTransform2.multiply(mTransform1.multiply(vector, new Vector3()), new Vector3());
+        Vector3 vector3 = new Transform(mTransform2).multiply(mTransform1).multiply(vector, new Vector3());
 
         Assert.assertEquals(vector2.x, vector3.x, 10e-6f);
         Assert.assertEquals(vector2.y, vector3.y, 10e-6f);

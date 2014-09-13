@@ -153,7 +153,8 @@ public class TestQuaternion {
         Matrix3x3 matrix = new Matrix3x3();
         mQuaternion1.getMatrix(matrix);
         Vector3 vector = new Vector3(56, -2, 82);
-        Vector3 vector1 = Matrix3x3.operatorMultiply(matrix, vector);
+        Vector3 vector1 = new Vector3();
+        matrix.multiply(vector, vector1);
         Vector3 vector2 = new Vector3();
         mQuaternion1.multiply(vector, vector2);
 
@@ -226,7 +227,8 @@ public class TestQuaternion {
         mQuaternion1.multiply(point, vector2);
         Matrix3x3 matrix = new Matrix3x3();
         mQuaternion1.getMatrix(matrix);
-        Vector3 testVector2 = Matrix3x3.operatorMultiply(matrix, point);
+        Vector3 testVector2 = new Vector3();
+        matrix.multiply(point, testVector2);
 
         Assert.assertEquals(vector1.equals(point), true);
         Assert.assertEquals(vector2.x, testVector2.x, 10e-5f);

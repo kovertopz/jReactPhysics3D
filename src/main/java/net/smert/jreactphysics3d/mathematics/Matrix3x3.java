@@ -52,7 +52,7 @@ public class Matrix3x3 {
 
     // Return the trace of the matrix
     public float getTrace() {
-        return (m00 + m11 + m22);
+        return m00 + m11 + m22;
     }
 
     // Return the matrix with absolute values
@@ -157,25 +157,17 @@ public class Matrix3x3 {
     }
 
     // Overloaded operator for matrix multiplication
-    public static Matrix3x3 operatorMultiply(Matrix3x3 matrix1, Matrix3x3 matrix2) {
-        return new Matrix3x3(matrix1.m00 * matrix2.m00 + matrix1.m01
-                * matrix2.m10 + matrix1.m02 * matrix2.m20,
-                matrix1.m00 * matrix2.m01 + matrix1.m01
-                * matrix2.m11 + matrix1.m02 * matrix2.m21,
-                matrix1.m00 * matrix2.m02 + matrix1.m01
-                * matrix2.m12 + matrix1.m02 * matrix2.m22,
-                matrix1.m10 * matrix2.m00 + matrix1.m11
-                * matrix2.m10 + matrix1.m12 * matrix2.m20,
-                matrix1.m10 * matrix2.m01 + matrix1.m11
-                * matrix2.m11 + matrix1.m12 * matrix2.m21,
-                matrix1.m10 * matrix2.m02 + matrix1.m11
-                * matrix2.m12 + matrix1.m12 * matrix2.m22,
-                matrix1.m20 * matrix2.m00 + matrix1.m21
-                * matrix2.m10 + matrix1.m22 * matrix2.m20,
-                matrix1.m20 * matrix2.m01 + matrix1.m21
-                * matrix2.m11 + matrix1.m22 * matrix2.m21,
-                matrix1.m20 * matrix2.m02 + matrix1.m21
-                * matrix2.m12 + matrix1.m22 * matrix2.m22);
+    public Matrix3x3 multiply(Matrix3x3 matrix) {
+        return set(
+                m00 * matrix.m00 + m01 * matrix.m10 + m02 * matrix.m20,
+                m00 * matrix.m01 + m01 * matrix.m11 + m02 * matrix.m21,
+                m00 * matrix.m02 + m01 * matrix.m12 + m02 * matrix.m22,
+                m10 * matrix.m00 + m11 * matrix.m10 + m12 * matrix.m20,
+                m10 * matrix.m01 + m11 * matrix.m11 + m12 * matrix.m21,
+                m10 * matrix.m02 + m11 * matrix.m12 + m12 * matrix.m22,
+                m20 * matrix.m00 + m21 * matrix.m10 + m22 * matrix.m20,
+                m20 * matrix.m01 + m21 * matrix.m11 + m22 * matrix.m21,
+                m20 * matrix.m02 + m21 * matrix.m12 + m22 * matrix.m22);
     }
 
     // Method to set all the values in the matrix
@@ -223,8 +215,8 @@ public class Matrix3x3 {
     }
 
     // Return the transpose matrix
-    public Matrix3x3 getTranspose() {
-        return new Matrix3x3(
+    public Matrix3x3 transpose() {
+        return set(
                 m00, m10, m20,
                 m01, m11, m21,
                 m02, m12, m22);
@@ -268,13 +260,11 @@ public class Matrix3x3 {
     }
 
     // Overloaded operator for multiplication with a vector
-    public static Vector3 operatorMultiply(Matrix3x3 matrix, Vector3 vector) {
-        return new Vector3(matrix.m00 * vector.x + matrix.m01 * vector.y
-                + matrix.m02 * vector.z,
-                matrix.m10 * vector.x + matrix.m11 * vector.y
-                + matrix.m12 * vector.z,
-                matrix.m20 * vector.x + matrix.m21 * vector.y
-                + matrix.m22 * vector.z);
+    public Vector3 multiply(Vector3 vector, Vector3 vectorOut) {
+        return vectorOut.set(
+                m00 * vector.x + m01 * vector.y + m02 * vector.z,
+                m10 * vector.x + m11 * vector.y + m12 * vector.z,
+                m20 * vector.x + m21 * vector.y + m22 * vector.z);
     }
 
     @Override
@@ -333,38 +323,6 @@ public class Matrix3x3 {
         return "(00= " + m00 + ", 01= " + m01 + ", 02= " + m02
                 + ", 10= " + m10 + ", 11= " + m11 + ", 12= " + m12
                 + ", 20= " + m20 + ", 21= " + m21 + ", 22= " + m22 + ")";
-    }
-
-    // Overloaded operator for addition
-    public static Matrix3x3 operatorAdd(Matrix3x3 matrix1, Matrix3x3 matrix2) {
-        return new Matrix3x3(matrix1.m00 + matrix2.m00, matrix1.m01
-                + matrix2.m01, matrix1.m02 + matrix2.m02,
-                matrix1.m10 + matrix2.m10, matrix1.m11
-                + matrix2.m11, matrix1.m12 + matrix2.m12,
-                matrix1.m20 + matrix2.m20, matrix1.m21
-                + matrix2.m21, matrix1.m22 + matrix2.m22);
-    }
-
-    // Overloaded operator for substraction
-    public static Matrix3x3 operatorSubtract(Matrix3x3 matrix1, Matrix3x3 matrix2) {
-        return new Matrix3x3(matrix1.m00 - matrix2.m00, matrix1.m01
-                - matrix2.m01, matrix1.m02 - matrix2.m02,
-                matrix1.m10 - matrix2.m10, matrix1.m11
-                - matrix2.m11, matrix1.m12 - matrix2.m12,
-                matrix1.m20 - matrix2.m20, matrix1.m21
-                - matrix2.m21, matrix1.m22 - matrix2.m22);
-    }
-
-    // Overloaded operator for multiplication with a number
-    public static Matrix3x3 operatorMultiply(float nb, Matrix3x3 matrix) {
-        return new Matrix3x3(matrix.m00 * nb, matrix.m01 * nb, matrix.m02 * nb,
-                matrix.m10 * nb, matrix.m11 * nb, matrix.m12 * nb,
-                matrix.m20 * nb, matrix.m21 * nb, matrix.m22 * nb);
-    }
-
-    // Overloaded operator for multiplication with a matrix
-    public static Matrix3x3 operatorMultiply(Matrix3x3 matrix, float nb) {
-        return operatorMultiply(nb, matrix);
     }
 
 }
