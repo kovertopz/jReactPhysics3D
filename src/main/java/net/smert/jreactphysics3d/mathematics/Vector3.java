@@ -20,23 +20,17 @@ public class Vector3 {
 
     // Constructor
     public Vector3() {
-        x = 0.0f;
-        y = 0.0f;
-        z = 0.0f;
+        zero();
     }
 
     // Constructor with arguments
     public Vector3(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        set(x, y, z);
     }
 
     // Copy-constructor
     public Vector3(Vector3 vector) {
-        x = vector.x;
-        y = vector.y;
-        z = vector.z;
+        set(vector);
     }
 
     // Return true if the vector is unit and false otherwise

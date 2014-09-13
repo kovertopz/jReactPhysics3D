@@ -17,20 +17,17 @@ public class Vector2 {
 
     // Constructor
     public Vector2() {
-        x = 0.0f;
-        y = 0.0f;
+        zero();
     }
 
     // Constructor with arguments
     public Vector2(float x, float y) {
-        this.x = x;
-        this.y = y;
+        set(x, y);
     }
 
     // Copy-constructor
     public Vector2(Vector2 vector) {
-        x = vector.x;
-        y = vector.y;
+        set(vector);
     }
 
     // Return true if the vector is unit and false otherwise
