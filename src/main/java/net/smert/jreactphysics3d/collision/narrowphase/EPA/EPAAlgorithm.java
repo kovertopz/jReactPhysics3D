@@ -109,7 +109,7 @@ public class EPAAlgorithm {
         // candidate of the EPA algorithm
         // Transform a point from local space of body 2 to local
         // space of body 1 (the GJK algorithm is done in local space of body 1)
-        Transform body2Tobody1 = transform1.getInverse().operatorMultiply(transform2);
+        Transform body2Tobody1 = new Transform(transform1).inverse().multiply(transform2);
 
         // Matrix that transform a direction from local
         // space of body 1 into local space of body 2
@@ -176,19 +176,19 @@ public class EPAAlgorithm {
 
                 // Compute the support point in the direction of v1
                 suppPointsA[2] = collisionShape1.getLocalSupportPointWithMargin(v1);
-                suppPointsB[2] = body2Tobody1.operatorMultiply(
+                suppPointsB[2] = body2Tobody1.multiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v1).invert())));
                 points[2] = new Vector3(suppPointsA[2]).subtract(suppPointsB[2]);
 
                 // Compute the support point in the direction of v2
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(v2);
-                suppPointsB[3] = body2Tobody1.operatorMultiply(
+                suppPointsB[3] = body2Tobody1.multiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v2).invert())));
                 points[3] = new Vector3(suppPointsA[3]).subtract(suppPointsB[3]);
 
                 // Compute the support point in the direction of v3
                 suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(v3);
-                suppPointsB[4] = body2Tobody1.operatorMultiply(
+                suppPointsB[4] = body2Tobody1.multiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(v3).invert())));
                 points[4] = new Vector3(suppPointsA[4]).subtract(suppPointsB[4]);
 
@@ -284,11 +284,11 @@ public class EPAAlgorithm {
 
                 // Compute the two new vertices to obtain a hexahedron
                 suppPointsA[3] = collisionShape1.getLocalSupportPointWithMargin(n);
-                suppPointsB[3] = body2Tobody1.operatorMultiply(
+                suppPointsB[3] = body2Tobody1.multiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, new Vector3(n).invert())));
                 points[3] = new Vector3(suppPointsA[3]).subtract(suppPointsB[3]);
                 suppPointsA[4] = collisionShape1.getLocalSupportPointWithMargin(new Vector3(n).invert());
-                suppPointsB[4] = body2Tobody1.operatorMultiply(
+                suppPointsB[4] = body2Tobody1.multiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, n)));
                 points[4] = new Vector3(suppPointsA[4]).subtract(suppPointsB[4]);
 
@@ -359,7 +359,7 @@ public class EPAAlgorithm {
                 // Compute the support point of the Minkowski
                 // difference (A-B) in the closest point direction
                 suppPointsA[nbVertices] = collisionShape1.getLocalSupportPointWithMargin(triangle.getClosestPoint());
-                suppPointsB[nbVertices] = body2Tobody1.operatorMultiply(
+                suppPointsB[nbVertices] = body2Tobody1.multiply(
                         collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2,
                                         new Vector3(triangle.getClosestPoint()).invert())));
                 points[nbVertices] = new Vector3(suppPointsA[nbVertices]).subtract(suppPointsB[nbVertices]);
@@ -406,7 +406,7 @@ public class EPAAlgorithm {
         transform1.getOrientation().getMatrix(rotation1);
         v = Matrix3x3.operatorMultiply(rotation1, triangle.getClosestPoint());
         Vector3 pALocal = triangle.computeClosestPointOfObject(suppPointsA);
-        Vector3 pBLocal = body2Tobody1.getInverse().operatorMultiply(triangle.computeClosestPointOfObject(suppPointsB));
+        Vector3 pBLocal = new Transform(body2Tobody1).inverse().multiply(triangle.computeClosestPointOfObject(suppPointsB));
         Vector3 normal = new Vector3(v).normalize();
         float penetrationDepth = v.length();
         assert (penetrationDepth > 0.0f);

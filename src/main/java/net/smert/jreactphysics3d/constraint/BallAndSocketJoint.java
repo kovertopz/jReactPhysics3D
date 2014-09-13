@@ -4,6 +4,7 @@ import net.smert.jreactphysics3d.configuration.JointsPositionCorrectionTechnique
 import net.smert.jreactphysics3d.engine.ConstraintSolverData;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
+import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 
 /**
@@ -51,8 +52,8 @@ public class BallAndSocketJoint extends Joint {
         mImpulse = new Vector3();
 
         // Compute the local-space anchor point for each body
-        mLocalAnchorPointBody1 = mBody1.getTransform().getInverse().operatorMultiply(jointInfo.anchorPointWorldSpace);
-        mLocalAnchorPointBody2 = mBody2.getTransform().getInverse().operatorMultiply(jointInfo.anchorPointWorldSpace);
+        mLocalAnchorPointBody1 = new Transform(mBody1.getTransform()).inverse().multiply(jointInfo.anchorPointWorldSpace);
+        mLocalAnchorPointBody2 = new Transform(mBody2.getTransform()).inverse().multiply(jointInfo.anchorPointWorldSpace);
     }
 
     // Initialize before solving the constraint

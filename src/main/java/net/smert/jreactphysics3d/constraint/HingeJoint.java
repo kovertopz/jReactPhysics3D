@@ -234,8 +234,8 @@ public class HingeJoint extends Joint {
         // Compute the local-space anchor point for each body
         Transform transform1 = mBody1.getTransform();
         Transform transform2 = mBody2.getTransform();
-        mLocalAnchorPointBody1 = transform1.getInverse().operatorMultiply(jointInfo.anchorPointWorldSpace);
-        mLocalAnchorPointBody2 = transform2.getInverse().operatorMultiply(jointInfo.anchorPointWorldSpace);
+        mLocalAnchorPointBody1 = new Transform(transform1).inverse().multiply(jointInfo.anchorPointWorldSpace);
+        mLocalAnchorPointBody2 = new Transform(transform2).inverse().multiply(jointInfo.anchorPointWorldSpace);
 
         // Compute the local-space hinge axis
         new Quaternion(transform1.getOrientation()).inverse().multiply(jointInfo.rotationAxisWorld, mHingeLocalAxisBody1);

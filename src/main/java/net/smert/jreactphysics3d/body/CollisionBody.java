@@ -75,7 +75,7 @@ public class CollisionBody extends Body {
 
     // Return the interpolated transform for rendering
     public Transform getInterpolatedTransform() {
-        return Transform.interpolateTransforms(mOldTransform, mTransform, mInterpolationFactor);
+        return Transform.Interpolate(mOldTransform, mTransform, mInterpolationFactor);
     }
 
     // Update the old transform with the current one.

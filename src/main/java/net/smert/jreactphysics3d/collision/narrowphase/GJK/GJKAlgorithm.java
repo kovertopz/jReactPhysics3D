@@ -47,7 +47,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
         // Transform a point from local space of body 2 to local space
         // of body 1 (the GJK algorithm is done in local space of body 1)
-        Transform body2ToBody1 = transform1.getInverse().operatorMultiply(transform2);
+        Transform body2ToBody1 = new Transform(transform1).inverse().multiply(transform2);
 
         // Matrix that transform a direction from local space of body 1 into local space of body 2
         Matrix3x3 rotation1 = new Matrix3x3();
@@ -60,7 +60,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
         do {
             // Compute the support points for the enlarged object A and B
             suppA = collisionShape1.getLocalSupportPointWithMargin(new Vector3(v).invert());
-            suppB = body2ToBody1.operatorMultiply(collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, v)));
+            suppB = body2ToBody1.multiply(collisionShape2.getLocalSupportPointWithMargin(Matrix3x3.operatorMultiply(rotateToBody2, v)));
 
             // Compute the support point for the Minkowski difference A-B
             w = new Vector3(suppA).subtract(suppB);
@@ -135,7 +135,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
         // Transform a point from local space of body 2 to local
         // space of body 1 (the GJK algorithm is done in local space of body 1)
-        Transform body2Tobody1 = transform1.getInverse().operatorMultiply(transform2);
+        Transform body2Tobody1 = new Transform(transform1).inverse().multiply(transform2);
 
         // Matrix that transform a direction from local
         // space of body 1 into local space of body 2
@@ -164,7 +164,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
             // Compute the support points for original objects (without margins) A and B
             suppA = collisionShape1.getLocalSupportPointWithoutMargin(new Vector3(v).invert());
-            suppB = body2Tobody1.operatorMultiply(collisionShape2.getLocalSupportPointWithoutMargin(Matrix3x3.operatorMultiply(rotateToBody2, v)));
+            suppB = body2Tobody1.multiply(collisionShape2.getLocalSupportPointWithoutMargin(Matrix3x3.operatorMultiply(rotateToBody2, v)));
 
             // Compute the support point for the Minkowski difference A-B
             w = new Vector3(suppA).subtract(suppB);
@@ -192,7 +192,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
-                pB = body2Tobody1.getInverse().operatorMultiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
+                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
 
                 // Compute the contact info
                 transform1.getOrientation().getMatrix(rotation1);
@@ -228,7 +228,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
-                pB = body2Tobody1.getInverse().operatorMultiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
+                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
 
                 // Compute the contact info
                 transform1.getOrientation().getMatrix(rotation1);
@@ -262,7 +262,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
-                pB = body2Tobody1.getInverse().operatorMultiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
+                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
 
                 // Compute the contact info
                 transform1.getOrientation().getMatrix(rotation1);
@@ -303,7 +303,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                 float dist = (float) Math.sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
-                pB = body2Tobody1.getInverse().operatorMultiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
+                pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)));
 
                 // Compute the contact info
                 transform1.getOrientation().getMatrix(rotation1);

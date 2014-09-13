@@ -233,6 +233,10 @@ public class Vector3 {
         return this;
     }
 
+    public static void Lerp(Vector3 vector1, Vector3 vector2, float t, Vector3 vectorOut) {
+        vectorOut.set(vector1).multiply(1.0f - t).add(new Vector3(vector2).multiply(t));
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;
