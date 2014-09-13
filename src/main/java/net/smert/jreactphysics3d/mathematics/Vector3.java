@@ -153,7 +153,7 @@ public class Vector3 {
     }
 
     // Set all the values of the vector
-    public Vector3 set(float x, float y, float z) {
+    public final Vector3 set(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -161,7 +161,7 @@ public class Vector3 {
     }
 
     // Assignment operator
-    public Vector3 set(Vector3 vector) {
+    public final Vector3 set(Vector3 vector) {
         assert (vector != this);
         x = vector.x;
         y = vector.y;
@@ -219,7 +219,7 @@ public class Vector3 {
     }
 
     // Set the vector to zero
-    public Vector3 zero() {
+    public final Vector3 zero() {
         x = 0.0f;
         y = 0.0f;
         z = 0.0f;

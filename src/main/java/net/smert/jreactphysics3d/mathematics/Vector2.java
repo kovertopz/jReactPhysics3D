@@ -129,14 +129,14 @@ public class Vector2 {
     }
 
     // Set all the values of the vector
-    public Vector2 set(float x, float y) {
+    public final Vector2 set(float x, float y) {
         this.x = x;
         this.y = y;
         return this;
     }
 
     // Assignment operator
-    public Vector2 set(Vector2 vector) {
+    public final Vector2 set(Vector2 vector) {
         assert (vector != this);
         x = vector.x;
         y = vector.y;
@@ -168,7 +168,7 @@ public class Vector2 {
     }
 
     // Set the vector to zero
-    public Vector2 zero() {
+    public final Vector2 zero() {
         x = 0.0f;
         y = 0.0f;
         return this;

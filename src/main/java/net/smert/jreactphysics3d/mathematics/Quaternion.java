@@ -94,7 +94,7 @@ public class Quaternion {
         return this;
     }
 
-    public Quaternion fromMatrix(Matrix3x3 matrix) {
+    public final Quaternion fromMatrix(Matrix3x3 matrix) {
 
         // Get the trace of the matrix
         float r, s, trace = matrix.getTrace();
@@ -213,7 +213,7 @@ public class Quaternion {
     }
 
     // Set all the values
-    public Quaternion set(float x, float y, float z, float w) {
+    public final Quaternion set(float x, float y, float z, float w) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -221,7 +221,7 @@ public class Quaternion {
         return this;
     }
 
-    public Quaternion set(Quaternion quaternion) {
+    public final Quaternion set(Quaternion quaternion) {
         x = quaternion.x;
         y = quaternion.y;
         z = quaternion.z;
@@ -229,7 +229,7 @@ public class Quaternion {
         return this;
     }
 
-    public Quaternion set(Vector3 v, float w) {
+    public final Quaternion set(Vector3 v, float w) {
         x = v.x;
         y = v.y;
         z = v.z;
@@ -267,7 +267,7 @@ public class Quaternion {
     }
 
     // Set the quaternion to zero
-    public Quaternion zero() {
+    public final Quaternion zero() {
         x = 0.0f;
         y = 0.0f;
         z = 0.0f;

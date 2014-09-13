@@ -11,8 +11,8 @@ public class Matrix2x2 {
 
     // Rows of the matrix (m[row][column])
     float m00;
-    float m10;
     float m01;
+    float m10;
     float m11;
 
     // Constructor
@@ -117,7 +117,7 @@ public class Matrix2x2 {
     }
 
     // Method to set all the values in the matrix
-    public Matrix2x2 set(float a1, float a2, float b1, float b2) {
+    public final Matrix2x2 set(float a1, float a2, float b1, float b2) {
         m00 = a1;
         m01 = a2;
         m10 = b1;
@@ -125,7 +125,7 @@ public class Matrix2x2 {
         return this;
     }
 
-    public Matrix2x2 set(Matrix2x2 matrix) {
+    public final Matrix2x2 set(Matrix2x2 matrix) {
         m00 = matrix.m00;
         m01 = matrix.m01;
         m10 = matrix.m10;
@@ -149,7 +149,7 @@ public class Matrix2x2 {
     }
 
     // Set the matrix to zero
-    public Matrix2x2 zero() {
+    public final Matrix2x2 zero() {
         m00 = 0.0f;
         m01 = 0.0f;
         m10 = 0.0f;

@@ -171,7 +171,7 @@ public class Matrix3x3 {
     }
 
     // Method to set all the values in the matrix
-    public Matrix3x3 set(
+    public final Matrix3x3 set(
             float a1, float a2, float a3,
             float b1, float b2, float b3,
             float c1, float c2, float c3) {
@@ -187,7 +187,7 @@ public class Matrix3x3 {
         return this;
     }
 
-    public Matrix3x3 set(Matrix3x3 matrix) {
+    public final Matrix3x3 set(Matrix3x3 matrix) {
         m00 = matrix.m00;
         m01 = matrix.m01;
         m02 = matrix.m02;
@@ -223,7 +223,7 @@ public class Matrix3x3 {
     }
 
     // Set the matrix to zero
-    public void zero() {
+    public final void zero() {
         m00 = 0.0f;
         m01 = 0.0f;
         m02 = 0.0f;
