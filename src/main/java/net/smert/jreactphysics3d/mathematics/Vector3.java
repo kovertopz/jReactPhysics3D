@@ -110,11 +110,10 @@ public class Vector3 {
 
     // Cross product of two vectors (public)
     public Vector3 cross(Vector3 vector) {
-        set(
+        return set(
                 y * vector.z - z * vector.y,
                 z * vector.x - x * vector.z,
                 x * vector.y - y * vector.x);
-        return this;
     }
 
     // Overloaded operator for division by a number with assignment
