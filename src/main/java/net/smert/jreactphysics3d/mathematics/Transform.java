@@ -111,17 +111,17 @@ public class Transform {
     public float[] getOpenGLMatrix(float[] openglMatrix) {
         Matrix3x3 matrix = new Matrix3x3();
         orientation.getMatrix(matrix);
-        openglMatrix[0] = matrix.m[0][0];
-        openglMatrix[1] = matrix.m[1][0];
-        openglMatrix[2] = matrix.m[2][0];
+        openglMatrix[0] = matrix.m00;
+        openglMatrix[1] = matrix.m10;
+        openglMatrix[2] = matrix.m20;
         openglMatrix[3] = 0.0f;
-        openglMatrix[4] = matrix.m[0][1];
-        openglMatrix[5] = matrix.m[1][1];
-        openglMatrix[6] = matrix.m[2][1];
+        openglMatrix[4] = matrix.m01;
+        openglMatrix[5] = matrix.m11;
+        openglMatrix[6] = matrix.m21;
         openglMatrix[7] = 0.0f;
-        openglMatrix[8] = matrix.m[0][2];
-        openglMatrix[9] = matrix.m[1][2];
-        openglMatrix[10] = matrix.m[2][2];
+        openglMatrix[8] = matrix.m02;
+        openglMatrix[9] = matrix.m12;
+        openglMatrix[10] = matrix.m22;
         openglMatrix[11] = 0.0f;
         openglMatrix[12] = position.x;
         openglMatrix[13] = position.y;

@@ -102,25 +102,25 @@ public class TestTransform {
         Vector3 position = mTransform1.getPosition();
         Matrix3x3 orientation = new Matrix3x3();
         mTransform1.getOrientation().getMatrix(orientation);
-        float[] openglMatrix = {orientation.m[0][0], orientation.m[1][0], orientation.m[2][0], 0,
-            orientation.m[0][1], orientation.m[1][1], orientation.m[2][1], 0,
-            orientation.m[0][2], orientation.m[1][2], orientation.m[2][2], 0,
+        float[] openglMatrix = {orientation.m00, orientation.m10, orientation.m20, 0,
+            orientation.m01, orientation.m11, orientation.m21, 0,
+            orientation.m02, orientation.m12, orientation.m22, 0,
             position.x, position.y, position.z, 1};
         transform.fromOpenGL(openglMatrix);
         float[] openglMatrix2 = new float[16];
         transform.getOpenGLMatrix(openglMatrix2);
 
-        Assert.assertEquals(openglMatrix2[0], orientation.m[0][0], 0);
-        Assert.assertEquals(openglMatrix2[1], orientation.m[1][0], 0);
-        Assert.assertEquals(openglMatrix2[2], orientation.m[2][0], 0);
+        Assert.assertEquals(openglMatrix2[0], orientation.m00, 0);
+        Assert.assertEquals(openglMatrix2[1], orientation.m10, 0);
+        Assert.assertEquals(openglMatrix2[2], orientation.m20, 0);
         Assert.assertEquals(openglMatrix2[3], 0, 0);
-        Assert.assertEquals(openglMatrix2[4], orientation.m[0][1], 0);
-        Assert.assertEquals(openglMatrix2[5], orientation.m[1][1], 0);
-        Assert.assertEquals(openglMatrix2[6], orientation.m[2][1], 0);
+        Assert.assertEquals(openglMatrix2[4], orientation.m01, 0);
+        Assert.assertEquals(openglMatrix2[5], orientation.m11, 0);
+        Assert.assertEquals(openglMatrix2[6], orientation.m21, 0);
         Assert.assertEquals(openglMatrix2[7], 0, 0);
-        Assert.assertEquals(openglMatrix2[8], orientation.m[0][2], 0);
-        Assert.assertEquals(openglMatrix2[9], orientation.m[1][2], 0);
-        Assert.assertEquals(openglMatrix2[10], orientation.m[2][2], 0);
+        Assert.assertEquals(openglMatrix2[8], orientation.m02, 0);
+        Assert.assertEquals(openglMatrix2[9], orientation.m12, 0);
+        Assert.assertEquals(openglMatrix2[10], orientation.m22, 0);
         Assert.assertEquals(openglMatrix2[11], 0, 0);
         Assert.assertEquals(openglMatrix2[12], position.x, 0);
         Assert.assertEquals(openglMatrix2[13], position.y, 0);

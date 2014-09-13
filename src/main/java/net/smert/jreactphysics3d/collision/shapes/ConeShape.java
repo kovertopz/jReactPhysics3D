@@ -69,7 +69,7 @@ public class ConeShape extends CollisionShape {
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float rSquare = mRadius * mRadius;
         float diagXZ = 0.15f * mass * (rSquare + mHalfHeight);
-        tensor.setAllValues(diagXZ, 0.0f, 0.0f,
+        tensor.set(diagXZ, 0.0f, 0.0f,
                 0.0f, 0.3f * mass * rSquare,
                 0.0f, 0.0f, 0.0f, diagXZ);
     }

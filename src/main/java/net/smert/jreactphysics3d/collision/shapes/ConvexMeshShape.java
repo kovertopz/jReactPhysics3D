@@ -212,7 +212,7 @@ public class ConvexMeshShape extends CollisionShape {
         float xSquare = realExtent.getX() * realExtent.getX();
         float ySquare = realExtent.getY() * realExtent.getY();
         float zSquare = realExtent.getZ() * realExtent.getZ();
-        tensor.setAllValues(factor * (ySquare + zSquare), 0.0f, 0.0f,
+        tensor.set(factor * (ySquare + zSquare), 0.0f, 0.0f,
                 0.0f, factor * (xSquare + zSquare), 0.0f,
                 0.0f, 0.0f, factor * (xSquare + ySquare));
     }

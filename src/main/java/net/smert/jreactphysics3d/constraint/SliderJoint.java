@@ -278,15 +278,15 @@ public class SliderJoint extends Joint {
 
         // Compute the inverse of the mass matrix K=JM^-1J^t for the 3 rotation
         // contraints (3x3 matrix)
-        mInverseMassMatrixRotationConstraint.setToZero();
+        mInverseMassMatrixRotationConstraint.zero();
         if (mBody1.isMotionEnabled()) {
-            mInverseMassMatrixRotationConstraint.operatorAddEqual(mI1);
+            mInverseMassMatrixRotationConstraint.add(mI1);
         }
         if (mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotationConstraint.operatorAddEqual(mI2);
+            mInverseMassMatrixRotationConstraint.add(mI2);
         }
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotationConstraint = mInverseMassMatrixRotationConstraint.getInverse();
+            mInverseMassMatrixRotationConstraint = new Matrix3x3(mInverseMassMatrixRotationConstraint).inverse();
         }
 
         // Compute the bias "b" of the rotation constraint
@@ -753,15 +753,15 @@ public class SliderJoint extends Joint {
          */
         // Compute the inverse of the mass matrix K=JM^-1J^t for the 3 rotation
         // contraints (3x3 matrix)
-        mInverseMassMatrixRotationConstraint.setToZero();
+        mInverseMassMatrixRotationConstraint.zero();
         if (mBody1.isMotionEnabled()) {
-            mInverseMassMatrixRotationConstraint.operatorAddEqual(mI1);
+            mInverseMassMatrixRotationConstraint.add(mI1);
         }
         if (mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotationConstraint.operatorAddEqual(mI2);
+            mInverseMassMatrixRotationConstraint.add(mI2);
         }
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotationConstraint = mInverseMassMatrixRotationConstraint.getInverse();
+            mInverseMassMatrixRotationConstraint = new Matrix3x3(mInverseMassMatrixRotationConstraint).inverse();
         }
 
         // Compute the position error for the 3 rotation constraints

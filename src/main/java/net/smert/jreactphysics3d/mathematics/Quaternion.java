@@ -100,53 +100,53 @@ public class Quaternion {
         float r, s, trace = matrix.getTrace();
 
         if (trace < 0.0f) {
-            if (matrix.m[1][1] > matrix.m[0][0]) {
-                if (matrix.m[2][2] > matrix.m[1][1]) {
-                    r = Mathematics.Sqrt(matrix.m[2][2] - matrix.m[0][0] - matrix.m[1][1] + 1.0f);
+            if (matrix.m11 > matrix.m00) {
+                if (matrix.m22 > matrix.m11) {
+                    r = Mathematics.Sqrt(matrix.m22 - matrix.m00 - matrix.m11 + 1.0f);
                     s = 0.5f / r;
 
                     // Compute the quaternion
-                    x = (matrix.m[2][0] + matrix.m[0][2]) * s;
-                    y = (matrix.m[1][2] + matrix.m[2][1]) * s;
+                    x = (matrix.m20 + matrix.m02) * s;
+                    y = (matrix.m12 + matrix.m21) * s;
                     z = 0.5f * r;
-                    w = (matrix.m[1][0] - matrix.m[0][1]) * s;
+                    w = (matrix.m10 - matrix.m01) * s;
                 } else {
-                    r = Mathematics.Sqrt(matrix.m[1][1] - matrix.m[2][2] - matrix.m[0][0] + 1.0f);
+                    r = Mathematics.Sqrt(matrix.m11 - matrix.m22 - matrix.m00 + 1.0f);
                     s = 0.5f / r;
 
                     // Compute the quaternion
-                    x = (matrix.m[0][1] + matrix.m[1][0]) * s;
+                    x = (matrix.m01 + matrix.m10) * s;
                     y = 0.5f * r;
-                    z = (matrix.m[1][2] + matrix.m[2][1]) * s;
-                    w = (matrix.m[0][2] - matrix.m[2][0]) * s;
+                    z = (matrix.m12 + matrix.m21) * s;
+                    w = (matrix.m02 - matrix.m20) * s;
                 }
-            } else if (matrix.m[2][2] > matrix.m[0][0]) {
-                r = Mathematics.Sqrt(matrix.m[2][2] - matrix.m[0][0] - matrix.m[1][1] + 1.0f);
+            } else if (matrix.m22 > matrix.m00) {
+                r = Mathematics.Sqrt(matrix.m22 - matrix.m00 - matrix.m11 + 1.0f);
                 s = 0.5f / r;
 
                 // Compute the quaternion
-                x = (matrix.m[2][0] + matrix.m[0][2]) * s;
-                y = (matrix.m[1][2] + matrix.m[2][1]) * s;
+                x = (matrix.m20 + matrix.m02) * s;
+                y = (matrix.m12 + matrix.m21) * s;
                 z = 0.5f * r;
-                w = (matrix.m[1][0] - matrix.m[0][1]) * s;
+                w = (matrix.m10 - matrix.m01) * s;
             } else {
-                r = Mathematics.Sqrt(matrix.m[0][0] - matrix.m[1][1] - matrix.m[2][2] + 1.0f);
+                r = Mathematics.Sqrt(matrix.m00 - matrix.m11 - matrix.m22 + 1.0f);
                 s = 0.5f / r;
 
                 // Compute the quaternion
                 x = 0.5f * r;
-                y = (matrix.m[0][1] + matrix.m[1][0]) * s;
-                z = (matrix.m[2][0] - matrix.m[0][2]) * s;
-                w = (matrix.m[2][1] - matrix.m[1][2]) * s;
+                y = (matrix.m01 + matrix.m10) * s;
+                z = (matrix.m20 - matrix.m02) * s;
+                w = (matrix.m21 - matrix.m12) * s;
             }
         } else {
             r = Mathematics.Sqrt(trace + 1.0f);
             s = 0.5f / r;
 
             // Compute the quaternion
-            x = (matrix.m[2][1] - matrix.m[1][2]) * s;
-            y = (matrix.m[0][2] - matrix.m[2][0]) * s;
-            z = (matrix.m[1][0] - matrix.m[0][1]) * s;
+            x = (matrix.m21 - matrix.m12) * s;
+            y = (matrix.m02 - matrix.m20) * s;
+            z = (matrix.m10 - matrix.m01) * s;
             w = 0.5f * r;
         }
 
@@ -195,10 +195,9 @@ public class Quaternion {
         Vector3 newVector = new Vector3(q2V).multiply(w)
                 .add(new Vector3(q1V).multiply(quaternion.w))
                 .add(new Vector3(q1V).cross(q2V));
-        set(
+        return set(
                 newVector.getX(), newVector.getY(), newVector.getZ(),
                 w * quaternion.w - q1V.dot(q2V));
-        return this;
     }
 
     // Normalize the quaternion

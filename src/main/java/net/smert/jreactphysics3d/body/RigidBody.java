@@ -70,7 +70,7 @@ public class RigidBody extends CollisionBody {
         mExternalForce = new Vector3();
         mExternalTorque = new Vector3();
         mInertiaTensorLocal = inertiaTensorLocal;
-        mInertiaTensorLocalInverse = inertiaTensorLocal.getInverse();
+        mInertiaTensorLocalInverse = new Matrix3x3(inertiaTensorLocal).inverse();
         mMassInverse = 1.0f / mass;
         mIsGravityEnabled = true;
         mMaterial = new Material();

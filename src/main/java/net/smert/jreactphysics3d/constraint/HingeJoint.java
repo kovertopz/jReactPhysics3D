@@ -300,8 +300,8 @@ public class HingeJoint extends Joint {
         mC2CrossA1 = new Vector3(c2).cross(mA1);
 
         // Compute the corresponding skew-symmetric matrices
-        Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
-        Matrix3x3 skewSymmetricMatrixU2 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR2World);
+        Matrix3x3 skewSymmetricMatrixU1 = new Matrix3x3().computeSkewSymmetricMatrixForCrossProduct(mR1World);
+        Matrix3x3 skewSymmetricMatrixU2 = new Matrix3x3().computeSkewSymmetricMatrixForCrossProduct(mR2World);
 
         // Compute the inverse mass matrix K=JM^-1J^t for the 3 translation constraints (3x3 matrix)
         float inverseMassBodies = 0.0f;
@@ -315,16 +315,16 @@ public class HingeJoint extends Joint {
                 0.0f, inverseMassBodies, 0.0f,
                 0.0f, 0.0f, inverseMassBodies);
         if (mBody1.isMotionEnabled()) {
-            massMatrix.operatorAddEqual(
+            massMatrix.add(
                     Matrix3x3.operatorMultiply(skewSymmetricMatrixU1, Matrix3x3.operatorMultiply(mI1, skewSymmetricMatrixU1.getTranspose())));
         }
         if (mBody2.isMotionEnabled()) {
-            massMatrix.operatorAddEqual(
+            massMatrix.add(
                     Matrix3x3.operatorMultiply(skewSymmetricMatrixU2, Matrix3x3.operatorMultiply(mI2, skewSymmetricMatrixU2.getTranspose())));
         }
-        mInverseMassMatrixTranslation.setToZero();
+        mInverseMassMatrixTranslation.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixTranslation = massMatrix.getInverse();
+            mInverseMassMatrixTranslation = new Matrix3x3(massMatrix).inverse();
         }
 
         // Compute the bias "b" of the translation constraints
@@ -699,8 +699,8 @@ public class HingeJoint extends Joint {
         mC2CrossA1 = new Vector3(c2).cross(mA1);
 
         // Compute the corresponding skew-symmetric matrices
-        Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
-        Matrix3x3 skewSymmetricMatrixU2 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR2World);
+        Matrix3x3 skewSymmetricMatrixU1 = new Matrix3x3().computeSkewSymmetricMatrixForCrossProduct(mR1World);
+        Matrix3x3 skewSymmetricMatrixU2 = new Matrix3x3().computeSkewSymmetricMatrixForCrossProduct(mR2World);
 
         /**
          * --------------- Translation Constraints ---------------
@@ -717,16 +717,16 @@ public class HingeJoint extends Joint {
                 0.0f, inverseMassBodies, 0.0f,
                 0.0f, 0.0f, inverseMassBodies);
         if (mBody1.isMotionEnabled()) {
-            massMatrix.operatorAddEqual(
+            massMatrix.add(
                     Matrix3x3.operatorMultiply(skewSymmetricMatrixU1, Matrix3x3.operatorMultiply(mI1, skewSymmetricMatrixU1.getTranspose())));
         }
         if (mBody2.isMotionEnabled()) {
-            massMatrix.operatorAddEqual(
+            massMatrix.add(
                     Matrix3x3.operatorMultiply(skewSymmetricMatrixU2, Matrix3x3.operatorMultiply(mI2, skewSymmetricMatrixU2.getTranspose())));
         }
-        mInverseMassMatrixTranslation.setToZero();
+        mInverseMassMatrixTranslation.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixTranslation = massMatrix.getInverse();
+            mInverseMassMatrixTranslation = new Matrix3x3(massMatrix).inverse();
         }
 
         // Compute position error for the 3 translation constraints

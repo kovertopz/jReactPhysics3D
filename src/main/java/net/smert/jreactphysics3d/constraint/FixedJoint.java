@@ -98,8 +98,8 @@ public class FixedJoint extends Joint {
         orientationBody2.multiply(mLocalAnchorPointBody2, mR2World);
 
         // Compute the corresponding skew-symmetric matrices
-        Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
-        Matrix3x3 skewSymmetricMatrixU2 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR2World);
+        Matrix3x3 skewSymmetricMatrixU1 = new Matrix3x3().computeSkewSymmetricMatrixForCrossProduct(mR1World);
+        Matrix3x3 skewSymmetricMatrixU2 = new Matrix3x3().computeSkewSymmetricMatrixForCrossProduct(mR2World);
 
         // Compute the matrix K=JM^-1J^t (3x3 matrix) for the 3 translation constraints
         float inverseMassBodies = 0.0f;
@@ -113,18 +113,18 @@ public class FixedJoint extends Joint {
                 0.0f, inverseMassBodies, 0.0f,
                 0.0f, 0.0f, inverseMassBodies);
         if (mBody1.isMotionEnabled()) {
-            massMatrix.operatorAddEqual(
+            massMatrix.add(
                     Matrix3x3.operatorMultiply(skewSymmetricMatrixU1, Matrix3x3.operatorMultiply(mI1, skewSymmetricMatrixU1.getTranspose())));
         }
         if (mBody2.isMotionEnabled()) {
-            massMatrix.operatorAddEqual(
+            massMatrix.add(
                     Matrix3x3.operatorMultiply(skewSymmetricMatrixU2, Matrix3x3.operatorMultiply(mI2, skewSymmetricMatrixU2.getTranspose())));
         }
 
         // Compute the inverse mass matrix K^-1 for the 3 translation constraints
-        mInverseMassMatrixTranslation.setToZero();
+        mInverseMassMatrixTranslation.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixTranslation = massMatrix.getInverse();
+            mInverseMassMatrixTranslation = new Matrix3x3(massMatrix).inverse();
         }
 
         // Compute the bias "b" of the constraint for the 3 translation constraints
@@ -137,15 +137,15 @@ public class FixedJoint extends Joint {
 
         // Compute the inverse of the mass matrix K=JM^-1J^t for the 3 rotation
         // contraints (3x3 matrix)
-        mInverseMassMatrixRotation.setToZero();
+        mInverseMassMatrixRotation.zero();
         if (mBody1.isMotionEnabled()) {
-            mInverseMassMatrixRotation.operatorAddEqual(mI1);
+            mInverseMassMatrixRotation.add(mI1);
         }
         if (mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotation.operatorAddEqual(mI2);
+            mInverseMassMatrixRotation.add(mI2);
         }
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotation = mInverseMassMatrixRotation.getInverse();
+            mInverseMassMatrixRotation = new Matrix3x3(mInverseMassMatrixRotation).inverse();
         }
 
         // Compute the bias "b" for the 3 rotation constraints
@@ -315,8 +315,8 @@ public class FixedJoint extends Joint {
         q2.multiply(mLocalAnchorPointBody2, mR2World);
 
         // Compute the corresponding skew-symmetric matrices
-        Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
-        Matrix3x3 skewSymmetricMatrixU2 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR2World);
+        Matrix3x3 skewSymmetricMatrixU1 = new Matrix3x3().computeSkewSymmetricMatrixForCrossProduct(mR1World);
+        Matrix3x3 skewSymmetricMatrixU2 = new Matrix3x3().computeSkewSymmetricMatrixForCrossProduct(mR2World);
 
         /**
          * --------------- Translation Constraints ---------------
@@ -333,16 +333,16 @@ public class FixedJoint extends Joint {
                 0.0f, inverseMassBodies, 0.0f,
                 0.0f, 0.0f, inverseMassBodies);
         if (mBody1.isMotionEnabled()) {
-            massMatrix.operatorAddEqual(
+            massMatrix.add(
                     Matrix3x3.operatorMultiply(skewSymmetricMatrixU1, Matrix3x3.operatorMultiply(mI1, skewSymmetricMatrixU1.getTranspose())));
         }
         if (mBody2.isMotionEnabled()) {
-            massMatrix.operatorAddEqual(
+            massMatrix.add(
                     Matrix3x3.operatorMultiply(skewSymmetricMatrixU2, Matrix3x3.operatorMultiply(mI2, skewSymmetricMatrixU2.getTranspose())));
         }
-        mInverseMassMatrixTranslation.setToZero();
+        mInverseMassMatrixTranslation.zero();
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixTranslation = massMatrix.getInverse();
+            mInverseMassMatrixTranslation = new Matrix3x3(massMatrix).inverse();
         }
 
         // Compute position error for the 3 translation constraints
@@ -390,15 +390,15 @@ public class FixedJoint extends Joint {
          */
         // Compute the inverse of the mass matrix K=JM^-1J^t for the 3 rotation
         // contraints (3x3 matrix)
-        mInverseMassMatrixRotation.setToZero();
+        mInverseMassMatrixRotation.zero();
         if (mBody1.isMotionEnabled()) {
-            mInverseMassMatrixRotation.operatorAddEqual(mI1);
+            mInverseMassMatrixRotation.add(mI1);
         }
         if (mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotation.operatorAddEqual(mI2);
+            mInverseMassMatrixRotation.add(mI2);
         }
         if (mBody1.isMotionEnabled() || mBody2.isMotionEnabled()) {
-            mInverseMassMatrixRotation = mInverseMassMatrixRotation.getInverse();
+            mInverseMassMatrixRotation = new Matrix3x3(mInverseMassMatrixRotation).inverse();
         }
 
         // Compute the position error for the 3 rotation constraints

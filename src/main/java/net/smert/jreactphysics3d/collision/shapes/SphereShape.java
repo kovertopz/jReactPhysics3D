@@ -56,7 +56,7 @@ public class SphereShape extends CollisionShape {
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float diag = 0.4f * mass * mRadius * mRadius;
-        tensor.setAllValues(diag, 0.0f, 0.0f,
+        tensor.set(diag, 0.0f, 0.0f,
                 0.0f, diag, 0.0f,
                 0.0f, 0.0f, diag);
     }
