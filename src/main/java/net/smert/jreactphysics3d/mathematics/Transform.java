@@ -19,7 +19,7 @@ public class Transform {
     // Constructor
     public Transform() {
         mPosition = new Vector3();
-        mOrientation = Quaternion.identity();
+        mOrientation = new Quaternion().identity();
     }
 
     // Constructor
@@ -63,7 +63,7 @@ public class Transform {
     // Set the transform to the identity transform
     public void setToIdentity() {
         mPosition = new Vector3();
-        mOrientation = Quaternion.identity();
+        mOrientation = new Quaternion().identity();
     }
 
     // Set the transform from an OpenGL transform matrix
@@ -98,7 +98,7 @@ public class Transform {
 
     // Return the inverse of the transform
     public Transform getInverse() {
-        Quaternion invQuaternion = mOrientation.getInverse();
+        Quaternion invQuaternion = new Quaternion(mOrientation).inverse();
         Matrix3x3 invMatrix = invQuaternion.getMatrix();
         return new Transform(Matrix3x3.operatorMultiply(invMatrix, new Vector3(mPosition).invert()), invQuaternion);
     }
@@ -106,19 +106,18 @@ public class Transform {
     // Return an interpolated transform
     public static Transform interpolateTransforms(Transform oldTransform, Transform newTransform, float interpolationFactor) {
 
+        Quaternion interOrientation = new Quaternion();
         Vector3 interPosition = new Vector3(oldTransform.mPosition).multiply(1.0f - interpolationFactor)
                 .add(new Vector3(newTransform.mPosition).multiply(interpolationFactor));
 
-        Quaternion interOrientation = Quaternion.slerp(oldTransform.mOrientation,
-                newTransform.mOrientation,
-                interpolationFactor);
+        Quaternion.Slerp(oldTransform.mOrientation, newTransform.mOrientation, interpolationFactor, interOrientation);
 
         return new Transform(interPosition, interOrientation);
     }
 
     // Return the identity transform
     public static Transform identity() {
-        return new Transform(new Vector3(), Quaternion.identity());
+        return new Transform(new Vector3(), new Quaternion().identity());
     }
 
     // Return the transformed vector
@@ -130,7 +129,7 @@ public class Transform {
     // Operator of multiplication of a transform with another one
     public Transform operatorMultiply(Transform transform2) {
         return new Transform(new Vector3(mPosition).add(Matrix3x3.operatorMultiply(mOrientation.getMatrix(), transform2.mPosition)),
-                mOrientation.operatorMultiply(transform2.mOrientation));
+                new Quaternion(mOrientation).multiply(transform2.mOrientation));
     }
 
     // Return true if the two transforms are equal

@@ -166,11 +166,11 @@ public class DynamicsWorld extends CollisionWorld {
 
                     // Compute the new position of the body
                     Vector3 newPosition = new Vector3(currentPosition).add(new Vector3(newLinVelocity).multiply(dt));
-                    Quaternion newOrientation = currentOrientation.operatorAdd(
-                            new Quaternion(0.0f, newAngVelocity).operatorMultiply(currentOrientation).operatorMultiply(0.5f).operatorMultiply(dt));
+                    Quaternion newOrientation = new Quaternion(currentOrientation).add(
+                            new Quaternion(0.0f, newAngVelocity).multiply(currentOrientation).multiply(0.5f).multiply(dt));
 
                     // Update the Transform of the body
-                    Transform newTransform = new Transform(newPosition, newOrientation.getUnit());
+                    Transform newTransform = new Transform(newPosition, new Quaternion(newOrientation).normalize());
                     bodies[b].setTransform(newTransform);
                 }
             }
@@ -455,7 +455,7 @@ public class DynamicsWorld extends CollisionWorld {
                 Quaternion newOrientation = mConstrainedOrientations.get(index);
 
                 // Update the Transform of the body
-                Transform newTransform = new Transform(newPosition, newOrientation.getUnit());
+                Transform newTransform = new Transform(newPosition, new Quaternion(newOrientation).normalize());
                 bodies[b].setTransform(newTransform);
             }
         }

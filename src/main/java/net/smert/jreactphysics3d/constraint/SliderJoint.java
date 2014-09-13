@@ -176,12 +176,12 @@ public class SliderJoint extends Joint {
         mLocalAnchorPointBody2 = transform2.getInverse().operatorMultiply(jointInfo.anchorPointWorldSpace);
 
         // Compute the inverse of the initial orientation difference between the two bodies
-        mInitOrientationDifferenceInv = transform2.getOrientation().operatorMultiply(transform1.getOrientation().getInverse());
+        mInitOrientationDifferenceInv = new Quaternion(transform2.getOrientation()).multiply(new Quaternion(transform1.getOrientation()).inverse());
         mInitOrientationDifferenceInv.normalize();
         mInitOrientationDifferenceInv.inverse();
 
         // Compute the slider axis in local-space of body 1
-        mSliderAxisBody1 = mBody1.getTransform().getOrientation().getInverse().operatorMultiply(jointInfo.sliderAxisWorldSpace);
+        new Quaternion(mBody1.getTransform().getOrientation()).inverse().multiplyOut(jointInfo.sliderAxisWorldSpace, mSliderAxisBody1);
         mSliderAxisBody1.normalize();
     }
 
@@ -204,14 +204,14 @@ public class SliderJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Vector from body center to the anchor point
-        mR1 = orientationBody1.operatorMultiply(mLocalAnchorPointBody1);
-        mR2 = orientationBody2.operatorMultiply(mLocalAnchorPointBody2);
+        orientationBody1.multiplyOut(mLocalAnchorPointBody1, mR1);
+        orientationBody2.multiplyOut(mLocalAnchorPointBody2, mR2);
 
         // Compute the vector u (difference between anchor points)
         Vector3 u = new Vector3(new Vector3(new Vector3(x2).add(mR2)).subtract(x1)).subtract(mR1);
 
         // Compute the two orthogonal vectors to the slider axis in world-space
-        mSliderAxisWorld = orientationBody1.operatorMultiply(mSliderAxisBody1);
+        orientationBody1.multiplyOut(mSliderAxisBody1, mSliderAxisWorld);
         mSliderAxisWorld.normalize();
         mN1 = new Vector3(mSliderAxisWorld).setUnitOrthogonal();
         mN2 = new Vector3(mSliderAxisWorld).cross(mN1);
@@ -292,10 +292,12 @@ public class SliderJoint extends Joint {
         // Compute the bias "b" of the rotation constraint
         mBRotation.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
-            Quaternion currentOrientationDifference = orientationBody2.operatorMultiply(orientationBody1.getInverse());
+            Quaternion currentOrientationDifference = new Quaternion(orientationBody2).multiply(new Quaternion(orientationBody1).inverse());
             currentOrientationDifference.normalize();
-            Quaternion qError = currentOrientationDifference.operatorMultiply(mInitOrientationDifferenceInv);
-            mBRotation = new Vector3(qError.getVectorV()).multiply(biasFactor * 2.0f);
+            Quaternion qError = new Quaternion(currentOrientationDifference).multiply(mInitOrientationDifferenceInv);
+            Vector3 qErrorV = new Vector3();
+            qError.getVectorV(qErrorV);
+            mBRotation = qErrorV.multiply(biasFactor * 2.0f);
         }
 
         // If the limits are enabled
@@ -642,14 +644,14 @@ public class SliderJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Vector from body center to the anchor point
-        mR1 = q1.operatorMultiply(mLocalAnchorPointBody1);
-        mR2 = q2.operatorMultiply(mLocalAnchorPointBody2);
+        q1.multiplyOut(mLocalAnchorPointBody1, mR1);
+        q2.multiplyOut(mLocalAnchorPointBody2, mR2);
 
         // Compute the vector u (difference between anchor points)
         Vector3 u = new Vector3(new Vector3(new Vector3(x2).add(mR2)).subtract(x1)).subtract(mR1);
 
         // Compute the two orthogonal vectors to the slider axis in world-space
-        mSliderAxisWorld = q1.operatorMultiply(mSliderAxisBody1);
+        q1.multiplyOut(mSliderAxisBody1, mSliderAxisWorld);
         mSliderAxisWorld.normalize();
         mN1 = new Vector3(mSliderAxisWorld).setUnitOrthogonal();
         mN2 = new Vector3(mSliderAxisWorld).cross(mN1);
@@ -723,7 +725,7 @@ public class SliderJoint extends Joint {
 
             // Update the body position/orientation
             x1.add(v1);
-            q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -742,7 +744,7 @@ public class SliderJoint extends Joint {
 
             // Update the body position/orientation
             x2.add(v2);
-            q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
 
@@ -763,10 +765,12 @@ public class SliderJoint extends Joint {
         }
 
         // Compute the position error for the 3 rotation constraints
-        Quaternion currentOrientationDifference = q2.operatorMultiply(q1.getInverse());
+        Quaternion currentOrientationDifference = new Quaternion(q2).multiply(new Quaternion(q1).inverse());
         currentOrientationDifference.normalize();
-        Quaternion qError = currentOrientationDifference.operatorMultiply(mInitOrientationDifferenceInv);
-        Vector3 errorRotation = new Vector3(qError.getVectorV()).multiply(2.0f);
+        Quaternion qError = new Quaternion(currentOrientationDifference).multiply(mInitOrientationDifferenceInv);
+        Vector3 qErrorV = new Vector3();
+        qError.getVectorV(qErrorV);
+        Vector3 errorRotation = qErrorV.multiply(2.0f);
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 lambdaRotation = Matrix3x3.operatorMultiply(
@@ -781,7 +785,7 @@ public class SliderJoint extends Joint {
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
-            q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -793,7 +797,7 @@ public class SliderJoint extends Joint {
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
-            q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
 
@@ -833,7 +837,7 @@ public class SliderJoint extends Joint {
 
                     // Update the body position/orientation
                     x1.add(v1);
-                    q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+                    q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
                     q1.normalize();
                 }
                 if (mBody2.isMotionEnabled()) {
@@ -848,7 +852,7 @@ public class SliderJoint extends Joint {
 
                     // Update the body position/orientation
                     x2.add(v2);
-                    q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+                    q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
                     q2.normalize();
                 }
             }
@@ -871,7 +875,7 @@ public class SliderJoint extends Joint {
 
                     // Update the body position/orientation
                     x1.add(v1);
-                    q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+                    q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
                     q1.normalize();
                 }
                 if (mBody2.isMotionEnabled()) {
@@ -886,7 +890,7 @@ public class SliderJoint extends Joint {
 
                     // Update the body position/orientation
                     x2.add(v2);
-                    q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+                    q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
                     q2.normalize();
                 }
             }
@@ -961,14 +965,19 @@ public class SliderJoint extends Joint {
         Quaternion q2 = mBody2.getTransform().getOrientation();
 
         // Compute the two anchor points in world-space coordinates
-        Vector3 anchorBody1 = new Vector3(x1).add(q1.operatorMultiply(mLocalAnchorPointBody1));
-        Vector3 anchorBody2 = new Vector3(x2).add(q2.operatorMultiply(mLocalAnchorPointBody2));
+        Vector3 vB1 = new Vector3();
+        q1.multiplyOut(mLocalAnchorPointBody1, vB1);
+        Vector3 anchorBody1 = new Vector3(x1).add(vB1);
+        Vector3 vB2 = new Vector3();
+        q2.multiplyOut(mLocalAnchorPointBody2, vB2);
+        Vector3 anchorBody2 = new Vector3(x2).add(vB2);
 
         // Compute the vector u (difference between anchor points)
         Vector3 u = new Vector3(anchorBody2).subtract(anchorBody1);
 
         // Compute the slider axis in world-space
-        Vector3 sliderAxisWorld = q1.operatorMultiply(mSliderAxisBody1);
+        Vector3 sliderAxisWorld = new Vector3();
+        q1.multiplyOut(mSliderAxisBody1, sliderAxisWorld);
         sliderAxisWorld.normalize();
 
         // Compute and return the translation value

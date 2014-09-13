@@ -174,11 +174,11 @@ public class HingeJoint extends Joint {
         float hingeAngle;
 
         // Compute the current orientation difference between the two bodies
-        Quaternion currentOrientationDiff = orientationBody2.operatorMultiply(orientationBody1.getInverse());
+        Quaternion currentOrientationDiff = new Quaternion(orientationBody2).multiply(new Quaternion(orientationBody1).inverse());
         currentOrientationDiff.normalize();
 
         // Compute the relative rotation considering the initial orientation difference
-        Quaternion relativeRotation = currentOrientationDiff.operatorMultiply(mInitOrientationDifferenceInv);
+        Quaternion relativeRotation = new Quaternion(currentOrientationDiff).multiply(mInitOrientationDifferenceInv);
         relativeRotation.normalize();
 
         // A quaternion q = [cos(theta/2); sin(theta/2) * rotAxis] where rotAxis is a unit
@@ -188,11 +188,13 @@ public class HingeJoint extends Joint {
         // axis is not pointing in the same direction as the hinge axis, we use the rotation -q which
         // has the same |sin(theta/2)| value but the value cos(theta/2) is sign inverted. Some details
         // about this trick is explained in the source code of OpenTissue (http://www.opentissue.org).
-        float cosHalfAngle = relativeRotation.w;
-        float sinHalfAngleAbs = relativeRotation.getVectorV().length();
+        float cosHalfAngle = relativeRotation.getW();
+        Vector3 relativeRotationV = new Vector3();
+        relativeRotation.getVectorV(relativeRotationV);
+        float sinHalfAngleAbs = relativeRotationV.length();
 
         // Compute the dot product of the relative rotation axis and the hinge axis
-        float dotProduct = relativeRotation.getVectorV().dot(mA1);
+        float dotProduct = relativeRotationV.dot(mA1);
 
         // If the relative rotation axis and the hinge axis are pointing the same direction
         if (dotProduct >= 0.0f) {
@@ -236,13 +238,13 @@ public class HingeJoint extends Joint {
         mLocalAnchorPointBody2 = transform2.getInverse().operatorMultiply(jointInfo.anchorPointWorldSpace);
 
         // Compute the local-space hinge axis
-        mHingeLocalAxisBody1 = transform1.getOrientation().getInverse().operatorMultiply(jointInfo.rotationAxisWorld);
-        mHingeLocalAxisBody2 = transform2.getOrientation().getInverse().operatorMultiply(jointInfo.rotationAxisWorld);
+        new Quaternion(transform1.getOrientation()).inverse().multiplyOut(jointInfo.rotationAxisWorld, mHingeLocalAxisBody1);
+        new Quaternion(transform2.getOrientation()).inverse().multiplyOut(jointInfo.rotationAxisWorld, mHingeLocalAxisBody2);
         mHingeLocalAxisBody1.normalize();
         mHingeLocalAxisBody2.normalize();
 
         // Compute the inverse of the initial orientation difference between the two bodies
-        mInitOrientationDifferenceInv = transform2.getOrientation().operatorMultiply(transform1.getOrientation().getInverse());
+        mInitOrientationDifferenceInv = new Quaternion(transform2.getOrientation()).multiply(new Quaternion(transform1.getOrientation()).inverse());
         mInitOrientationDifferenceInv.normalize();
         mInitOrientationDifferenceInv.inverse();
     }
@@ -266,8 +268,8 @@ public class HingeJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        mR1World = orientationBody1.operatorMultiply(mLocalAnchorPointBody1);
-        mR2World = orientationBody2.operatorMultiply(mLocalAnchorPointBody2);
+        orientationBody1.multiplyOut(mLocalAnchorPointBody1, mR1World);
+        orientationBody2.multiplyOut(mLocalAnchorPointBody2, mR2World);
 
         // Compute the current angle around the hinge axis
         float hingeAngle = computeCurrentHingeAngle(orientationBody1, orientationBody2);
@@ -287,8 +289,9 @@ public class HingeJoint extends Joint {
         }
 
         // Compute vectors needed in the Jacobian
-        mA1 = orientationBody1.operatorMultiply(mHingeLocalAxisBody1);
-        Vector3 a2 = orientationBody2.operatorMultiply(mHingeLocalAxisBody2);
+        orientationBody1.multiplyOut(mHingeLocalAxisBody1, mA1);
+        Vector3 a2 = new Vector3();
+        orientationBody2.multiplyOut(mHingeLocalAxisBody2, a2);
         mA1.normalize();
         a2.normalize();
         Vector3 b2 = new Vector3(a2).setUnitOrthogonal();
@@ -672,8 +675,8 @@ public class HingeJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        mR1World = q1.operatorMultiply(mLocalAnchorPointBody1);
-        mR2World = q2.operatorMultiply(mLocalAnchorPointBody2);
+        q1.multiplyOut(mLocalAnchorPointBody1, mR1World);
+        q2.multiplyOut(mLocalAnchorPointBody2, mR2World);
 
         // Compute the current angle around the hinge axis
         float hingeAngle = computeCurrentHingeAngle(q1, q2);
@@ -685,8 +688,9 @@ public class HingeJoint extends Joint {
         mIsUpperLimitViolated = upperLimitError <= 0.0f;
 
         // Compute vectors needed in the Jacobian
-        mA1 = q1.operatorMultiply(mHingeLocalAxisBody1);
-        Vector3 a2 = q2.operatorMultiply(mHingeLocalAxisBody2);
+        q1.multiplyOut(mHingeLocalAxisBody1, mA1);
+        Vector3 a2 = new Vector3();
+        q2.multiplyOut(mHingeLocalAxisBody2, a2);
         mA1.normalize();
         a2.normalize();
         Vector3 b2 = new Vector3(a2).setUnitOrthogonal();
@@ -746,7 +750,7 @@ public class HingeJoint extends Joint {
 
             // Update the body position/orientation
             x1.add(v1);
-            q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -761,7 +765,7 @@ public class HingeJoint extends Joint {
 
             // Update the body position/orientation
             x2.add(v2);
-            q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
 
@@ -810,7 +814,7 @@ public class HingeJoint extends Joint {
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
-            q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -824,7 +828,7 @@ public class HingeJoint extends Joint {
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
-            q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
 
@@ -862,7 +866,7 @@ public class HingeJoint extends Joint {
                     Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
                     // Update the body position/orientation
-                    q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+                    q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
                     q1.normalize();
                 }
                 if (mBody2.isMotionEnabled()) {
@@ -874,7 +878,7 @@ public class HingeJoint extends Joint {
                     Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
                     // Update the body position/orientation
-                    q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+                    q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
                     q2.normalize();
                 }
             }
@@ -895,7 +899,7 @@ public class HingeJoint extends Joint {
                     Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
                     // Update the body position/orientation
-                    q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+                    q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
                     q1.normalize();
                 }
                 if (mBody2.isMotionEnabled()) {
@@ -907,7 +911,7 @@ public class HingeJoint extends Joint {
                     Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
                     // Update the body position/orientation
-                    q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+                    q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
                     q2.normalize();
                 }
             }

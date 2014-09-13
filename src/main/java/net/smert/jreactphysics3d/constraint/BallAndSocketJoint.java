@@ -74,8 +74,8 @@ public class BallAndSocketJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        mR1World = orientationBody1.operatorMultiply(mLocalAnchorPointBody1);
-        mR2World = orientationBody2.operatorMultiply(mLocalAnchorPointBody2);
+        orientationBody1.multiplyOut(mLocalAnchorPointBody1, mR1World);
+        orientationBody2.multiplyOut(mLocalAnchorPointBody2, mR2World);
 
         // Compute the corresponding skew-symmetric matrices
         Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
@@ -228,8 +228,8 @@ public class BallAndSocketJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        mR1World = q1.operatorMultiply(mLocalAnchorPointBody1);
-        mR2World = q2.operatorMultiply(mLocalAnchorPointBody2);
+        q1.multiplyOut(mLocalAnchorPointBody1, mR1World);
+        q2.multiplyOut(mLocalAnchorPointBody2, mR2World);
 
         // Compute the corresponding skew-symmetric matrices
         Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
@@ -280,7 +280,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Update the body position/orientation
             x1.add(v1);
-            q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -295,7 +295,7 @@ public class BallAndSocketJoint extends Joint {
 
             // Update the body position/orientation
             x2.add(v2);
-            q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
     }

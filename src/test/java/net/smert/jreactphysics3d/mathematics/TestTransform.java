@@ -53,7 +53,7 @@ public class TestTransform {
         Transform transform2 = new Transform(new Vector3(4, 5, 6), new Matrix3x3(1, 0, 0, 0, 1, 0, 0, 0, 1));
 
         Assert.assertEquals(transform2.getPosition().equals(new Vector3(4, 5, 6)), true);
-        Assert.assertEquals(transform2.getOrientation().equals(Quaternion.identity()), true);
+        Assert.assertEquals(transform2.getOrientation().equals(new Quaternion().identity()), true);
 
         Transform transform3 = new Transform(transform1);
 
@@ -65,7 +65,7 @@ public class TestTransform {
     public void testGetSet() {
 
         Assert.assertEquals(mIdentityTransform.getPosition().equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(mIdentityTransform.getOrientation().equals(Quaternion.identity()), true);
+        Assert.assertEquals(mIdentityTransform.getOrientation().equals(new Quaternion().identity()), true);
 
         Transform transform = new Transform();
         transform.setPosition(new Vector3(5, 7, 8));
@@ -77,7 +77,7 @@ public class TestTransform {
         transform.setToIdentity();
 
         Assert.assertEquals(transform.getPosition().equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(transform.getOrientation().equals(Quaternion.identity()), true);
+        Assert.assertEquals(transform.getOrientation().equals(new Quaternion().identity()), true);
     }
 
     @Test
@@ -141,7 +141,7 @@ public class TestTransform {
         float cosA = (float) Math.cos(Defaults.PI / 3.0f);
         float sinB = (float) Math.sin(Defaults.PI / 6.0f);
         float cosB = (float) Math.cos(Defaults.PI / 6.0f);
-        Transform transform1 = new Transform(new Vector3(4, 5, 6), Quaternion.identity());
+        Transform transform1 = new Transform(new Vector3(4, 5, 6), new Quaternion().identity());
         Transform transform2 = new Transform(new Vector3(8, 11, 16), new Quaternion(sinA, sinA, sinA, cosA));
         Transform transform = Transform.interpolateTransforms(transform1, transform2, 0.5f);
         Vector3 position = transform.getPosition();
@@ -163,13 +163,13 @@ public class TestTransform {
         Transform transform = Transform.identity();
 
         Assert.assertEquals(transform.getPosition().equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(transform.getOrientation().equals(Quaternion.identity()), true);
+        Assert.assertEquals(transform.getOrientation().equals(new Quaternion().identity()), true);
 
         Transform transform2 = new Transform(new Vector3(5, 6, 2), new Quaternion(3, 5, 1, 6));
         transform2.setToIdentity();
 
         Assert.assertEquals(transform2.getPosition().equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(transform2.getOrientation().equals(Quaternion.identity()), true);
+        Assert.assertEquals(transform2.getOrientation().equals(new Quaternion().identity()), true);
     }
 
     @Test

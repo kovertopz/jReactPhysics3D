@@ -131,7 +131,7 @@ public class Box extends Object3D {
 
         // Initial position and orientation of the rigid body
         net.smert.jreactphysics3d.mathematics.Vector3 initPosition = new net.smert.jreactphysics3d.mathematics.Vector3(position.x, position.y, position.z);
-        Quaternion initOrientation = Quaternion.identity();
+        Quaternion initOrientation = new Quaternion().identity();
         Transform transform = new Transform(initPosition, initOrientation);
 
         // Create a rigid body corresponding to the cube in the dynamics world

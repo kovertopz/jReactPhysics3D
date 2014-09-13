@@ -16,6 +16,10 @@ public class Mathematics {
         return (difference < epsilon && difference > -epsilon);
     }
 
+    public static float ArcCos(float radians) {
+        return (float) StrictMath.acos(radians);
+    }
+
     public static float ArcSin(float radians) {
         return (float) StrictMath.asin(radians);
     }

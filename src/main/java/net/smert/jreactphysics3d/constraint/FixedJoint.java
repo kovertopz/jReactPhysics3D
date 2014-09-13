@@ -70,7 +70,7 @@ public class FixedJoint extends Joint {
         mLocalAnchorPointBody2 = transform2.getInverse().operatorMultiply(jointInfo.anchorPointWorldSpace);
 
         // Compute the inverse of the initial orientation difference between the two bodies
-        mInitOrientationDifferenceInv = transform2.getOrientation().operatorMultiply(transform1.getOrientation().getInverse());
+        mInitOrientationDifferenceInv = new Quaternion(transform2.getOrientation()).multiply(new Quaternion(transform1.getOrientation()).inverse());
         mInitOrientationDifferenceInv.normalize();
         mInitOrientationDifferenceInv.inverse();
     }
@@ -94,8 +94,8 @@ public class FixedJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        mR1World = orientationBody1.operatorMultiply(mLocalAnchorPointBody1);
-        mR2World = orientationBody2.operatorMultiply(mLocalAnchorPointBody2);
+        orientationBody1.multiplyOut(mLocalAnchorPointBody1, mR1World);
+        orientationBody2.multiplyOut(mLocalAnchorPointBody2, mR2World);
 
         // Compute the corresponding skew-symmetric matrices
         Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
@@ -151,10 +151,12 @@ public class FixedJoint extends Joint {
         // Compute the bias "b" for the 3 rotation constraints
         mBiasRotation.zero();
         if (mPositionCorrectionTechnique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
-            Quaternion currentOrientationDifference = orientationBody2.operatorMultiply(orientationBody1.getInverse());
+            Quaternion currentOrientationDifference = new Quaternion(orientationBody2).multiply(new Quaternion(orientationBody1).inverse());
             currentOrientationDifference.normalize();
-            Quaternion qError = currentOrientationDifference.operatorMultiply(mInitOrientationDifferenceInv);
-            mBiasRotation = new Vector3(qError.getVectorV()).multiply(biasFactor * 2.0f);
+            Quaternion qError = new Quaternion(currentOrientationDifference).multiply(mInitOrientationDifferenceInv);
+            Vector3 qErrorV = new Vector3();
+            qError.getVectorV(qErrorV);
+            mBiasRotation = qErrorV.multiply(biasFactor * 2.0f);
         }
 
         // If warm-starting is not enabled
@@ -309,8 +311,8 @@ public class FixedJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        mR1World = q1.operatorMultiply(mLocalAnchorPointBody1);
-        mR2World = q2.operatorMultiply(mLocalAnchorPointBody2);
+        q1.multiplyOut(mLocalAnchorPointBody1, mR1World);
+        q2.multiplyOut(mLocalAnchorPointBody2, mR2World);
 
         // Compute the corresponding skew-symmetric matrices
         Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
@@ -364,7 +366,7 @@ public class FixedJoint extends Joint {
 
             // Update the body position/orientation
             x1.add(v1);
-            q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -379,7 +381,7 @@ public class FixedJoint extends Joint {
 
             // Update the body position/orientation
             x2.add(v2);
-            q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
 
@@ -400,10 +402,12 @@ public class FixedJoint extends Joint {
         }
 
         // Compute the position error for the 3 rotation constraints
-        Quaternion currentOrientationDifference = q2.operatorMultiply(q1.getInverse());
+        Quaternion currentOrientationDifference = new Quaternion(q2).multiply(new Quaternion(q1).inverse());
         currentOrientationDifference.normalize();
-        Quaternion qError = currentOrientationDifference.operatorMultiply(mInitOrientationDifferenceInv);
-        Vector3 errorRotation = new Vector3(qError.getVectorV()).multiply(2.0f);
+        Quaternion qError = new Quaternion(currentOrientationDifference).multiply(mInitOrientationDifferenceInv);
+        Vector3 qErrorV = new Vector3();
+        qError.getVectorV(qErrorV);
+        Vector3 errorRotation = qErrorV.multiply(2.0f);
 
         // Compute the Lagrange multiplier lambda for the 3 rotation constraints
         Vector3 lambdaRotation = Matrix3x3.operatorMultiply(
@@ -419,7 +423,7 @@ public class FixedJoint extends Joint {
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
-            q1.operatorAddEqual(new Quaternion(0.0f, w1).operatorMultiply(q1).operatorMultiply(0.5f));
+            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -431,7 +435,7 @@ public class FixedJoint extends Joint {
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
-            q2.operatorAddEqual(new Quaternion(0.0f, w2).operatorMultiply(q2).operatorMultiply(0.5f));
+            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
     }
