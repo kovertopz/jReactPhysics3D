@@ -9,7 +9,7 @@ import net.smert.jreactphysics3d.configuration.Defaults;
  */
 public class Matrix3x3 {
 
-    // Rows of the matrix;
+    // Rows of the matrix (m[row][column])
     float m00;
     float m01;
     float m02;
