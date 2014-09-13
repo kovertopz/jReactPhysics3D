@@ -23,18 +23,12 @@ public class Quaternion {
 
     // Constructor
     public Quaternion() {
-        x = 0.0f;
-        y = 0.0f;
-        z = 0.0f;
-        w = 0.0f;
+        zero();
     }
 
     // Constructor with arguments
-    public Quaternion(float newX, float newY, float newZ, float newW) {
-        x = newX;
-        y = newY;
-        z = newZ;
-        w = newW;
+    public Quaternion(float x, float y, float z, float w) {
+        set(x, y, z, w);
     }
 
     // Create a unit quaternion from a rotation matrix
@@ -44,18 +38,12 @@ public class Quaternion {
 
     // Copy-constructor
     public Quaternion(Quaternion quaternion) {
-        x = quaternion.x;
-        y = quaternion.y;
-        z = quaternion.z;
-        w = quaternion.w;
+        set(quaternion);
     }
 
     // Constructor with the component w and the vector v=(x y z)
-    public Quaternion(Vector3 v, float newW) {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-        w = newW;
+    public Quaternion(Vector3 v, float w) {
+        set(v, w);
     }
 
     // Scalar product between two quaternions
@@ -226,11 +214,11 @@ public class Quaternion {
     }
 
     // Set all the values
-    public Quaternion set(float newX, float newY, float newZ, float newW) {
-        x = newX;
-        y = newY;
-        z = newZ;
-        w = newW;
+    public Quaternion set(float x, float y, float z, float w) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
         return this;
     }
 
@@ -242,23 +230,31 @@ public class Quaternion {
         return this;
     }
 
-    public Quaternion setW(float newW) {
-        w = newW;
+    public Quaternion set(Vector3 v, float w) {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        this.w = w;
         return this;
     }
 
-    public Quaternion setX(float newX) {
-        x = newX;
+    public Quaternion setW(float w) {
+        this.w = w;
         return this;
     }
 
-    public Quaternion setY(float newY) {
-        y = newY;
+    public Quaternion setX(float x) {
+        this.x = x;
         return this;
     }
 
-    public Quaternion setZ(float newZ) {
-        z = newZ;
+    public Quaternion setY(float y) {
+        this.y = y;
+        return this;
+    }
+
+    public Quaternion setZ(float z) {
+        this.z = z;
         return this;
     }
 
@@ -305,7 +301,7 @@ public class Quaternion {
         float zzs = z * zs;
 
         // Create the matrix corresponding to the quaternion
-        return matrix.setAllValues(1.0f - yys - zzs, xys - wzs, xzs + wys,
+        return matrix.set(1.0f - yys - zzs, xys - wzs, xzs + wys,
                 xys + wzs, 1.0f - xxs - zzs, yzs - wxs,
                 xzs - wys, yzs + wxs, 1.0f - xxs - yys);
     }

@@ -22,13 +22,13 @@ public class Transform {
         position = new Vector3();
     }
 
-    // Constructor
+    // Constructor with arguments
     public Transform(Vector3 position, Matrix3x3 orientation) {
         this.orientation = new Quaternion(orientation);
         this.position = new Vector3(position);
     }
 
-    // Constructor
+    // Constructor with arguments
     public Transform(Vector3 position, Quaternion orientation) {
         this.orientation = new Quaternion(orientation);
         this.position = new Vector3(position);
