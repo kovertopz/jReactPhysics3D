@@ -77,7 +77,8 @@ public class Transform {
 
     // Get the OpenGL matrix of the transform
     public void getOpenGLMatrix(float[] openglMatrix) {
-        Matrix3x3 matrix = mOrientation.getMatrix();
+        Matrix3x3 matrix = new Matrix3x3();
+        mOrientation.getMatrix(matrix);
         openglMatrix[0] = matrix.m[0][0];
         openglMatrix[1] = matrix.m[1][0];
         openglMatrix[2] = matrix.m[2][0];
@@ -99,7 +100,8 @@ public class Transform {
     // Return the inverse of the transform
     public Transform getInverse() {
         Quaternion invQuaternion = new Quaternion(mOrientation).inverse();
-        Matrix3x3 invMatrix = invQuaternion.getMatrix();
+        Matrix3x3 invMatrix = new Matrix3x3();
+        invQuaternion.getMatrix(invMatrix);
         return new Transform(Matrix3x3.operatorMultiply(invMatrix, new Vector3(mPosition).invert()), invQuaternion);
     }
 
@@ -122,13 +124,16 @@ public class Transform {
 
     // Return the transformed vector
     public Vector3 operatorMultiply(Vector3 vector) {
-        Matrix3x3 matrix = mOrientation.getMatrix();
+        Matrix3x3 matrix = new Matrix3x3();
+        mOrientation.getMatrix(matrix);
         return Matrix3x3.operatorMultiply(matrix, vector).add(mPosition);
     }
 
     // Operator of multiplication of a transform with another one
     public Transform operatorMultiply(Transform transform2) {
-        return new Transform(new Vector3(mPosition).add(Matrix3x3.operatorMultiply(mOrientation.getMatrix(), transform2.mPosition)),
+        Matrix3x3 matrix = new Matrix3x3();
+        mOrientation.getMatrix(matrix);
+        return new Transform(new Vector3(mPosition).add(Matrix3x3.operatorMultiply(matrix, transform2.mPosition)),
                 new Quaternion(mOrientation).multiply(transform2.mOrientation));
     }
 

@@ -113,8 +113,12 @@ public class EPAAlgorithm {
 
         // Matrix that transform a direction from local
         // space of body 1 into local space of body 2
-        Matrix3x3 rotateToBody2 = Matrix3x3.operatorMultiply(transform2.getOrientation().getMatrix().getTranspose(),
-                transform1.getOrientation().getMatrix());
+        Matrix3x3 rotation1 = new Matrix3x3();
+        transform1.getOrientation().getMatrix(rotation1);
+        Matrix3x3 rotation2 = new Matrix3x3();
+        transform2.getOrientation().getMatrix(rotation2);
+        rotation2 = rotation2.getTranspose();
+        Matrix3x3 rotateToBody2 = Matrix3x3.operatorMultiply(rotation2, rotation1);
 
         // Get the simplex computed previously by the GJK algorithm
         int nbVertices = simplex.getSimplex(suppPointsA, suppPointsB, points);
@@ -162,7 +166,8 @@ public class EPAAlgorithm {
                 Quaternion rotationQuat = new Quaternion(d.getX() * sin60, d.getY() * sin60, d.getZ() * sin60, 0.5f);
 
                 // Construct the corresponding rotation matrix
-                Matrix3x3 rotationMat = rotationQuat.getMatrix();
+                Matrix3x3 rotationMat = new Matrix3x3();
+                rotationQuat.getMatrix(rotationMat);
 
                 // Compute the vector v1, v2, v3
                 Vector3 v1 = new Vector3(d).cross(new Vector3(minAxis == 0 ? 1.0f : 0.0f, minAxis == 1 ? 1.0f : 0.0f, minAxis == 2 ? 1.0f : 0.0f));
@@ -398,7 +403,8 @@ public class EPAAlgorithm {
         } while (nbTriangles[0] > 0 && triangleHeap.element().getDistSquare() <= upperBoundSquarePenDepth);
 
         // Compute the contact info
-        v = Matrix3x3.operatorMultiply(transform1.getOrientation().getMatrix(), triangle.getClosestPoint());
+        transform1.getOrientation().getMatrix(rotation1);
+        v = Matrix3x3.operatorMultiply(rotation1, triangle.getClosestPoint());
         Vector3 pALocal = triangle.computeClosestPointOfObject(suppPointsA);
         Vector3 pBLocal = body2Tobody1.getInverse().operatorMultiply(triangle.computeClosestPointOfObject(suppPointsB));
         Vector3 normal = new Vector3(v).normalize();

@@ -94,8 +94,8 @@ public class FixedJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        orientationBody1.multiplyOut(mLocalAnchorPointBody1, mR1World);
-        orientationBody2.multiplyOut(mLocalAnchorPointBody2, mR2World);
+        orientationBody1.multiply(mLocalAnchorPointBody1, mR1World);
+        orientationBody2.multiply(mLocalAnchorPointBody2, mR2World);
 
         // Compute the corresponding skew-symmetric matrices
         Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
@@ -311,8 +311,8 @@ public class FixedJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        q1.multiplyOut(mLocalAnchorPointBody1, mR1World);
-        q2.multiplyOut(mLocalAnchorPointBody2, mR2World);
+        q1.multiply(mLocalAnchorPointBody1, mR1World);
+        q2.multiply(mLocalAnchorPointBody2, mR2World);
 
         // Compute the corresponding skew-symmetric matrices
         Matrix3x3 skewSymmetricMatrixU1 = Matrix3x3.computeSkewSymmetricMatrixForCrossProduct(mR1World);
@@ -366,7 +366,7 @@ public class FixedJoint extends Joint {
 
             // Update the body position/orientation
             x1.add(v1);
-            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
+            q1.add(new Quaternion(w1, 0.0f).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -381,7 +381,7 @@ public class FixedJoint extends Joint {
 
             // Update the body position/orientation
             x2.add(v2);
-            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
+            q2.add(new Quaternion(w2, 0.0f).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
 
@@ -423,7 +423,7 @@ public class FixedJoint extends Joint {
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
-            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
+            q1.add(new Quaternion(w1, 0.0f).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -435,7 +435,7 @@ public class FixedJoint extends Joint {
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
-            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
+            q2.add(new Quaternion(w2, 0.0f).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
     }

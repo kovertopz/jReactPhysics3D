@@ -100,7 +100,8 @@ public class TestTransform {
 
         Transform transform = new Transform();
         Vector3 position = mTransform1.getPosition();
-        Matrix3x3 orientation = mTransform1.getOrientation().getMatrix();
+        Matrix3x3 orientation = new Matrix3x3();
+        mTransform1.getOrientation().getMatrix(orientation);
         float[] openglMatrix = {orientation.m[0][0], orientation.m[1][0], orientation.m[2][0], 0,
             orientation.m[0][1], orientation.m[1][1], orientation.m[2][1], 0,
             orientation.m[0][2], orientation.m[1][2], orientation.m[2][2], 0,

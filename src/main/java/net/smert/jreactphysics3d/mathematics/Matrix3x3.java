@@ -40,7 +40,7 @@ public class Matrix3x3 {
     }
 
     // Method to set all the values in the matrix
-    public final void setAllValues(float a1, float a2, float a3,
+    public final Matrix3x3 setAllValues(float a1, float a2, float a3,
             float b1, float b2, float b3,
             float c1, float c2, float c3) {
         m[0][0] = a1;
@@ -52,6 +52,7 @@ public class Matrix3x3 {
         m[2][0] = c1;
         m[2][1] = c2;
         m[2][2] = c3;
+        return this;
     }
 
     // Set the matrix to zero

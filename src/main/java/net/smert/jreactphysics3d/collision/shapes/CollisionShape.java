@@ -92,7 +92,9 @@ public abstract class CollisionShape {
         getLocalBounds(minBounds, maxBounds);
 
         // Rotate the local bounds according to the orientation of the body
-        Matrix3x3 worldAxis = transform.getOrientation().getMatrix().getAbsoluteMatrix();
+        Matrix3x3 worldAxis = new Matrix3x3();
+        transform.getOrientation().getMatrix(worldAxis);
+        worldAxis.getAbsoluteMatrix();
         Vector3 worldMinBounds = new Vector3(worldAxis.getColumn(0).dot(minBounds),
                 worldAxis.getColumn(1).dot(minBounds),
                 worldAxis.getColumn(2).dot(minBounds));

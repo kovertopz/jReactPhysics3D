@@ -48,11 +48,13 @@ public class TestQuaternion {
 
         Assert.assertEquals(quaternion2.equals(new Quaternion(4, 5, 6, 7)), true);
 
-        Quaternion quaternion3 = new Quaternion(8, new Vector3(3, 5, 2));
+        Quaternion quaternion3 = new Quaternion(new Vector3(3, 5, 2), 8);
 
         Assert.assertEquals(quaternion3.equals(new Quaternion(3, 5, 2, 8)), true);
 
-        Quaternion quaternion4 = new Quaternion(mQuaternion1.getMatrix());
+        Matrix3x3 matrix = new Matrix3x3();
+        mQuaternion1.getMatrix(matrix);
+        Quaternion quaternion4 = new Quaternion(matrix);
 
         Assert.assertEquals(quaternion4.x, mQuaternion1.x, 0);
         Assert.assertEquals(quaternion4.y, mQuaternion1.y, 0);
@@ -142,17 +144,18 @@ public class TestQuaternion {
         Vector3 axis = new Vector3();
         float[] angle = new float[1];
         Vector3 originalAxis = new Vector3(2, 3, 4).normalize();
-        mQuaternion1.getRotationAngleAxis(angle, axis);
+        mQuaternion1.getRotationAngleAxis(axis, angle);
 
         Assert.assertEquals(axis.x, originalAxis.x, 10e-6f);
         Assert.assertEquals(angle[0], Defaults.PI / 4.0f, 10e-6f);
 
         // Test the method that returns the corresponding matrix
-        Matrix3x3 matrix = mQuaternion1.getMatrix();
+        Matrix3x3 matrix = new Matrix3x3();
+        mQuaternion1.getMatrix(matrix);
         Vector3 vector = new Vector3(56, -2, 82);
         Vector3 vector1 = Matrix3x3.operatorMultiply(matrix, vector);
         Vector3 vector2 = new Vector3();
-        mQuaternion1.multiplyOut(vector, vector2);
+        mQuaternion1.multiply(vector, vector2);
 
         Assert.assertEquals(vector1.x, vector2.x, 10e-6f);
         Assert.assertEquals(vector1.y, vector2.y, 10e-6f);
@@ -218,10 +221,12 @@ public class TestQuaternion {
         // Test multiplication between a quaternion and a point
         Vector3 point = new Vector3(5, -24, 563);
         Vector3 vector1 = new Vector3();
-        mIdentity.multiplyOut(point, vector1);
+        mIdentity.multiply(point, vector1);
         Vector3 vector2 = new Vector3();
-        mQuaternion1.multiplyOut(point, vector2);
-        Vector3 testVector2 = Matrix3x3.operatorMultiply(mQuaternion1.getMatrix(), point);
+        mQuaternion1.multiply(point, vector2);
+        Matrix3x3 matrix = new Matrix3x3();
+        mQuaternion1.getMatrix(matrix);
+        Vector3 testVector2 = Matrix3x3.operatorMultiply(matrix, point);
 
         Assert.assertEquals(vector1.equals(point), true);
         Assert.assertEquals(vector2.x, testVector2.x, 10e-5f);

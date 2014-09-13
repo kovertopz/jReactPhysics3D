@@ -204,12 +204,14 @@ public class RigidBody extends CollisionBody {
     // where R is the rotation matrix (and R^T its transpose) of
     // the current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorWorld() {
+        Matrix3x3 rotation = new Matrix3x3();
+        mTransform.getOrientation().getMatrix(rotation);
+        Matrix3x3 transpose = new Matrix3x3(rotation).getTranspose();
 
         // TODO: Optimize
         // Compute and return the inertia tensor in world coordinates
         return Matrix3x3.operatorMultiply(
-                Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(),
-                        mInertiaTensorLocal), mTransform.getOrientation().getMatrix().getTranspose());
+                Matrix3x3.operatorMultiply(rotation, mInertiaTensorLocal), transpose);
     }
 
     // Get the inverse of the inertia tensor
@@ -224,12 +226,14 @@ public class RigidBody extends CollisionBody {
     // where R is the rotation matrix (and R^T its transpose) of the
     // current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorInverseWorld() {
+        Matrix3x3 rotation = new Matrix3x3();
+        mTransform.getOrientation().getMatrix(rotation);
+        Matrix3x3 transpose = new Matrix3x3(rotation).getTranspose();
 
         // TODO: Optimize
         // Compute and return the inertia tensor in world coordinates
         return Matrix3x3.operatorMultiply(
-                Matrix3x3.operatorMultiply(mTransform.getOrientation().getMatrix(), mInertiaTensorLocalInverse),
-                mTransform.getOrientation().getMatrix().getTranspose());
+                Matrix3x3.operatorMultiply(rotation, mInertiaTensorLocalInverse), transpose);
     }
 
     // Return the inverse of the mass of the body

@@ -238,8 +238,8 @@ public class HingeJoint extends Joint {
         mLocalAnchorPointBody2 = transform2.getInverse().operatorMultiply(jointInfo.anchorPointWorldSpace);
 
         // Compute the local-space hinge axis
-        new Quaternion(transform1.getOrientation()).inverse().multiplyOut(jointInfo.rotationAxisWorld, mHingeLocalAxisBody1);
-        new Quaternion(transform2.getOrientation()).inverse().multiplyOut(jointInfo.rotationAxisWorld, mHingeLocalAxisBody2);
+        new Quaternion(transform1.getOrientation()).inverse().multiply(jointInfo.rotationAxisWorld, mHingeLocalAxisBody1);
+        new Quaternion(transform2.getOrientation()).inverse().multiply(jointInfo.rotationAxisWorld, mHingeLocalAxisBody2);
         mHingeLocalAxisBody1.normalize();
         mHingeLocalAxisBody2.normalize();
 
@@ -268,8 +268,8 @@ public class HingeJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        orientationBody1.multiplyOut(mLocalAnchorPointBody1, mR1World);
-        orientationBody2.multiplyOut(mLocalAnchorPointBody2, mR2World);
+        orientationBody1.multiply(mLocalAnchorPointBody1, mR1World);
+        orientationBody2.multiply(mLocalAnchorPointBody2, mR2World);
 
         // Compute the current angle around the hinge axis
         float hingeAngle = computeCurrentHingeAngle(orientationBody1, orientationBody2);
@@ -289,9 +289,9 @@ public class HingeJoint extends Joint {
         }
 
         // Compute vectors needed in the Jacobian
-        orientationBody1.multiplyOut(mHingeLocalAxisBody1, mA1);
+        orientationBody1.multiply(mHingeLocalAxisBody1, mA1);
         Vector3 a2 = new Vector3();
-        orientationBody2.multiplyOut(mHingeLocalAxisBody2, a2);
+        orientationBody2.multiply(mHingeLocalAxisBody2, a2);
         mA1.normalize();
         a2.normalize();
         Vector3 b2 = new Vector3(a2).setUnitOrthogonal();
@@ -675,8 +675,8 @@ public class HingeJoint extends Joint {
         mI2 = mBody2.getInertiaTensorInverseWorld();
 
         // Compute the vector from body center to the anchor point in world-space
-        q1.multiplyOut(mLocalAnchorPointBody1, mR1World);
-        q2.multiplyOut(mLocalAnchorPointBody2, mR2World);
+        q1.multiply(mLocalAnchorPointBody1, mR1World);
+        q2.multiply(mLocalAnchorPointBody2, mR2World);
 
         // Compute the current angle around the hinge axis
         float hingeAngle = computeCurrentHingeAngle(q1, q2);
@@ -688,9 +688,9 @@ public class HingeJoint extends Joint {
         mIsUpperLimitViolated = upperLimitError <= 0.0f;
 
         // Compute vectors needed in the Jacobian
-        q1.multiplyOut(mHingeLocalAxisBody1, mA1);
+        q1.multiply(mHingeLocalAxisBody1, mA1);
         Vector3 a2 = new Vector3();
-        q2.multiplyOut(mHingeLocalAxisBody2, a2);
+        q2.multiply(mHingeLocalAxisBody2, a2);
         mA1.normalize();
         a2.normalize();
         Vector3 b2 = new Vector3(a2).setUnitOrthogonal();
@@ -750,7 +750,7 @@ public class HingeJoint extends Joint {
 
             // Update the body position/orientation
             x1.add(v1);
-            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
+            q1.add(new Quaternion(w1, 0.0f).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -765,7 +765,7 @@ public class HingeJoint extends Joint {
 
             // Update the body position/orientation
             x2.add(v2);
-            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
+            q2.add(new Quaternion(w2, 0.0f).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
 
@@ -814,7 +814,7 @@ public class HingeJoint extends Joint {
             Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
             // Update the body position/orientation
-            q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
+            q1.add(new Quaternion(w1, 0.0f).multiply(q1).multiply(0.5f));
             q1.normalize();
         }
         if (mBody2.isMotionEnabled()) {
@@ -828,7 +828,7 @@ public class HingeJoint extends Joint {
             Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
             // Update the body position/orientation
-            q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
+            q2.add(new Quaternion(w2, 0.0f).multiply(q2).multiply(0.5f));
             q2.normalize();
         }
 
@@ -866,7 +866,7 @@ public class HingeJoint extends Joint {
                     Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
                     // Update the body position/orientation
-                    q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
+                    q1.add(new Quaternion(w1, 0.0f).multiply(q1).multiply(0.5f));
                     q1.normalize();
                 }
                 if (mBody2.isMotionEnabled()) {
@@ -878,7 +878,7 @@ public class HingeJoint extends Joint {
                     Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
                     // Update the body position/orientation
-                    q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
+                    q2.add(new Quaternion(w2, 0.0f).multiply(q2).multiply(0.5f));
                     q2.normalize();
                 }
             }
@@ -899,7 +899,7 @@ public class HingeJoint extends Joint {
                     Vector3 w1 = Matrix3x3.operatorMultiply(mI1, angularImpulseBody1);
 
                     // Update the body position/orientation
-                    q1.add(new Quaternion(0.0f, w1).multiply(q1).multiply(0.5f));
+                    q1.add(new Quaternion(w1, 0.0f).multiply(q1).multiply(0.5f));
                     q1.normalize();
                 }
                 if (mBody2.isMotionEnabled()) {
@@ -911,7 +911,7 @@ public class HingeJoint extends Joint {
                     Vector3 w2 = Matrix3x3.operatorMultiply(mI2, angularImpulseBody2);
 
                     // Update the body position/orientation
-                    q2.add(new Quaternion(0.0f, w2).multiply(q2).multiply(0.5f));
+                    q2.add(new Quaternion(w2, 0.0f).multiply(q2).multiply(0.5f));
                     q2.normalize();
                 }
             }

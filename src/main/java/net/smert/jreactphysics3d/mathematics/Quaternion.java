@@ -37,14 +37,6 @@ public class Quaternion {
         w = newW;
     }
 
-    // Constructor with the component w and the vector v=(x y z)
-    public Quaternion(float newW, Vector3 v) {
-        x = v.x;
-        y = v.y;
-        z = v.z;
-        w = newW;
-    }
-
     // Create a unit quaternion from a rotation matrix
     public Quaternion(Matrix3x3 matrix) {
         fromMatrix(matrix);
@@ -56,6 +48,14 @@ public class Quaternion {
         y = quaternion.y;
         z = quaternion.z;
         w = quaternion.w;
+    }
+
+    // Constructor with the component w and the vector v=(x y z)
+    public Quaternion(Vector3 v, float newW) {
+        x = v.x;
+        y = v.y;
+        z = v.z;
+        w = newW;
     }
 
     // Scalar product between two quaternions
@@ -281,7 +281,7 @@ public class Quaternion {
     }
 
     // Return the orientation matrix corresponding to this quaternion
-    public Matrix3x3 getMatrix() {
+    public Matrix3x3 getMatrix(Matrix3x3 matrix) {
 
         float nQ = x * x + y * y + z * z + w * w;
         float s = 0.0f;
@@ -305,7 +305,7 @@ public class Quaternion {
         float zzs = z * zs;
 
         // Create the matrix corresponding to the quaternion
-        return new Matrix3x3(1.0f - yys - zzs, xys - wzs, xzs + wys,
+        return matrix.setAllValues(1.0f - yys - zzs, xys - wzs, xzs + wys,
                 xys + wzs, 1.0f - xxs - zzs, yzs - wxs,
                 xzs - wys, yzs + wxs, 1.0f - xxs - yys);
     }
@@ -313,7 +313,7 @@ public class Quaternion {
     // Compute the rotation angle (in radians) and the rotation axis
     // This method is used to get the rotation angle (in radian) and the unit
     // rotation axis of an orientation quaternion.
-    public void getRotationAngleAxis(float[] angle, Vector3 axis) {
+    public Vector3 getRotationAngleAxis(Vector3 axis, float[] angle) {
 
         Quaternion quaternion;
 
@@ -335,20 +335,21 @@ public class Quaternion {
         rotationAxis.normalize();
 
         // Set the rotation axis values
-        axis.set(rotationAxis);
+        return axis.set(rotationAxis);
     }
 
     // Return the vector v=(x y z) of the quaternion
-    public void getVectorV(Vector3 vector) {
-        vector.set(x, y, z);
+    public Vector3 getVectorV(Vector3 vector) {
+        return vector.set(x, y, z);
     }
 
     // Overloaded operator for the multiplication with a vector.
     // This methods rotates a point given the rotation of a quaternion.
-    public void multiplyOut(Vector3 vector, Vector3 vectorOut) {
+    public Vector3 multiply(Vector3 vector, Vector3 vectorOut) {
         Quaternion c = new Quaternion(this).conjugate();
         Quaternion p = new Quaternion(vector.x, vector.y, vector.z, 0.0f);
         new Quaternion(this).multiply(p).multiply(c).getVectorV(vectorOut);
+        return vectorOut;
     }
 
     // Compute the spherical linear interpolation between two quaternions.
