@@ -70,8 +70,8 @@ public class TestVector2 {
         Assert.assertEquals(test1.get(1), 18, 0);
     }
 
-    @Test
     // Test the length, unit vector and normalize methods
+    @Test
     public void testLengthMethods() {
 
         Vector2 test1 = new Vector2();
