@@ -147,7 +147,7 @@ public class Vector2 {
     public Vector2 setUnitOrthogonal() {
         float len = length();
         assert (len > Defaults.MACHINE_EPSILON);
-        return new Vector2(-y / len, x / len);
+        return set(-y / len, x / len);
     }
 
     public Vector2 setX(float x) {
