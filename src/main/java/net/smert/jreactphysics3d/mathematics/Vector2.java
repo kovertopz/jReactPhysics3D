@@ -22,9 +22,9 @@ public class Vector2 {
     }
 
     // Constructor with arguments
-    public Vector2(float newX, float newY) {
-        x = newX;
-        y = newY;
+    public Vector2(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
     // Copy-constructor
@@ -132,9 +132,17 @@ public class Vector2 {
     }
 
     // Set all the values of the vector
-    public Vector2 set(float newX, float newY) {
-        x = newX;
-        y = newY;
+    public Vector2 set(float x, float y) {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
+    // Assignment operator
+    public Vector2 set(Vector2 vector) {
+        assert (vector != this);
+        x = vector.x;
+        y = vector.y;
         return this;
     }
 
@@ -145,13 +153,13 @@ public class Vector2 {
         return new Vector2(-y / len, x / len);
     }
 
-    public Vector2 setX(float newX) {
-        x = newX;
+    public Vector2 setX(float x) {
+        this.x = x;
         return this;
     }
 
-    public Vector2 setY(float newY) {
-        y = newY;
+    public Vector2 setY(float y) {
+        this.y = y;
         return this;
     }
 

@@ -26,10 +26,10 @@ public class Vector3 {
     }
 
     // Constructor with arguments
-    public Vector3(float newX, float newY, float newZ) {
-        x = newX;
-        y = newY;
-        z = newZ;
+    public Vector3(float x, float y, float z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     // Copy-constructor
@@ -160,10 +160,10 @@ public class Vector3 {
     }
 
     // Set all the values of the vector
-    public Vector3 set(float newX, float newY, float newZ) {
-        x = newX;
-        y = newY;
-        z = newZ;
+    public Vector3 set(float x, float y, float z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
         return this;
     }
 
@@ -202,18 +202,18 @@ public class Vector3 {
         return this;
     }
 
-    public Vector3 setX(float newX) {
-        x = newX;
+    public Vector3 setX(float x) {
+        this.x = x;
         return this;
     }
 
-    public Vector3 setY(float newY) {
-        y = newY;
+    public Vector3 setY(float y) {
+        this.y = y;
         return this;
     }
 
-    public Vector3 setZ(float newZ) {
-        z = newZ;
+    public Vector3 setZ(float z) {
+        this.z = z;
         return this;
     }
 
