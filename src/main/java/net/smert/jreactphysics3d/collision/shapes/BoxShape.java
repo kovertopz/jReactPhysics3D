@@ -48,8 +48,8 @@ public class BoxShape extends CollisionShape {
 
     // Return a local support point in a given direction with the object margin
     @Override
-    public Vector3 getLocalSupportPointWithMargin(Vector3 direction) {
-        return new Vector3(
+    public Vector3 getLocalSupportPointWithMargin(Vector3 direction, Vector3 supportPoint) {
+        return supportPoint.set(
                 direction.getX() < 0.0f ? -mExtent.getX() - mMargin : mExtent.getX() + mMargin,
                 direction.getY() < 0.0f ? -mExtent.getY() - mMargin : mExtent.getY() + mMargin,
                 direction.getZ() < 0.0f ? -mExtent.getZ() - mMargin : mExtent.getZ() + mMargin);
@@ -57,8 +57,8 @@ public class BoxShape extends CollisionShape {
 
     // Return a local support point in a given direction without the objec margin
     @Override
-    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
-        return new Vector3(
+    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
+        return supportPoint.set(
                 direction.getX() < 0.0f ? -mExtent.getX() : mExtent.getX(),
                 direction.getY() < 0.0f ? -mExtent.getY() : mExtent.getY(),
                 direction.getZ() < 0.0f ? -mExtent.getZ() : mExtent.getZ());

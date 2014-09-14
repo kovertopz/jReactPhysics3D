@@ -67,10 +67,10 @@ public class ConeShape extends CollisionShape {
 
     // Return a local support point in a given direction with the object margin
     @Override
-    public Vector3 getLocalSupportPointWithMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithMargin(Vector3 direction, Vector3 supportPoint) {
 
         // Compute the support point without the margin
-        Vector3 supportPoint = getLocalSupportPointWithoutMargin(direction);
+        getLocalSupportPointWithoutMargin(direction, supportPoint);
 
         // Add the margin to the support point
         Vector3 unitDirection = new Vector3(0.0f, -1.0f, 0.0f);
@@ -83,21 +83,20 @@ public class ConeShape extends CollisionShape {
 
     // Return a local support point in a given direction without the object margin
     @Override
-    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
 
         Vector3 v = direction;
         float sinThetaTimesLengthV = mSinTheta * v.length();
-        Vector3 supportPoint;
 
         if (v.getY() > sinThetaTimesLengthV) {
-            supportPoint = new Vector3(0.0f, mHalfHeight, 0.0f);
+            supportPoint.set(0.0f, mHalfHeight, 0.0f);
         } else {
             float projectedLength = Mathematics.Sqrt(v.getX() * v.getX() + v.getZ() * v.getZ());
             if (projectedLength > Defaults.MACHINE_EPSILON) {
                 float d = mRadius / projectedLength;
-                supportPoint = new Vector3(v.getX() * d, -mHalfHeight, v.getZ() * d);
+                supportPoint.set(v.getX() * d, -mHalfHeight, v.getZ() * d);
             } else {
-                supportPoint = new Vector3(0.0f, -mHalfHeight, 0.0f);
+                supportPoint.set(0.0f, -mHalfHeight, 0.0f);
             }
         }
 

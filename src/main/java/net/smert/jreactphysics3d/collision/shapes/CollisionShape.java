@@ -93,10 +93,10 @@ public abstract class CollisionShape {
     public abstract boolean isEqualTo(CollisionShape otherCollisionShape);
 
     // Return a local support point in a given direction with the object margin
-    public abstract Vector3 getLocalSupportPointWithMargin(Vector3 direction);
+    public abstract Vector3 getLocalSupportPointWithMargin(Vector3 direction, Vector3 supportPoint);
 
     // Return a local support point in a given direction without the object margin
-    public abstract Vector3 getLocalSupportPointWithoutMargin(Vector3 direction);
+    public abstract Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint);
 
     // Return the local inertia tensor of the collision shapes
     public abstract void computeLocalInertiaTensor(Matrix3x3 tensor, float mass);

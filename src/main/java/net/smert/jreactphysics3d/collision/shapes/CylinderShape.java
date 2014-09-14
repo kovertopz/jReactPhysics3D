@@ -59,10 +59,10 @@ public class CylinderShape extends CollisionShape {
 
     // Return a local support point in a given direction with the object margin
     @Override
-    public Vector3 getLocalSupportPointWithMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithMargin(Vector3 direction, Vector3 supportPoint) {
 
         // Compute the support point without the margin
-        Vector3 supportPoint = getLocalSupportPointWithoutMargin(direction);
+        getLocalSupportPointWithoutMargin(direction, supportPoint);
 
         // Add the margin to the support point
         Vector3 unitDirection = new Vector3(0.0f, 1.0f, 0.0f);
@@ -75,9 +75,8 @@ public class CylinderShape extends CollisionShape {
 
     // Return a local support point in a given direction without the object margin
     @Override
-    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
 
-        Vector3 supportPoint = new Vector3();
         float uDotv = direction.getY();
         Vector3 w = new Vector3(direction.getX(), 0.0f, direction.getZ());
         float lengthW = Mathematics.Sqrt(direction.getX() * direction.getX() + direction.getZ() * direction.getZ());

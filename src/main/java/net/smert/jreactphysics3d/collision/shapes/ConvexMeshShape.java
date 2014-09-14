@@ -230,10 +230,10 @@ public class ConvexMeshShape extends CollisionShape {
 
     // Return a local support point in a given direction with the object margin
     @Override
-    public Vector3 getLocalSupportPointWithMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithMargin(Vector3 direction, Vector3 supportPoint) {
 
         // Get the support point without the margin
-        Vector3 supportPoint = getLocalSupportPointWithoutMargin(direction);
+        getLocalSupportPointWithoutMargin(direction, supportPoint);
 
         // Get the unit direction vector
         Vector3 unitDirection = new Vector3(1.0f, 1.0f, 1.0f);
@@ -243,7 +243,7 @@ public class ConvexMeshShape extends CollisionShape {
         unitDirection.normalize();
 
         // Add the margin to the support point and return it
-        return new Vector3(supportPoint).add(unitDirection.multiply(mMargin));
+        return supportPoint.add(unitDirection.multiply(mMargin));
     }
 
     // Return a local support point in a given direction without the object margin.
@@ -255,7 +255,7 @@ public class ConvexMeshShape extends CollisionShape {
     // will be in most of the cases very close to the previous one. Using hill-climbing, this method
     // runs in almost constant time.
     @Override
-    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
 
         // If the edges information is used to speed up the collision detection
         if (mIsEdgesInformationUsed) {
@@ -293,30 +293,30 @@ public class ConvexMeshShape extends CollisionShape {
             mCachedSupportVertex = maxVertex;
 
             // Return the support vertex
-            return mVertices.get(maxVertex);
-        } else {  // If the edges information is not used
-
-            float maxDotProduct = Defaults.DECIMAL_SMALLEST;
-            int indexMaxDotProduct = 0;
-
-            // For each vertex of the mesh
-            for (int i = 0; i < mVertices.size(); i++) {
-
-                // Compute the dot product of the current vertex
-                float dotProduct = direction.dot(mVertices.get(i));
-
-                // If the current dot product is larger than the maximum one
-                if (dotProduct > maxDotProduct) {
-                    indexMaxDotProduct = i;
-                    maxDotProduct = dotProduct;
-                }
-            }
-
-            assert (maxDotProduct >= 0.0f);
-
-            // Return the vertex with the largest dot product in the support direction
-            return mVertices.get(indexMaxDotProduct);
+            return supportPoint.set(mVertices.get(maxVertex));
         }
+
+        // If the edges information is not used
+        float maxDotProduct = Defaults.DECIMAL_SMALLEST;
+        int indexMaxDotProduct = 0;
+
+        // For each vertex of the mesh
+        for (int i = 0; i < mVertices.size(); i++) {
+
+            // Compute the dot product of the current vertex
+            float dotProduct = direction.dot(mVertices.get(i));
+
+            // If the current dot product is larger than the maximum one
+            if (dotProduct > maxDotProduct) {
+                indexMaxDotProduct = i;
+                maxDotProduct = dotProduct;
+            }
+        }
+
+        assert (maxDotProduct >= 0.0f);
+
+        // Return the vertex with the largest dot product in the support direction
+        return supportPoint.set(mVertices.get(indexMaxDotProduct));
     }
 
     // Return the local inertia tensor of the collision shape.

@@ -56,26 +56,26 @@ public class SphereShape extends CollisionShape {
 
     // Return a local support point in a given direction with the object margin
     @Override
-    public Vector3 getLocalSupportPointWithMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithMargin(Vector3 direction, Vector3 supportPoint) {
 
         // If the direction vector is not the zero vector
         if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
 
             // Return the support point of the sphere in the given direction
-            return new Vector3(direction).normalize().multiply(getMargin());
+            return supportPoint.set(direction).normalize().multiply(getMargin());
         }
 
         // If the direction vector is the zero vector we return a point on the
         // boundary of the sphere
-        return new Vector3(0.0f, getMargin(), 0.0f);
+        return supportPoint.set(0.0f, getMargin(), 0.0f);
     }
 
     // Return a local support point in a given direction without the object margin
     @Override
-    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
 
         // Return the center of the sphere (the radius is taken into account in the object margin)
-        return new Vector3();
+        return supportPoint.zero();
     }
 
     // Return the local inertia tensor of the sphere

@@ -64,7 +64,7 @@ public class CapsuleShape extends CollisionShape {
     // the capsule and return the point with the maximum dot product with the direction vector. Note
     // that the object margin is implicitly the radius and height of the capsule.
     @Override
-    public Vector3 getLocalSupportPointWithMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithMargin(Vector3 direction, Vector3 supportPoint) {
 
         // If the direction vector is not the zero vector
         if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
@@ -83,32 +83,31 @@ public class CapsuleShape extends CollisionShape {
 
             // Return the point with the maximum dot product
             if (dotProductTop > dotProductBottom) {
-                return topSpherePoint;
+                return supportPoint.set(topSpherePoint);
             } else {
-                return bottomSpherePoint;
+                return supportPoint.set(bottomSpherePoint);
             }
         }
 
         // If the direction vector is the zero vector we return a point on the
         // boundary of the capsule
-        return new Vector3(0.0f, mRadius + mMargin, 0.0f);
+        return supportPoint.set(0.0f, mRadius + mMargin, 0.0f);
     }
 
     // Return a local support point in a given direction without the object margin.
     @Override
-    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
+    public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
 
         // If the dot product of the direction and the local Y axis (dotProduct = direction.y)
         // is positive
         if (direction.getY() > 0.0f) {
 
             // Return the top sphere center point
-            return new Vector3(0.0f, mHalfHeight, 0.0f);
-        } else {
-
-            // Return the bottom sphere center point
-            return new Vector3(0.0f, -mHalfHeight, 0.0f);
+            return supportPoint.set(0.0f, mHalfHeight, 0.0f);
         }
+
+        // Return the bottom sphere center point
+        return supportPoint.set(0.0f, -mHalfHeight, 0.0f);
     }
 
     // Return the local inertia tensor of the capsule
