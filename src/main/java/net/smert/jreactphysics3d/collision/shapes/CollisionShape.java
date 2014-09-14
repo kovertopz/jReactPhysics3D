@@ -1,5 +1,6 @@
 package net.smert.jreactphysics3d.collision.shapes;
 
+import java.util.Objects;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
@@ -12,34 +13,33 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public abstract class CollisionShape {
 
-    // Type of the collision shape
-    protected final CollisionShapeType mType;
+    // Margin used for the GJK collision detection algorithm
+    protected float mMargin;
 
     // Current number of similar created shapes
     protected int mNbSimilarCreatedShapes;
 
-    // Margin used for the GJK collision detection algorithm
-    protected float mMargin;
-
-    // Private copy-constructor
-    protected CollisionShape(CollisionShape shape) {
-        mType = shape.mType;
-        mNbSimilarCreatedShapes = shape.mNbSimilarCreatedShapes;
-        mMargin = shape.mMargin;
-    }
+    // Type of the collision shape
+    protected final CollisionShapeType mType;
 
     // Constructor
     public CollisionShape(CollisionShapeType type, float margin) {
-        mType = type;
-        mNbSimilarCreatedShapes = 0;
+        assert (margin >= 0.0f);
         mMargin = margin;
-
-        assert (margin > 0.0f);
+        mNbSimilarCreatedShapes = 0;
+        mType = type;
     }
 
-    // Return the type of the collision shape
-    public CollisionShapeType getType() {
-        return mType;
+    // Copy-constructor
+    public CollisionShape(CollisionShape shape) {
+        mMargin = shape.mMargin;
+        mNbSimilarCreatedShapes = shape.mNbSimilarCreatedShapes;
+        mType = shape.mType;
+    }
+
+    // Return the current object margin
+    public float getMargin() {
+        return mMargin;
     }
 
     // Return the number of similar created shapes
@@ -47,19 +47,19 @@ public abstract class CollisionShape {
         return mNbSimilarCreatedShapes;
     }
 
-    // Increment the number of similar allocated collision shapes
-    public void incrementNbSimilarCreatedShapes() {
-        mNbSimilarCreatedShapes++;
-    }
-
     // Decrement the number of similar allocated collision shapes
     public void decrementNbSimilarCreatedShapes() {
         mNbSimilarCreatedShapes--;
     }
 
-    // Return the current object margin
-    public float getMargin() {
-        return mMargin;
+    // Increment the number of similar allocated collision shapes
+    public void incrementNbSimilarCreatedShapes() {
+        mNbSimilarCreatedShapes++;
+    }
+
+    // Return the type of the collision shape
+    public CollisionShapeType getType() {
+        return mType;
     }
 
     // Equality operator between two collision shapes.
@@ -92,8 +92,7 @@ public abstract class CollisionShape {
         getLocalBounds(minBounds, maxBounds);
 
         // Rotate the local bounds according to the orientation of the body
-        Matrix3x3 worldAxis = new Matrix3x3();
-        transform.getOrientation().getMatrix(worldAxis);
+        Matrix3x3 worldAxis = transform.getOrientation().getMatrix(new Matrix3x3());
         worldAxis.abs();
         Vector3 worldMinBounds = new Vector3(worldAxis.getColumn(0).dot(minBounds),
                 worldAxis.getColumn(1).dot(minBounds),
@@ -111,11 +110,8 @@ public abstract class CollisionShape {
         aabb.setMax(maxCoordinates);
     }
 
-    @Override
-    public abstract CollisionShape clone();
-
-    // Return the local inertia tensor of the collision shapes
-    public abstract void computeLocalInertiaTensor(Matrix3x3 tensor, float mass);
+    // Test equality between two collision shapes of the same type (same derived classes).
+    public abstract boolean isEqualTo(CollisionShape otherCollisionShape);
 
     // Return a local support point in a given direction with the object margin
     public abstract Vector3 getLocalSupportPointWithMargin(Vector3 direction);
@@ -123,10 +119,46 @@ public abstract class CollisionShape {
     // Return a local support point in a given direction without the object margin
     public abstract Vector3 getLocalSupportPointWithoutMargin(Vector3 direction);
 
+    // Return the local inertia tensor of the collision shapes
+    public abstract void computeLocalInertiaTensor(Matrix3x3 tensor, float mass);
+
     // Return the local bounds of the shape in x, y and z directions
     public abstract void getLocalBounds(Vector3 min, Vector3 max);
 
-    // Test equality between two collision shapes of the same type (same derived classes).
-    public abstract boolean isEqualTo(CollisionShape otherCollisionShape);
+    @Override
+    public abstract CollisionShape clone();
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Float.floatToIntBits(this.mMargin);
+        hash = 67 * hash + this.mNbSimilarCreatedShapes;
+        hash = 67 * hash + Objects.hashCode(this.mType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CollisionShape other = (CollisionShape) obj;
+        if (this.mType == other.mType) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.mMargin) != Float.floatToIntBits(other.mMargin)) {
+            return false;
+        }
+        return this.mNbSimilarCreatedShapes != other.mNbSimilarCreatedShapes;
+    }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 
 }
