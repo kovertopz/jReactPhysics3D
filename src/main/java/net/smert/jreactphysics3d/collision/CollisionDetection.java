@@ -27,23 +27,34 @@ import net.smert.jreactphysics3d.engine.Profiler;
  */
 public class CollisionDetection {
 
-    // Pointer to the physics world
-    private CollisionWorld mWorld;
-
-    // Broad-phase overlapping pairs
-    private Map<BodyIndexPair, BroadPhasePair> mOverlappingPairs;
-
     // Broad-phase algorithm
-    private BroadPhaseAlgorithm mBroadPhaseAlgorithm;
+    private final BroadPhaseAlgorithm mBroadPhaseAlgorithm;
+
+    // Pointer to the physics world
+    private final CollisionWorld mWorld;
 
     // Narrow-phase GJK algorithm
-    private GJKAlgorithm mNarrowPhaseGJKAlgorithm;
+    private final GJKAlgorithm mNarrowPhaseGJKAlgorithm;
 
-    // Narrow-phase Sphere vs Sphere algorithm
-    private SphereVsSphereAlgorithm mNarrowPhaseSphereVsSphereAlgorithm;
+    // Broad-phase overlapping pairs
+    private final Map<BodyIndexPair, BroadPhasePair> mOverlappingPairs;
 
     // Set of pair of bodies that cannot collide between each other
-    private Set<BodyIndexPair> mNoCollisionPairs;
+    private final Set<BodyIndexPair> mNoCollisionPairs;
+
+    // Narrow-phase Sphere vs Sphere algorithm
+    private final SphereVsSphereAlgorithm mNarrowPhaseSphereVsSphereAlgorithm;
+
+    // Constructor
+    public CollisionDetection(CollisionWorld world) {
+        assert (world != null);
+        mBroadPhaseAlgorithm = new NoBroadPhaseAlgorithm(this);
+        mWorld = world;
+        mNarrowPhaseGJKAlgorithm = new GJKAlgorithm();
+        mOverlappingPairs = new HashMap<>();
+        mNoCollisionPairs = new HashSet<>();
+        mNarrowPhaseSphereVsSphereAlgorithm = new SphereVsSphereAlgorithm();
+    }
 
     // Compute the broad-phase collision detection
     private void computeBroadPhase() {
@@ -90,7 +101,7 @@ public class CollisionDetection {
             }
 
             // Select the narrow phase algorithm to use according to the two collision shapes
-            NarrowPhaseAlgorithm narrowPhaseAlgorithm = SelectNarrowPhaseAlgorithm(
+            NarrowPhaseAlgorithm narrowPhaseAlgorithm = selectNarrowPhaseAlgorithm(
                     body1.getCollisionShape(), body2.getCollisionShape());
 
             // Notify the narrow-phase algorithm about the overlapping pair we are going to test
@@ -119,7 +130,7 @@ public class CollisionDetection {
     }
 
     // Select the narrow-phase collision algorithm to use given two collision shapes
-    private NarrowPhaseAlgorithm SelectNarrowPhaseAlgorithm(CollisionShape collisionShape1, CollisionShape collisionShape2) {
+    private NarrowPhaseAlgorithm selectNarrowPhaseAlgorithm(CollisionShape collisionShape1, CollisionShape collisionShape2) {
 
         // Sphere vs Sphere algorithm
         if (collisionShape1.getType() == CollisionShapeType.SPHERE && collisionShape2.getType() == CollisionShapeType.SPHERE) {
@@ -127,20 +138,6 @@ public class CollisionDetection {
         } else {    // GJK algorithm
             return mNarrowPhaseGJKAlgorithm;
         }
-    }
-
-    // Constructor
-    public CollisionDetection(CollisionWorld world) {
-        mWorld = world;
-        mNarrowPhaseGJKAlgorithm = new GJKAlgorithm();
-        mNarrowPhaseSphereVsSphereAlgorithm = new SphereVsSphereAlgorithm();
-
-        // Create the broad-phase algorithm that will be used (Sweep and Prune with AABB)
-        mBroadPhaseAlgorithm = new NoBroadPhaseAlgorithm(this);
-        assert (mBroadPhaseAlgorithm != null);
-
-        mNoCollisionPairs = new HashSet<>();
-        mOverlappingPairs = new HashMap<>();
     }
 
     // Add a body to the collision detection
@@ -165,18 +162,6 @@ public class CollisionDetection {
     // Remove a pair of bodies that cannot collide with each other
     public void removeNoCollisionPair(CollisionBody body1, CollisionBody body2) {
         mNoCollisionPairs.remove(BroadPhasePair.ComputeBodiesIndexPair(body1, body2));
-    }
-
-    // Compute the collision detection
-    public void computeCollisionDetection() {
-
-        Profiler.startProfilingBlock("CollisionDetection::computeCollisionDetection()");
-
-        // Compute the broad-phase collision detection
-        computeBroadPhase();
-
-        // Compute the narrow-phase collision detection
-        computeNarrowPhase();
     }
 
     // Allow the broadphase to notify the collision detection about an overlapping pair.
@@ -214,6 +199,18 @@ public class CollisionDetection {
 
         // Remove the overlapping pair from the memory allocator
         mOverlappingPairs.remove(indexPair);
+    }
+
+    // Compute the collision detection
+    public void computeCollisionDetection() {
+
+        Profiler.startProfilingBlock("CollisionDetection::computeCollisionDetection()");
+
+        // Compute the broad-phase collision detection
+        computeBroadPhase();
+
+        // Compute the narrow-phase collision detection
+        computeNarrowPhase();
     }
 
 }
