@@ -10,27 +10,26 @@ import net.smert.jreactphysics3d.configuration.Defaults;
  */
 public class Material {
 
-    // Friction coefficient (positive value)
-    private float mFrictionCoefficient;
-
     // Bounciness during collisions (between 0 and 1) where 1 is for a very bouncy body
-    private float mBounciness;
+    private float bounciness;
+
+    // Friction coefficient (positive value)
+    private float frictionCoefficient;
 
     // Constructor
     public Material() {
-        mFrictionCoefficient = Defaults.DEFAULT_FRICTION_COEFFICIENT;
-        mBounciness = Defaults.DEFAULT_BOUNCINESS;
+        bounciness = Defaults.DEFAULT_BOUNCINESS;
+        frictionCoefficient = Defaults.DEFAULT_FRICTION_COEFFICIENT;
     }
 
     // Copy-constructor
     public Material(Material material) {
-        mFrictionCoefficient = material.mFrictionCoefficient;
-        mBounciness = material.mBounciness;
+        set(material);
     }
 
     // Return the bounciness
     public float getBounciness() {
-        return mBounciness;
+        return bounciness;
     }
 
     // Set the bounciness.
@@ -38,12 +37,12 @@ public class Material {
     // very bouncy body and zero is used for a body that is not bouncy at all.
     public void setBounciness(float bounciness) {
         assert (bounciness >= 0.0f && bounciness <= 1.0f);
-        mBounciness = bounciness;
+        this.bounciness = bounciness;
     }
 
     // Return the friction coefficient
     public float getFrictionCoefficient() {
-        return mFrictionCoefficient;
+        return frictionCoefficient;
     }
 
     // Set the friction coefficient.
@@ -51,20 +50,36 @@ public class Material {
     // friction at all.
     public void setFrictionCoefficient(float frictionCoefficient) {
         assert (frictionCoefficient >= 0.0f);
-        mFrictionCoefficient = frictionCoefficient;
+        this.frictionCoefficient = frictionCoefficient;
     }
 
-    // Overloaded assignment operator
-    public Material operatorEqual(Material material) {
+    public final void set(Material material) {
+        bounciness = material.bounciness;
+        frictionCoefficient = material.frictionCoefficient;
+    }
 
-        // Check for self-assignment
-        if (this != material) {
-            mFrictionCoefficient = material.mFrictionCoefficient;
-            mBounciness = material.mBounciness;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Float.floatToIntBits(this.bounciness);
+        hash = 71 * hash + Float.floatToIntBits(this.frictionCoefficient);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj == null) {
+            return false;
         }
-
-        // Return this material
-        return this;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Material other = (Material) obj;
+        if (Float.floatToIntBits(this.bounciness) != Float.floatToIntBits(other.bounciness)) {
+            return false;
+        }
+        return Float.floatToIntBits(this.frictionCoefficient) == Float.floatToIntBits(other.frictionCoefficient);
     }
 
 }
