@@ -19,13 +19,6 @@ public class BoxShape extends CollisionShape {
     // Extent sizes of the box in the x, y and z direction
     private final Vector3 mExtent;
 
-    // Private copy-constructor
-    private BoxShape(BoxShape shape) {
-        super(shape);
-        mExtent = new Vector3();
-        mExtent.set(shape.mExtent.getX(), shape.mExtent.getY(), shape.mExtent.getZ());
-    }
-
     // Constructor
     public BoxShape(Vector3 extent, float margin) {
         super(CollisionShapeType.BOX, margin);
@@ -37,27 +30,23 @@ public class BoxShape extends CollisionShape {
         mExtent = new Vector3(extent).subtract(new Vector3(margin, margin, margin));
     }
 
+    // Copy-constructor
+    public BoxShape(BoxShape shape) {
+        super(shape);
+        mExtent = new Vector3();
+        mExtent.set(shape.mExtent.getX(), shape.mExtent.getY(), shape.mExtent.getZ());
+    }
+
     // Return the extents of the box
     public Vector3 getExtent() {
         return new Vector3(mExtent).add(new Vector3(mMargin, mMargin, mMargin));
     }
 
+    // Test equality between two box shapes
     @Override
-    public CollisionShape clone() {
-        return new BoxShape(this);
-    }
-
-    // Return the local inertia tensor of the collision shape
-    @Override
-    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float factor = (1.0f / 3.0f) * mass;
-        Vector3 realExtent = new Vector3(mExtent).add(new Vector3(mMargin, mMargin, mMargin));
-        float xSquare = realExtent.getX() * realExtent.getX();
-        float ySquare = realExtent.getY() * realExtent.getY();
-        float zSquare = realExtent.getZ() * realExtent.getZ();
-        tensor.set(factor * (ySquare + zSquare), 0.0f, 0.0f,
-                0.0f, factor * (xSquare + zSquare), 0.0f,
-                0.0f, 0.0f, factor * (xSquare + ySquare));
+    public boolean isEqualTo(CollisionShape otherCollisionShape) {
+        BoxShape otherShape = (BoxShape) otherCollisionShape;
+        return (mExtent.equals(otherShape.mExtent));
     }
 
     // Return a local support point in a given direction with the object margin
@@ -80,6 +69,19 @@ public class BoxShape extends CollisionShape {
                 direction.getZ() < 0.0f ? -mExtent.getZ() : mExtent.getZ());
     }
 
+    // Return the local inertia tensor of the collision shape
+    @Override
+    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
+        float factor = (1.0f / 3.0f) * mass;
+        Vector3 realExtent = new Vector3(mExtent).add(new Vector3(mMargin, mMargin, mMargin));
+        float xSquare = realExtent.getX() * realExtent.getX();
+        float ySquare = realExtent.getY() * realExtent.getY();
+        float zSquare = realExtent.getZ() * realExtent.getZ();
+        tensor.set(factor * (ySquare + zSquare), 0.0f, 0.0f,
+                0.0f, factor * (xSquare + zSquare), 0.0f,
+                0.0f, 0.0f, factor * (xSquare + ySquare));
+    }
+
     // Return the local bounds of the shape in x, y and z directions
     // This method is used to compute the AABB of the box
     @Override
@@ -93,11 +95,9 @@ public class BoxShape extends CollisionShape {
         min.set(-max.getX(), -max.getY(), -max.getZ());
     }
 
-    // Test equality between two box shapes
     @Override
-    public boolean isEqualTo(CollisionShape otherCollisionShape) {
-        BoxShape otherShape = (BoxShape) otherCollisionShape;
-        return (mExtent.equals(otherShape.mExtent));
+    public CollisionShape clone() {
+        return new BoxShape(this);
     }
 
 }

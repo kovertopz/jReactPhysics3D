@@ -62,27 +62,6 @@ public abstract class CollisionShape {
         return mType;
     }
 
-    // Equality operator between two collision shapes.
-    // This methods returns true only if the two collision shapes are of the same type and
-    // of the same dimensions.
-    public boolean operatorEquals(CollisionShape otherCollisionShape) {
-
-        // If the two collisions shapes are not of the same type (same derived classes)
-        // we return false
-        if (mType != otherCollisionShape.mType) {
-            return false;
-        }
-
-        assert (this.getClass().equals(otherCollisionShape.getClass()));
-
-        if (mMargin != otherCollisionShape.mMargin) {
-            return false;
-        }
-
-        // Check if the two shapes are equal
-        return otherCollisionShape.isEqualTo(this);
-    }
-
     // Update the AABB of a body using its collision shape
     public void updateAABB(AABB aabb, Transform transform) {
 

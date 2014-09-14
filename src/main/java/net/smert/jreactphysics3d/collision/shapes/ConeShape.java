@@ -6,7 +6,7 @@ import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 
 /**
- * This class represents a cone collision shape centered at the origin and alligned with the Y axis. The cone is defined
+ * This class represents a cone collision shape centered at the origin and aligned with the Y axis. The cone is defined
  * by its height and by the radius of its base. The center of the cone is at the half of the height. The "transform" of
  * the corresponding rigid body gives an orientation and a position to the cone. This collision shape uses an extra
  * margin distance around it for collision detection purpose. The default margin is 4cm (if your units are meters, which
@@ -19,35 +19,35 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ConeShape extends CollisionShape {
 
-    // Radius of the base
-    private float mRadius;
-
     // Half height of the cone
-    private float mHalfHeight;
+    private final float mHalfHeight;
+
+    // Radius of the base
+    private final float mRadius;
 
     // sine of the semi angle at the apex point
-    private float mSinTheta;
-
-    // Private copy-constructor
-    private ConeShape(ConeShape shape) {
-        super(shape);
-        mRadius = shape.mRadius;
-        mHalfHeight = shape.mHalfHeight;
-        mSinTheta = shape.mSinTheta;
-    }
+    private final float mSinTheta;
 
     // Constructor
     public ConeShape(float radius, float height, float margin) {
         super(CollisionShapeType.CONE, margin);
 
-        assert (radius > 0.0f);
         assert (height > 0.0f);
+        assert (radius > 0.0f);
 
-        mRadius = radius;
         mHalfHeight = height * 0.5f;
+        mRadius = radius;
 
         // Compute the sine of the semi-angle at the apex point
         mSinTheta = mRadius / (Mathematics.Sqrt(mRadius * mRadius + height * height));
+    }
+
+    // Copy-constructor
+    public ConeShape(ConeShape shape) {
+        super(shape);
+        mHalfHeight = shape.mHalfHeight;
+        mRadius = shape.mRadius;
+        mSinTheta = shape.mSinTheta;
     }
 
     // Return the radius
@@ -57,22 +57,14 @@ public class ConeShape extends CollisionShape {
 
     // Return the height
     public float getHeight() {
-        return 2.0f * mHalfHeight;
+        return mHalfHeight + mHalfHeight;
     }
 
+    // Test equality between two cone shapes
     @Override
-    public CollisionShape clone() {
-        return new ConeShape(this);
-    }
-
-    // Return the local inertia tensor of the collision shape
-    @Override
-    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float rSquare = mRadius * mRadius;
-        float diagXZ = 0.15f * mass * (rSquare + mHalfHeight);
-        tensor.set(diagXZ, 0.0f, 0.0f,
-                0.0f, 0.3f * mass * rSquare,
-                0.0f, 0.0f, 0.0f, diagXZ);
+    public boolean isEqualTo(CollisionShape otherCollisionShape) {
+        ConeShape otherShape = (ConeShape) otherCollisionShape;
+        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
     }
 
     // Return a local support point in a given direction with the object margin
@@ -115,6 +107,16 @@ public class ConeShape extends CollisionShape {
         return supportPoint;
     }
 
+    // Return the local inertia tensor of the collision shape
+    @Override
+    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
+        float rSquare = mRadius * mRadius;
+        float diagXZ = 0.15f * mass * (rSquare + mHalfHeight);
+        tensor.set(diagXZ, 0.0f, 0.0f,
+                0.0f, 0.3f * mass * rSquare,
+                0.0f, 0.0f, 0.0f, diagXZ);
+    }
+
     // Return the local bounds of the shape in x, y and z directions
     @Override
     public void getLocalBounds(Vector3 min, Vector3 max) {
@@ -130,11 +132,9 @@ public class ConeShape extends CollisionShape {
         min.setZ(min.getX());
     }
 
-    // Test equality between two cone shapes
     @Override
-    public boolean isEqualTo(CollisionShape otherCollisionShape) {
-        ConeShape otherShape = (ConeShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
+    public CollisionShape clone() {
+        return new ConeShape(this);
     }
 
 }

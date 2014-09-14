@@ -18,28 +18,28 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class CylinderShape extends CollisionShape {
 
-    // Radius of the base
-    private float mRadius;
-
     // Half height of the cylinder
-    private float mHalfHeight;
+    private final float mHalfHeight;
 
-    // Private copy-constructor
-    private CylinderShape(CylinderShape shape) {
-        super(shape);
-        mRadius = shape.mRadius;
-        mHalfHeight = shape.mHalfHeight;
-    }
+    // Radius of the base
+    private final float mRadius;
 
     // Constructor
     public CylinderShape(float radius, float height, float margin) {
         super(CollisionShapeType.CYLINDER, margin);
 
-        assert (radius > 0.0f);
         assert (height > 0.0f);
+        assert (radius > 0.0f);
 
+        mHalfHeight = height * 0.5f;
         mRadius = radius;
-        mHalfHeight = height / 2.0f;
+    }
+
+    // Copy-constructor
+    public CylinderShape(CylinderShape shape) {
+        super(shape);
+        mHalfHeight = shape.mHalfHeight;
+        mRadius = shape.mRadius;
     }
 
     // Return the radius
@@ -52,19 +52,11 @@ public class CylinderShape extends CollisionShape {
         return mHalfHeight + mHalfHeight;
     }
 
+    // Test equality between two cylinder shapes
     @Override
-    public CollisionShape clone() {
-        return new CylinderShape(this);
-    }
-
-    // Return the local inertia tensor of the cylinder
-    @Override
-    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float height = 2.0f * mHalfHeight;
-        float diag = (1.0f / 12.0f) * mass * (3 * mRadius * mRadius + height * height);
-        tensor.set(diag, 0.0f, 0.0f,
-                0.0f, 0.5f * mass * mRadius * mRadius, 0.0f,
-                0.0f, 0.0f, diag);
+    public boolean isEqualTo(CollisionShape otherCollisionShape) {
+        CylinderShape otherShape = (CylinderShape) otherCollisionShape;
+        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
     }
 
     // Return a local support point in a given direction with the object margin
@@ -76,7 +68,7 @@ public class CylinderShape extends CollisionShape {
 
         // Add the margin to the support point
         Vector3 unitVec = new Vector3(0.0f, 1.0f, 0.0f);
-        if (direction.lengthSquare() > Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
+        if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
             unitVec = new Vector3(direction).normalize();
         }
         supportPoint.add(unitVec.multiply(mMargin));
@@ -111,6 +103,16 @@ public class CylinderShape extends CollisionShape {
         return supportPoint;
     }
 
+    // Return the local inertia tensor of the cylinder
+    @Override
+    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
+        float height = 2.0f * mHalfHeight;
+        float diag = (1.0f / 12.0f) * mass * (3 * mRadius * mRadius + height * height);
+        tensor.set(diag, 0.0f, 0.0f,
+                0.0f, 0.5f * mass * mRadius * mRadius, 0.0f,
+                0.0f, 0.0f, diag);
+    }
+
     // Return the local bounds of the shape in x, y and z directions
     @Override
     public void getLocalBounds(Vector3 min, Vector3 max) {
@@ -126,11 +128,9 @@ public class CylinderShape extends CollisionShape {
         min.setZ(min.getX());
     }
 
-    // Test equality between two cylinder shapes
     @Override
-    public boolean isEqualTo(CollisionShape otherCollisionShape) {
-        CylinderShape otherShape = (CylinderShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
+    public CollisionShape clone() {
+        return new CylinderShape(this);
     }
 
 }

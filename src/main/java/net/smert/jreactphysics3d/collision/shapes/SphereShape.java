@@ -15,19 +15,19 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class SphereShape extends CollisionShape {
 
     // Radius of the sphere
-    private float mRadius;
-
-    // Private copy-constructor
-    private SphereShape(SphereShape shape) {
-        super(shape);
-        mRadius = shape.mRadius;
-    }
+    private final float mRadius;
 
     // Constructor
     public SphereShape(float radius) {
         super(CollisionShapeType.SPHERE, radius);
         assert (radius > 0.0f);
         mRadius = radius;
+    }
+
+    // Copy-constructor
+    public SphereShape(SphereShape shape) {
+        super(shape);
+        mRadius = shape.mRadius;
     }
 
     // Get the radius of the sphere
@@ -47,18 +47,11 @@ public class SphereShape extends CollisionShape {
         aabb.setMax(new Vector3(transform.getPosition()).add(extents));
     }
 
+    // Test equality between two sphere shapes
     @Override
-    public CollisionShape clone() {
-        return new SphereShape(this);
-    }
-
-    // Return the local inertia tensor of the sphere
-    @Override
-    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float diag = 0.4f * mass * mRadius * mRadius;
-        tensor.set(diag, 0.0f, 0.0f,
-                0.0f, diag, 0.0f,
-                0.0f, 0.0f, diag);
+    public boolean isEqualTo(CollisionShape otherCollisionShape) {
+        SphereShape otherShape = (SphereShape) otherCollisionShape;
+        return (mRadius == otherShape.mRadius);
     }
 
     // Return a local support point in a given direction with the object margin
@@ -72,6 +65,8 @@ public class SphereShape extends CollisionShape {
             return new Vector3(direction).normalize().multiply(mMargin);
         }
 
+        assert (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON);
+
         // If the direction vector is the zero vector we return a point on the
         // boundary of the sphere
         return new Vector3(0.0f, mMargin, 0.0f);
@@ -83,6 +78,15 @@ public class SphereShape extends CollisionShape {
 
         // Return the center of the sphere (the radius is taken into account in the object margin)
         return new Vector3();
+    }
+
+    // Return the local inertia tensor of the sphere
+    @Override
+    public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
+        float diag = 0.4f * mass * mRadius * mRadius;
+        tensor.set(diag, 0.0f, 0.0f,
+                0.0f, diag, 0.0f,
+                0.0f, 0.0f, diag);
     }
 
     // Return the local bounds of the shape in x, y and z directions.
@@ -101,11 +105,9 @@ public class SphereShape extends CollisionShape {
         min.setZ(min.getX());
     }
 
-    // Test equality between two sphere shapes
     @Override
-    public boolean isEqualTo(CollisionShape otherCollisionShape) {
-        SphereShape otherShape = (SphereShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius);
+    public CollisionShape clone() {
+        return new SphereShape(this);
     }
 
 }
