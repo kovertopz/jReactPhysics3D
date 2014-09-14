@@ -198,9 +198,9 @@ public class HingeJoint extends Joint {
 
         // If the relative rotation axis and the hinge axis are pointing the same direction
         if (dotProduct >= 0.0f) {
-            hingeAngle = 2.0f * (float) Math.atan2(sinHalfAngleAbs, cosHalfAngle);
+            hingeAngle = 2.0f * Mathematics.ArcTan2(sinHalfAngleAbs, cosHalfAngle);
         } else {
-            hingeAngle = 2.0f * (float) Math.atan2(sinHalfAngleAbs, -cosHalfAngle);
+            hingeAngle = 2.0f * Mathematics.ArcTan2(sinHalfAngleAbs, -cosHalfAngle);
         }
 
         // Convert the angle from range [-2*pi; 2*pi] into the range [-pi; pi]
@@ -563,7 +563,7 @@ public class HingeJoint extends Joint {
                 // Compute the Lagrange multiplier lambda for the lower limit constraint
                 float deltaLambdaLower = mInverseMassMatrixLimitMotor * (-JvLowerLimit - mBLowerLimit);
                 float lambdaTemp = mImpulseLowerLimit;
-                mImpulseLowerLimit = (float) Math.max(mImpulseLowerLimit + deltaLambdaLower, 0.0f);
+                mImpulseLowerLimit = Math.max(mImpulseLowerLimit + deltaLambdaLower, 0.0f);
                 deltaLambdaLower = mImpulseLowerLimit - lambdaTemp;
 
                 if (mBody1.isMotionEnabled()) {
@@ -593,7 +593,7 @@ public class HingeJoint extends Joint {
                 // Compute the Lagrange multiplier lambda for the upper limit constraint
                 float deltaLambdaUpper = mInverseMassMatrixLimitMotor * (-JvUpperLimit - mBUpperLimit);
                 float lambdaTemp = mImpulseUpperLimit;
-                mImpulseUpperLimit = (float) Math.max(mImpulseUpperLimit + deltaLambdaUpper, 0.0f);
+                mImpulseUpperLimit = Math.max(mImpulseUpperLimit + deltaLambdaUpper, 0.0f);
                 deltaLambdaUpper = mImpulseUpperLimit - lambdaTemp;
 
                 if (mBody1.isMotionEnabled()) {

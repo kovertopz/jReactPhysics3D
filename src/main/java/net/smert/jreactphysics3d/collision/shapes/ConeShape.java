@@ -1,6 +1,7 @@
 package net.smert.jreactphysics3d.collision.shapes;
 
 import net.smert.jreactphysics3d.configuration.Defaults;
+import net.smert.jreactphysics3d.mathematics.Mathematics;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 
@@ -46,7 +47,7 @@ public class ConeShape extends CollisionShape {
         mHalfHeight = height * 0.5f;
 
         // Compute the sine of the semi-angle at the apex point
-        mSinTheta = mRadius / ((float) Math.sqrt(mRadius * mRadius + height * height));
+        mSinTheta = mRadius / (Mathematics.Sqrt(mRadius * mRadius + height * height));
     }
 
     // Return the radius
@@ -102,7 +103,7 @@ public class ConeShape extends CollisionShape {
         if (v.getY() > sinThetaTimesLengthV) {
             supportPoint = new Vector3(0.0f, mHalfHeight, 0.0f);
         } else {
-            float projectedLength = (float) Math.sqrt(v.getX() * v.getX() + v.getZ() * v.getZ());
+            float projectedLength = Mathematics.Sqrt(v.getX() * v.getX() + v.getZ() * v.getZ());
             if (projectedLength > Defaults.MACHINE_EPSILON) {
                 float d = mRadius / projectedLength;
                 supportPoint = new Vector3(v.getX() * d, -mHalfHeight, v.getZ() * d);

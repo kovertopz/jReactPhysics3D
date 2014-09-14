@@ -524,7 +524,7 @@ public class SliderJoint extends Joint {
                 // Compute the Lagrange multiplier lambda for the lower limit constraint
                 float deltaLambdaLower = mInverseMassMatrixLimit * (-JvLowerLimit - mBLowerLimit);
                 float lambdaTemp = mImpulseLowerLimit;
-                mImpulseLowerLimit = (float) Math.max(mImpulseLowerLimit + deltaLambdaLower, 0.0f);
+                mImpulseLowerLimit = Math.max(mImpulseLowerLimit + deltaLambdaLower, 0.0f);
                 deltaLambdaLower = mImpulseLowerLimit - lambdaTemp;
 
                 if (mBody1.isMotionEnabled()) {

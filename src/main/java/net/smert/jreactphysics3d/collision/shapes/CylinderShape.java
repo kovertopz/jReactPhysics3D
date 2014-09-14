@@ -1,6 +1,7 @@
 package net.smert.jreactphysics3d.collision.shapes;
 
 import net.smert.jreactphysics3d.configuration.Defaults;
+import net.smert.jreactphysics3d.mathematics.Mathematics;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 
@@ -90,7 +91,7 @@ public class CylinderShape extends CollisionShape {
         Vector3 supportPoint = new Vector3();
         float uDotv = direction.getY();
         Vector3 w = new Vector3(direction.getX(), 0.0f, direction.getZ());
-        float lengthW = (float) Math.sqrt(direction.getX() * direction.getX() + direction.getZ() * direction.getZ());
+        float lengthW = Mathematics.Sqrt(direction.getX() * direction.getX() + direction.getZ() * direction.getZ());
 
         if (lengthW > Defaults.MACHINE_EPSILON) {
             if (uDotv < 0.0f) {

@@ -7,6 +7,7 @@ import net.smert.jreactphysics3d.collision.narrowphase.GJK.Simplex;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.configuration.Defaults;
 import net.smert.jreactphysics3d.constraint.ContactPointInfo;
+import net.smert.jreactphysics3d.mathematics.Mathematics;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
 import net.smert.jreactphysics3d.mathematics.Transform;
@@ -158,7 +159,7 @@ public class EPAAlgorithm {
                 int minAxis = new Vector3(d).abs().getMinAxis();
 
                 // Compute sin(60)
-                float sin60 = (float) Math.sqrt(3.0f) * 0.5f;
+                float sin60 = Mathematics.Sqrt(3.0f) * 0.5f;
 
                 // Create a rotation quaternion to rotate the vector v1 to get the vectors
                 // v2 and v3

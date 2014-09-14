@@ -5,6 +5,7 @@ import net.smert.jreactphysics3d.collision.narrowphase.NarrowPhaseAlgorithm;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.configuration.Defaults;
 import net.smert.jreactphysics3d.constraint.ContactPointInfo;
+import net.smert.jreactphysics3d.mathematics.Mathematics;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Transform;
 import net.smert.jreactphysics3d.mathematics.Vector3;
@@ -188,7 +189,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
                 // Project those two points on the margins to have the closest points of both
                 // object with the margins
-                float dist = (float) Math.sqrt(distSquare);
+                float dist = Mathematics.Sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
                 pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)), new Vector3());
@@ -224,7 +225,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
                 // Project those two points on the margins to have the closest points of both
                 // object with the margins
-                float dist = (float) Math.sqrt(distSquare);
+                float dist = Mathematics.Sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
                 pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)), new Vector3());
@@ -258,7 +259,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
                 // Project those two points on the margins to have the closest points of both
                 // object with the margins
-                float dist = (float) Math.sqrt(distSquare);
+                float dist = Mathematics.Sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
                 pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)), new Vector3());
@@ -299,7 +300,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
 
                 // Project those two points on the margins to have the closest points of both
                 // object with the margins
-                float dist = (float) Math.sqrt(distSquare);
+                float dist = Mathematics.Sqrt(distSquare);
                 assert (dist > 0.0f);
                 pA = new Vector3(pA).subtract(new Vector3(v).multiply(collisionShape1.getMargin() / dist));
                 pB = new Transform(body2Tobody1).inverse().multiply(new Vector3(pB).add(new Vector3(v).multiply(collisionShape2.getMargin() / dist)), new Vector3());

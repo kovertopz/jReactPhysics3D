@@ -4,6 +4,7 @@ import java.util.Map;
 import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.configuration.Defaults;
 import net.smert.jreactphysics3d.constraint.ContactPoint;
+import net.smert.jreactphysics3d.mathematics.Mathematics;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 
@@ -309,7 +310,7 @@ public class ContactSolver {
     // Compute the mixed friction coefficient from the friction coefficient of each body
     private float computeMixedFrictionCoefficient(RigidBody body1, RigidBody body2) {
         // Use the geometric mean to compute the mixed friction coefficient
-        return (float) Math.sqrt(body1.getMaterial().getFrictionCoefficient()
+        return Mathematics.Sqrt(body1.getMaterial().getFrictionCoefficient()
                 * body2.getMaterial().getFrictionCoefficient());
     }
 
@@ -538,7 +539,7 @@ public class ContactSolver {
             if (mIsSolveFrictionAtContactManifoldCenterActive) {
 
                 internalManifold.frictionPointBody1.divide(internalManifold.nbContacts);
-                internalManifold.frictionPointBody2.divide((float) internalManifold.nbContacts);
+                internalManifold.frictionPointBody2.divide(internalManifold.nbContacts);
                 internalManifold.r1Friction.set(new Vector3(internalManifold.frictionPointBody1).subtract(x1));
                 internalManifold.r2Friction.set(new Vector3(internalManifold.frictionPointBody2).subtract(x2));
                 internalManifold.oldFrictionVector1.set(new Vector3(externalManifold.getFrictionVector1()));
