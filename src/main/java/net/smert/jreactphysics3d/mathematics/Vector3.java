@@ -162,7 +162,6 @@ public class Vector3 {
 
     // Assignment operator
     public final Vector3 set(Vector3 vector) {
-        assert (vector != this);
         x = vector.x;
         y = vector.y;
         z = vector.z;

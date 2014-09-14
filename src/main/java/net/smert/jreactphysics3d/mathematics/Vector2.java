@@ -137,7 +137,6 @@ public class Vector2 {
 
     // Assignment operator
     public final Vector2 set(Vector2 vector) {
-        assert (vector != this);
         x = vector.x;
         y = vector.y;
         return this;

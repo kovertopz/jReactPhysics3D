@@ -91,7 +91,6 @@ public class Transform {
 
     // Assignment operator
     public Transform set(Transform transform) {
-        assert (transform != this);
         orientation.set(transform.orientation);
         position.set(transform.position);
         return this;
@@ -99,14 +98,12 @@ public class Transform {
 
     // Set the rotation matrix of the transform
     public Transform setOrientation(Quaternion orientation) {
-        assert (orientation != this.orientation);
         this.orientation.set(orientation);
         return this;
     }
 
     // Set the origin of the transform
     public Transform setPosition(Vector3 position) {
-        assert (position != this.position);
         this.position.set(position);
         return this;
     }
