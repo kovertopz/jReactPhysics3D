@@ -7,12 +7,20 @@ package net.smert.jreactphysics3d.body;
  */
 public class BodyIndexPair {
 
-    public int first;
-    public int second;
+    private int first;
+    private int second;
 
     public BodyIndexPair(int first, int second) {
         this.first = first;
         this.second = second;
+    }
+
+    public int getFirst() {
+        return first;
+    }
+
+    public int getSecond() {
+        return second;
     }
 
     @Override
