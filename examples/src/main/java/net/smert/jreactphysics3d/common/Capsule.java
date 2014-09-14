@@ -123,7 +123,7 @@ public class Capsule extends Mesh {
     public void updateTransform() {
 
         // Get the interpolated transform of the rigid body
-        Transform transform = mRigidBody.getInterpolatedTransform();
+        Transform transform = mRigidBody.getInterpolatedTransform(new Transform());
 
         // Compute the transform used for rendering the sphere
         float[] matrix = new float[16];

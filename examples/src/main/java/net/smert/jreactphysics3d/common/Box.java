@@ -199,7 +199,7 @@ public class Box extends Object3D {
     public void updateTransform() {
 
         // Get the interpolated transform of the rigid body
-        Transform transform = mRigidBody.getInterpolatedTransform();
+        Transform transform = mRigidBody.getInterpolatedTransform(new Transform());
 
         // Compute the transform used for rendering the box
         float[] matrix = new float[16];

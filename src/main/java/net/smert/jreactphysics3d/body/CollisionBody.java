@@ -74,14 +74,14 @@ public class CollisionBody extends Body {
     }
 
     // Return the interpolated transform for rendering
-    public Transform getInterpolatedTransform() {
-        return Transform.Interpolate(mOldTransform, mTransform, mInterpolationFactor);
+    public Transform getInterpolatedTransform(Transform outTransform) {
+        return Transform.Interpolate(mOldTransform, mTransform, mInterpolationFactor, outTransform);
     }
 
     // Update the old transform with the current one.
     // This is used to compute the interpolated position and orientation of the body
     public void updateOldTransform() {
-        mOldTransform = new Transform(mTransform);
+        mOldTransform.set(mTransform);
     }
 
     // Set the interpolation factor of the body
