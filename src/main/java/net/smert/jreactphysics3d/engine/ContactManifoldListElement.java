@@ -8,15 +8,23 @@ package net.smert.jreactphysics3d.engine;
 public class ContactManifoldListElement {
 
     // Pointer to the actual contact manifold
-    public ContactManifold contactManifold;
+    private final ContactManifold contactManifold;
 
     // Next element of the list
-    public ContactManifoldListElement next;
+    private final ContactManifoldListElement next;
 
     // Constructor
-    public ContactManifoldListElement(ContactManifold initContactManifold, ContactManifoldListElement initNext) {
-        contactManifold = initContactManifold;
-        next = initNext;
+    public ContactManifoldListElement(ContactManifold contactManifold, ContactManifoldListElement next) {
+        this.contactManifold = contactManifold;
+        this.next = next;
+    }
+
+    public ContactManifold getContactManifold() {
+        return contactManifold;
+    }
+
+    public ContactManifoldListElement getNext() {
+        return next;
     }
 
 }
