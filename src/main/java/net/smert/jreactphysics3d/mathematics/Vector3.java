@@ -226,8 +226,9 @@ public class Vector3 {
         return this;
     }
 
-    public static void Lerp(Vector3 vector1, Vector3 vector2, float t, Vector3 vectorOut) {
-        vectorOut.set(vector1).multiply(1.0f - t).add(new Vector3(vector2).multiply(t));
+    public static void Lerp(Vector3 oldVector, Vector3 newVector, float t, Vector3 vectorOut) {
+        assert (t >= 0.0f && t <= 1.0f);
+        vectorOut.set(oldVector).multiply(1.0f - t).add(new Vector3(newVector).multiply(t));
     }
 
     @Override

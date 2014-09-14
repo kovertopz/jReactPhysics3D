@@ -13,9 +13,6 @@ import org.junit.Test;
  */
 public class TestTransform {
 
-    // Identity transform
-    private Transform mIdentityTransform;
-
     // First example transform
     private Transform mTransform1;
 
@@ -24,9 +21,6 @@ public class TestTransform {
 
     @Before
     public void beforeEachTest() {
-        mIdentityTransform = new Transform();
-        mIdentityTransform.identity();
-
         float sinA = (float) Math.sin(Defaults.PI / 8.0f);
         float cosA = (float) Math.cos(Defaults.PI / 8.0f);
         mTransform1 = new Transform(new Vector3(4, 5, 6), new Quaternion(sinA, sinA, sinA, cosA));
@@ -41,102 +35,112 @@ public class TestTransform {
         Assert.assertThat(new Transform(), CoreMatchers.instanceOf(Transform.class));
     }
 
-    @Test
     // Test the constructors
+    @Test
     public void testConstructors() {
 
-        Transform transform1 = new Transform(new Vector3(1, 2, 3), new Quaternion(6, 7, 8, 9));
+        Transform test1 = new Transform();
 
-        Assert.assertEquals(transform1.getPosition().equals(new Vector3(1, 2, 3)), true);
-        Assert.assertEquals(transform1.getOrientation().equals(new Quaternion(6, 7, 8, 9)), true);
+        Assert.assertEquals(test1.getOrientation().equals(new Quaternion(0, 0, 0, 1)), true);
+        Assert.assertEquals(test1.getPosition().equals(new Vector3(0, 0, 0)), true);
 
-        Transform transform2 = new Transform(new Vector3(4, 5, 6), new Matrix3x3(1, 0, 0, 0, 1, 0, 0, 0, 1));
+        Transform test2 = new Transform(new Vector3(4, 5, 6), new Matrix3x3(1, 0, 0, 0, 1, 0, 0, 0, 1));
 
-        Assert.assertEquals(transform2.getPosition().equals(new Vector3(4, 5, 6)), true);
-        Assert.assertEquals(transform2.getOrientation().equals(new Quaternion().identity()), true);
+        Assert.assertEquals(test2.getOrientation().equals(new Quaternion(0, 0, 0, 1)), true);
+        Assert.assertEquals(test2.getPosition().equals(new Vector3(4, 5, 6)), true);
 
-        Transform transform3 = new Transform(transform1);
+        Transform test3 = new Transform(new Vector3(1, 2, 3), new Quaternion(6, 7, 8, 9));
 
-        Assert.assertEquals(transform3.equals(transform1), true);
+        Assert.assertEquals(test3.getOrientation().equals(new Quaternion(6, 7, 8, 9)), true);
+        Assert.assertEquals(test3.getPosition().equals(new Vector3(1, 2, 3)), true);
+
+        Transform test4 = new Transform(test3);
+
+        Assert.assertEquals(test4.equals(test3), true);
     }
 
-    @Test
     // Test getter and setter
+    @Test
     public void testGetSet() {
 
-        Assert.assertEquals(mIdentityTransform.getPosition().equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(mIdentityTransform.getOrientation().equals(new Quaternion().identity()), true);
+        Transform test1 = new Transform();
+        test1.setOrientation(new Quaternion(6, 7, 8, 9));
+        test1.setPosition(new Vector3(1, 2, 3));
 
-        Transform transform = new Transform();
-        transform.setPosition(new Vector3(5, 7, 8));
-        transform.setOrientation(new Quaternion(1, 2, 3, 1));
+        Assert.assertEquals(test1.getOrientation().equals(new Quaternion(6, 7, 8, 9)), true);
+        Assert.assertEquals(test1.getPosition().equals(new Vector3(1, 2, 3)), true);
 
-        Assert.assertEquals(transform.getPosition().equals(new Vector3(5, 7, 8)), true);
-        Assert.assertEquals(transform.getOrientation().equals(new Quaternion(1, 2, 3, 1)), true);
+        Transform test2 = new Transform(new Vector3(4, 5, 6), new Quaternion(4, 3, 2, 1));
+        test2.set(test1);
 
-        transform.identity();
-
-        Assert.assertEquals(transform.getPosition().equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(transform.getOrientation().equals(new Quaternion().identity()), true);
+        Assert.assertEquals(test2.getOrientation().equals(new Quaternion(6, 7, 8, 9)), true);
+        Assert.assertEquals(test2.getPosition().equals(new Vector3(1, 2, 3)), true);
     }
 
+    // Test others methods
     @Test
-    // Test the inverse
-    public void testInverse() {
+    public void testOthersMethods() {
 
-        Transform inverseTransform = new Transform(mTransform1).inverse();
+        // Test the identity methods
+        Transform test1 = new Transform(new Vector3(1, 2, 3), new Quaternion(6, 7, 8, 9));
+        test1.identity();
+
+        Assert.assertEquals(test1.getOrientation().equals(new Quaternion(0, 0, 0, 1)), true);
+        Assert.assertEquals(test1.getPosition().equals(new Vector3(0, 0, 0)), true);
+
+        // Test the inverse
+        Transform test2 = new Transform(mTransform1);
+        test2.inverse();
+
         Vector3 vector = new Vector3(2, 3, 4);
-        Vector3 tempVector = mTransform1.multiply(vector, new Vector3());
-        Vector3 tempVector2 = inverseTransform.multiply(tempVector, new Vector3());
+        Vector3 vector1 = mTransform1.multiply(vector, new Vector3());
+        Vector3 vector2 = test2.multiply(vector1, new Vector3());
 
-        Assert.assertEquals(tempVector2.x, vector.x, 10e-6f);
-        Assert.assertEquals(tempVector2.y, vector.y, 10e-6f);
-        Assert.assertEquals(tempVector2.z, vector.z, 10e-6f);
-    }
+        Assert.assertEquals(vector2.x, vector.x, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(vector2.y, vector.y, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(vector2.z, vector.z, TestDefaults.FLOAT_EPSILON);
 
-    @Test
-    // Test methods to set and get transform matrix from and to OpenGL
-    public void testGetSetOpenGLMatrix() {
-
-        Transform transform = new Transform();
-        Vector3 position = mTransform1.getPosition();
-        Matrix3x3 orientation = new Matrix3x3();
-        mTransform1.getOrientation().getMatrix(orientation);
-        float[] openglMatrix = {orientation.m00, orientation.m10, orientation.m20, 0,
-            orientation.m01, orientation.m11, orientation.m21, 0,
-            orientation.m02, orientation.m12, orientation.m22, 0,
+        // Test methods to set and get transform matrix from and to OpenGL
+        Quaternion orientation = new Quaternion(6, 7, 8, 9).normalize();
+        Matrix3x3 rotation = orientation.getMatrix(new Matrix3x3());
+        Vector3 position = new Vector3(3, 4, 5);
+        float[] fromOpenglMatrix = {rotation.m00, rotation.m10, rotation.m20, 0,
+            rotation.m01, rotation.m11, rotation.m21, 0,
+            rotation.m02, rotation.m12, rotation.m22, 0,
             position.x, position.y, position.z, 1};
-        transform.fromOpenGL(openglMatrix);
-        float[] openglMatrix2 = new float[16];
-        transform.getOpenGLMatrix(openglMatrix2);
 
-        Assert.assertEquals(openglMatrix2[0], orientation.m00, 0);
-        Assert.assertEquals(openglMatrix2[1], orientation.m10, 0);
-        Assert.assertEquals(openglMatrix2[2], orientation.m20, 0);
-        Assert.assertEquals(openglMatrix2[3], 0, 0);
-        Assert.assertEquals(openglMatrix2[4], orientation.m01, 0);
-        Assert.assertEquals(openglMatrix2[5], orientation.m11, 0);
-        Assert.assertEquals(openglMatrix2[6], orientation.m21, 0);
-        Assert.assertEquals(openglMatrix2[7], 0, 0);
-        Assert.assertEquals(openglMatrix2[8], orientation.m02, 0);
-        Assert.assertEquals(openglMatrix2[9], orientation.m12, 0);
-        Assert.assertEquals(openglMatrix2[10], orientation.m22, 0);
-        Assert.assertEquals(openglMatrix2[11], 0, 0);
-        Assert.assertEquals(openglMatrix2[12], position.x, 0);
-        Assert.assertEquals(openglMatrix2[13], position.y, 0);
-        Assert.assertEquals(openglMatrix2[14], position.z, 0);
-        Assert.assertEquals(openglMatrix2[15], 1, 0);
-    }
+        Transform test3 = new Transform();
+        test3.fromOpenGL(fromOpenglMatrix);
 
-    @Test
-    // Test the method to interpolate transforms
-    public void testInterpolateTransform() {
+        Assert.assertEquals(test3.getOrientation().equals(orientation), true);
+        Assert.assertEquals(test3.getPosition().equals(position), true);
 
-        Transform transformStart = Transform.Interpolate(mTransform1, mTransform2, 0);
-        Transform transformEnd = Transform.Interpolate(mTransform1, mTransform2, 1);
+        float[] getOpenglMatrix = new float[16];
+        test3.getOpenGLMatrix(getOpenglMatrix);
 
-        Assert.assertEquals(transformStart.equals(mTransform1), true);
-        Assert.assertEquals(transformEnd.equals(mTransform2), true);
+        Assert.assertEquals(getOpenglMatrix[0], rotation.m00, 0);
+        Assert.assertEquals(getOpenglMatrix[1], rotation.m10, 0);
+        Assert.assertEquals(getOpenglMatrix[2], rotation.m20, 0);
+        Assert.assertEquals(getOpenglMatrix[3], 0, 0);
+        Assert.assertEquals(getOpenglMatrix[4], rotation.m01, 0);
+        Assert.assertEquals(getOpenglMatrix[5], rotation.m11, 0);
+        Assert.assertEquals(getOpenglMatrix[6], rotation.m21, 0);
+        Assert.assertEquals(getOpenglMatrix[7], 0, 0);
+        Assert.assertEquals(getOpenglMatrix[8], rotation.m02, 0);
+        Assert.assertEquals(getOpenglMatrix[9], rotation.m12, 0);
+        Assert.assertEquals(getOpenglMatrix[10], rotation.m22, 0);
+        Assert.assertEquals(getOpenglMatrix[11], 0, 0);
+        Assert.assertEquals(getOpenglMatrix[12], position.x, 0);
+        Assert.assertEquals(getOpenglMatrix[13], position.y, 0);
+        Assert.assertEquals(getOpenglMatrix[14], position.z, 0);
+        Assert.assertEquals(getOpenglMatrix[15], 1, 0);
+
+        // Test the method to interpolate transforms
+        Transform test4 = Transform.Interpolate(mTransform1, mTransform2, 0, new Transform());
+        Transform test5 = Transform.Interpolate(mTransform1, mTransform2, 1, new Transform());
+
+        Assert.assertEquals(test4.equals(mTransform1), true);
+        Assert.assertEquals(test5.equals(mTransform2), true);
 
         float sinA = (float) Math.sin(Defaults.PI / 3.0f);
         float cosA = (float) Math.cos(Defaults.PI / 3.0f);
@@ -144,57 +148,66 @@ public class TestTransform {
         float cosB = (float) Math.cos(Defaults.PI / 6.0f);
         Transform transform1 = new Transform(new Vector3(4, 5, 6), new Quaternion().identity());
         Transform transform2 = new Transform(new Vector3(8, 11, 16), new Quaternion(sinA, sinA, sinA, cosA));
-        Transform transform = Transform.Interpolate(transform1, transform2, 0.5f);
-        Vector3 position = transform.getPosition();
-        Quaternion orientation = transform.getOrientation();
 
+        Transform test6 = Transform.Interpolate(transform1, transform2, 0.5f, new Transform());
+        orientation = test6.getOrientation();
+        position = test6.getPosition();
+
+        Assert.assertEquals(orientation.w, cosB, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(orientation.x, sinB, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(orientation.y, sinB, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(orientation.z, sinB, TestDefaults.FLOAT_EPSILON);
         Assert.assertEquals(position.x, 6, 0);
         Assert.assertEquals(position.y, 8, 0);
         Assert.assertEquals(position.z, 11, 0);
-        Assert.assertEquals(orientation.x, sinB, 10e-6f);
-        Assert.assertEquals(orientation.y, sinB, 10e-6f);
-        Assert.assertEquals(orientation.z, sinB, 10e-6f);
-        Assert.assertEquals(orientation.w, cosB, 10e-6f);
+
+        // Test equality
+        Transform test7 = new Transform(test1);
+        Transform test8 = new Transform(test2);
+        Transform test9 = new Transform(test3);
+        Transform test10 = new Transform(test4);
+
+        Assert.assertEquals(test7.equals(test1), true);
+        Assert.assertEquals(test8.equals(test2), true);
+        Assert.assertEquals(test9.equals(test3), true);
+        Assert.assertEquals(test10.equals(test4), true);
+        Assert.assertEquals(mTransform1.equals(mTransform1), true);
+        Assert.assertEquals(test10.equals(test1), false);
+        Assert.assertEquals(test9.equals(test2), false);
+        Assert.assertEquals(test8.equals(test3), false);
+        Assert.assertEquals(test7.equals(test4), false);
+        Assert.assertEquals(mTransform1.equals(mTransform2), false);
     }
 
-    @Test
-    // Test the identity methods
-    public void testIdentity() {
-
-        Transform transform = new Transform().identity();
-
-        Assert.assertEquals(transform.getPosition().equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(transform.getOrientation().equals(new Quaternion().identity()), true);
-
-        Transform transform2 = new Transform(new Vector3(5, 6, 2), new Quaternion(3, 5, 1, 6));
-        transform2.identity();
-
-        Assert.assertEquals(transform2.getPosition().equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(transform2.getOrientation().equals(new Quaternion().identity()), true);
-    }
-
-    @Test
     // Test the overloaded operators
+    @Test
     public void testOperators() {
 
-        // Equality, inequality operator
-        Assert.assertEquals(mTransform1.equals(mTransform1), true);
-        Assert.assertEquals(mTransform1.equals(mTransform2), false);
+        // Test multiplication with a transform
+        Transform test1 = new Transform(mTransform1);
+        Transform test2 = new Transform();
+        test2.identity();
+        test1.multiply(test2);
 
-        // Assignment operator
-        Transform transform;
-        transform = mTransform1;
+        Assert.assertEquals(test1.equals(mTransform1), true);
 
-        Assert.assertEquals(transform.equals(mTransform1), true);
+        Transform test3 = new Transform(mTransform1);
+        Transform test4 = new Transform(mTransform2);
+        test4.inverse();
 
-        // Multiplication
-        Vector3 vector = new Vector3(7, 53, 5);
-        Vector3 vector2 = mTransform2.multiply(mTransform1.multiply(vector, new Vector3()), new Vector3());
-        Vector3 vector3 = new Transform(mTransform2).multiply(mTransform1).multiply(vector, new Vector3());
+        test3.multiply(mTransform2).multiply(test4);
+        Quaternion test3Orientation = test3.getOrientation();
+        Vector3 test3Position = test3.getPosition();
+        Quaternion orientation = mTransform1.getOrientation();
+        Vector3 position = mTransform1.getPosition();
 
-        Assert.assertEquals(vector2.x, vector3.x, 10e-6f);
-        Assert.assertEquals(vector2.y, vector3.y, 10e-6f);
-        Assert.assertEquals(vector2.z, vector3.z, 10e-6f);
+        Assert.assertEquals(test3Orientation.w, orientation.w, 10e-5); // Raise tolerance
+        Assert.assertEquals(test3Orientation.x, orientation.x, 10e-5); // Raise tolerance
+        Assert.assertEquals(test3Orientation.y, orientation.y, 10e-5); // Raise tolerance
+        Assert.assertEquals(test3Orientation.z, orientation.z, 10e-5); // Raise tolerance
+        Assert.assertEquals(test3Position.x, position.x, 10e-5); // Raise tolerance
+        Assert.assertEquals(test3Position.y, position.y, 10e-5); // Raise tolerance
+        Assert.assertEquals(test3Position.z, position.z, 10e-5); // Raise tolerance
     }
 
 }

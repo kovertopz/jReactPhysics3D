@@ -141,12 +141,15 @@ public class Transform {
     }
 
     // Return an interpolated transform
-    public static Transform Interpolate(Transform oldTransform, Transform newTransform, float interpolationFactor) {
+    public static Transform Interpolate(Transform oldTransform, Transform newTransform, float interpolationFactor, Transform outTransform) {
+        assert (interpolationFactor >= 0.0f && interpolationFactor <= 1.0f);
         Quaternion interOrientation = new Quaternion();
         Vector3 interPosition = new Vector3();
         Quaternion.Slerp(oldTransform.orientation, newTransform.orientation, interpolationFactor, interOrientation);
         Vector3.Lerp(oldTransform.position, newTransform.position, interpolationFactor, interPosition);
-        return new Transform(interPosition, interOrientation);
+        outTransform.setOrientation(interOrientation);
+        outTransform.setPosition(interPosition);
+        return outTransform;
     }
 
     @Override

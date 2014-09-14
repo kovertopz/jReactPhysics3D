@@ -176,8 +176,8 @@ public class TestVector2 {
         test2.setUnitOrthogonal();
         test3.setUnitOrthogonal();
 
-        Assert.assertEquals(test2.x, -0.96f, TestDefaults.FLOAT_EPSILON);
-        Assert.assertEquals(test2.y, 0.28f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test2.x, -0.96f, 0);
+        Assert.assertEquals(test2.y, 0.28f, 0);
         Assert.assertEquals(test3.x, -0.985622f, TestDefaults.FLOAT_EPSILON);
         Assert.assertEquals(test3.y, 0.168963f, TestDefaults.FLOAT_EPSILON);
 

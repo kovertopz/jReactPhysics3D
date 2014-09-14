@@ -2,7 +2,6 @@ package net.smert.jreactphysics3d.mathematics;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -12,104 +11,143 @@ import org.junit.Test;
  */
 public class TestVector3 {
 
-    // Zero vector
-    private Vector3 mVectorZero;
-
-    // Vector (3, 4, 5)
-    private Vector3 mVector345;
-
-    @Before
-    public void beforeEachTest() {
-        mVectorZero = new Vector3(0, 0, 0);
-        mVector345 = new Vector3(3, 4, 5);
-    }
-
     @Test
     public void testClassExists() {
         Assert.assertThat(new Vector3(), CoreMatchers.instanceOf(Vector3.class));
     }
 
+    // Test the constructors
     @Test
-    // Test the constructors, getter and setter
     public void testConstructors() {
 
-        // Test constructor
-        Assert.assertEquals(mVectorZero.x, 0, 0);
-        Assert.assertEquals(mVectorZero.y, 0, 0);
-        Assert.assertEquals(mVectorZero.z, 0, 0);
-        Assert.assertEquals(mVector345.x, 3, 0);
-        Assert.assertEquals(mVector345.y, 4, 0);
-        Assert.assertEquals(mVector345.z, 5, 0);
+        Vector3 test1 = new Vector3();
 
-        // Test copy-constructor
-        Vector3 newVector = new Vector3(mVector345);
+        Assert.assertEquals(test1.x, 0, 0);
+        Assert.assertEquals(test1.y, 0, 0);
+        Assert.assertEquals(test1.z, 0, 0);
 
-        Assert.assertEquals(newVector.x, 3, 0);
-        Assert.assertEquals(newVector.y, 4, 0);
-        Assert.assertEquals(newVector.z, 5, 0);
+        Vector3 test2 = new Vector3(3, 4, 5);
 
-        // Test method to set values
-        Vector3 newVector2 = new Vector3();
-        newVector2.set(6.1f, 7.2f, 8.6f);
+        Assert.assertEquals(test2.x, 3, 0);
+        Assert.assertEquals(test2.y, 4, 0);
+        Assert.assertEquals(test2.z, 5, 0);
 
-        Assert.assertEquals(newVector2.x, 6.1f, 0);
-        Assert.assertEquals(newVector2.y, 7.2f, 0);
-        Assert.assertEquals(newVector2.z, 8.6f, 0);
+        Vector3 vector = new Vector3(8, 15, -5);
+        Vector3 test3 = new Vector3(vector);
 
-        // Test method to set to zero
-        newVector2.zero();
-
-        Assert.assertEquals(newVector2.equals(new Vector3(0, 0, 0)), true);
+        Assert.assertEquals(test3.x, 8, 0);
+        Assert.assertEquals(test3.y, 15, 0);
+        Assert.assertEquals(test3.z, -5, 0);
     }
 
+    // Test the getter and setter methods
     @Test
+    public void testGetSet() {
+
+        // Test method to set all the values
+        Vector3 test1 = new Vector3();
+        test1.set(4, -4, 88);
+
+        Assert.assertEquals(test1.x, 4, 0);
+        Assert.assertEquals(test1.y, -4, 0);
+        Assert.assertEquals(test1.z, 88, 0);
+
+        // Test method to set all values to another vector
+        Vector3 test2 = new Vector3(23, 42, -4);
+        test1.set(test2);
+
+        Assert.assertEquals(test1.x, 23, 0);
+        Assert.assertEquals(test1.y, 42, 0);
+        Assert.assertEquals(test1.z, -4, 0);
+
+        test1.setX(10);
+        test1.setY(-10);
+        test1.setZ(3);
+
+        Assert.assertEquals(test1.x, 10, 0);
+        Assert.assertEquals(test1.y, -10, 0);
+        Assert.assertEquals(test1.z, 3, 0);
+
+        test1.setX(3);
+        test1.setY(18);
+        test1.setZ(33);
+
+        Assert.assertEquals(test1.getX(), 3, 0);
+        Assert.assertEquals(test1.getY(), 18, 0);
+        Assert.assertEquals(test1.getZ(), 33, 0);
+        Assert.assertEquals(test1.get(0), 3, 0);
+        Assert.assertEquals(test1.get(1), 18, 0);
+        Assert.assertEquals(test1.get(2), 33, 0);
+    }
+
     // Test the length, unit vector and normalize methods
+    @Test
     public void testLengthMethods() {
 
+        Vector3 test1 = new Vector3();
+        Vector3 test2 = new Vector3(1, 0, 0);
+        Vector3 test3 = new Vector3(0, 1, 0);
+        Vector3 test4 = new Vector3(0, 0, 1);
+        Vector3 test5 = new Vector3(3, 4, 5);
+
         // Test length methods
-        Assert.assertEquals(mVectorZero.length(), 0, 0);
-        Assert.assertEquals(mVectorZero.lengthSquare(), 0, 0);
-        Assert.assertEquals(new Vector3(1, 0, 0).length(), 1, 0);
-        Assert.assertEquals(new Vector3(0, 1, 0).length(), 1, 0);
-        Assert.assertEquals(new Vector3(0, 0, 1).length(), 1, 0);
-        Assert.assertEquals(mVector345.lengthSquare(), 50, 0);
-
-        // Test unit vector methods
-        Assert.assertEquals(new Vector3(1, 0, 0).isUnit(), true);
-        Assert.assertEquals(new Vector3(0, 1, 0).isUnit(), true);
-        Assert.assertEquals(new Vector3(0, 0, 1).isUnit(), true);
-        Assert.assertEquals(!mVector345.isUnit(), true);
-        Assert.assertEquals(new Vector3(5, 0, 0).normalize().equals(new Vector3(1, 0, 0)), true);
-        Assert.assertEquals(new Vector3(0, 5, 0).normalize().equals(new Vector3(0, 1, 0)), true);
-        Assert.assertEquals(new Vector3(0, 0, 5).normalize().equals(new Vector3(0, 0, 1)), true);
-
-        Assert.assertEquals(!mVector345.isZero(), true);
-        Assert.assertEquals(mVectorZero.isZero(), true);
+        Assert.assertEquals(test1.length(), 0, 0);
+        Assert.assertEquals(test1.lengthSquare(), 0, 0);
+        Assert.assertEquals(test2.length(), 1, 0);
+        Assert.assertEquals(test3.length(), 1, 0);
+        Assert.assertEquals(test4.length(), 1, 0);
+        Assert.assertEquals(test5.length(), 7.071068f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test5.lengthSquare(), 50, 0);
 
         // Test normalization method
-        Vector3 mVector100 = new Vector3(1, 0, 0);
-        Vector3 mVector010 = new Vector3(0, 1, 0);
-        Vector3 mVector001 = new Vector3(0, 0, 1);
-        Vector3 mVector500 = new Vector3(5, 0, 0);
-        Vector3 mVector050 = new Vector3(0, 5, 0);
-        Vector3 mVector005 = new Vector3(0, 0, 5);
-        mVector100.normalize();
-        mVector010.normalize();
-        mVector001.normalize();
-        mVector500.normalize();
-        mVector050.normalize();
-        mVector005.normalize();
+        Vector3 test6 = new Vector3(5, 0, 0);
+        Vector3 test7 = new Vector3(0, -5, 0);
+        Vector3 test8 = new Vector3(0, 0, 5);
+        test2.normalize();
+        test3.normalize();
+        test4.normalize();
+        test6.normalize();
+        test7.normalize();
+        test8.normalize();
 
-        Assert.assertEquals(mVector100.equals(new Vector3(1, 0, 0)), true);
-        Assert.assertEquals(mVector010.equals(new Vector3(0, 1, 0)), true);
-        Assert.assertEquals(mVector001.equals(new Vector3(0, 0, 1)), true);
-        Assert.assertEquals(mVector500.equals(new Vector3(1, 0, 0)), true);
-        Assert.assertEquals(mVector050.equals(new Vector3(0, 1, 0)), true);
-        Assert.assertEquals(mVector005.equals(new Vector3(0, 0, 1)), true);
+        Assert.assertEquals(test2.x, 1, 0);
+        Assert.assertEquals(test2.y, 0, 0);
+        Assert.assertEquals(test2.z, 0, 0);
+        Assert.assertEquals(test3.x, 0, 0);
+        Assert.assertEquals(test3.y, 1, 0);
+        Assert.assertEquals(test3.z, 0, 0);
+        Assert.assertEquals(test4.x, 0, 0);
+        Assert.assertEquals(test4.y, 0, 0);
+        Assert.assertEquals(test4.z, 1, 0);
+        Assert.assertEquals(test6.x, 1, 0);
+        Assert.assertEquals(test6.y, 0, 0);
+        Assert.assertEquals(test6.z, 0, 0);
+        Assert.assertEquals(test7.x, 0, 0);
+        Assert.assertEquals(test7.y, -1, 0);
+        Assert.assertEquals(test7.z, 0, 0);
+        Assert.assertEquals(test8.x, 0, 0);
+        Assert.assertEquals(test8.y, 0, 0);
+        Assert.assertEquals(test8.z, 1, 0);
+
+        // Test unit vector methods
+        Assert.assertEquals(test2.isUnit(), true);
+        Assert.assertEquals(test3.isUnit(), true);
+        Assert.assertEquals(test4.isUnit(), true);
+        Assert.assertEquals(test5.isUnit(), false);
+        Assert.assertEquals(test6.isUnit(), true);
+        Assert.assertEquals(test7.isUnit(), true);
+        Assert.assertEquals(test8.isUnit(), true);
+
+        // Test zero vector methods
+        Assert.assertEquals(test1.isZero(), true);
+        Assert.assertEquals(test5.isZero(), false);
+        Assert.assertEquals(test6.isZero(), false);
+        Assert.assertEquals(test7.isZero(), false);
+        Assert.assertEquals(test8.isZero(), false);
     }
 
-    @Test
     // Test the dot and cross products
+    @Test
     public void testDotCrossProducts() {
 
         // Test the dot product
@@ -122,79 +160,190 @@ public class TestVector3 {
         Assert.assertEquals(new Vector3(4, 3, 2).dot(new Vector3(8, 9, 10)), 79, 0);
 
         // Test the cross product
-        Assert.assertEquals(new Vector3(0, 0, 0).cross(new Vector3(0, 0, 0)).equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(new Vector3(6, 7, 2).cross(new Vector3(6, 7, 2)).equals(new Vector3(0, 0, 0)), true);
-        Assert.assertEquals(new Vector3(1, 0, 0).cross(new Vector3(0, 1, 0)).equals(new Vector3(0, 0, 1)), true);
-        Assert.assertEquals(new Vector3(0, 1, 0).cross(new Vector3(0, 0, 1)).equals(new Vector3(1, 0, 0)), true);
-        Assert.assertEquals(new Vector3(0, 0, 1).cross(new Vector3(0, 1, 0)).equals(new Vector3(-1, 0, 0)), true);
-        Assert.assertEquals(new Vector3(4, 7, 24).cross(new Vector3(8, 13, 11)).equals(new Vector3(-235, 148, -4)), true);
-        Assert.assertEquals(new Vector3(-4, 42, -2).cross(new Vector3(35, 7, -21)).equals(new Vector3(-868, -154, -1498)), true);
+        Vector3 test1 = new Vector3();
+        Vector3 test2 = new Vector3();
+        test1.cross(test2);
+
+        Assert.assertEquals(test1.x, 0, 0);
+        Assert.assertEquals(test1.y, 0, 0);
+        Assert.assertEquals(test1.z, 0, 0);
+
+        Vector3 test3 = new Vector3(6, 7, 2);
+        Vector3 test4 = new Vector3(6, 7, 2);
+        test3.cross(test4);
+
+        Assert.assertEquals(test3.x, 0, 0);
+        Assert.assertEquals(test3.y, 0, 0);
+        Assert.assertEquals(test3.z, 0, 0);
+
+        Vector3 test5 = new Vector3(1, 0, 0);
+        Vector3 test6 = new Vector3(0, 1, 0);
+        test5.cross(test6);
+
+        Assert.assertEquals(test5.x, 0, 0);
+        Assert.assertEquals(test5.y, 0, 0);
+        Assert.assertEquals(test5.z, 1, 0);
+
+        Vector3 test7 = new Vector3(0, 1, 0);
+        Vector3 test8 = new Vector3(0, 0, 1);
+        test7.cross(test8);
+
+        Assert.assertEquals(test7.x, 1, 0);
+        Assert.assertEquals(test7.y, 0, 0);
+        Assert.assertEquals(test7.z, 0, 0);
+
+        Vector3 test9 = new Vector3(0, 0, 1);
+        Vector3 test10 = new Vector3(0, 1, 0);
+        test9.cross(test10);
+
+        Assert.assertEquals(test9.x, -1, 0);
+        Assert.assertEquals(test9.y, 0, 0);
+        Assert.assertEquals(test9.z, 0, 0);
+
+        Vector3 test11 = new Vector3(4, 7, 24);
+        Vector3 test12 = new Vector3(8, 13, 11);
+        test11.cross(test12);
+
+        Assert.assertEquals(test11.x, -235, 0);
+        Assert.assertEquals(test11.y, 148, 0);
+        Assert.assertEquals(test11.z, -4, 0);
+
+        Vector3 test13 = new Vector3(-4, 42, -2);
+        Vector3 test14 = new Vector3(35, 7, -21);
+        test13.cross(test14);
+
+        Assert.assertEquals(test13.x, -868, 0);
+        Assert.assertEquals(test13.y, -154, 0);
+        Assert.assertEquals(test13.z, -1498, 0);
     }
 
-    @Test
     // Test others methods
+    @Test
     public void testOthersMethods() {
 
         // Test the method that returns the absolute vector
-        Assert.assertEquals(new Vector3(4, 5, 6).abs().equals(new Vector3(4, 5, 6)), true);
-        Assert.assertEquals(new Vector3(-7, -24, -12).abs().equals(new Vector3(7, 24, 12)), true);
+        Vector3 test1 = new Vector3(4, 5, 6);
+        Vector3 test2 = new Vector3(-7, -24, -12);
+        test1.abs();
+        test2.abs();
+
+        Assert.assertEquals(test1.x, 4, 0);
+        Assert.assertEquals(test1.y, 5, 0);
+        Assert.assertEquals(test1.z, 6, 0);
+
+        Assert.assertEquals(test2.x, 7, 0);
+        Assert.assertEquals(test2.y, 24, 0);
+        Assert.assertEquals(test2.z, 12, 0);
 
         // Test the method that returns the minimal element
-        Assert.assertEquals(new Vector3(6, 35, 82).getMinAxis(), 0, 0);
-        Assert.assertEquals(new Vector3(564, 45, 532).getMinAxis(), 1, 0);
-        Assert.assertEquals(new Vector3(98, 23, 3).getMinAxis(), 2, 0);
-        Assert.assertEquals(new Vector3(-53, -25, -63).getMinAxis(), 2, 0);
+        Vector3 test3 = new Vector3(6, 35, 82);
+        Vector3 test4 = new Vector3(564, 45, 532);
+        Vector3 test5 = new Vector3(98, 23, 3);
+        Vector3 test6 = new Vector3(-53, -25, -63);
+
+        Assert.assertEquals(test3.getMinAxis(), 0, 0);
+        Assert.assertEquals(test4.getMinAxis(), 1, 0);
+        Assert.assertEquals(test5.getMinAxis(), 2, 0);
+        Assert.assertEquals(test6.getMinAxis(), 2, 0);
 
         // Test the method that returns the maximal element
-        Assert.assertEquals(new Vector3(6, 35, 82).getMaxAxis(), 2, 0);
-        Assert.assertEquals(new Vector3(7, 533, 36).getMaxAxis(), 1, 0);
-        Assert.assertEquals(new Vector3(98, 23, 3).getMaxAxis(), 0, 0);
-        Assert.assertEquals(new Vector3(-53, -25, -63).getMaxAxis(), 1, 0);
+        Vector3 test7 = new Vector3(6, 35, 82);
+        Vector3 test8 = new Vector3(7, 533, 36);
+        Vector3 test9 = new Vector3(98, 23, 3);
+        Vector3 test10 = new Vector3(-53, -25, -63);
+
+        Assert.assertEquals(test7.getMaxAxis(), 2, 0);
+        Assert.assertEquals(test8.getMaxAxis(), 1, 0);
+        Assert.assertEquals(test9.getMaxAxis(), 0, 0);
+        Assert.assertEquals(test10.getMaxAxis(), 1, 0);
+
+        // Test zero
+        test1.zero();
+
+        Assert.assertEquals(test1.x, 0, 0);
+        Assert.assertEquals(test1.y, 0, 0);
+        Assert.assertEquals(test1.z, 0, 0);
+
+        test2.setUnitOrthogonal();
+        test3.setUnitOrthogonal();
+        test4.setUnitOrthogonal();
+        test5.setUnitOrthogonal();
+        test6.setUnitOrthogonal();
+
+        Assert.assertEquals(test2.x, 0, 0);
+        Assert.assertEquals(test2.y, -0.4472136f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test2.z, 0.8944272f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test3.x, 0, 0);
+        Assert.assertEquals(test3.y, -0.9197242f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test3.z, 0.3925652f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test4.x, -0.6861689f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test4.y, 0, 0);
+        Assert.assertEquals(test4.z, 0.7274422f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test5.x, -0.2284856f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test5.y, 0.9735473f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test5.z, 0, 0);
+        Assert.assertEquals(test6.x, 0.765226f, TestDefaults.FLOAT_EPSILON);
+        Assert.assertEquals(test6.y, 0, 0);
+        Assert.assertEquals(test6.z, -0.6437616f, TestDefaults.FLOAT_EPSILON);
+
+        // Test equality
+        Vector3 test11 = new Vector3(test7);
+        Vector3 test12 = new Vector3(test8);
+        Vector3 test13 = new Vector3(test9);
+        Vector3 test14 = new Vector3(test10);
+
+        Assert.assertEquals(test7.equals(test11), true);
+        Assert.assertEquals(test8.equals(test12), true);
+        Assert.assertEquals(test9.equals(test13), true);
+        Assert.assertEquals(test10.equals(test14), true);
+        Assert.assertEquals(test10.equals(test11), false);
+        Assert.assertEquals(test9.equals(test12), false);
+        Assert.assertEquals(test8.equals(test13), false);
+        Assert.assertEquals(test7.equals(test14), false);
     }
 
-    @Test
     // Test the operators
+    @Test
     public void testOperators() {
 
-        // Test the [] operator
-        Assert.assertEquals(mVector345.get(0), 3, 0);
-        Assert.assertEquals(mVector345.get(1), 4, 0);
-        Assert.assertEquals(mVector345.get(2), 5, 0);
+        Vector3 vector1 = new Vector3(63, 24, 5);
+        Vector3 vector2 = new Vector3(3, 4, 2);
 
-        // Assignment operator
-        Vector3 newVector = new Vector3(6, 4, 2);
-        newVector = new Vector3(7, 8, 9);
+        // Test addition
+        Vector3 addition = new Vector3(vector1);
+        addition.add(vector2);
 
-        Assert.assertEquals(newVector.equals(new Vector3(7, 8, 9)), true);
+        Assert.assertEquals(addition.equals(new Vector3(66, 28, 7)), true);
 
-        // Addition, substraction
-        Assert.assertEquals(new Vector3(63, 24, 5).add(new Vector3(3, 4, 2)).equals(new Vector3(66, 28, 7)), true);
-        Assert.assertEquals(new Vector3(63, 24, 5).subtract(new Vector3(3, 4, 2)).equals(new Vector3(60, 20, 3)), true);
+        // Test substraction
+        Vector3 subtraction = new Vector3(vector1);
+        subtraction.subtract(vector2);
 
-        Vector3 vector1 = new Vector3(6, 33, 62);
-        Vector3 vector2 = new Vector3(7, 68, 35);
-        vector1.add(new Vector3(5, 10, 12));
-        vector2.subtract(new Vector3(10, 21, 5));
+        Assert.assertEquals(subtraction.equals(new Vector3(60, 20, 3)), true);
 
-        Assert.assertEquals(vector1.equals(new Vector3(11, 43, 74)), true);
-        Assert.assertEquals(vector2.equals(new Vector3(-3, 47, 30)), true);
+        // Test negative operator
+        Vector3 negative = new Vector3(vector1);
+        negative.invert();
 
-        // Multiplication, division
-        Assert.assertEquals(new Vector3(63, 24, 5).multiply(3).equals(new Vector3(189, 72, 15)), true);
-        Assert.assertEquals(new Vector3(14, 8, 50).divide(2).equals(new Vector3(7, 4, 25)), true);
+        Assert.assertEquals(negative.equals(new Vector3(-63, -24, -5)), true);
 
-        Vector3 vector3 = new Vector3(6, 33, 62);
-        Vector3 vector4 = new Vector3(15, 60, 33);
-        vector3.multiply(10);
-        vector4.divide(3);
+        // Test multiplication with a number
+        Vector3 multiplication1 = new Vector3(vector1);
+        multiplication1.multiply(3);
+        Vector3 multiplication2 = new Vector3(6, 33, 62);
+        multiplication2.multiply(10);
 
-        Assert.assertEquals(vector3.equals(new Vector3(60, 330, 620)), true);
-        Assert.assertEquals(vector4.equals(new Vector3(5, 20, 11)), true);
+        Assert.assertEquals(multiplication1.equals(new Vector3(189, 72, 15)), true);
+        Assert.assertEquals(multiplication2.equals(new Vector3(60, 330, 620)), true);
 
-        // Negative operator
-        Vector3 vector5 = new Vector3(-34, 5, 422).invert();
+        // Test division with a number
+        Vector3 division1 = new Vector3(14, 8, 50);
+        division1.divide(2);
+        Vector3 division2 = new Vector3(15, 60, 33);
+        division2.divide(3);
 
-        Assert.assertEquals(vector5.equals(new Vector3(34, -5, -422)), true);
+        Assert.assertEquals(division1.equals(new Vector3(7, 4, 25)), true);
+        Assert.assertEquals(division2.equals(new Vector3(5, 20, 11)), true);
     }
 
 }

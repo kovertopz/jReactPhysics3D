@@ -349,15 +349,15 @@ public class Quaternion {
 
     // Compute the spherical linear interpolation between two quaternions.
     // The t argument has to be such that 0 <= t <= 1. This method is static.
-    public static void Slerp(Quaternion quaternion1, Quaternion quaternion2, float t, Quaternion quaternionOut) {
+    public static void Slerp(Quaternion oldQuaternion, Quaternion newQuaternion2, float t, Quaternion quaternionOut) {
 
         assert (t >= 0.0f && t <= 1.0f);
 
         float invert = 1.0f;
-        Quaternion tempQ2 = new Quaternion(quaternion2);
+        Quaternion tempQ2 = new Quaternion(newQuaternion2);
 
         // Compute cos(theta) using the quaternion scalar product
-        float cosineTheta = quaternion1.dot(quaternion2);
+        float cosineTheta = oldQuaternion.dot(newQuaternion2);
 
         // Take care of the sign of cosineTheta
         if (cosineTheta < 0.0f) {
@@ -370,7 +370,7 @@ public class Quaternion {
         // sin((1-t)*theta) as (1-t) and sin(t*theta) as t
         float epsilon = 0.00001f;
         if (1 - cosineTheta < epsilon) {
-            quaternionOut.set(quaternion1).multiply(1.0f - t).add(tempQ2.multiply(t * invert));
+            quaternionOut.set(oldQuaternion).multiply(1.0f - t).add(tempQ2.multiply(t * invert));
             return;
         }
 
@@ -385,7 +385,7 @@ public class Quaternion {
         float coeff2 = Mathematics.Sin(t * theta) / sineTheta * invert;
 
         // Compute and return the interpolated quaternion
-        quaternionOut.set(quaternion1).multiply(coeff1).add(tempQ2.multiply(coeff2));
+        quaternionOut.set(oldQuaternion).multiply(coeff1).add(tempQ2.multiply(coeff2));
     }
 
     @Override
