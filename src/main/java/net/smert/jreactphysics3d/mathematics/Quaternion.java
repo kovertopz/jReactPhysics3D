@@ -166,14 +166,14 @@ public class Quaternion {
     public Quaternion inverse() {
 
         // Get the square length of the quaternion
-        float lengthSquareQuaternion = lengthSquare();
-        assert (lengthSquareQuaternion > Defaults.MACHINE_EPSILON);
+        float lenSq = lengthSquare();
+        assert (lenSq > Defaults.MACHINE_EPSILON);
 
         // Compute and return the inverse quaternion
-        x /= -lengthSquareQuaternion;
-        y /= -lengthSquareQuaternion;
-        z /= -lengthSquareQuaternion;
-        w /= lengthSquareQuaternion;
+        x /= -lenSq;
+        y /= -lenSq;
+        z /= -lenSq;
+        w /= lenSq;
         return this;
     }
 
