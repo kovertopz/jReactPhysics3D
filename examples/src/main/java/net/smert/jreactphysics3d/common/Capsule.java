@@ -62,7 +62,7 @@ public class Capsule extends Mesh {
         // Create the collision shape for the rigid body (sphere shape)
         // ReactPhysics3D will clone this object to create an internal one. Therefore,
         // it is OK if this object is destroyed right after calling Dynamics::createRigidBody()
-        CapsuleShape collisionShape = new CapsuleShape(mRadius, mHeight, 0);
+        CapsuleShape collisionShape = new CapsuleShape(mRadius, mHeight, 0.02f);
 
         // Compute the inertia tensor of the body using its collision shape
         Matrix3x3 inertiaTensor = new Matrix3x3();
