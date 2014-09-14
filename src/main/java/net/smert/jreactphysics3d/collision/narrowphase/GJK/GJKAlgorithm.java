@@ -155,7 +155,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
         Simplex simplex = new Simplex();
 
         // Get the previous point V (last cached separating axis)
-        Vector3 v = mCurrentOverlappingPair.previousSeparatingAxis;
+        Vector3 v = mCurrentOverlappingPair.getPreviousSeparatingAxis();
 
         // Initialize the upper bound for the square distance
         float distSquare = Defaults.DECIMAL_LARGEST;
@@ -175,7 +175,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
             if (vDotw > 0.0f && vDotw * vDotw > distSquare * marginSquare) {
 
                 // Cache the current separating axis for frame coherence
-                mCurrentOverlappingPair.previousSeparatingAxis = v;
+                mCurrentOverlappingPair.getPreviousSeparatingAxis().set(v);
 
                 // No intersection, we return false
                 return false;

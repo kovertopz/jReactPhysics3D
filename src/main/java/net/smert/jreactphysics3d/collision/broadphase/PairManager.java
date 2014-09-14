@@ -82,7 +82,7 @@ public class PairManager {
 
     // Return true if pair1 and pair2 are the same
     private boolean isDifferentPair(BodyPair pair1, int pair2ID1, int pair2ID2) {
-        return (pair2ID1 != pair1.body1.getID() || pair2ID2 != pair1.body2.getID());
+        return (pair2ID1 != pair1.getBody1().getID() || pair2ID2 != pair1.getBody2().getID());
     }
 
     // Look for a pair in the set of overlapping pairs
@@ -131,8 +131,8 @@ public class PairManager {
 
         // Recompute the hash table with the new hash values
         for (int i = 0; i < mNbOverlappingPairs; i++) {
-            int newHashValue = computeHashBodies(mOverlappingPairs[i].body1.getID(),
-                    mOverlappingPairs[i].body2.getID()) & mHashMask;
+            int newHashValue = computeHashBodies(mOverlappingPairs[i].getBody1().getID(),
+                    mOverlappingPairs[i].getBody2().getID()) & mHashMask;
             newOffsetNextPair[i] = mHashTable[newHashValue];
             mHashTable[newHashValue] = i;
         }
@@ -184,8 +184,8 @@ public class PairManager {
             // now free because of the pair we want to remove
             // Get the last pair
             BodyPair lastPair = mOverlappingPairs[indexLastPair];
-            int lastPairHashValue = computeHashBodies(lastPair.body1.getID(),
-                    lastPair.body2.getID()) & mHashMask;
+            int lastPairHashValue = computeHashBodies(lastPair.getBody1().getID(),
+                    lastPair.getBody2().getID()) & mHashMask;
 
             // Compute the initial offset of the last pair
             offset = mHashTable[lastPairHashValue];
@@ -342,8 +342,8 @@ public class PairManager {
             mOverlappingPairs[mNbOverlappingPairs] = new BodyPair();
         }
         BodyPair newPair = mOverlappingPairs[mNbOverlappingPairs];
-        newPair.body1 = body1;
-        newPair.body2 = body2;
+        newPair.setBody1(body1);
+        newPair.setBody2(body2);
 
         // Put the new pair as the initial pair with this hash value
         mOffsetNextPair[mNbOverlappingPairs] = mHashTable[hashValue];
@@ -378,8 +378,8 @@ public class PairManager {
             return false;
         }
 
-        assert (pair.body1.getID() == id1);
-        assert (pair.body2.getID() == id2);
+        assert (pair.getBody1().getID() == id1);
+        assert (pair.getBody2().getID() == id2);
 
         // Notify the collision detection about this removed overlapping pair
         mCollisionDetection.broadPhaseNotifyRemovedOverlappingPair(pair);

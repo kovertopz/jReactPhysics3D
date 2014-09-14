@@ -1147,7 +1147,7 @@ public class DynamicsWorld extends CollisionWorld {
         BodyIndexPair indexPair = addedPair.getBodiesIndexPair();
 
         // Add the pair into the set of overlapping pairs (if not there yet)
-        OverlappingPair newPair = new OverlappingPair(addedPair.body1, addedPair.body2);
+        OverlappingPair newPair = new OverlappingPair(addedPair.getBody1(), addedPair.getBody2());
         assert (newPair != null);
 
         OverlappingPair check = mOverlappingPairs.put(indexPair, newPair);

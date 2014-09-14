@@ -73,8 +73,8 @@ public class CollisionDetection {
             BroadPhasePair pair = (BroadPhasePair) pairs.getValue();
             assert (pair != null);
 
-            CollisionBody body1 = pair.body1;
-            CollisionBody body2 = pair.body2;
+            CollisionBody body1 = pair.getBody1();
+            CollisionBody body2 = pair.getBody2();
 
             // Update the contact cache of the overlapping pair
             mWorld.updateOverlappingPair(pair);
@@ -187,7 +187,7 @@ public class CollisionDetection {
         BodyIndexPair indexPair = addedPair.getBodiesIndexPair();
 
         // Create the corresponding broad-phase pair object
-        BroadPhasePair broadPhasePair = new BroadPhasePair(addedPair.body1, addedPair.body2);
+        BroadPhasePair broadPhasePair = new BroadPhasePair(addedPair.getBody1(), addedPair.getBody2());
         assert (broadPhasePair != null);
 
         // Add the pair into the set of overlapping pairs (if not there yet)
