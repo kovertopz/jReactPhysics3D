@@ -11,37 +11,22 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class AABB {
 
-    // Minimum world coordinates of the AABB on the x,y and z axis
-    private Vector3 mMinCoordinates;
-
     // Maximum world coordinates of the AABB on the x,y and z axis
-    private Vector3 mMaxCoordinates;
+    private final Vector3 mMaxCoordinates;
+
+    // Minimum world coordinates of the AABB on the x,y and z axis
+    private final Vector3 mMinCoordinates;
 
     // Constructor
     public AABB() {
-        mMinCoordinates = new Vector3();
         mMaxCoordinates = new Vector3();
+        mMinCoordinates = new Vector3();
     }
 
     // Constructor
     public AABB(Vector3 minCoordinates, Vector3 maxCoordinates) {
-        mMinCoordinates = minCoordinates;
         mMaxCoordinates = maxCoordinates;
-    }
-
-    // Return the center point of the AABB in world coordinates
-    public Vector3 getCenter() {
-        return new Vector3(mMinCoordinates).add(mMaxCoordinates).multiply(0.5f);
-    }
-
-    // Return the minimum coordinates of the AABB
-    public Vector3 getMin() {
-        return mMinCoordinates;
-    }
-
-    // Set the minimum coordinates of the AABB
-    public void setMin(Vector3 min) {
-        mMinCoordinates = min;
+        mMinCoordinates = minCoordinates;
     }
 
     // Return the maximum coordinates of the AABB
@@ -51,7 +36,22 @@ public class AABB {
 
     // Set the maximum coordinates of the AABB
     public void setMax(Vector3 max) {
-        mMaxCoordinates = max;
+        mMaxCoordinates.set(max);
+    }
+
+    // Return the minimum coordinates of the AABB
+    public Vector3 getMin() {
+        return mMinCoordinates;
+    }
+
+    // Set the minimum coordinates of the AABB
+    public void setMin(Vector3 min) {
+        mMinCoordinates.set(min);
+    }
+
+    // Return the center point of the AABB in world coordinates
+    public Vector3 getCenter() {
+        return new Vector3(mMinCoordinates).add(mMaxCoordinates).multiply(0.5f);
     }
 
     // Return true if the current AABB is overlapping with the AABB in argument.
@@ -60,10 +60,10 @@ public class AABB {
         if (mMaxCoordinates.getX() < aabb.mMinCoordinates.getX() || aabb.mMaxCoordinates.getX() < mMinCoordinates.getX()) {
             return false;
         }
-        if (mMaxCoordinates.getY() < aabb.mMinCoordinates.getY() || aabb.mMaxCoordinates.getY() < mMinCoordinates.getY()) {
+        if (mMaxCoordinates.getZ() < aabb.mMinCoordinates.getZ() || aabb.mMaxCoordinates.getZ() < mMinCoordinates.getZ()) {
             return false;
         }
-        return mMaxCoordinates.getZ() >= aabb.mMinCoordinates.getZ() && aabb.mMaxCoordinates.getZ() >= mMinCoordinates.getZ();
+        return mMaxCoordinates.getY() >= aabb.mMinCoordinates.getY() && aabb.mMaxCoordinates.getY() >= mMinCoordinates.getY();
     }
 
 }
