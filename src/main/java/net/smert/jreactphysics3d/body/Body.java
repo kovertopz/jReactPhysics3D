@@ -27,7 +27,7 @@ public abstract class Body {
 
     // Constructor
     public Body(int id) {
-        assert (id > 0);
+        assert (id >= 0);
         mIsActive = true;
         mIsAllowedToSleep = true;
         mIsAlreadyInIsland = false;
