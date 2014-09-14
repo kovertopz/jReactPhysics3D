@@ -12,13 +12,13 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class BroadPhasePair {
 
     // Pointer to the first body
-    public CollisionBody body1;
+    private final CollisionBody body1;
 
     // Pointer to the second body
-    public CollisionBody body2;
+    private final CollisionBody body2;
 
     // Previous cached separating axis
-    public Vector3 previousSeparatingAxis;
+    private final Vector3 previousSeparatingAxis;
 
     // Constructor
     public BroadPhasePair(CollisionBody body1, CollisionBody body2) {
@@ -32,24 +32,16 @@ public class BroadPhasePair {
         return ComputeBodiesIndexPair(body1, body2);
     }
 
-    // Smaller than operator
-    public boolean operatorLessThan(BroadPhasePair broadPhasePair2) {
-        return (body1.getID() < broadPhasePair2.body1.getID() ? true : (body2.getID() < broadPhasePair2.body2.getID()));
+    public CollisionBody getBody1() {
+        return body1;
     }
 
-    // Larger than operator
-    public boolean operatorGreaterThan(BroadPhasePair broadPhasePair2) {
-        return (body1.getID() > broadPhasePair2.body1.getID() ? true : (body2.getID() > broadPhasePair2.body2.getID()));
+    public CollisionBody getBody2() {
+        return body2;
     }
 
-    // Equal operator
-    public boolean operatorEquals(BroadPhasePair broadPhasePair2) {
-        return (body1.getID() == broadPhasePair2.body1.getID() && body2.getID() == broadPhasePair2.body2.getID());
-    }
-
-    // Not equal operator
-    public boolean operatorNotEquals(BroadPhasePair broadPhasePair2) {
-        return (body1 != broadPhasePair2.body1 || body2 != broadPhasePair2.body2);
+    public Vector3 getPreviousSeparatingAxis() {
+        return previousSeparatingAxis;
     }
 
     // Return the pair of bodies index
@@ -59,9 +51,7 @@ public class BroadPhasePair {
         BodyIndexPair indexPair = body1.getID() < body2.getID()
                 ? new BodyIndexPair(body1.getID(), body2.getID())
                 : new BodyIndexPair(body2.getID(), body1.getID());
-
-        assert (indexPair.first != indexPair.second);
-
+        assert (indexPair.getFirst() != indexPair.getSecond());
         return indexPair;
     }
 
