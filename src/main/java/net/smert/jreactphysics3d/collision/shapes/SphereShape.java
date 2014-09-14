@@ -18,8 +18,8 @@ public class SphereShape extends CollisionShape {
     private final float mRadius;
 
     // Constructor
-    public SphereShape(float radius) {
-        super(CollisionShapeType.SPHERE, radius);
+    public SphereShape(float radius, float margin) {
+        super(CollisionShapeType.SPHERE, radius + margin);
         assert (radius > 0.0f);
         mRadius = radius;
     }
@@ -62,14 +62,12 @@ public class SphereShape extends CollisionShape {
         if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
 
             // Return the support point of the sphere in the given direction
-            return new Vector3(direction).normalize().multiply(mMargin);
+            return new Vector3(direction).normalize().multiply(getMargin());
         }
-
-        assert (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON);
 
         // If the direction vector is the zero vector we return a point on the
         // boundary of the sphere
-        return new Vector3(0.0f, mMargin, 0.0f);
+        return new Vector3(0.0f, getMargin(), 0.0f);
     }
 
     // Return a local support point in a given direction without the object margin
@@ -95,12 +93,12 @@ public class SphereShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.setX(mRadius);
+        max.setX(mRadius + mMargin);
         max.setY(max.getX());
         max.setZ(max.getX());
 
         // Minimum bounds
-        min.setX(-mRadius);
+        min.setX(-mRadius - mMargin);
         min.setY(min.getX());
         min.setZ(min.getX());
     }

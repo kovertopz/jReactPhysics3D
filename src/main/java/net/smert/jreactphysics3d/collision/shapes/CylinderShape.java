@@ -27,10 +27,8 @@ public class CylinderShape extends CollisionShape {
     // Constructor
     public CylinderShape(float radius, float height, float margin) {
         super(CollisionShapeType.CYLINDER, margin);
-
         assert (height > 0.0f);
         assert (radius > 0.0f);
-
         mHalfHeight = height * 0.5f;
         mRadius = radius;
     }
@@ -67,13 +65,12 @@ public class CylinderShape extends CollisionShape {
         Vector3 supportPoint = getLocalSupportPointWithoutMargin(direction);
 
         // Add the margin to the support point
-        Vector3 unitVec = new Vector3(0.0f, 1.0f, 0.0f);
+        Vector3 unitDirection = new Vector3(0.0f, 1.0f, 0.0f);
         if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
-            unitVec = new Vector3(direction).normalize();
+            unitDirection.set(direction).normalize();
         }
-        supportPoint.add(unitVec.multiply(mMargin));
 
-        return supportPoint;
+        return supportPoint.add(unitDirection.multiply(mMargin));
     }
 
     // Return a local support point in a given direction without the object margin

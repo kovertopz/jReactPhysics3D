@@ -236,14 +236,14 @@ public class ConvexMeshShape extends CollisionShape {
         Vector3 supportPoint = getLocalSupportPointWithoutMargin(direction);
 
         // Get the unit direction vector
-        Vector3 unitDirection = direction;
-        if (direction.lengthSquare() < Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
-            unitDirection.set(1.0f, 1.0f, 1.0f);
+        Vector3 unitDirection = new Vector3(1.0f, 1.0f, 1.0f);
+        if (direction.lengthSquare() >= Defaults.MACHINE_EPSILON * Defaults.MACHINE_EPSILON) {
+            unitDirection.set(direction);
         }
         unitDirection.normalize();
 
         // Add the margin to the support point and return it
-        return new Vector3(supportPoint).add(unitDirection).multiply(mMargin);
+        return new Vector3(supportPoint).add(unitDirection.multiply(mMargin));
     }
 
     // Return a local support point in a given direction without the object margin.
@@ -338,8 +338,8 @@ public class ConvexMeshShape extends CollisionShape {
     // Return the local bounds of the shape in x, y and z directions
     @Override
     public void getLocalBounds(Vector3 min, Vector3 max) {
-        min.set(mMinBounds.getX(), mMinBounds.getY(), mMinBounds.getZ());
-        max.set(mMaxBounds.getX(), mMaxBounds.getY(), mMaxBounds.getZ());
+        min.set(mMinBounds);
+        max.set(mMaxBounds);
     }
 
     @Override

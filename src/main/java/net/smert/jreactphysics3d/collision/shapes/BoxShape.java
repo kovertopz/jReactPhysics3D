@@ -22,40 +22,35 @@ public class BoxShape extends CollisionShape {
     // Constructor
     public BoxShape(Vector3 extent, float margin) {
         super(CollisionShapeType.BOX, margin);
-
         assert (extent.getX() > 0.0f && extent.getX() > margin);
         assert (extent.getY() > 0.0f && extent.getY() > margin);
         assert (extent.getZ() > 0.0f && extent.getZ() > margin);
-
-        mExtent = new Vector3(extent).subtract(new Vector3(margin, margin, margin));
+        mExtent = new Vector3(extent);
     }
 
     // Copy-constructor
     public BoxShape(BoxShape shape) {
         super(shape);
-        mExtent = new Vector3();
-        mExtent.set(shape.mExtent.getX(), shape.mExtent.getY(), shape.mExtent.getZ());
+        mExtent = new Vector3(shape.mExtent);
     }
 
     // Return the extents of the box
     public Vector3 getExtent() {
-        return new Vector3(mExtent).add(new Vector3(mMargin, mMargin, mMargin));
+        return mExtent;
     }
 
     // Test equality between two box shapes
     @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         BoxShape otherShape = (BoxShape) otherCollisionShape;
-        return (mExtent.equals(otherShape.mExtent));
+        return mExtent.equals(otherShape.mExtent);
     }
 
     // Return a local support point in a given direction with the object margin
     @Override
     public Vector3 getLocalSupportPointWithMargin(Vector3 direction) {
-
-        assert (mMargin > 0.0f);
-
-        return new Vector3(direction.getX() < 0.0f ? -mExtent.getX() - mMargin : mExtent.getX() + mMargin,
+        return new Vector3(
+                direction.getX() < 0.0f ? -mExtent.getX() - mMargin : mExtent.getX() + mMargin,
                 direction.getY() < 0.0f ? -mExtent.getY() - mMargin : mExtent.getY() + mMargin,
                 direction.getZ() < 0.0f ? -mExtent.getZ() - mMargin : mExtent.getZ() + mMargin);
     }
@@ -63,8 +58,8 @@ public class BoxShape extends CollisionShape {
     // Return a local support point in a given direction without the objec margin
     @Override
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction) {
-
-        return new Vector3(direction.getX() < 0.0f ? -mExtent.getX() : mExtent.getX(),
+        return new Vector3(
+                direction.getX() < 0.0f ? -mExtent.getX() : mExtent.getX(),
                 direction.getY() < 0.0f ? -mExtent.getY() : mExtent.getY(),
                 direction.getZ() < 0.0f ? -mExtent.getZ() : mExtent.getZ());
     }
@@ -73,10 +68,9 @@ public class BoxShape extends CollisionShape {
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
-        Vector3 realExtent = new Vector3(mExtent).add(new Vector3(mMargin, mMargin, mMargin));
-        float xSquare = realExtent.getX() * realExtent.getX();
-        float ySquare = realExtent.getY() * realExtent.getY();
-        float zSquare = realExtent.getZ() * realExtent.getZ();
+        float xSquare = mExtent.getX() * mExtent.getX();
+        float ySquare = mExtent.getY() * mExtent.getY();
+        float zSquare = mExtent.getZ() * mExtent.getZ();
         tensor.set(factor * (ySquare + zSquare), 0.0f, 0.0f,
                 0.0f, factor * (xSquare + zSquare), 0.0f,
                 0.0f, 0.0f, factor * (xSquare + ySquare));

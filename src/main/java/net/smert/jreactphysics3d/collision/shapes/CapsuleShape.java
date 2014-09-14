@@ -22,13 +22,12 @@ public class CapsuleShape extends CollisionShape {
     private final float mRadius;
 
     // Constructor
-    public CapsuleShape(float radius, float height) {
-        // TODO: Should radius really be the margin for a capsule? Seems like a bug.
-        super(CollisionShapeType.CAPSULE, radius);
+    public CapsuleShape(float radius, float height, float margin) {
 
+        // TODO: Should radius really be the margin for a capsule? Seems like a bug.
+        super(CollisionShapeType.CAPSULE, radius + margin);
         assert (height > 0.0f);
         assert (radius > 0.0f);
-
         mHalfHeight = height * 0.5f;
         mRadius = radius;
     }
@@ -74,12 +73,12 @@ public class CapsuleShape extends CollisionShape {
 
             // Support point top sphere
             Vector3 centerTopSphere = new Vector3(0.0f, mHalfHeight, 0.0f);
-            Vector3 topSpherePoint = new Vector3(centerTopSphere).add(unitDirection).multiply(mRadius);
+            Vector3 topSpherePoint = new Vector3(centerTopSphere).add(unitDirection).multiply(mRadius + mMargin);
             float dotProductTop = topSpherePoint.dot(direction);
 
             // Support point bottom sphere
             Vector3 centerBottomSphere = new Vector3(0.0f, -mHalfHeight, 0.0f);
-            Vector3 bottomSpherePoint = new Vector3(centerBottomSphere).add(unitDirection).multiply(mRadius);
+            Vector3 bottomSpherePoint = new Vector3(centerBottomSphere).add(unitDirection).multiply(mRadius + mMargin);
             float dotProductBottom = bottomSpherePoint.dot(direction);
 
             // Return the point with the maximum dot product
@@ -92,7 +91,7 @@ public class CapsuleShape extends CollisionShape {
 
         // If the direction vector is the zero vector we return a point on the
         // boundary of the capsule
-        return new Vector3(0.0f, mRadius, 0.0f);
+        return new Vector3(0.0f, mRadius + mMargin, 0.0f);
     }
 
     // Return a local support point in a given direction without the object margin.
@@ -139,10 +138,14 @@ public class CapsuleShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.set(mRadius, mHalfHeight + mRadius, mRadius);
+        max.setX(mRadius + mMargin);
+        max.setY(mHalfHeight + mRadius + mMargin);
+        max.setZ(max.getX());
 
         // Minimum bounds
-        min.set(-mRadius, -max.getY(), -mRadius);
+        min.setX(-max.getX());
+        min.setY(-max.getY());
+        min.setZ(min.getX());
     }
 
     @Override
