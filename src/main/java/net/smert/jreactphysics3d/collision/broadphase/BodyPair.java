@@ -12,10 +12,10 @@ import net.smert.jreactphysics3d.body.CollisionBody;
 public class BodyPair {
 
     // Pointer to the first body
-    public CollisionBody body1;
+    private CollisionBody body1;
 
     // Pointer to the second body
-    public CollisionBody body2;
+    private CollisionBody body2;
 
     // Return the pair of bodies index
     public BodyIndexPair getBodiesIndexPair() {
@@ -25,9 +25,24 @@ public class BodyPair {
         BodyIndexPair indexPair = body1.getID() < body2.getID()
                 ? new BodyIndexPair(body1.getID(), body2.getID())
                 : new BodyIndexPair(body2.getID(), body1.getID());
-
-        assert (indexPair.first != indexPair.second);
+        assert (indexPair.getFirst() != indexPair.getSecond());
         return indexPair;
+    }
+
+    public CollisionBody getBody1() {
+        return body1;
+    }
+
+    public CollisionBody getBody2() {
+        return body2;
+    }
+
+    public void setBody1(CollisionBody body1) {
+        this.body1 = body1;
+    }
+
+    public void setBody2(CollisionBody body2) {
+        this.body2 = body2;
     }
 
     @Override
