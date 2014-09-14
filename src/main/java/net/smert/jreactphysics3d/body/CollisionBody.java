@@ -50,7 +50,6 @@ public class CollisionBody extends Body {
         mIsCollisionEnabled = true;
         mIsMotionEnabled = true;
         mInterpolationFactor = 0.0f;
-
         mAabb = new AABB();
         mCollisionShape = collisionShape;
         mContactManifoldsList = null;
