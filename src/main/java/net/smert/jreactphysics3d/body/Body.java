@@ -7,17 +7,14 @@ package net.smert.jreactphysics3d.body;
  */
 public abstract class Body {
 
-    // ID of the body
-    protected int mID;
-
-    // True if the body has already been added in an island (for sleeping technique)
-    protected boolean mIsAlreadyInIsland;
+    // True if the body is active
+    protected boolean mIsActive;
 
     // True if the body is allowed to go to sleep for better efficiency
     protected boolean mIsAllowedToSleep;
 
-    // True if the body is active
-    protected boolean mIsActive;
+    // True if the body has already been added in an island (for sleeping technique)
+    protected boolean mIsAlreadyInIsland;
 
     // True if the body is sleeping (for sleeping technique)
     protected boolean mIsSleeping;
@@ -25,27 +22,23 @@ public abstract class Body {
     // Elapsed time since the body velocity was bellow the sleep velocity
     protected float mSleepTime;
 
+    // ID of the body
+    protected int mID;
+
     // Constructor
     public Body(int id) {
-        mID = id;
-        mIsAlreadyInIsland = false;
-        mIsAllowedToSleep = true;
+        assert (id > 0);
         mIsActive = true;
+        mIsAllowedToSleep = true;
+        mIsAlreadyInIsland = false;
         mIsSleeping = false;
         mSleepTime = 0;
+        mID = id;
     }
 
-    // Return the id of the body
-    public int getID() {
-        return mID;
-    }
-
-    public boolean isAlreadyInIsland() {
-        return mIsAlreadyInIsland;
-    }
-
-    public void setIsAlreadyInIsland(boolean isAlreadyInIsland) {
-        mIsAlreadyInIsland = isAlreadyInIsland;
+    // Return true if the body is active
+    public boolean isActive() {
+        return mIsActive;
     }
 
     // Return whether or not the body is allowed to sleep
@@ -62,9 +55,12 @@ public abstract class Body {
         }
     }
 
-    // Return true if the body is active
-    public boolean isActive() {
-        return mIsActive;
+    public boolean isAlreadyInIsland() {
+        return mIsAlreadyInIsland;
+    }
+
+    public void setIsAlreadyInIsland(boolean isAlreadyInIsland) {
+        mIsAlreadyInIsland = isAlreadyInIsland;
     }
 
     // Return whether or not the body is sleeping
@@ -94,24 +90,9 @@ public abstract class Body {
         mSleepTime = sleepTime;
     }
 
-    // Smaller than operator
-    public boolean operatorLessThan(Body body2) {
-        return (mID < body2.mID);
-    }
-
-    // Larger than operator
-    public boolean operatorGreaterThan(Body body2) {
-        return (mID > body2.mID);
-    }
-
-    // Equal operator
-    public boolean operatorEquals(Body body2) {
-        return (mID == body2.mID);
-    }
-
-    // Not equal operator
-    public boolean operatorNotEquals(Body body2) {
-        return (mID != body2.mID);
+    // Return the id of the body
+    public int getID() {
+        return mID;
     }
 
 }
