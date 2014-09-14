@@ -19,7 +19,6 @@ public abstract class NarrowPhaseAlgorithm {
 
     // Constructor
     public NarrowPhaseAlgorithm() {
-        mCurrentOverlappingPair = null;
     }
 
     // Set the current overlapping pair of bodies
