@@ -572,9 +572,9 @@ public class DynamicsWorld extends CollisionWorld {
                 // For each contact manifold in which the current body is involded
                 ContactManifoldListElement contactElement;
                 for (contactElement = bodyToVisit.getContactManifoldsLists(); contactElement != null;
-                        contactElement = contactElement.next) {
+                        contactElement = contactElement.getNext()) {
 
-                    ContactManifold contactManifold = contactElement.contactManifold;
+                    ContactManifold contactManifold = contactElement.getContactManifold();
 
                     // Check if the current contact manifold has already been added into an island
                     if (contactManifold.isAlreadyInIsland()) {

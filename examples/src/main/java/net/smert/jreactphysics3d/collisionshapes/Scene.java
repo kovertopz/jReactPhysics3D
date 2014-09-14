@@ -129,7 +129,7 @@ public class Scene {
             Box box = new Box(BOX_SIZE, position, BOX_MASS, mDynamicsWorld);
 
             // The sphere is a moving rigid body
-            box.getRigidBody().enableMotion(true);
+            box.getRigidBody().setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
             Material material = box.getRigidBody().getMaterial();
@@ -152,7 +152,7 @@ public class Scene {
             Sphere sphere = new Sphere(SPHERE_RADIUS, position, BOX_MASS, mDynamicsWorld);
 
             // The sphere is a moving rigid body
-            sphere.getRigidBody().enableMotion(true);
+            sphere.getRigidBody().setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
             Material material = sphere.getRigidBody().getMaterial();
@@ -175,7 +175,7 @@ public class Scene {
             Cone cone = new Cone(CONE_RADIUS, CONE_HEIGHT, position, CONE_MASS, mDynamicsWorld);
 
             // The cone is a moving rigid body
-            cone.getRigidBody().enableMotion(true);
+            cone.getRigidBody().setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
             Material material = cone.getRigidBody().getMaterial();
@@ -199,7 +199,7 @@ public class Scene {
                     CYLINDER_MASS, mDynamicsWorld);
 
             // The cylinder is a moving rigid body
-            cylinder.getRigidBody().enableMotion(true);
+            cylinder.getRigidBody().setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
             Material material = cylinder.getRigidBody().getMaterial();
@@ -223,7 +223,7 @@ public class Scene {
                     CAPSULE_MASS, mDynamicsWorld);
 
             // The cylinder is a moving rigid body
-            capsule.getRigidBody().enableMotion(true);
+            capsule.getRigidBody().setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
             Material material = capsule.getRigidBody().getMaterial();
@@ -246,7 +246,7 @@ public class Scene {
             ConvexMesh mesh = new ConvexMesh(position, MESH_MASS, mDynamicsWorld);
 
             // The mesh is a moving rigid body
-            mesh.getRigidBody().enableMotion(true);
+            mesh.getRigidBody().setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
             Material material = mesh.getRigidBody().getMaterial();
@@ -261,7 +261,7 @@ public class Scene {
         mFloor = new Box(FLOOR_SIZE, floorPosition, FLOOR_MASS, mDynamicsWorld);
 
         // The floor must be a non-moving rigid body
-        mFloor.getRigidBody().enableMotion(false);
+        mFloor.getRigidBody().setIsMotionEnabled(false);
 
         // Change the material properties of the rigid body
         Material material = mFloor.getRigidBody().getMaterial();
