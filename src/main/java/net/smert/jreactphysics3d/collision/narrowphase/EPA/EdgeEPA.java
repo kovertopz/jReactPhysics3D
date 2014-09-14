@@ -54,8 +54,7 @@ public class EdgeEPA {
     }
 
     // Execute the recursive silhouette algorithm from this edge
-    public boolean computeSilhouette(Vector3[] vertices, int indexNewVertex,
-            TrianglesStore triangleStore) {
+    public boolean computeSilhouette(Vector3[] vertices, int indexNewVertex, TrianglesStore triangleStore) {
         // If the edge has not already been visited
         if (!mOwnerTriangle.getIsObsolete()) {
 

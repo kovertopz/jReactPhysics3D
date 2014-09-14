@@ -11,6 +11,9 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ContactPointInfo {
 
+    // Penetration depth of the contact
+    public float penetrationDepth;
+
     // First rigid body of the constraint
     public RigidBody body1;
 
@@ -18,23 +21,20 @@ public class ContactPointInfo {
     public RigidBody body2;
 
     // Normal vector the the collision contact in world space
-    public Vector3 normal;
-
-    // Penetration depth of the contact
-    public float penetrationDepth;
+    public final Vector3 normal;
 
     // Contact point of body 1 in local space of body 1
-    public Vector3 localPoint1;
+    public final Vector3 localPoint1;
 
     // Contact point of body 2 in local space of body 2
-    public Vector3 localPoint2;
+    public final Vector3 localPoint2;
 
     // Constructor
-    public ContactPointInfo(Vector3 normal, float penetrationDepth, Vector3 localPoint1, Vector3 localPoint2) {
-        this.normal = normal;
-        this.penetrationDepth = penetrationDepth;
-        this.localPoint1 = localPoint1;
-        this.localPoint2 = localPoint2;
+    public ContactPointInfo() {
+        this.normal = new Vector3();
+        this.penetrationDepth = 0.0f;
+        this.localPoint1 = new Vector3();
+        this.localPoint2 = new Vector3();
     }
 
 }
