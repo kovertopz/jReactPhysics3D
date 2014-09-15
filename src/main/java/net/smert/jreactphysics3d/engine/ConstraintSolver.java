@@ -71,56 +71,49 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ConstraintSolver {
 
-    // Array of constrained linear velocities (state of the linear velocities
-    // after solving the constraints)
-    private Vector3[] mLinearVelocities;
+    // Current time step
+    private float timeStep;
 
-    // Array of constrained angular velocities (state of the angular velocities
-    // after solving the constraints)
-    private Vector3[] mAngularVelocities;
+    // True if the warm starting of the solver is active
+    private boolean isWarmStartingActive;
+
+    // Constraint solver data used to initialize and solve the constraints
+    private final ConstraintSolverData mConstraintSolverData;
 
     // Reference to the array of bodies positions (for position error correction)
-    private List<Vector3> mPositions;
+    private final List<Vector3> positions;
 
     // Reference to the array of bodies orientations (for position error correction)
-    private List<Quaternion> mOrientations;
+    private final List<Quaternion> orientations;
 
     // Reference to the map that associates rigid body to their index in
     // the constrained velocities array
-    private Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
+    private final Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
 
-    // Current time step
-    private float mTimeStep;
+    // Array of constrained angular velocities (state of the angular velocities
+    // after solving the constraints)
+    private Vector3[] angularVelocities;
 
-    // True if the warm starting of the solver is active
-    private boolean mIsWarmStartingActive;
-
-    // Constraint solver data used to initialize and solve the constraints
-    private ConstraintSolverData mConstraintSolverData;
+    // Array of constrained linear velocities (state of the linear velocities
+    // after solving the constraints)
+    private Vector3[] linearVelocities;
 
     // Constructor
     public ConstraintSolver(List<Vector3> positions, List<Quaternion> orientations, Map<RigidBody, Integer> mapBodyToVelocityIndex) {
-        mLinearVelocities = null;
-        mAngularVelocities = null;
-        mPositions = positions;
-        mOrientations = orientations;
-        mMapBodyToConstrainedVelocityIndex = mapBodyToVelocityIndex;
-        mIsWarmStartingActive = true;
+        isWarmStartingActive = true;
         mConstraintSolverData = new ConstraintSolverData(positions, orientations, mapBodyToVelocityIndex);
+        this.orientations = orientations;
+        this.positions = positions;
+        mMapBodyToConstrainedVelocityIndex = mapBodyToVelocityIndex;
+        angularVelocities = null;
+        linearVelocities = null;
     }
 
     // Return true if the Non-Linear-Gauss-Seidel position correction technique is active
     //public boolean getIsNonLinearGaussSeidelPositionCorrectionActive();
     // Enable/Disable the Non-Linear-Gauss-Seidel position correction technique.
-    //public void setIsNonLinearGaussSeidelPositionCorrectionActive(boolean isActive);
-    // Set the constrained velocities arrays
-    public void setConstrainedVelocitiesArrays(Vector3[] constrainedLinearVelocities, Vector3[] constrainedAngularVelocities) {
-        assert (constrainedLinearVelocities != null);
-        assert (constrainedAngularVelocities != null);
-        mLinearVelocities = constrainedLinearVelocities;
-        mAngularVelocities = constrainedAngularVelocities;
-        mConstraintSolverData.linearVelocities = mLinearVelocities;
-        mConstraintSolverData.angularVelocities = mAngularVelocities;
+    public void setIsNonLinearGaussSeidelPositionCorrectionActive(boolean isActive) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     // Initialize the constraint solver for a given island
@@ -128,18 +121,18 @@ public class ConstraintSolver {
 
         Profiler.StartProfilingBlock("ConstraintSolver::initializeForIsland()");
 
-        assert (mLinearVelocities != null);
-        assert (mAngularVelocities != null);
+        assert (linearVelocities != null);
+        assert (angularVelocities != null);
         assert (island != null);
         assert (island.getNumBodies() > 0);
         assert (island.getNumJoints() > 0);
 
         // Set the current time step
-        mTimeStep = dt;
+        timeStep = dt;
 
         // Initialize the constraint solver data used to initialize and solve the constraints
-        mConstraintSolverData.timeStep = mTimeStep;
-        mConstraintSolverData.isWarmStartingActive = mIsWarmStartingActive;
+        mConstraintSolverData.timeStep = timeStep;
+        mConstraintSolverData.isWarmStartingActive = isWarmStartingActive;
 
         // For each joint of the island
         Joint[] joints = island.getJoints();
@@ -149,27 +142,20 @@ public class ConstraintSolver {
             joints[i].initBeforeSolve(mConstraintSolverData);
 
             // Warm-start the constraint if warm-starting is enabled
-            if (mIsWarmStartingActive) {
+            if (isWarmStartingActive) {
                 joints[i].warmstart(mConstraintSolverData);
             }
         }
     }
 
-    // Solve the velocity constraints
-    public void solveVelocityConstraints(Island island) {
-
-        Profiler.StartProfilingBlock("ConstraintSolver::solveVelocityConstraints()");
-
-        assert (island != null);
-        assert (island.getNumJoints() > 0);
-
-        // For each joint of the island
-        Joint[] joints = island.getJoints();
-        for (int i = 0; i < island.getNumJoints(); i++) {
-
-            // Solve the constraint
-            joints[i].solveVelocityConstraint(mConstraintSolverData);
-        }
+    // Set the constrained velocities arrays
+    public void setConstrainedVelocitiesArrays(Vector3[] constrainedLinearVelocities, Vector3[] constrainedAngularVelocities) {
+        assert (constrainedLinearVelocities != null);
+        assert (constrainedAngularVelocities != null);
+        linearVelocities = constrainedLinearVelocities;
+        angularVelocities = constrainedAngularVelocities;
+        mConstraintSolverData.linearVelocities = linearVelocities;
+        mConstraintSolverData.angularVelocities = angularVelocities;
     }
 
     // Solve the position constraints
@@ -189,8 +175,21 @@ public class ConstraintSolver {
         }
     }
 
-    public void setIsNonLinearGaussSeidelPositionCorrectionActive(boolean isNonLinearGaussSeidelPositionCorrectionActive) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    // Solve the velocity constraints
+    public void solveVelocityConstraints(Island island) {
+
+        Profiler.StartProfilingBlock("ConstraintSolver::solveVelocityConstraints()");
+
+        assert (island != null);
+        assert (island.getNumJoints() > 0);
+
+        // For each joint of the island
+        Joint[] joints = island.getJoints();
+        for (int i = 0; i < island.getNumJoints(); i++) {
+
+            // Solve the constraint
+            joints[i].solveVelocityConstraint(mConstraintSolverData);
+        }
     }
 
 }

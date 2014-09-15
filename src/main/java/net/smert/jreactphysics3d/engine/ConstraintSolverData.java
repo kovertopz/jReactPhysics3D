@@ -29,11 +29,11 @@ public class ConstraintSolverData {
     // in the constrained velocities array
     public final Map<RigidBody, Integer> mapBodyToConstrainedVelocityIndex;
 
-    // Array with the bodies linear velocities
-    public Vector3[] linearVelocities;
-
     // Array with the bodies angular velocities
     public Vector3[] angularVelocities;
+
+    // Array with the bodies linear velocities
+    public Vector3[] linearVelocities;
 
     // Constructor
     public ConstraintSolverData(List<Vector3> refPositions, List<Quaternion> refOrientations,
@@ -41,8 +41,8 @@ public class ConstraintSolverData {
         orientations = refOrientations;
         positions = refPositions;
         mapBodyToConstrainedVelocityIndex = refMapBodyToConstrainedVelocityIndex;
-        linearVelocities = null;
         angularVelocities = null;
+        linearVelocities = null;
     }
 
 }
