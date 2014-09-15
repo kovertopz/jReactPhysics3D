@@ -93,7 +93,7 @@ public class Profiler {
             System.out.print(" % | ");
             System.out.print(currentTotalTime / (long) nbFrames);
             System.out.print(" ms/frame (");
-            System.out.print(iterator.getCurrentNbTotalCalls());
+            System.out.print(iterator.getCurrentNumTotalCalls());
             System.out.println(" calls)");
             totalTime += currentTotalTime;
         }

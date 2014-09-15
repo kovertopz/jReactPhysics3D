@@ -7,88 +7,88 @@ package net.smert.jreactphysics3d.engine;
  */
 public class ProfileNodeIterator {
 
-    // Current parent node
-    private ProfileNode mCurrentParentNode;
-
     // Current child node
-    private ProfileNode mCurrentChildNode;
+    private ProfileNode currentChildNode;
+
+    // Current parent node
+    private ProfileNode currentParentNode;
 
     // Constructor
     public ProfileNodeIterator(ProfileNode startingNode) {
-        mCurrentParentNode = startingNode;
-        mCurrentChildNode = mCurrentParentNode.getChildNode();
-    }
-
-    // Return true if we are at the root of the profiler tree
-    public boolean isRoot() {
-        return (mCurrentParentNode.getParentNode() == null);
-    }
-
-    // Return true if we are at the end of a branch of the profiler tree
-    public boolean isEnd() {
-        return (mCurrentChildNode == null);
-    }
-
-    // Return the name of the current node
-    public String getCurrentName() {
-        return mCurrentChildNode.getName();
-    }
-
-    // Return the total time of the current node
-    public float getCurrentTotalTime() {
-        return mCurrentChildNode.getTotalTime();
-    }
-
-    // Return the total number of calls of the current node
-    public int getCurrentNbTotalCalls() {
-        return mCurrentChildNode.getNbTotalCalls();
-    }
-
-    // Return the name of the current parent node
-    public String getCurrentParentName() {
-        return mCurrentParentNode.getName();
-    }
-
-    // Return the total time of the current parent node
-    public float getCurrentParentTotalTime() {
-        return mCurrentParentNode.getTotalTime();
-    }
-
-    // Return the total number of calls of the current parent node
-    public int getCurrentParentNbTotalCalls() {
-        return mCurrentParentNode.getNbTotalCalls();
-    }
-
-    // Go to the first node
-    public void first() {
-        mCurrentChildNode = mCurrentParentNode.getChildNode();
-    }
-
-    // Go to the next node
-    public void next() {
-        mCurrentChildNode = mCurrentChildNode.getSiblingNode();
+        currentChildNode = startingNode.getChildNode();
+        currentParentNode = startingNode;
     }
 
     // Enter a given child node
     public void enterChild(int index) {
-        mCurrentChildNode = mCurrentParentNode.getChildNode();
-        while ((mCurrentChildNode != null) && (index != 0)) {
+        currentChildNode = currentParentNode.getChildNode();
+        while ((currentChildNode != null) && (index != 0)) {
             index--;
-            mCurrentChildNode = mCurrentChildNode.getSiblingNode();
+            currentChildNode = currentChildNode.getSiblingNode();
         }
 
-        if (mCurrentChildNode != null) {
-            mCurrentParentNode = mCurrentChildNode;
-            mCurrentChildNode = mCurrentParentNode.getChildNode();
+        if (currentChildNode != null) {
+            currentParentNode = currentChildNode;
+            currentChildNode = currentParentNode.getChildNode();
         }
     }
 
     // Enter a given parent node
     public void enterParent() {
-        if (mCurrentParentNode.getParentNode() != null) {
-            mCurrentParentNode = mCurrentParentNode.getParentNode();
+        if (currentParentNode.getParentNode() != null) {
+            currentParentNode = currentParentNode.getParentNode();
         }
-        mCurrentChildNode = mCurrentParentNode.getChildNode();
+        currentChildNode = currentParentNode.getChildNode();
+    }
+
+    // Go to the first node
+    public void first() {
+        currentChildNode = currentParentNode.getChildNode();
+    }
+
+    // Return the total time of the current node
+    public float getCurrentTotalTime() {
+        return currentChildNode.getTotalTime();
+    }
+
+    // Return the total time of the current parent node
+    public float getCurrentParentTotalTime() {
+        return currentParentNode.getTotalTime();
+    }
+
+    // Return the total number of calls of the current node
+    public int getCurrentNumTotalCalls() {
+        return currentChildNode.getNumTotalCalls();
+    }
+
+    // Return the total number of calls of the current parent node
+    public int getCurrentParentNumTotalCalls() {
+        return currentParentNode.getNumTotalCalls();
+    }
+
+    // Return the name of the current node
+    public String getCurrentName() {
+        return currentChildNode.getName();
+    }
+
+    // Return the name of the current parent node
+    public String getCurrentParentName() {
+        return currentParentNode.getName();
+    }
+
+    // Return true if we are at the end of a branch of the profiler tree
+    public boolean isEnd() {
+        return (currentChildNode == null);
+    }
+
+    // Return true if we are at the root of the profiler tree
+    public boolean isRoot() {
+        return (currentParentNode.getParentNode() == null);
+    }
+
+    // Go to the next node
+    public void next() {
+        currentChildNode = currentChildNode.getSiblingNode();
     }
 
 }

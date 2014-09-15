@@ -66,7 +66,7 @@ public class ProfileNode {
     }
 
     // Return the total number of call of the corresponding block of code
-    public int getNbTotalCalls() {
+    public int getNumTotalCalls() {
         return mNbTotalCalls;
     }
 
