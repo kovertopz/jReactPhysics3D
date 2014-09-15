@@ -8,103 +8,101 @@ package net.smert.jreactphysics3d.engine;
  */
 public class Timer {
 
-    // Timestep dt of the physics engine (timestep > 0.0f)
-    private double mTimeStep;
-
-    // Last time the timer has been updated
-    private float mLastUpdateTime;
-
-    // Time difference between the two last timer update() calls
-    private float mDeltaTime;
+    // True if the timer is running
+    private boolean isRunning;
 
     // Used to fix the time step and avoid strange time effects
-    private double mAccumulator;
+    private double accumulator;
 
-    // True if the timer is running
-    private boolean mIsRunning;
+    // Timestep dt of the physics engine (timestep > 0.0f)
+    private double timeStep;
+
+    // Time difference between the two last timer update() calls
+    private float deltaTime;
+
+    // Last time the timer has been updated
+    private float lastUpdateTime;
 
     // Constructor
     public Timer(double timeStep) {
         assert (timeStep > 0.0f);
+        isRunning = false;
+        this.timeStep = timeStep;
+    }
 
-        mTimeStep = timeStep;
-        mIsRunning = false;
+    // Compute the interpolation factor
+    public float computeInterpolationFactor() {
+        return (float) (accumulator / timeStep);
+    }
+
+    // Return if the timer is running
+    public boolean getIsRunning() {
+        return isRunning;
     }
 
     // Return the timestep of the physics engine
     public double getTimeStep() {
-        return mTimeStep;
+        return timeStep;
     }
 
     // Set the timestep of the physics engine
     public void setTimeStep(double timeStep) {
         assert (timeStep > 0.0f);
-        mTimeStep = timeStep;
+        this.timeStep = timeStep;
     }
 
     // Return the current time
     public float getPhysicsTime() {
-        return mLastUpdateTime;
+        return lastUpdateTime;
     }
 
-    // Return if the timer is running
-    public boolean getIsRunning() {
-        return mIsRunning;
+    // True if it's possible to take a new step
+    public boolean isPossibleToTakeStep() {
+        return (accumulator >= timeStep);
+    }
+
+    // Take a new step => update the timer by adding the timeStep value to the current time
+    public void nextStep() {
+        assert (isRunning);
+
+        // Update the accumulator value
+        accumulator -= timeStep;
     }
 
     // Start the timer
     public void start() {
-        if (!mIsRunning) {
+        if (!isRunning) {
 
+            isRunning = true;
+            accumulator = 0.0;
             // Get the current system time
-            mLastUpdateTime = getCurrentSystemTime();
-
-            mAccumulator = 0.0;
-            mIsRunning = true;
+            lastUpdateTime = GetCurrentSystemTime();
         }
     }
 
     // Stop the timer
     public void stop() {
-        mIsRunning = false;
-    }
-
-    // True if it's possible to take a new step
-    public boolean isPossibleToTakeStep() {
-        return (mAccumulator >= mTimeStep);
-    }
-
-    // Take a new step => update the timer by adding the timeStep value to the current time
-    public void nextStep() {
-        assert (mIsRunning);
-
-        // Update the accumulator value
-        mAccumulator -= mTimeStep;
-    }
-
-    // Compute the interpolation factor
-    public float computeInterpolationFactor() {
-        return (float) (mAccumulator / mTimeStep);
+        isRunning = false;
     }
 
     // Compute the time since the last update() call and add it to the accumulator
     public void update() {
 
         // Get the current system time
-        float currentTime = getCurrentSystemTime();
+        float currentTime = GetCurrentSystemTime();
 
         // Compute the delta display time between two display frames
-        mDeltaTime = currentTime - mLastUpdateTime;
+        deltaTime = currentTime - lastUpdateTime;
 
         // Update the current display time
-        mLastUpdateTime = currentTime;
+        lastUpdateTime = currentTime;
 
         // Update the accumulator value
-        mAccumulator += mDeltaTime;
+        accumulator += deltaTime;
     }
 
     // Return the current time of the system in seconds
-    public static float getCurrentSystemTime() {
+    public static float GetCurrentSystemTime() {
         return System.nanoTime() / 1000000000.0f;
     }
 

@@ -105,7 +105,7 @@ public class ProfileNode {
 
             // Get the current system time to initialize the starting time of
             // the profiling of the current block of code
-            mStartingTime = Timer.getCurrentSystemTime() * 1000.0f;
+            mStartingTime = Timer.GetCurrentSystemTime() * 1000.0f;
         }
 
         mRecursionCounter++;
@@ -118,7 +118,7 @@ public class ProfileNode {
         if (mRecursionCounter == 0 && mNbTotalCalls != 0) {
 
             // Get the current system time
-            float currentTime = Timer.getCurrentSystemTime() * 1000.0f;
+            float currentTime = Timer.GetCurrentSystemTime() * 1000.0f;
 
             // Increase the total elasped time in the current block of code
             mTotalTime += currentTime - mStartingTime;

@@ -100,7 +100,7 @@ public class Profiler {
 
     // Return the elasped time since the start/reset of the profiling
     public static float getElapsedTimeSinceStart() {
-        float currentTime = Timer.getCurrentSystemTime() * 1000l;
+        float currentTime = Timer.GetCurrentSystemTime() * 1000l;
         return currentTime - mProfilingStartTime;
     }
 
@@ -153,7 +153,7 @@ public class Profiler {
         mRootNode.reset();
         mRootNode.enterBlockOfCode();
         mFrameCounter = 0;
-        mProfilingStartTime = Timer.getCurrentSystemTime() * 1000.0f;
+        mProfilingStartTime = Timer.GetCurrentSystemTime() * 1000.0f;
     }
 
     // Print the report of the profiler in a given output stream
@@ -171,7 +171,7 @@ public class Profiler {
         // Initialization of static variables
         mRootNode = new ProfileNode("Root", null);
         mCurrentNode = mRootNode;
-        mProfilingStartTime = Timer.getCurrentSystemTime() * 1000.0f;
+        mProfilingStartTime = Timer.GetCurrentSystemTime() * 1000.0f;
         mFrameCounter = 0;
     }
 
