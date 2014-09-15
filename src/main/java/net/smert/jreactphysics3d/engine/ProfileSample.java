@@ -12,7 +12,7 @@ public class ProfileSample {
     public ProfileSample(String name) {
 
         // Ask the profiler to start profiling a block of code
-        Profiler.startProfilingBlock(name);
+        Profiler.StartProfilingBlock(name);
     }
 
 }

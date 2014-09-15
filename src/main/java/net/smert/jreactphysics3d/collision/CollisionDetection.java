@@ -58,7 +58,7 @@ public class CollisionDetection {
     // Compute the broad-phase collision detection
     private void computeBroadPhase() {
 
-        Profiler.startProfilingBlock("CollisionDetection::computeBroadPhase()");
+        Profiler.StartProfilingBlock("CollisionDetection::computeBroadPhase()");
 
         // Notify the broad-phase algorithm about the bodies that have moved since last frame
         for (CollisionBody it : world.getBodies()) {
@@ -75,7 +75,7 @@ public class CollisionDetection {
     // Compute the narrow-phase collision detection
     private void computeNarrowPhase() {
 
-        Profiler.startProfilingBlock("CollisionDetection::computeNarrowPhase()");
+        Profiler.StartProfilingBlock("CollisionDetection::computeNarrowPhase()");
 
         for (Map.Entry pairs : overlappingPairs.entrySet()) {
             ContactPointInfo contactInfo = new ContactPointInfo();
@@ -203,7 +203,7 @@ public class CollisionDetection {
     // Compute the collision detection
     public void computeCollisionDetection() {
 
-        Profiler.startProfilingBlock("CollisionDetection::computeCollisionDetection()");
+        Profiler.StartProfilingBlock("CollisionDetection::computeCollisionDetection()");
 
         // Compute the broad-phase collision detection
         computeBroadPhase();

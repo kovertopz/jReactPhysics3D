@@ -445,7 +445,7 @@ public class ContactSolver {
     // Initialize the constraint solver for a given island
     public void initializeForIsland(float dt, Island island) {
 
-        Profiler.startProfilingBlock("ContactSolver::initializeForIsland()");
+        Profiler.StartProfilingBlock("ContactSolver::initializeForIsland()");
 
         assert (island != null);
         assert (island.getNbBodies() > 0);
@@ -713,7 +713,7 @@ public class ContactSolver {
     // Solve the contacts
     public void solve() {
 
-        Profiler.startProfilingBlock("ContactSolver::solve()");
+        Profiler.StartProfilingBlock("ContactSolver::solve()");
 
         float deltaLambda;
         float lambdaTemp;
