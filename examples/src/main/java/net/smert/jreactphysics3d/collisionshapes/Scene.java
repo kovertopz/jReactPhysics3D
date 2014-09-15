@@ -109,7 +109,7 @@ public class Scene {
         mDynamicsWorld = new DynamicsWorld(gravity, timeStep);
 
         // Set the number of iterations of the constraint solver
-        mDynamicsWorld.setNbIterationsVelocitySolver(15);
+        mDynamicsWorld.setNumIterationsVelocitySolver(15);
 
         // Create the static data for the visual contact points
         VisualContactPoint.createStaticData();

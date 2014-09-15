@@ -41,439 +41,120 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class DynamicsWorld extends CollisionWorld {
 
-    // Timer of the physics engine
-    protected Timer mTimer;
-
-    // Contact solver
-    protected ContactSolver mContactSolver;
-
-    // Constraint solver
-    protected ConstraintSolver mConstraintSolver;
-
-    // Number of iterations for the velocity solver of the Sequential Impulses technique
-    protected int mNbVelocitySolverIterations;
-
-    // Number of iterations for the position solver of the Sequential Impulses technique
-    protected int mNbPositionSolverIterations;
+    // True if the gravity force is on
+    protected boolean isGravityEnabled;
 
     // True if the spleeping technique for inactive bodies is enabled
-    protected boolean mIsSleepingEnabled;
-
-    // All the rigid bodies of the physics world
-    protected Set<RigidBody> mRigidBodies;
-
-    // All the contact constraints
-    // TODO : Remove this variable (we will use the ones in the island now)
-    protected List<ContactManifold> mContactManifolds;
-
-    // All the joints of the world
-    protected Set<Joint> mJoints;
-
-    // Gravity vector of the world
-    protected Vector3 mGravity;
-
-    // True if the gravity force is on
-    protected boolean mIsGravityEnabled;
-
-    // Array of constrained linear velocities (state of the linear velocities
-    // after solving the constraints)
-    protected Vector3[] mConstrainedLinearVelocities;
-
-    // Array of constrained angular velocities (state of the angular velocities
-    // after solving the constraints)
-    protected Vector3[] mConstrainedAngularVelocities;
-
-    // Split linear velocities for the position contact solver (split impulse)
-    protected Vector3[] mSplitLinearVelocities;
-
-    // Split angular velocities for the position contact solver (split impulse)
-    protected Vector3[] mSplitAngularVelocities;
-
-    // Array of constrained rigid bodies position (for position error correction)
-    protected List<Vector3> mConstrainedPositions;
-
-    // Array of constrained rigid bodies orientation (for position error correction)
-    protected List<Quaternion> mConstrainedOrientations;
-
-    // Map body to their index in the constrained velocities array
-    protected Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
-
-    // Number of islands in the world
-    protected int mNbIslands;
-
-    // Current allocated capacity for the islands
-    protected int mNbIslandsCapacity;
-
-    // Array with all the islands of awaken bodies
-    protected Island[] mIslands;
-
-    // Current allocated capacity for the bodies
-    protected int mNbBodiesCapacity;
-
-    // Sleep linear velocity threshold
-    protected float mSleepLinearVelocity;
+    protected boolean isSleepingEnabled;
 
     // Sleep angular velocity threshold
-    protected float mSleepAngularVelocity;
+    protected float sleepAngularVelocity;
+
+    // Sleep linear velocity threshold
+    protected float sleepLinearVelocity;
 
     // Time (in seconds) before a body is put to sleep if its velocity
     // becomes smaller than the sleep velocity.
-    protected float mTimeBeforeSleep;
+    protected float timeBeforeSleep;
+
+    // Number of islands in the world
+    protected int numIslands;
+
+    // Current allocated capacity for the islands
+    protected int numIslandsCapacity;
+
+    // Number of iterations for the position solver of the Sequential Impulses technique
+    protected int numPositionSolverIterations;
+
+    // Current allocated capacity for the bodies
+    protected int numRigidBodiesCapacity;
+
+    // Number of iterations for the velocity solver of the Sequential Impulses technique
+    protected int numVelocitySolverIterations;
+
+    // Constraint solver
+    protected ConstraintSolver constraintSolver;
+
+    // Contact solver
+    protected ContactSolver contactSolver;
 
     // Pointer to an event listener object
-    protected EventListener mEventListener;
-
-    // Integrate position and orientation of the rigid bodies.
-    // The positions and orientations of the bodies are integrated using
-    // the sympletic Euler time stepping scheme.
-    protected void integrateRigidBodiesPositions() {
-
-        Profiler.StartProfilingBlock("DynamicsWorld::integrateRigidBodiesPositions()");
-
-        float dt = (float) mTimer.getTimeStep();
-
-        // For each island of the world
-        for (int i = 0; i < mNbIslands; i++) {
-
-            RigidBody[] bodies = mIslands[i].getBodies();
-
-            // For each body of the island
-            for (int b = 0; b < mIslands[i].getNumBodies(); b++) {
-
-                // If the body is allowed to move
-                if (bodies[b].isMotionEnabled()) {
-
-                    // Get the constrained velocity
-                    int indexArray = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
-                    Vector3 newLinVelocity = mConstrainedLinearVelocities[indexArray];
-                    Vector3 newAngVelocity = mConstrainedAngularVelocities[indexArray];
-
-                    // Update the linear and angular velocity of the body
-                    bodies[b].setLinearVelocity(newLinVelocity);
-                    bodies[b].setAngularVelocity(newAngVelocity);
-
-                    // Add the split impulse velocity from Contact Solver (only used
-                    // to update the position)
-                    if (mContactSolver.isSplitImpulseActive()) {
-
-                        newLinVelocity.add(mSplitLinearVelocities[indexArray]);
-                        newAngVelocity.add(mSplitAngularVelocities[indexArray]);
-                    }
-
-                    // Get current position and orientation of the body
-                    Vector3 currentPosition = bodies[b].getTransform().getPosition();
-                    Quaternion currentOrientation = bodies[b].getTransform().getOrientation();
-
-                    // Compute the new position of the body
-                    Vector3 newPosition = new Vector3(currentPosition).add(new Vector3(newLinVelocity).multiply(dt));
-                    Quaternion newOrientation = new Quaternion(currentOrientation).add(
-                            new Quaternion(newAngVelocity, 0.0f).multiply(currentOrientation).multiply(0.5f).multiply(dt));
-
-                    // Update the Transform of the body
-                    Transform newTransform = new Transform(newPosition, new Quaternion(newOrientation).normalize());
-                    bodies[b].setTransform(newTransform);
-                }
-            }
-        }
-    }
-
-    // Update the AABBs of the bodies
-    protected void updateRigidBodiesAABB() {
-
-        Profiler.StartProfilingBlock("DynamicsWorld::updateRigidBodiesAABB()");
-
-        // For each rigid body of the world
-        for (RigidBody it : mRigidBodies) {
-
-            // If the body has moved
-            if (it.getHasMoved()) {
-
-                // Update the AABB of the rigid body
-                it.updateAABB();
-            }
-        }
-    }
-
-    // Reset the external force and torque applied to the bodies
-    protected void resetBodiesForceAndTorque() {
-
-        // For each body of the world
-        for (RigidBody it : mRigidBodies) {
-            it.getExternalForce().zero();
-            it.getExternalTorque().zero();
-        }
-    }
-
-    // Update the position and orientation of a body
-    protected void updatePositionAndOrientationOfBody(RigidBody body, Vector3 newLinVelocity,
-            Vector3 newAngVelocity) {
-    }
-
-    // Compute and set the interpolation factor to all bodies
-    protected void setInterpolationFactorToAllBodies() {
-
-        Profiler.StartProfilingBlock("DynamicsWorld::setInterpolationFactorToAllBodies()");
-
-        // Compute the interpolation factor
-        float factor = mTimer.computeInterpolationFactor();
-        assert (factor >= 0.0f && factor <= 1.0f);
-
-        // Set the factor to all bodies
-        for (RigidBody it : mRigidBodies) {
-
-            it.setInterpolationFactor(factor);
-        }
-    }
-
-    // Initialize the bodies velocities arrays for the next simulation step.
-    protected void initVelocityArrays() {
-
-        // Allocate memory for the bodies velocity arrays
-        int nbBodies = mRigidBodies.size();
-        if (mNbBodiesCapacity != nbBodies && nbBodies > 0) {
-            if (mNbBodiesCapacity > 0) {
-                //delete[] mSplitLinearVelocities;
-                //delete[] mSplitAngularVelocities;
-            }
-            mNbBodiesCapacity = nbBodies;
-            mSplitLinearVelocities = new Vector3[mNbBodiesCapacity];
-            mSplitAngularVelocities = new Vector3[mNbBodiesCapacity];
-            mConstrainedLinearVelocities = new Vector3[mNbBodiesCapacity];
-            mConstrainedAngularVelocities = new Vector3[mNbBodiesCapacity];
-            assert (mSplitLinearVelocities != null);
-            assert (mSplitAngularVelocities != null);
-            assert (mConstrainedLinearVelocities != null);
-            assert (mConstrainedAngularVelocities != null);
-        }
-
-        // Reset the velocities arrays
-        for (int i = 0; i < mNbBodiesCapacity; i++) {
-            mSplitLinearVelocities[i] = new Vector3();
-            mSplitAngularVelocities[i] = new Vector3();
-        }
-
-        // Initialize the map of body indexes in the velocity arrays
-        mMapBodyToConstrainedVelocityIndex.clear();
-        int indexBody = 0;
-        for (RigidBody it : mRigidBodies) {
-
-            // Add the body into the map
-            mMapBodyToConstrainedVelocityIndex.put(it, indexBody);
-            indexBody++;
-        }
-    }
-
-    // Integrate the velocities of rigid bodies.
-    // This method only set the temporary velocities but does not update
-    // the actual velocitiy of the bodies. The velocities updated in this method
-    // might violate the constraints and will be corrected in the constraint and
-    // contact solver.
-    protected void integrateRigidBodiesVelocities() {
-
-        Profiler.StartProfilingBlock("DynamicsWorld::integrateRigidBodiesVelocities()");
-
-        // Initialize the bodies velocity arrays
-        initVelocityArrays();
-
-        float dt = (float) mTimer.getTimeStep();
-
-        // For each island of the world
-        for (int i = 0; i < mNbIslands; i++) {
-
-            RigidBody[] bodies = mIslands[i].getBodies();
-
-            // For each body of the island
-            for (int b = 0; b < mIslands[i].getNumBodies(); b++) {
-
-                // Insert the body into the map of constrained velocities
-                int indexBody = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
-
-                assert (mSplitLinearVelocities[indexBody].equals(new Vector3()));
-                assert (mSplitAngularVelocities[indexBody].equals(new Vector3()));
-
-                // If the body is allowed to move
-                if (bodies[b].isMotionEnabled()) {
-
-                    // Integrate the external force to get the new velocity of the body
-                    mConstrainedLinearVelocities[indexBody] = new Vector3(bodies[b].getLinearVelocity()).add(
-                            new Vector3(bodies[b].getExternalForce()).multiply(dt * bodies[b].getMassInverse()));
-                    mConstrainedAngularVelocities[indexBody] = new Vector3(bodies[b].getAngularVelocity()).add(
-                            new Matrix3x3(bodies[b].getInertiaTensorInverseWorld()).multiply(dt).multiply(
-                                    bodies[b].getExternalTorque(), new Vector3()));
-
-                    // If the gravity has to be applied to this rigid body
-                    if (bodies[b].isGravityEnabled() && mIsGravityEnabled) {
-
-                        // Integrate the gravity force
-                        mConstrainedLinearVelocities[indexBody].add(new Vector3(
-                                mGravity).multiply(dt * bodies[b].getMassInverse() * bodies[b].getMass()));
-                    }
-
-                    // Apply the velocity damping
-                    // Damping force : F_c = -c' * v (c=damping factor)
-                    // Equation      : m * dv/dt = -c' * v
-                    //                 => dv/dt = -c * v (with c=c'/m)
-                    //                 => dv/dt + c * v = 0
-                    // Solution      : v(t) = v0 * e^(-c * t)
-                    //                 => v(t + dt) = v0 * e^(-c(t + dt))
-                    //                              = v0 * e^(-ct) * e^(-c * dt)
-                    //                              = v(t) * e^(-c * dt)
-                    //                 => v2 = v1 * e^(-c * dt)
-                    // Using Taylor Serie for e^(-x) : e^x ~ 1 + x + x^2/2! + ...
-                    //                              => e^(-x) ~ 1 - x
-                    //                 => v2 = v1 * (1 - c * dt)
-                    float linDampingFactor = bodies[b].getLinearDamping();
-                    float angDampingFactor = bodies[b].getAngularDamping();
-                    float linearDamping = Mathematics.Clamp(1.0f - dt * linDampingFactor, 0.0f, 1.0f);
-                    float angularDamping = Mathematics.Clamp(1.0f - dt * angDampingFactor, 0.0f, 1.0f);
-                    mConstrainedLinearVelocities[indexBody].multiply(Mathematics.Clamp(linearDamping, 0.0f, 1.0f));
-                    mConstrainedAngularVelocities[indexBody].multiply(Mathematics.Clamp(angularDamping, 0.0f, 1.0f));
-
-                    // Update the old Transform of the body
-                    bodies[b].updateOldTransform();
-                } else {
-                    mConstrainedLinearVelocities[indexBody] = new Vector3(0, 0, 0);
-                    mConstrainedAngularVelocities[indexBody] = new Vector3(0, 0, 0);
-                }
-
-                indexBody++;
-            }
-        }
-    }
-
-    // Solve the contacts and constraints
-    protected void solveContactsAndConstraints() {
-
-        Profiler.StartProfilingBlock("DynamicsWorld::solveContactsAndConstraints()");
-
-        // Get the current time step
-        float dt = (float) mTimer.getTimeStep();
-
-        // Set the velocities arrays
-        mContactSolver.setSplitVelocitiesArrays(mSplitLinearVelocities, mSplitAngularVelocities);
-        mContactSolver.setConstrainedVelocitiesArrays(mConstrainedLinearVelocities,
-                mConstrainedAngularVelocities);
-        mConstraintSolver.setConstrainedVelocitiesArrays(mConstrainedLinearVelocities,
-                mConstrainedAngularVelocities);
-
-        // ---------- Solve velocity constraints for joints and contacts ---------- //
-        // For each island of the world
-        for (int islandIndex = 0; islandIndex < mNbIslands; islandIndex++) {
-
-            // Check if there are contacts and constraints to solve
-            boolean isConstraintsToSolve = mIslands[islandIndex].getNumJoints() > 0;
-            boolean isContactsToSolve = mIslands[islandIndex].getNumContactManifolds() > 0;
-            if (!isConstraintsToSolve && !isContactsToSolve) {
-                continue;
-            }
-
-            // If there are contacts in the current island
-            if (isContactsToSolve) {
-
-                // Initialize the solver
-                mContactSolver.initializeForIsland(dt, mIslands[islandIndex]);
-
-                // Warm start the contact solver
-                mContactSolver.warmStart();
-            }
-
-            // If there are constraints
-            if (isConstraintsToSolve) {
-
-                // Initialize the constraint solver
-                mConstraintSolver.initializeForIsland(dt, mIslands[islandIndex]);
-            }
-
-            // For each iteration of the velocity solver
-            for (int i = 0; i < mNbVelocitySolverIterations; i++) {
-
-                // Solve the constraints
-                if (isConstraintsToSolve) {
-                    mConstraintSolver.solveVelocityConstraints(mIslands[islandIndex]);
-                }
-
-                // Solve the contacts
-                if (isContactsToSolve) {
-                    mContactSolver.solve();
-                }
-            }
-
-            // Cache the lambda values in order to use them in the next
-            // step and cleanup the contact solver
-            if (isContactsToSolve) {
-                mContactSolver.storeImpulses();
-                mContactSolver.cleanup();
-            }
-        }
-    }
-
-    // Solve the position error correction of the constraints
-    protected void solvePositionCorrection() {
-
-        Profiler.StartProfilingBlock("DynamicsWorld::solvePositionCorrection()");
-
-        // Do not continue if there is no constraints
-        if (mJoints.isEmpty()) {
-            return;
-        }
-
-        // ---------- Get the position/orientation of the rigid bodies ---------- //
-        // TODO : Use better memory allocation here
-        mConstrainedPositions = new ArrayList<>(mRigidBodies.size());
-        mConstrainedOrientations = new ArrayList<>(mRigidBodies.size());
-
-        // For each island of the world
-        for (int islandIndex = 0; islandIndex < mNbIslands; islandIndex++) {
-
-            // For each body of the island
-            RigidBody[] bodies = mIslands[islandIndex].getBodies();
-            for (int b = 0; b < mIslands[islandIndex].getNumBodies(); b++) {
-
-                int index = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
-
-                // Get the position/orientation of the rigid body
-                Transform transform = bodies[b].getTransform();
-                mConstrainedPositions.set(index, transform.getPosition());
-                mConstrainedOrientations.set(index, transform.getOrientation());
-            }
-
-            // ---------- Solve the position error correction for the constraints ---------- //
-            // For each iteration of the position (error correction) solver
-            for (int i = 0; i < mNbPositionSolverIterations; i++) {
-
-                // Solve the position constraints
-                mConstraintSolver.solvePositionConstraints(mIslands[islandIndex]);
-            }
-
-            // ---------- Update the position/orientation of the rigid bodies ---------- //
-            for (int b = 0; b < mIslands[islandIndex].getNumBodies(); b++) {
-
-                int index = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
-
-                // Get the new position/orientation of the body
-                Vector3 newPosition = mConstrainedPositions.get(index);
-                Quaternion newOrientation = mConstrainedOrientations.get(index);
-
-                // Update the Transform of the body
-                Transform newTransform = new Transform(newPosition, new Quaternion(newOrientation).normalize());
-                bodies[b].setTransform(newTransform);
-            }
-        }
-    }
-
-    // Cleanup the constrained velocities array at each step
-    protected void cleanupConstrainedVelocitiesArray() {
-    }
-
-    // Reset the boolean movement variable of each body
-    protected void resetBodiesMovementVariable() {
-
-        // For each rigid body
-        for (RigidBody it : getRigidBodies()) {
-
-            // Set the hasMoved variable to false
-            it.setHasMoved(false);
-        }
+    protected EventListener eventListener;
+
+    // Array with all the islands of awaken bodies
+    protected Island[] islands;
+
+    // All the contact constraints
+    // TODO : Remove this variable (we will use the ones in the island now)
+    protected final List<ContactManifold> contactManifolds;
+
+    // Array of constrained rigid bodies orientation (for position error correction)
+    protected final List<Quaternion> constrainedOrientations;
+
+    // Array of constrained rigid bodies position (for position error correction)
+    protected final List<Vector3> constrainedPositions;
+
+    // Map body to their index in the constrained velocities array
+    protected final Map<RigidBody, Integer> mapBodyToConstrainedVelocityIndex;
+
+    // All the joints of the world
+    protected final Set<Joint> joints;
+
+    // All the rigid bodies of the physics world
+    protected final Set<RigidBody> rigidBodies;
+
+    // Timer of the physics engine
+    protected Timer timer;
+
+    // Gravity vector of the world
+    protected Vector3 gravity;
+
+    // Array of constrained angular velocities (state of the angular velocities
+    // after solving the constraints)
+    protected Vector3[] constrainedAngularVelocities;
+
+    // Array of constrained linear velocities (state of the linear velocities
+    // after solving the constraints)
+    protected Vector3[] constrainedLinearVelocities;
+
+    // Split angular velocities for the position contact solver (split impulse)
+    protected Vector3[] splitAngularVelocities;
+
+    // Split linear velocities for the position contact solver (split impulse)
+    protected Vector3[] splitLinearVelocities;
+
+    // Constructor
+    public DynamicsWorld(Vector3 gravity, float timeStep) {
+        super();
+
+        isGravityEnabled = true;
+        isSleepingEnabled = Defaults.SPLEEPING_ENABLED;
+        sleepAngularVelocity = Defaults.DEFAULT_SLEEP_ANGULAR_VELOCITY;
+        sleepLinearVelocity = Defaults.DEFAULT_SLEEP_LINEAR_VELOCITY;
+        timeBeforeSleep = Defaults.DEFAULT_TIME_BEFORE_SLEEP;
+        numIslands = 0;
+        numIslandsCapacity = 0;
+        numPositionSolverIterations = Defaults.DEFAULT_POSITION_SOLVER_NUM_ITERATIONS;
+        numRigidBodiesCapacity = 0;
+        numVelocitySolverIterations = Defaults.DEFAULT_VELOCITY_SOLVER_NUM_ITERATIONS;
+
+        contactManifolds = new ArrayList<>();
+        constrainedPositions = new ArrayList<>();
+        constrainedOrientations = new ArrayList<>();
+        mapBodyToConstrainedVelocityIndex = new HashMap<>();
+        joints = new HashSet<>();
+        rigidBodies = new HashSet<>();
+
+        constraintSolver = new ConstraintSolver(constrainedPositions, constrainedOrientations, mapBodyToConstrainedVelocityIndex);
+        contactSolver = new ContactSolver(mapBodyToConstrainedVelocityIndex);
+        eventListener = null;
+        islands = null;
+        timer = new Timer(timeStep);
+        this.gravity = gravity;
+        constrainedLinearVelocities = null;
+        constrainedAngularVelocities = null;
+        splitLinearVelocities = null;
+        splitAngularVelocities = null;
     }
 
     // Compute the islands of awake bodies.
@@ -487,40 +168,38 @@ public class DynamicsWorld extends CollisionWorld {
 
         Profiler.StartProfilingBlock("DynamicsWorld::computeIslands()");
 
-        int nbBodies = mRigidBodies.size();
+        int numBodies = rigidBodies.size();
 
         // Clear all the islands
-        for (int i = 0; i < mNbIslands; i++) {
+        for (int i = 0; i < numIslands; i++) {
             // Call the island destructor
             // Release the allocated memory for the island
-            mIslands[i] = null;
+            islands[i] = null;
         }
 
         // Allocate and create the array of islands
-        if (mNbIslandsCapacity != nbBodies && nbBodies > 0) {
-            if (mNbIslandsCapacity > 0) {
-            }
-            mNbIslandsCapacity = nbBodies;
-            mIslands = new Island[mNbIslandsCapacity];
+        if (numIslandsCapacity != numBodies && numBodies > 0) {
+            islands = new Island[numBodies];
+            numIslandsCapacity = numBodies;
         }
-        mNbIslands = 0;
+        numIslands = 0;
 
         // Reset all the isAlreadyInIsland variables of bodies, joints and contact manifolds
-        for (RigidBody it : mRigidBodies) {
+        for (RigidBody it : rigidBodies) {
             it.setIsAlreadyInIsland(false);
         }
-        for (ContactManifold it : mContactManifolds) {
+        for (ContactManifold it : contactManifolds) {
             it.setIsAlreadyInIsland(false);
         }
-        for (Joint it : mJoints) {
+        for (Joint it : joints) {
             it.setIsAlreadyInIsland(false);
         }
 
         // Create a stack (using an array) for the rigid bodies to visit during the Depth First Search
-        RigidBody[] stackBodiesToVisit = new RigidBody[nbBodies];
+        RigidBody[] stackBodiesToVisit = new RigidBody[numBodies];
 
         // For each rigid body of the world
-        for (RigidBody it : mRigidBodies) {
+        for (RigidBody it : rigidBodies) {
 
             RigidBody body = it;
 
@@ -547,7 +226,7 @@ public class DynamicsWorld extends CollisionWorld {
             body.setIsAlreadyInIsland(true);
 
             // Create the new island
-            mIslands[mNbIslands] = new Island(nbBodies, mContactManifolds.size(), mJoints.size());
+            islands[numIslands] = new Island(numBodies, contactManifolds.size(), joints.size());
 
             // While there are still some bodies to visit in the stack
             while (stackIndex > 0) {
@@ -561,7 +240,7 @@ public class DynamicsWorld extends CollisionWorld {
                 bodyToVisit.setIsSleeping(false);
 
                 // Add the body into the island
-                mIslands[mNbIslands].addBody(bodyToVisit);
+                islands[numIslands].addBody(bodyToVisit);
 
                 // If the current body is not moving, we do not want to perform the DFS
                 // search across that body
@@ -582,7 +261,7 @@ public class DynamicsWorld extends CollisionWorld {
                     }
 
                     // Add the contact manifold into the island
-                    mIslands[mNbIslands].addContactManifold(contactManifold);
+                    islands[numIslands].addContactManifold(contactManifold);
                     contactManifold.setIsAlreadyInIsland(true);
 
                     // Get the other body of the contact manifold
@@ -614,7 +293,7 @@ public class DynamicsWorld extends CollisionWorld {
                     }
 
                     // Add the joint into the island
-                    mIslands[mNbIslands].addJoint(joint);
+                    islands[numIslands].addJoint(joint);
                     joint.setIsAlreadyInIsland(true);
 
                     // Get the other body of the contact manifold
@@ -636,17 +315,355 @@ public class DynamicsWorld extends CollisionWorld {
 
             // Reset the isAlreadyIsland variable of the static bodies so that they
             // can also be included in the other islands
-            for (int i = 0; i < mIslands[mNbIslands].getNumBodies(); i++) {
+            for (int i = 0; i < islands[numIslands].getNumBodies(); i++) {
 
-                if (!mIslands[mNbIslands].getBodies()[i].isMotionEnabled()) {
-                    mIslands[mNbIslands].getBodies()[i].setIsAlreadyInIsland(false);
+                if (!islands[numIslands].getBodies()[i].isMotionEnabled()) {
+                    islands[numIslands].getBodies()[i].setIsAlreadyInIsland(false);
                 }
             }
 
-            mNbIslands++;
+            numIslands++;
         }
 
         // Release the allocated memory for the stack of bodies to visit
+    }
+
+    // Initialize the bodies velocities arrays for the next simulation step.
+    protected void initVelocityArrays() {
+
+        // Allocate memory for the bodies velocity arrays
+        int numBodies = rigidBodies.size();
+        if (numRigidBodiesCapacity != numBodies && numBodies > 0) {
+            constrainedAngularVelocities = new Vector3[numBodies];
+            constrainedLinearVelocities = new Vector3[numBodies];
+            numRigidBodiesCapacity = numBodies;
+            splitAngularVelocities = new Vector3[numBodies];
+            splitLinearVelocities = new Vector3[numBodies];
+            assert (constrainedAngularVelocities != null);
+            assert (constrainedLinearVelocities != null);
+            assert (splitAngularVelocities != null);
+            assert (splitLinearVelocities != null);
+        }
+
+        // Reset the velocities arrays
+        for (int i = 0; i < numRigidBodiesCapacity; i++) {
+            splitLinearVelocities[i] = new Vector3();
+            splitAngularVelocities[i] = new Vector3();
+        }
+
+        // Initialize the map of body indexes in the velocity arrays
+        mapBodyToConstrainedVelocityIndex.clear();
+        int indexBody = 0;
+        for (RigidBody it : rigidBodies) {
+
+            // Add the body into the map
+            mapBodyToConstrainedVelocityIndex.put(it, indexBody);
+            indexBody++;
+        }
+    }
+
+    // Integrate position and orientation of the rigid bodies.
+    // The positions and orientations of the bodies are integrated using
+    // the sympletic Euler time stepping scheme.
+    protected void integrateRigidBodiesPositions() {
+
+        Profiler.StartProfilingBlock("DynamicsWorld::integrateRigidBodiesPositions()");
+
+        float dt = (float) timer.getTimeStep();
+
+        // For each island of the world
+        for (int i = 0; i < numIslands; i++) {
+
+            RigidBody[] bodies = islands[i].getBodies();
+
+            // For each body of the island
+            for (int b = 0; b < islands[i].getNumBodies(); b++) {
+
+                // If the body is allowed to move
+                if (bodies[b].isMotionEnabled()) {
+
+                    // Get the constrained velocity
+                    int indexArray = mapBodyToConstrainedVelocityIndex.get(bodies[b]);
+                    Vector3 newLinVelocity = constrainedLinearVelocities[indexArray];
+                    Vector3 newAngVelocity = constrainedAngularVelocities[indexArray];
+
+                    // Update the linear and angular velocity of the body
+                    bodies[b].setLinearVelocity(newLinVelocity);
+                    bodies[b].setAngularVelocity(newAngVelocity);
+
+                    // Add the split impulse velocity from Contact Solver (only used
+                    // to update the position)
+                    if (contactSolver.isSplitImpulseActive()) {
+
+                        newLinVelocity.add(splitLinearVelocities[indexArray]);
+                        newAngVelocity.add(splitAngularVelocities[indexArray]);
+                    }
+
+                    // Get current position and orientation of the body
+                    Vector3 currentPosition = bodies[b].getTransform().getPosition();
+                    Quaternion currentOrientation = bodies[b].getTransform().getOrientation();
+
+                    // Compute the new position of the body
+                    Vector3 newPosition = new Vector3(currentPosition).add(new Vector3(newLinVelocity).multiply(dt));
+                    Quaternion newOrientation = new Quaternion(currentOrientation).add(
+                            new Quaternion(newAngVelocity, 0.0f).multiply(currentOrientation).multiply(0.5f * dt));
+
+                    // Update the Transform of the body
+                    Transform newTransform = new Transform(newPosition, new Quaternion(newOrientation).normalize());
+                    bodies[b].setTransform(newTransform);
+                }
+            }
+        }
+    }
+
+    // Integrate the velocities of rigid bodies.
+    // This method only set the temporary velocities but does not update
+    // the actual velocitiy of the bodies. The velocities updated in this method
+    // might violate the constraints and will be corrected in the constraint and
+    // contact solver.
+    protected void integrateRigidBodiesVelocities() {
+
+        Profiler.StartProfilingBlock("DynamicsWorld::integrateRigidBodiesVelocities()");
+
+        // Initialize the bodies velocity arrays
+        initVelocityArrays();
+
+        float dt = (float) timer.getTimeStep();
+
+        // For each island of the world
+        for (int i = 0; i < numIslands; i++) {
+
+            RigidBody[] bodies = islands[i].getBodies();
+
+            // For each body of the island
+            for (int b = 0; b < islands[i].getNumBodies(); b++) {
+
+                // Insert the body into the map of constrained velocities
+                int indexBody = mapBodyToConstrainedVelocityIndex.get(bodies[b]);
+
+                assert (splitLinearVelocities[indexBody].equals(new Vector3()));
+                assert (splitAngularVelocities[indexBody].equals(new Vector3()));
+
+                // If the body is allowed to move
+                if (bodies[b].isMotionEnabled()) {
+
+                    // Integrate the external force to get the new velocity of the body
+                    constrainedLinearVelocities[indexBody] = new Vector3(bodies[b].getLinearVelocity()).add(
+                            new Vector3(bodies[b].getExternalForce()).multiply(dt * bodies[b].getMassInverse()));
+                    constrainedAngularVelocities[indexBody] = new Vector3(bodies[b].getAngularVelocity()).add(
+                            new Matrix3x3(bodies[b].getInertiaTensorInverseWorld()).multiply(dt).multiply(
+                                    bodies[b].getExternalTorque(), new Vector3()));
+
+                    // If the gravity has to be applied to this rigid body
+                    if (bodies[b].isGravityEnabled() && isGravityEnabled) {
+
+                        // Integrate the gravity force
+                        constrainedLinearVelocities[indexBody].add(new Vector3(
+                                gravity).multiply(dt * bodies[b].getMassInverse() * bodies[b].getMass()));
+                    }
+
+                    // Apply the velocity damping
+                    // Damping force : F_c = -c' * v (c=damping factor)
+                    // Equation      : m * dv/dt = -c' * v
+                    //                 => dv/dt = -c * v (with c=c'/m)
+                    //                 => dv/dt + c * v = 0
+                    // Solution      : v(t) = v0 * e^(-c * t)
+                    //                 => v(t + dt) = v0 * e^(-c(t + dt))
+                    //                              = v0 * e^(-ct) * e^(-c * dt)
+                    //                              = v(t) * e^(-c * dt)
+                    //                 => v2 = v1 * e^(-c * dt)
+                    // Using Taylor Serie for e^(-x) : e^x ~ 1 + x + x^2/2! + ...
+                    //                              => e^(-x) ~ 1 - x
+                    //                 => v2 = v1 * (1 - c * dt)
+                    float linDampingFactor = bodies[b].getLinearDamping();
+                    float angDampingFactor = bodies[b].getAngularDamping();
+                    float linearDamping = Mathematics.Clamp(1.0f - dt * linDampingFactor, 0.0f, 1.0f);
+                    float angularDamping = Mathematics.Clamp(1.0f - dt * angDampingFactor, 0.0f, 1.0f);
+                    constrainedLinearVelocities[indexBody].multiply(Mathematics.Clamp(linearDamping, 0.0f, 1.0f));
+                    constrainedAngularVelocities[indexBody].multiply(Mathematics.Clamp(angularDamping, 0.0f, 1.0f));
+
+                    // Update the old Transform of the body
+                    bodies[b].updateOldTransform();
+                } else {
+                    constrainedLinearVelocities[indexBody] = new Vector3(0, 0, 0);
+                    constrainedAngularVelocities[indexBody] = new Vector3(0, 0, 0);
+                }
+
+                indexBody++;
+            }
+        }
+    }
+
+    // Reset the external force and torque applied to the bodies
+    protected void resetBodiesForceAndTorque() {
+
+        // For each body of the world
+        for (RigidBody it : rigidBodies) {
+            it.getExternalForce().zero();
+            it.getExternalTorque().zero();
+        }
+    }
+
+    // Reset the boolean movement variable of each body
+    protected void resetBodiesMovementVariable() {
+
+        // For each rigid body
+        for (RigidBody it : getRigidBodies()) {
+
+            // Set the hasMoved variable to false
+            it.setHasMoved(false);
+        }
+    }
+
+    // Compute and set the interpolation factor to all bodies
+    protected void setInterpolationFactorToAllBodies() {
+
+        Profiler.StartProfilingBlock("DynamicsWorld::setInterpolationFactorToAllBodies()");
+
+        // Compute the interpolation factor
+        float factor = timer.computeInterpolationFactor();
+        assert (factor >= 0.0f && factor <= 1.0f);
+
+        // Set the factor to all bodies
+        for (RigidBody it : rigidBodies) {
+
+            it.setInterpolationFactor(factor);
+        }
+    }
+
+    // Solve the contacts and constraints
+    protected void solveContactsAndConstraints() {
+
+        Profiler.StartProfilingBlock("DynamicsWorld::solveContactsAndConstraints()");
+
+        // Get the current time step
+        float dt = (float) timer.getTimeStep();
+
+        // Set the velocities arrays
+        contactSolver.setSplitVelocitiesArrays(splitLinearVelocities, splitAngularVelocities);
+        contactSolver.setConstrainedVelocitiesArrays(constrainedLinearVelocities, constrainedAngularVelocities);
+        constraintSolver.setConstrainedVelocitiesArrays(constrainedLinearVelocities, constrainedAngularVelocities);
+
+        // ---------- Solve velocity constraints for joints and contacts ---------- //
+        // For each island of the world
+        for (int islandIndex = 0; islandIndex < numIslands; islandIndex++) {
+
+            // Check if there are contacts and constraints to solve
+            boolean isConstraintsToSolve = islands[islandIndex].getNumJoints() > 0;
+            boolean isContactsToSolve = islands[islandIndex].getNumContactManifolds() > 0;
+            if (!isConstraintsToSolve && !isContactsToSolve) {
+                continue;
+            }
+
+            // If there are contacts in the current island
+            if (isContactsToSolve) {
+
+                // Initialize the solver
+                contactSolver.initializeForIsland(dt, islands[islandIndex]);
+
+                // Warm start the contact solver
+                contactSolver.warmStart();
+            }
+
+            // If there are constraints
+            if (isConstraintsToSolve) {
+
+                // Initialize the constraint solver
+                constraintSolver.initializeForIsland(dt, islands[islandIndex]);
+            }
+
+            // For each iteration of the velocity solver
+            for (int i = 0; i < numVelocitySolverIterations; i++) {
+
+                // Solve the constraints
+                if (isConstraintsToSolve) {
+                    constraintSolver.solveVelocityConstraints(islands[islandIndex]);
+                }
+
+                // Solve the contacts
+                if (isContactsToSolve) {
+                    contactSolver.solve();
+                }
+            }
+
+            // Cache the lambda values in order to use them in the next
+            // step and cleanup the contact solver
+            if (isContactsToSolve) {
+                contactSolver.storeImpulses();
+                contactSolver.cleanup();
+            }
+        }
+    }
+
+    // Solve the position error correction of the constraints
+    protected void solvePositionCorrection() {
+
+        Profiler.StartProfilingBlock("DynamicsWorld::solvePositionCorrection()");
+
+        // Do not continue if there is no constraints
+        if (joints.isEmpty()) {
+            return;
+        }
+
+        // ---------- Get the position/orientation of the rigid bodies ---------- //
+        // TODO : Use better memory allocation here
+        constrainedPositions.clear();
+        constrainedOrientations.clear();
+
+        // For each island of the world
+        for (int islandIndex = 0; islandIndex < numIslands; islandIndex++) {
+
+            // For each body of the island
+            RigidBody[] bodies = islands[islandIndex].getBodies();
+            for (int b = 0; b < islands[islandIndex].getNumBodies(); b++) {
+
+                int index = mapBodyToConstrainedVelocityIndex.get(bodies[b]);
+
+                // Get the position/orientation of the rigid body
+                Transform transform = bodies[b].getTransform();
+                constrainedPositions.set(index, transform.getPosition());
+                constrainedOrientations.set(index, transform.getOrientation());
+            }
+
+            // ---------- Solve the position error correction for the constraints ---------- //
+            // For each iteration of the position (error correction) solver
+            for (int i = 0; i < numPositionSolverIterations; i++) {
+
+                // Solve the position constraints
+                constraintSolver.solvePositionConstraints(islands[islandIndex]);
+            }
+
+            // ---------- Update the position/orientation of the rigid bodies ---------- //
+            for (int b = 0; b < islands[islandIndex].getNumBodies(); b++) {
+
+                int index = mapBodyToConstrainedVelocityIndex.get(bodies[b]);
+
+                // Get the new position/orientation of the body
+                Vector3 newPosition = constrainedPositions.get(index);
+                Quaternion newOrientation = constrainedOrientations.get(index);
+
+                // Update the Transform of the body
+                Transform newTransform = new Transform(newPosition, new Quaternion(newOrientation).normalize());
+                bodies[b].setTransform(newTransform);
+            }
+        }
+    }
+
+    // Update the AABBs of the bodies
+    protected void updateRigidBodiesAABB() {
+
+        Profiler.StartProfilingBlock("DynamicsWorld::updateRigidBodiesAABB()");
+
+        // For each rigid body of the world
+        for (RigidBody it : rigidBodies) {
+
+            // If the body has moved
+            if (it.getHasMoved()) {
+
+                // Update the AABB of the rigid body
+                it.updateAABB();
+            }
+        }
     }
 
     // Put bodies to sleep if needed.
@@ -656,18 +673,18 @@ public class DynamicsWorld extends CollisionWorld {
 
         Profiler.StartProfilingBlock("DynamicsWorld::updateSleepingBodies()");
 
-        float dt = (float) mTimer.getTimeStep();
-        float sleepLinearVelocitySquare = mSleepLinearVelocity * mSleepLinearVelocity;
-        float sleepAngularVelocitySquare = mSleepAngularVelocity * mSleepAngularVelocity;
+        float dt = (float) timer.getTimeStep();
+        float sleepLinearVelocitySquare = sleepLinearVelocity * sleepLinearVelocity;
+        float sleepAngularVelocitySquare = sleepAngularVelocity * sleepAngularVelocity;
 
         // For each island of the world
-        for (int i = 0; i < mNbIslands; i++) {
+        for (int i = 0; i < numIslands; i++) {
 
             float minSleepTime = Defaults.DECIMAL_LARGEST;
 
             // For each body of the island
-            RigidBody[] bodies = mIslands[i].getBodies();
-            for (int b = 0; b < mIslands[i].getNumBodies(); b++) {
+            RigidBody[] bodies = islands[i].getBodies();
+            for (int b = 0; b < islands[i].getNumBodies(); b++) {
 
                 // Skip static bodies
                 if (!bodies[b].isMotionEnabled()) {
@@ -695,312 +712,50 @@ public class DynamicsWorld extends CollisionWorld {
             // If the velocity of all the bodies of the island is under the
             // sleeping velocity threshold for a period of time larger than
             // the time required to become a sleeping body
-            if (minSleepTime >= mTimeBeforeSleep) {
+            if (minSleepTime >= timeBeforeSleep) {
 
                 // Put all the bodies of the island to sleep
-                for (int b = 0; b < mIslands[i].getNumBodies(); b++) {
+                for (int b = 0; b < islands[i].getNumBodies(); b++) {
                     bodies[b].setIsSleeping(true);
                 }
             }
         }
     }
 
-    // Constructor
-    public DynamicsWorld(Vector3 gravity, float timeStep) {
-        super();
+    // Add the joint to the list of joints of the two bodies involved in the joint
+    public void addJointToBody(Joint joint) {
 
-        mBodies = new HashSet<>();
-        mContactManifolds = new ArrayList<>();
-        mJoints = new HashSet<>();
-        mMapBodyToConstrainedVelocityIndex = new HashMap<>();
-        mRigidBodies = new HashSet<>();
+        assert (joint != null);
 
-        mTimer = new Timer(timeStep);
-        mGravity = gravity;
-        mIsGravityEnabled = true;
-        mConstrainedLinearVelocities = null;
-        mConstrainedAngularVelocities = null;
-        mContactSolver = new ContactSolver(mMapBodyToConstrainedVelocityIndex);
-        mConstraintSolver = new ConstraintSolver(mConstrainedPositions, mConstrainedOrientations, mMapBodyToConstrainedVelocityIndex);
-        mNbVelocitySolverIterations = Defaults.DEFAULT_VELOCITY_SOLVER_NUM_ITERATIONS;
-        mNbPositionSolverIterations = Defaults.DEFAULT_POSITION_SOLVER_NUM_ITERATIONS;
-        mIsSleepingEnabled = Defaults.SPLEEPING_ENABLED;
-        mSplitLinearVelocities = null;
-        mSplitAngularVelocities = null;
-        mNbIslands = 0;
-        mNbIslandsCapacity = 0;
-        mIslands = null;
-        mNbBodiesCapacity = 0;
-        mSleepLinearVelocity = Defaults.DEFAULT_SLEEP_LINEAR_VELOCITY;
-        mSleepAngularVelocity = Defaults.DEFAULT_SLEEP_ANGULAR_VELOCITY;
-        mTimeBeforeSleep = Defaults.DEFAULT_TIME_BEFORE_SLEEP;
-        mEventListener = null;
+        // Add the joint at the beginning of the linked list of joints of the first body
+        JointListElement jointListElement1 = new JointListElement(joint, joint.getBody1().getJointsList());
+        joint.getBody1().setJointsList(jointListElement1);
+
+        // Add the joint at the beginning of the linked list of joints of the second body
+        JointListElement jointListElement2 = new JointListElement(joint, joint.getBody2().getJointsList());
+        joint.getBody2().setJointsList(jointListElement2);
     }
 
-    // Start the physics simulation
-    public void start() {
-        mTimer.start();
-    }
+    // Add a contact manifold to the linked list of contact manifolds of the two bodies involed
+    // in the corresponding contact
+    public void addContactManifoldToBody(ContactManifold contactManifold, CollisionBody body1, CollisionBody body2) {
 
-    public void stop() {
-        mTimer.stop();
-    }
+        assert (contactManifold != null);
 
-    // Set the number of iterations for the velocity constraint solver
-    public void setNbIterationsVelocitySolver(int nbIterations) {
-        mNbVelocitySolverIterations = nbIterations;
-    }
+        // Add the contact manifold at the beginning of the linked
+        // list of contact manifolds of the first body
+        ContactManifoldListElement listElement1 = new ContactManifoldListElement(contactManifold, body1.getContactManifoldsLists());
+        body1.setContactManifoldsLists(listElement1);
 
-    // Set the number of iterations for the position constraint solver
-    public void setNbIterationsPositionSolver(int nbIterations) {
-        mNbPositionSolverIterations = nbIterations;
-    }
-
-    // Set the position correction technique used for contacts
-    public void setContactsPositionCorrectionTechnique(ContactsPositionCorrectionTechnique technique) {
-        if (technique == ContactsPositionCorrectionTechnique.BAUMGARTE_CONTACTS) {
-            mContactSolver.setIsSplitImpulseActive(false);
-        } else {
-            mContactSolver.setIsSplitImpulseActive(true);
-        }
-    }
-
-    // Set the position correction technique used for joints
-    public void setJointsPositionCorrectionTechnique(JointsPositionCorrectionTechnique technique) {
-        // TODO: Notify upstream of bug with missing method.
-        if (technique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
-            mConstraintSolver.setIsNonLinearGaussSeidelPositionCorrectionActive(false);
-        } else {
-            mConstraintSolver.setIsNonLinearGaussSeidelPositionCorrectionActive(true);
-        }
-    }
-
-    // Activate or deactivate the solving of friction constraints at the center of
-    // the contact manifold instead of solving them at each contact point
-    public void setIsSolveFrictionAtContactManifoldCenterActive(boolean isActive) {
-        mContactSolver.setIsSolveFrictionAtContactManifoldCenterActive(isActive);
-    }
-
-    // Return the gravity vector of the world
-    public Vector3 getGravity() {
-        return mGravity;
-    }
-
-    // Return if the gravity is enaled
-    public boolean isGravityEnabled() {
-        return mIsGravityEnabled;
-    }
-
-    // Enable/Disable the gravity
-    public void setIsGratityEnabled(boolean isGravityEnabled) {
-        mIsGravityEnabled = isGravityEnabled;
-    }
-
-    // Return the number of rigid bodies in the world
-    public int getNbRigidBodies() {
-        return mRigidBodies.size();
-    }
-
-    // Return the number of joints in the world
-    public int getNbJoints() {
-        return mJoints.size();
-    }
-
-    // Return an iterator to the beginning of the bodies of the physics world
-    public Set<RigidBody> getRigidBodies() {
-        return mRigidBodies;
-    }
-
-    // Return a reference to the contact manifolds of the world
-    public List<ContactManifold> getContactManifolds() {
-        return mContactManifolds;
-    }
-
-    // Return the number of contact manifolds in the world
-    public int getNbContactManifolds() {
-        return mContactManifolds.size();
-    }
-
-    // Return the current physics time (in seconds)
-    public float getPhysicsTime() {
-        return mTimer.getPhysicsTime();
-    }
-
-    // Return true if the sleeping technique is enabled
-    public boolean isSleepingEnabled() {
-        return mIsSleepingEnabled;
-    }
-
-    // Return the current sleep linear velocity
-    public float getSleepLinearVelocity() {
-        return mSleepLinearVelocity;
-    }
-
-    // Set the sleep linear velocity.
-    // When the velocity of a body becomes smaller than the sleep linear/angular
-    // velocity for a given amount of time, the body starts sleeping and does not need
-    // to be simulated anymore.
-    public void setSleepLinearVelocity(float sleepLinearVelocity) {
-        assert (sleepLinearVelocity >= 0.0f);
-        mSleepLinearVelocity = sleepLinearVelocity;
-    }
-
-    // Return the current sleep angular velocity
-    public float getSleepAngularVelocity() {
-        return mSleepAngularVelocity;
-    }
-
-    // Set the sleep angular velocity.
-    // When the velocity of a body becomes smaller than the sleep linear/angular
-    // velocity for a given amount of time, the body starts sleeping and does not need
-    // to be simulated anymore.
-    public void setSleepAngularVelocity(float sleepAngularVelocity) {
-        assert (sleepAngularVelocity >= 0.0f);
-        mSleepAngularVelocity = sleepAngularVelocity;
-    }
-
-    // Return the time a body is required to stay still before sleeping
-    public float getTimeBeforeSleep() {
-        return mTimeBeforeSleep;
-    }
-
-    // Set the time a body is required to stay still before sleeping
-    public void setTimeBeforeSleep(float timeBeforeSleep) {
-        assert (timeBeforeSleep >= 0.0f);
-        mTimeBeforeSleep = timeBeforeSleep;
-    }
-
-    // Set an event listener object to receive events callbacks.
-    // If you use null as an argument, the events callbacks will be disabled.
-    public void setEventListener(EventListener eventListener) {
-        mEventListener = eventListener;
-    }
-
-    // Update the physics simulation
-    public void update() {
-
-        //#ifdef IS_PROFILING_ACTIVE
-        // Increment the frame counter of the profiler
-        Profiler.IncrementFrameCounter();
-        //#endif
-
-        Profiler.StartProfilingBlock("DynamicsWorld::update()");
-
-        assert (mTimer.getIsRunning());
-
-        // Compute the time since the last update() call and update the timer
-        mTimer.update();
-
-        // While the time accumulator is not empty
-        while (mTimer.isPossibleToTakeStep()) {
-
-            // Remove all contact manifolds
-            mContactManifolds.clear();
-
-            // Reset all the contact manifolds lists of each body
-            resetContactManifoldListsOfBodies();
-
-            // Compute the collision detection
-            mCollisionDetection.computeCollisionDetection();
-
-            // Compute the islands (separate groups of bodies with constraints between each others)
-            computeIslands();
-
-            // Integrate the velocities
-            integrateRigidBodiesVelocities();
-
-            // Reset the movement boolean variable of each body to false
-            resetBodiesMovementVariable();
-
-            // Update the timer
-            mTimer.nextStep();
-
-            // Solve the contacts and constraints
-            solveContactsAndConstraints();
-
-            // Integrate the position and orientation of each body
-            integrateRigidBodiesPositions();
-
-            // Solve the position correction for constraints
-            solvePositionCorrection();
-
-            if (mIsSleepingEnabled) {
-                updateSleepingBodies();
-            }
-
-            // Update the AABBs of the bodies
-            updateRigidBodiesAABB();
-        }
-
-        // Reset the external force and torque applied to the bodies
-        resetBodiesForceAndTorque();
-
-        // Compute and set the interpolation factor to all the bodies
-        setInterpolationFactorToAllBodies();
-    }
-
-    // Create a rigid body into the physics world
-    public RigidBody createRigidBody(Transform transform, float mass,
-            Matrix3x3 inertiaTensorLocal,
-            CollisionShape collisionShape) {
-
-        // Compute the body ID
-        int bodyID = computeNextAvailableBodyID();
-
-        // Largest index cannot be used (it is used for invalid index)
-        assert (bodyID < Integer.MAX_VALUE);
-
-        // Create a collision shape for the rigid body into the world
-        CollisionShape newCollisionShape = createCollisionShape(collisionShape);
-
-        // Create the rigid body
-        RigidBody rigidBody = new RigidBody(transform, mass, inertiaTensorLocal, newCollisionShape, bodyID);
-        assert (rigidBody != null);
-
-        // Add the rigid body to the physics world
-        mBodies.add(rigidBody);
-        mRigidBodies.add(rigidBody);
-
-        // Add the rigid body to the collision detection
-        mCollisionDetection.addBody(rigidBody);
-
-        // Return the pointer to the rigid body
-        return rigidBody;
-    }
-
-    // Destroy a rigid body and all the joints which it belongs
-    public void destroyRigidBody(RigidBody rigidBody) {
-
-        // Remove the body from the collision detection
-        mCollisionDetection.removeBody(rigidBody);
-
-        // Add the body ID to the list of free IDs
-        mFreeBodiesIDs.add(rigidBody.getBodyID());
-
-        // Remove the collision shape from the world
-        removeCollisionShape(rigidBody.getCollisionShape());
-
-        // Destroy all the joints in which the rigid body to be destroyed is involved
-        JointListElement element;
-        for (element = rigidBody.getJointsList(); element != null; element = element.next) {
-            destroyJoint(element.joint);
-        }
-
-        // Reset the contact manifold list of the body
-        rigidBody.resetContactManifoldsList();
-        // Call the destructor of the rigid body
-
-        // Remove the rigid body from the list of rigid bodies
-        mBodies.remove(rigidBody);
-        mRigidBodies.remove(rigidBody);
-
-        // Free the object from the memory allocator
+        // Add the joint at the beginning of the linked list of joints of the second body
+        ContactManifoldListElement listElement2 = new ContactManifoldListElement(contactManifold, body2.getContactManifoldsLists());
+        body2.setContactManifoldsLists(listElement2);
     }
 
     // Create a joint between two bodies in the world and return a pointer to the new joint
     public Joint createJoint(JointInfo jointInfo) {
 
-        Joint newJoint = null;
+        Joint newJoint;
 
         // Allocate memory to create the new joint
         switch (jointInfo.type) {
@@ -1047,13 +802,41 @@ public class DynamicsWorld extends CollisionWorld {
         }
 
         // Add the joint into the world
-        mJoints.add(newJoint);
+        joints.add(newJoint);
 
         // Add the joint into the joint list of the bodies involved in the joint
         addJointToBody(newJoint);
 
         // Return the pointer to the created joint
         return newJoint;
+    }
+
+    // Create a rigid body into the physics world
+    public RigidBody createRigidBody(Transform transform, float mass,
+            Matrix3x3 inertiaTensorLocal, CollisionShape collisionShape) {
+
+        // Compute the body ID
+        int bodyID = computeNextAvailableBodyID();
+
+        // Largest index cannot be used (it is used for invalid index)
+        assert (bodyID < Integer.MAX_VALUE);
+
+        // Create a collision shape for the rigid body into the world
+        CollisionShape newCollisionShape = createCollisionShape(collisionShape);
+
+        // Create the rigid body
+        RigidBody rigidBody = new RigidBody(transform, mass, inertiaTensorLocal, newCollisionShape, bodyID);
+        assert (rigidBody != null);
+
+        // Add the rigid body to the physics world
+        mBodies.add(rigidBody);
+        rigidBodies.add(rigidBody);
+
+        // Add the rigid body to the collision detection
+        mCollisionDetection.addBody(rigidBody);
+
+        // Return the pointer to the rigid body
+        return rigidBody;
     }
 
     // Destroy a joint
@@ -1073,7 +856,7 @@ public class DynamicsWorld extends CollisionWorld {
         joint.getBody2().setIsSleeping(false);
 
         // Remove the joint from the world
-        mJoints.remove(joint);
+        joints.remove(joint);
 
         // Remove the joint from the joint list of the bodies involved in the joint
         joint.getBody1().removeJointFromJointsList(joint);
@@ -1083,60 +866,259 @@ public class DynamicsWorld extends CollisionWorld {
         // Release the allocated memory
     }
 
-    // Add the joint to the list of joints of the two bodies involved in the joint
-    public void addJointToBody(Joint joint) {
+    // Destroy a rigid body and all the joints which it belongs
+    public void destroyRigidBody(RigidBody rigidBody) {
 
-        assert (joint != null);
+        // Remove the body from the collision detection
+        mCollisionDetection.removeBody(rigidBody);
 
-        // Add the joint at the beginning of the linked list of joints of the first body
-        JointListElement jointListElement1 = new JointListElement(joint, joint.getBody1().getJointsList());
-        joint.getBody1().setJointsList(jointListElement1);
+        // Add the body ID to the list of free IDs
+        mFreeBodiesIDs.add(rigidBody.getBodyID());
 
-        // Add the joint at the beginning of the linked list of joints of the second body
-        JointListElement jointListElement2 = new JointListElement(joint, joint.getBody2().getJointsList());
-        joint.getBody2().setJointsList(jointListElement2);
+        // Remove the collision shape from the world
+        removeCollisionShape(rigidBody.getCollisionShape());
+
+        // Destroy all the joints in which the rigid body to be destroyed is involved
+        JointListElement element;
+        for (element = rigidBody.getJointsList(); element != null; element = element.next) {
+            destroyJoint(element.joint);
+        }
+
+        // Reset the contact manifold list of the body
+        rigidBody.resetContactManifoldsList();
+        // Call the destructor of the rigid body
+
+        // Remove the rigid body from the list of rigid bodies
+        mBodies.remove(rigidBody);
+        rigidBodies.remove(rigidBody);
+
+        // Free the object from the memory allocator
     }
 
-    // Add a contact manifold to the linked list of contact manifolds of the two bodies involed
-    // in the corresponding contact
-    public void addContactManifoldToBody(ContactManifold contactManifold, CollisionBody body1, CollisionBody body2) {
+    // Return the current physics time (in seconds)
+    public float getPhysicsTime() {
+        return timer.getPhysicsTime();
+    }
 
-        assert (contactManifold != null);
+    // Return the current sleep angular velocity
+    public float getSleepAngularVelocity() {
+        return sleepAngularVelocity;
+    }
 
-        // Add the contact manifold at the beginning of the linked
-        // list of contact manifolds of the first body
-        ContactManifoldListElement listElement1 = new ContactManifoldListElement(contactManifold, body1.getContactManifoldsLists());
-        body1.setContactManifoldsLists(listElement1);
+    // Set the sleep angular velocity.
+    // When the velocity of a body becomes smaller than the sleep linear/angular
+    // velocity for a given amount of time, the body starts sleeping and does not need
+    // to be simulated anymore.
+    public void setSleepAngularVelocity(float sleepAngularVelocity) {
+        assert (sleepAngularVelocity >= 0.0f);
+        this.sleepAngularVelocity = sleepAngularVelocity;
+    }
 
-        // Add the joint at the beginning of the linked list of joints of the second body
-        ContactManifoldListElement listElement2 = new ContactManifoldListElement(contactManifold, body2.getContactManifoldsLists());
-        body2.setContactManifoldsLists(listElement2);
+    // Return the current sleep linear velocity
+    public float getSleepLinearVelocity() {
+        return sleepLinearVelocity;
+    }
+
+    // Set the sleep linear velocity.
+    // When the velocity of a body becomes smaller than the sleep linear/angular
+    // velocity for a given amount of time, the body starts sleeping and does not need
+    // to be simulated anymore.
+    public void setSleepLinearVelocity(float sleepLinearVelocity) {
+        assert (sleepLinearVelocity >= 0.0f);
+        this.sleepLinearVelocity = sleepLinearVelocity;
+    }
+
+    // Return the time a body is required to stay still before sleeping
+    public float getTimeBeforeSleep() {
+        return timeBeforeSleep;
+    }
+
+    // Set the time a body is required to stay still before sleeping
+    public void setTimeBeforeSleep(float timeBeforeSleep) {
+        assert (timeBeforeSleep >= 0.0f);
+        this.timeBeforeSleep = timeBeforeSleep;
+    }
+
+    // Return the number of contact manifolds in the world
+    public int getNumContactManifolds() {
+        return contactManifolds.size();
+    }
+
+    // Return the number of joints in the world
+    public int getNumJoints() {
+        return joints.size();
+    }
+
+    // Return the number of rigid bodies in the world
+    public int getNumRigidBodies() {
+        return rigidBodies.size();
+    }
+
+    // Return a reference to the contact manifolds of the world
+    public List<ContactManifold> getContactManifolds() {
+        return contactManifolds;
+    }
+
+    // Return an iterator to the beginning of the bodies of the physics world
+    public Set<RigidBody> getRigidBodies() {
+        return rigidBodies;
+    }
+
+    // Return the gravity vector of the world
+    public Vector3 getGravity() {
+        return gravity;
+    }
+
+    // Return if the gravity is enaled
+    public boolean isGravityEnabled() {
+        return isGravityEnabled;
+    }
+
+    // Enable/Disable the gravity
+    public void setIsGratityEnabled(boolean isGravityEnabled) {
+        this.isGravityEnabled = isGravityEnabled;
+    }
+
+    // Return true if the sleeping technique is enabled
+    public boolean isSleepingEnabled() {
+        return isSleepingEnabled;
+    }
+
+    // Enable/Disable the sleeping technique
+    public void setIsSleepingEnabled(boolean isSleepingEnabled) {
+        this.isSleepingEnabled = isSleepingEnabled;
+
+        if (!this.isSleepingEnabled) {
+
+            // For each body of the world
+            for (RigidBody it : rigidBodies) {
+
+                // Wake up the rigid body
+                it.setIsSleeping(false);
+            }
+        }
     }
 
     // Reset all the contact manifolds linked list of each body
     public void resetContactManifoldListsOfBodies() {
 
         // For each rigid body of the world
-        for (RigidBody it : mRigidBodies) {
+        for (RigidBody it : rigidBodies) {
 
             // Reset the contact manifold list of the body
             it.resetContactManifoldsList();
         }
     }
 
-    // Enable/Disable the sleeping technique
-    public void enableSleeping(boolean isSleepingEnabled) {
-        mIsSleepingEnabled = isSleepingEnabled;
-
-        if (!mIsSleepingEnabled) {
-
-            // For each body of the world
-            for (RigidBody it : mRigidBodies) {
-
-                // Wake up the rigid body
-                it.setIsSleeping(false);
-            }
+    // Set the position correction technique used for contacts
+    public void setContactsPositionCorrectionTechnique(ContactsPositionCorrectionTechnique technique) {
+        if (technique == ContactsPositionCorrectionTechnique.BAUMGARTE_CONTACTS) {
+            contactSolver.setIsSplitImpulseActive(false);
+        } else {
+            contactSolver.setIsSplitImpulseActive(true);
         }
+    }
+
+    // Set an event listener object to receive events callbacks.
+    // If you use null as an argument, the events callbacks will be disabled.
+    public void setEventListener(EventListener eventListener) {
+        this.eventListener = eventListener;
+    }
+
+    // Set the position correction technique used for joints
+    public void setJointsPositionCorrectionTechnique(JointsPositionCorrectionTechnique technique) {
+        // TODO: Notify upstream of bug with missing method.
+        if (technique == JointsPositionCorrectionTechnique.BAUMGARTE_JOINTS) {
+            constraintSolver.setIsNonLinearGaussSeidelPositionCorrectionActive(false);
+        } else {
+            constraintSolver.setIsNonLinearGaussSeidelPositionCorrectionActive(true);
+        }
+    }
+
+    // Activate or deactivate the solving of friction constraints at the center of
+    // the contact manifold instead of solving them at each contact point
+    public void setIsSolveFrictionAtContactManifoldCenterActive(boolean isActive) {
+        contactSolver.setIsSolveFrictionAtContactManifoldCenterActive(isActive);
+    }
+
+    // Set the number of iterations for the position constraint solver
+    public void setNumIterationsPositionSolver(int numIterations) {
+        numPositionSolverIterations = numIterations;
+    }
+
+    // Set the number of iterations for the velocity constraint solver
+    public void setNumIterationsVelocitySolver(int numIterations) {
+        numVelocitySolverIterations = numIterations;
+    }
+
+    // Start the physics simulation
+    public void start() {
+        timer.start();
+    }
+
+    public void stop() {
+        timer.stop();
+    }
+
+    // Update the physics simulation
+    public void update() {
+
+        // Increment the frame counter of the profiler
+        Profiler.IncrementFrameCounter();
+
+        Profiler.StartProfilingBlock("DynamicsWorld::update()");
+
+        assert (timer.getIsRunning());
+
+        // Compute the time since the last update() call and update the timer
+        timer.update();
+
+        // While the time accumulator is not empty
+        while (timer.isPossibleToTakeStep()) {
+
+            // Remove all contact manifolds
+            contactManifolds.clear();
+
+            // Reset all the contact manifolds lists of each body
+            resetContactManifoldListsOfBodies();
+
+            // Compute the collision detection
+            mCollisionDetection.computeCollisionDetection();
+
+            // Compute the islands (separate groups of bodies with constraints between each others)
+            computeIslands();
+
+            // Integrate the velocities
+            integrateRigidBodiesVelocities();
+
+            // Reset the movement boolean variable of each body to false
+            resetBodiesMovementVariable();
+
+            // Update the timer
+            timer.nextStep();
+
+            // Solve the contacts and constraints
+            solveContactsAndConstraints();
+
+            // Integrate the position and orientation of each body
+            integrateRigidBodiesPositions();
+
+            // Solve the position correction for constraints
+            solvePositionCorrection();
+
+            if (isSleepingEnabled) {
+                updateSleepingBodies();
+            }
+
+            // Update the AABBs of the bodies
+            updateRigidBodiesAABB();
+        }
+
+        // Reset the external force and torque applied to the bodies
+        resetBodiesForceAndTorque();
+
+        // Compute and set the interpolation factor to all the bodies
+        setInterpolationFactorToAllBodies();
     }
 
     // Notify the world about a new broad-phase overlapping pair
@@ -1153,17 +1135,6 @@ public class DynamicsWorld extends CollisionWorld {
         OverlappingPair check = mOverlappingPairs.put(indexPair, newPair);
 
         assert (check == null);
-    }
-
-    // Notify the world about a removed broad-phase overlapping pair
-    @Override
-    public void notifyRemovedOverlappingPair(BroadPhasePair removedPair) {
-
-        // Get the pair of body index
-        BodyIndexPair indexPair = removedPair.newBodiesIndexPair();
-
-        // Remove the overlapping pair from the memory allocator
-        mOverlappingPairs.remove(indexPair);
     }
 
     // Notify the world about a new narrow-phase contact
@@ -1183,8 +1154,8 @@ public class DynamicsWorld extends CollisionWorld {
         if (overlappingPair.getNumContactPoints() == 0) {
 
             // Trigger a callback event
-            if (mEventListener != null) {
-                mEventListener.beginContact(contactInfo);
+            if (eventListener != null) {
+                eventListener.beginContact(contactInfo);
             }
         }
 
@@ -1192,7 +1163,7 @@ public class DynamicsWorld extends CollisionWorld {
         overlappingPair.addContact(contact);
 
         // Add the contact manifold to the world
-        mContactManifolds.add(overlappingPair.getContactManifold());
+        contactManifolds.add(overlappingPair.getContactManifold());
 
         // Add the contact manifold into the list of contact manifolds
         // of the two bodies involved in the contact
@@ -1200,9 +1171,20 @@ public class DynamicsWorld extends CollisionWorld {
                 overlappingPair.getBody2());
 
         // Trigger a callback event for the new contact
-        if (mEventListener != null) {
-            mEventListener.newContact(contactInfo);
+        if (eventListener != null) {
+            eventListener.newContact(contactInfo);
         }
+    }
+
+    // Notify the world about a removed broad-phase overlapping pair
+    @Override
+    public void notifyRemovedOverlappingPair(BroadPhasePair removedPair) {
+
+        // Get the pair of body index
+        BodyIndexPair indexPair = removedPair.newBodiesIndexPair();
+
+        // Remove the overlapping pair from the memory allocator
+        mOverlappingPairs.remove(indexPair);
     }
 
     @Override
