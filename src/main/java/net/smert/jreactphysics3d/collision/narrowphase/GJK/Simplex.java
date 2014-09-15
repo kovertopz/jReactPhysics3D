@@ -69,8 +69,8 @@ public class Simplex {
     // represented by the bits "subset"
     private Vector3 computeClosestPointForSubset(int subset) {
 
-        float deltaX = 0.0f;            // deltaX = sum of all det[subset][i]
         mMaxLengthSquare = 0.0f;
+        float deltaX = 0.0f;            // deltaX = sum of all det[subset][i]
         Vector3 v = new Vector3();      // Closet point v = sum(lambda_i * points[i])
 
         // For each four point in the possible simplex set
