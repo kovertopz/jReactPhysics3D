@@ -17,44 +17,44 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class RigidBody extends CollisionBody {
 
     // True if the gravity needs to be applied to this rigid body
-    protected boolean mIsGravityEnabled;
+    protected boolean isGravityEnabled;
 
     // Angular velocity damping factor
-    protected float mAngularDamping;
+    protected float angularDamping;
 
     // Linear velocity damping factor
-    protected float mLinearDamping;
+    protected float linearDamping;
 
     // TODO: Remove the mass variable (duplicate with inverseMass)
     // Mass of the body
-    protected float mMass;
+    protected float mass;
 
     // Inverse of the mass of the body
-    protected float mMassInverse;
+    protected float massInverse;
 
     // First element of the linked list of joints involving this body
-    protected JointListElement mJointsList;
+    protected JointListElement jointsList;
 
     // Angular velocity of the body
-    protected final Vector3 mAngularVelocity;
+    protected final Vector3 angularVelocity;
 
     // Linear velocity of the body
-    protected final Vector3 mLinearVelocity;
+    protected final Vector3 linearVelocity;
 
     // Current external force on the body
-    protected final Vector3 mExternalForce;
+    protected final Vector3 externalForce;
 
     // Current external torque on the body
-    protected final Vector3 mExternalTorque;
+    protected final Vector3 externalTorque;
 
     // Material properties of the rigid body
-    protected final Material mMaterial;
+    protected final Material material;
 
     // Local inertia tensor of the body (in local-space)
-    protected final Matrix3x3 mInertiaTensorLocal;
+    protected final Matrix3x3 inertiaTensorLocal;
 
     // Inverse of the inertia tensor of the body
-    protected final Matrix3x3 mInertiaTensorLocalInverse;
+    protected final Matrix3x3 inertiaTensorLocalInverse;
 
     // Constructor
     public RigidBody(Transform transform, float mass, Matrix3x3 inertiaTensorLocal, CollisionShape collisionShape, int id) {
@@ -63,57 +63,57 @@ public class RigidBody extends CollisionBody {
         assert (mass > 0.0f);
         assert (inertiaTensorLocal != null);
 
-        mIsGravityEnabled = true;
-        mLinearDamping = 0.0f;
-        mAngularDamping = 0.0f;
-        mMass = mass;
-        mMassInverse = 1.0f / mass;
+        isGravityEnabled = true;
+        linearDamping = 0.0f;
+        angularDamping = 0.0f;
+        this.mass = mass;
+        massInverse = 1.0f / mass;
 
-        mJointsList = null;
-        mAngularVelocity = new Vector3();
-        mLinearVelocity = new Vector3();
-        mExternalForce = new Vector3();
-        mExternalTorque = new Vector3();
-        mMaterial = new Material();
-        mInertiaTensorLocal = new Matrix3x3(inertiaTensorLocal);
-        mInertiaTensorLocalInverse = new Matrix3x3(inertiaTensorLocal).inverse();
+        jointsList = null;
+        angularVelocity = new Vector3();
+        linearVelocity = new Vector3();
+        externalForce = new Vector3();
+        externalTorque = new Vector3();
+        material = new Material();
+        this.inertiaTensorLocal = new Matrix3x3(inertiaTensorLocal);
+        inertiaTensorLocalInverse = new Matrix3x3(inertiaTensorLocal).inverse();
     }
 
     // Return true if the gravity needs to be applied to this rigid body
     public boolean isGravityEnabled() {
-        return mIsGravityEnabled;
+        return isGravityEnabled;
     }
 
     // Set the variable to know if the gravity is applied to this rigid body
     public void enableGravity(boolean isEnabled) {
-        mIsGravityEnabled = isEnabled;
+        isGravityEnabled = isEnabled;
     }
 
     // Return the angular velocity damping factor
     public float getAngularDamping() {
-        return mAngularDamping;
+        return angularDamping;
     }
 
     // Set the angular damping factor
     public void setAngularDamping(float angularDamping) {
         assert (angularDamping >= 0.0f);
-        mAngularDamping = angularDamping;
+        this.angularDamping = angularDamping;
     }
 
     // Return the linear velocity damping factor
     public float getLinearDamping() {
-        return mLinearDamping;
+        return linearDamping;
     }
 
     // Set the linear damping factor
     public void setLinearDamping(float linearDamping) {
         assert (linearDamping >= 0.0f);
-        mLinearDamping = linearDamping;
+        this.linearDamping = linearDamping;
     }
 
     // Method that return the mass of the body
     public float getMass() {
-        return mMass;
+        return mass;
     }
 
     // Method that set the mass of the body
@@ -121,41 +121,41 @@ public class RigidBody extends CollisionBody {
         assert (mass > 0.0f);
 
         // TODO: Set inverse mass when this is set?
-        mMass = mass;
+        this.mass = mass;
     }
 
     // Return the inverse of the mass of the body
     public float getMassInverse() {
-        return mMassInverse;
+        return massInverse;
     }
 
     // Set the inverse of the mass
     public void setMassInverse(float massInverse) {
         assert (massInverse >= 0.0f);
-        mMassInverse = massInverse;
+        this.massInverse = massInverse;
     }
 
     // Return the first element of the linked list of joints involving this body
     public JointListElement getJointsList() {
-        return mJointsList;
+        return jointsList;
     }
 
     public void setJointsList(JointListElement jointsList) {
-        mJointsList = jointsList;
+        this.jointsList = jointsList;
     }
 
     // Remove a joint from the joints list
     public void removeJointFromJointsList(Joint joint) {
 
         assert (joint != null);
-        assert (mJointsList != null);
+        assert (jointsList != null);
 
         // Remove the joint from the linked list of the joints of the first body
-        if (mJointsList.joint == joint) {   // If the first element is the one to remove
-            JointListElement elementToRemove = mJointsList;
-            mJointsList = elementToRemove.next;
+        if (jointsList.joint == joint) {   // If the first element is the one to remove
+            JointListElement elementToRemove = jointsList;
+            jointsList = elementToRemove.next;
         } else {    // If the element to remove is not the first one in the list
-            JointListElement currentElement = mJointsList;
+            JointListElement currentElement = jointsList;
             while (currentElement.next != null) {
                 if (currentElement.next.joint == joint) {
                     JointListElement elementToRemove = currentElement.next;
@@ -169,34 +169,34 @@ public class RigidBody extends CollisionBody {
 
     // Return the angular velocity of the body
     public Vector3 getAngularVelocity() {
-        return mAngularVelocity;
+        return angularVelocity;
     }
 
     public void setAngularVelocity(Vector3 angularVelocity) {
-        mAngularVelocity.set(angularVelocity);
+        this.angularVelocity.set(angularVelocity);
     }
 
     // Return the linear velocity
     public Vector3 getLinearVelocity() {
-        return mLinearVelocity;
+        return linearVelocity;
     }
 
     // Set the linear velocity of the rigid body
     public void setLinearVelocity(Vector3 linearVelocity) {
 
         // If the body is able to move
-        if (mIsMotionEnabled) {
+        if (isMotionEnabled) {
             // Update the linear velocity of the current body state
-            mLinearVelocity.set(linearVelocity);
+            this.linearVelocity.set(linearVelocity);
         }
     }
 
     public Vector3 getExternalForce() {
-        return mExternalForce;
+        return externalForce;
     }
 
     public Vector3 getExternalTorque() {
-        return mExternalTorque;
+        return externalTorque;
     }
 
     // Apply an external force to the body at a given point (in world-space coordinates).
@@ -208,18 +208,18 @@ public class RigidBody extends CollisionBody {
     public void applyForce(Vector3 force, Vector3 point) {
 
         // If it is a static body, do not apply any force
-        if (!mIsMotionEnabled) {
+        if (!isMotionEnabled) {
             return;
         }
 
         // Awake the body if it was sleeping
-        if (mIsSleeping) {
+        if (isSleeping) {
             setIsSleeping(false);
         }
 
         // Add the force and torque
-        mExternalForce.add(force);
-        mExternalTorque.add(new Vector3(point).subtract(mTransform.getPosition()).cross(force));
+        externalForce.add(force);
+        externalTorque.add(new Vector3(point).subtract(transform.getPosition()).cross(force));
     }
 
     // Apply an external force to the body at its gravity center.
@@ -229,17 +229,17 @@ public class RigidBody extends CollisionBody {
     public void applyForceToCenter(Vector3 force) {
 
         // If it is a static body, do not apply any force
-        if (!mIsMotionEnabled) {
+        if (!isMotionEnabled) {
             return;
         }
 
         // Awake the body if it was sleeping
-        if (mIsSleeping) {
+        if (isSleeping) {
             setIsSleeping(false);
         }
 
         // Add the force
-        mExternalForce.add(force);
+        externalForce.add(force);
     }
 
     // Apply an external torque to the body.
@@ -249,39 +249,39 @@ public class RigidBody extends CollisionBody {
     public void applyTorque(Vector3 torque) {
 
         // If it is a static body, do not apply any force
-        if (!mIsMotionEnabled) {
+        if (!isMotionEnabled) {
             return;
         }
 
         // Awake the body if it was sleeping
-        if (mIsSleeping) {
+        if (isSleeping) {
             setIsSleeping(false);
         }
 
         // Add the torque
-        mExternalTorque.add(torque);
+        externalTorque.add(torque);
     }
 
     // Return a reference to the material properties of the rigid body
     public Material getMaterial() {
-        return mMaterial;
+        return material;
     }
 
     // Set a new material for this rigid body
     public void setMaterial(Material material) {
-        mMaterial.set(material);
+        this.material.set(material);
     }
 
     // Return the local inertia tensor of the body (in body coordinates)
     public Matrix3x3 getInertiaTensorLocal() {
-        return mInertiaTensorLocal;
+        return inertiaTensorLocal;
     }
 
     // Set the local inertia tensor of the body (in body coordinates)
     public void setInertiaTensorLocal(Matrix3x3 inertiaTensorLocal) {
 
         // TODO: Set inertiaTensorLocalInverse when this is set?
-        mInertiaTensorLocal.set(inertiaTensorLocal);
+        this.inertiaTensorLocal.set(inertiaTensorLocal);
     }
 
     // Return the inertia tensor in world coordinates.
@@ -292,16 +292,16 @@ public class RigidBody extends CollisionBody {
     // the current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorWorld() {
         // TODO: Rename to new
-        Matrix3x3 rotation = mTransform.getOrientation().getMatrix(new Matrix3x3());
+        Matrix3x3 rotation = transform.getOrientation().getMatrix(new Matrix3x3());
         Matrix3x3 transpose = new Matrix3x3(rotation).transpose();
 
         // Compute and return the inertia tensor in world coordinates
-        return new Matrix3x3(rotation).multiply(mInertiaTensorLocal).multiply(transpose);
+        return new Matrix3x3(rotation).multiply(inertiaTensorLocal).multiply(transpose);
     }
 
     // Get the inverse of the inertia tensor
     public Matrix3x3 getInertiaTensorLocalInverse() {
-        return mInertiaTensorLocalInverse;
+        return inertiaTensorLocalInverse;
     }
 
     // Return the inverse of the inertia tensor in world coordinates.
@@ -312,21 +312,21 @@ public class RigidBody extends CollisionBody {
     // current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorInverseWorld() {
         // TODO: Rename to new
-        Matrix3x3 rotation = mTransform.getOrientation().getMatrix(new Matrix3x3());
+        Matrix3x3 rotation = transform.getOrientation().getMatrix(new Matrix3x3());
         Matrix3x3 transpose = new Matrix3x3(rotation).transpose();
 
         // Compute and return the inertia tensor in world coordinates
-        return new Matrix3x3(rotation).multiply(mInertiaTensorLocalInverse).multiply(transpose);
+        return new Matrix3x3(rotation).multiply(inertiaTensorLocalInverse).multiply(transpose);
     }
 
     // Set the variable to know whether or not the body is sleeping
     @Override
     public void setIsSleeping(boolean isSleeping) {
         if (isSleeping) {
-            mLinearVelocity.zero();
-            mAngularVelocity.zero();
-            mExternalForce.zero();
-            mExternalTorque.zero();
+            linearVelocity.zero();
+            angularVelocity.zero();
+            externalForce.zero();
+            externalTorque.zero();
         }
         super.setIsSleeping(isSleeping);
     }

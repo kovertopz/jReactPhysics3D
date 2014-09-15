@@ -13,31 +13,31 @@ import net.smert.jreactphysics3d.mathematics.Transform;
 public class CollisionBody extends Body {
 
     // True if the body has moved during the last frame
-    protected boolean mHasMoved;
+    protected boolean hasMoved;
 
     // True if the body can collide with others bodies
-    protected boolean mIsCollisionEnabled;
+    protected boolean isCollisionEnabled;
 
     // True if the body is able to move
-    protected boolean mIsMotionEnabled;
+    protected boolean isMotionEnabled;
 
     // Interpolation factor used for the state interpolation
-    protected float mInterpolationFactor;
+    protected float interpolationFactor;
 
     // AABB for Broad-Phase collision detection
-    protected final AABB mAabb;
+    protected final AABB aabb;
 
     // Collision shape of the body
-    protected CollisionShape mCollisionShape;
+    protected CollisionShape collisionShape;
 
     // First element of the linked list of contact manifolds involving this body
-    protected ContactManifoldListElement mContactManifoldsList;
+    protected ContactManifoldListElement contactManifoldsList;
 
     // Last position and orientation of the body
-    protected final Transform mOldTransform;
+    protected final Transform oldTransform;
 
     // Position and orientation of the body
-    protected final Transform mTransform;
+    protected final Transform transform;
 
     // Constructor
     public CollisionBody(Transform transform, CollisionShape collisionShape, int id) {
@@ -46,66 +46,66 @@ public class CollisionBody extends Body {
         assert (transform != null);
         assert (collisionShape != null);
 
-        mHasMoved = false;
-        mIsCollisionEnabled = true;
-        mIsMotionEnabled = true;
-        mInterpolationFactor = 0.0f;
-        mAabb = new AABB();
-        mCollisionShape = collisionShape;
-        mContactManifoldsList = null;
-        mOldTransform = new Transform(transform);
-        mTransform = new Transform(transform);
+        hasMoved = false;
+        isCollisionEnabled = true;
+        isMotionEnabled = true;
+        interpolationFactor = 0.0f;
+        aabb = new AABB();
+        this.collisionShape = collisionShape;
+        contactManifoldsList = null;
+        oldTransform = new Transform(transform);
+        this.transform = new Transform(transform);
 
         // Initialize the AABB for broad-phase collision detection
-        mCollisionShape.updateAABB(mAabb, transform);
+        this.collisionShape.updateAABB(aabb, transform);
     }
 
     public boolean getHasMoved() {
-        return mHasMoved;
+        return hasMoved;
     }
 
     public void setHasMoved(boolean hasMoved) {
-        mHasMoved = hasMoved;
+        this.hasMoved = hasMoved;
     }
 
     // Return true if the body can collide with others bodies
     public boolean isCollisionEnabled() {
-        return mIsCollisionEnabled;
+        return isCollisionEnabled;
     }
 
     // Enable/disable the collision with this body
     public void setIsCollisionEnabled(boolean isCollisionEnabled) {
-        mIsCollisionEnabled = isCollisionEnabled;
+        this.isCollisionEnabled = isCollisionEnabled;
     }
 
     // Return true if the rigid body is allowed to move
     public boolean isMotionEnabled() {
-        return mIsMotionEnabled;
+        return isMotionEnabled;
     }
 
     // Enable/disable the motion of the body
     public void setIsMotionEnabled(boolean isMotionEnabled) {
-        mIsMotionEnabled = isMotionEnabled;
+        this.isMotionEnabled = isMotionEnabled;
     }
 
     // Set the interpolation factor of the body
     public void setInterpolationFactor(float interpolationFactor) {
-        mInterpolationFactor = interpolationFactor;
+        this.interpolationFactor = interpolationFactor;
     }
 
     // Return the AAABB of the body
     public AABB getAABB() {
-        return mAabb;
+        return aabb;
     }
 
     // Update the rigid body in order to reflect a change in the body state
     public void updateAABB() {
-        mCollisionShape.updateAABB(mAabb, mTransform);
+        collisionShape.updateAABB(aabb, transform);
     }
 
     // Return the collision shape
     public CollisionShape getCollisionShape() {
-        return mCollisionShape;
+        return collisionShape;
     }
 
     // Set the collision shape
@@ -113,49 +113,49 @@ public class CollisionBody extends Body {
 
         // TODO: Should we even be allowed to change collision shapes?
         assert (collisionShape != null);
-        mCollisionShape = collisionShape;
+        this.collisionShape = collisionShape;
     }
 
     // Return the first element of the linked list of contact manifolds involving this body
     public ContactManifoldListElement getContactManifoldsLists() {
-        return mContactManifoldsList;
+        return contactManifoldsList;
     }
 
     public void setContactManifoldsLists(ContactManifoldListElement contactManifoldsList) {
-        mContactManifoldsList = contactManifoldsList;
+        this.contactManifoldsList = contactManifoldsList;
     }
 
     // Reset the contact manifold lists
     public void resetContactManifoldsList() {
-        mContactManifoldsList = null;
-        assert (mContactManifoldsList == null);
+        contactManifoldsList = null;
+        assert (contactManifoldsList == null);
     }
 
     // Return the interpolated transform for rendering
     public Transform getInterpolatedTransform(Transform outTransform) {
-        return Transform.Interpolate(mOldTransform, mTransform, mInterpolationFactor, outTransform);
+        return Transform.Interpolate(oldTransform, transform, interpolationFactor, outTransform);
     }
 
     // Update the old transform with the current one.
     // This is used to compute the interpolated position and orientation of the body
     public void updateOldTransform() {
-        mOldTransform.set(mTransform);
+        oldTransform.set(transform);
     }
 
     // Return the current position and orientation
     public Transform getTransform() {
-        return mTransform;
+        return transform;
     }
 
     // Set the current position and orientation
     public void setTransform(Transform transform) {
 
         // Check if the body has moved
-        if (!mTransform.equals(transform)) {
-            mHasMoved = true;
+        if (!this.transform.equals(transform)) {
+            hasMoved = true;
         }
 
-        mTransform.set(transform);
+        this.transform.set(transform);
     }
 
 }
