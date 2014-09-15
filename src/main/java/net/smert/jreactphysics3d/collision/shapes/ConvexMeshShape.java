@@ -27,33 +27,33 @@ public class ConvexMeshShape extends CollisionShape {
 
     // True if the shape contains the edges of the convex mesh in order to
     // make the collision detection faster
-    private boolean mIsEdgesInformationUsed;
+    private boolean isEdgesInformationUsed;
 
     // Cached support vertex index (previous support vertex)
-    private int mCachedSupportVertex;
+    private int cachedSupportVertex;
 
     // Array with the vertices of the mesh
-    private final List<Vector3> mVertices;
+    private final List<Vector3> vertices;
 
     // Mesh maximum bounds in the three local x, y and z directions
-    private final Vector3 mMaxBounds;
+    private final Vector3 maxBounds;
 
     // Mesh minimum bounds in the three local x, y and z directions
-    private final Vector3 mMinBounds;
+    private final Vector3 minBounds;
 
     // Adjacency list representing the edges of the mesh
-    private final Map<Integer, List<Integer>> mEdgesAdjacencyList;
+    private final Map<Integer, List<Integer>> edgesAdjacencyList;
 
     // Constructor.
     // If you use this constructor, you will need to set the vertices manually one by one using the addVertex() method.
     public ConvexMeshShape(float margin) {
         super(CollisionShapeType.CONVEX_MESH, margin);
-        mIsEdgesInformationUsed = false;
-        mCachedSupportVertex = 0;
-        mVertices = new ArrayList<>();
-        mMaxBounds = new Vector3();
-        mMinBounds = new Vector3();
-        mEdgesAdjacencyList = new HashMap<>();
+        isEdgesInformationUsed = false;
+        cachedSupportVertex = 0;
+        vertices = new ArrayList<>();
+        maxBounds = new Vector3();
+        minBounds = new Vector3();
+        edgesAdjacencyList = new HashMap<>();
     }
 
     // Constructor to initialize with a array of 3D vertices.
@@ -65,16 +65,16 @@ public class ConvexMeshShape extends CollisionShape {
         assert (nbVertices > 0);
         assert (stride > 0);
 
-        mIsEdgesInformationUsed = false;
-        mCachedSupportVertex = 0;
-        mVertices = new ArrayList<>();
-        mMaxBounds = new Vector3();
-        mMinBounds = new Vector3();
-        mEdgesAdjacencyList = new HashMap<>();
+        isEdgesInformationUsed = false;
+        cachedSupportVertex = 0;
+        vertices = new ArrayList<>();
+        maxBounds = new Vector3();
+        minBounds = new Vector3();
+        edgesAdjacencyList = new HashMap<>();
 
         // Copy all the vertices into the internal array
         for (int i = 0; i < arrayVertices.length; i += stride) {
-            mVertices.add(new Vector3(arrayVertices[i + 0], arrayVertices[i + 1], arrayVertices[i + 2]));
+            vertices.add(new Vector3(arrayVertices[i + 0], arrayVertices[i + 1], arrayVertices[i + 2]));
         }
 
         // Recalculate the bounds of the mesh
@@ -86,55 +86,55 @@ public class ConvexMeshShape extends CollisionShape {
         super(shape);
 
         // TODO: Do real copying
-        mIsEdgesInformationUsed = shape.mIsEdgesInformationUsed;
-        mCachedSupportVertex = shape.mCachedSupportVertex;
-        mVertices = shape.mVertices;
-        mMaxBounds = shape.mMaxBounds;
-        mMinBounds = shape.mMinBounds;
-        mEdgesAdjacencyList = shape.mEdgesAdjacencyList;
+        isEdgesInformationUsed = shape.isEdgesInformationUsed;
+        cachedSupportVertex = shape.cachedSupportVertex;
+        vertices = shape.vertices;
+        maxBounds = shape.maxBounds;
+        minBounds = shape.minBounds;
+        edgesAdjacencyList = shape.edgesAdjacencyList;
     }
 
     // Recompute the bounds of the mesh
     private void recalculateBounds() {
 
-        mMaxBounds.zero();
-        mMinBounds.zero();
+        maxBounds.zero();
+        minBounds.zero();
 
-        for (Vector3 mVertice : mVertices) {
-            if (mVertice.getX() > mMaxBounds.getX()) {
-                mMaxBounds.setX(mVertice.getX());
+        for (Vector3 mVertice : vertices) {
+            if (mVertice.getX() > maxBounds.getX()) {
+                maxBounds.setX(mVertice.getX());
             }
-            if (mVertice.getX() < mMinBounds.getX()) {
-                mMinBounds.setX(mVertice.getX());
+            if (mVertice.getX() < minBounds.getX()) {
+                minBounds.setX(mVertice.getX());
             }
-            if (mVertice.getY() > mMaxBounds.getY()) {
-                mMaxBounds.setY(mVertice.getY());
+            if (mVertice.getY() > maxBounds.getY()) {
+                maxBounds.setY(mVertice.getY());
             }
-            if (mVertice.getY() < mMinBounds.getY()) {
-                mMinBounds.setY(mVertice.getY());
+            if (mVertice.getY() < minBounds.getY()) {
+                minBounds.setY(mVertice.getY());
             }
-            if (mVertice.getZ() > mMaxBounds.getZ()) {
-                mMaxBounds.setZ(mVertice.getZ());
+            if (mVertice.getZ() > maxBounds.getZ()) {
+                maxBounds.setZ(mVertice.getZ());
             }
-            if (mVertice.getZ() < mMinBounds.getZ()) {
-                mMinBounds.setZ(mVertice.getZ());
+            if (mVertice.getZ() < minBounds.getZ()) {
+                minBounds.setZ(mVertice.getZ());
             }
         }
 
         // Add the object margin to the bounds
-        mMaxBounds.add(new Vector3(mMargin, mMargin, mMargin));
-        mMinBounds.subtract(new Vector3(mMargin, mMargin, mMargin));
+        maxBounds.add(new Vector3(margin, margin, margin));
+        minBounds.subtract(new Vector3(margin, margin, margin));
     }
 
     // Return true if the edges information is used to speed up the collision detection
     public boolean isEdgesInformationUsed() {
-        return mIsEdgesInformationUsed;
+        return isEdgesInformationUsed;
     }
 
     // Set the variable to know if the edges information is used to speed up the
     // collision detection
     public void setIsEdgesInformationUsed(boolean isEdgesUsed) {
-        mIsEdgesInformationUsed = isEdgesUsed;
+        isEdgesInformationUsed = isEdgesUsed;
     }
 
     // Add an edge into the convex mesh by specifying the two vertex indices of the edge.
@@ -147,44 +147,44 @@ public class ConvexMeshShape extends CollisionShape {
         assert (v2 >= 0);
 
         // If the entry for vertex v1 does not exist in the adjacency list
-        if (mEdgesAdjacencyList.containsKey(v1) == false) {
-            mEdgesAdjacencyList.put(v1, new ArrayList<Integer>());
+        if (edgesAdjacencyList.containsKey(v1) == false) {
+            edgesAdjacencyList.put(v1, new ArrayList<Integer>());
         }
 
         // If the entry for vertex v2 does not exist in the adjacency list
-        if (mEdgesAdjacencyList.containsKey(v2) == false) {
-            mEdgesAdjacencyList.put(v2, new ArrayList<Integer>());
+        if (edgesAdjacencyList.containsKey(v2) == false) {
+            edgesAdjacencyList.put(v2, new ArrayList<Integer>());
         }
 
         // Add the edge in the adjacency list
-        mEdgesAdjacencyList.get(v1).add(v2);
-        mEdgesAdjacencyList.get(v2).add(v1);
+        edgesAdjacencyList.get(v1).add(v2);
+        edgesAdjacencyList.get(v2).add(v1);
     }
 
     // Add a vertex into the convex mesh
     public void addVertex(Vector3 vertex) {
 
         // Add the vertex in to vertices array
-        mVertices.add(vertex);
+        vertices.add(vertex);
 
         // Update the bounds of the mesh
-        if (vertex.getX() > mMaxBounds.getX()) {
-            mMaxBounds.setX(vertex.getX());
+        if (vertex.getX() > maxBounds.getX()) {
+            maxBounds.setX(vertex.getX());
         }
-        if (vertex.getX() < mMinBounds.getX()) {
-            mMinBounds.setX(vertex.getX());
+        if (vertex.getX() < minBounds.getX()) {
+            minBounds.setX(vertex.getX());
         }
-        if (vertex.getY() > mMaxBounds.getY()) {
-            mMaxBounds.setY(vertex.getY());
+        if (vertex.getY() > maxBounds.getY()) {
+            maxBounds.setY(vertex.getY());
         }
-        if (vertex.getY() < mMinBounds.getY()) {
-            mMinBounds.setY(vertex.getY());
+        if (vertex.getY() < minBounds.getY()) {
+            minBounds.setY(vertex.getY());
         }
-        if (vertex.getZ() > mMaxBounds.getZ()) {
-            mMaxBounds.setZ(vertex.getZ());
+        if (vertex.getZ() > maxBounds.getZ()) {
+            maxBounds.setZ(vertex.getZ());
         }
-        if (vertex.getZ() < mMinBounds.getZ()) {
-            mMinBounds.setZ(vertex.getZ());
+        if (vertex.getZ() < minBounds.getZ()) {
+            minBounds.setZ(vertex.getZ());
         }
     }
 
@@ -193,7 +193,7 @@ public class ConvexMeshShape extends CollisionShape {
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         ConvexMeshShape otherShape = (ConvexMeshShape) otherCollisionShape;
 
-        if (mVertices.size() != otherShape.mVertices.size()) {
+        if (vertices.size() != otherShape.vertices.size()) {
             return false;
         }
 
@@ -201,26 +201,26 @@ public class ConvexMeshShape extends CollisionShape {
         // cached data (previous support vertex) and therefore, we should not reuse the shape
         // for another body. Therefore, we consider that all convex mesh shape using edges
         // information are different.
-        if (mIsEdgesInformationUsed) {
+        if (isEdgesInformationUsed) {
             return false;
         }
 
-        if (mEdgesAdjacencyList.size() != otherShape.mEdgesAdjacencyList.size()) {
+        if (edgesAdjacencyList.size() != otherShape.edgesAdjacencyList.size()) {
             return false;
         }
 
         // Check that the vertices are the same
-        for (int i = 0; i < mVertices.size(); i++) {
-            if (mVertices.get(i) != otherShape.mVertices.get(i)) {
+        for (int i = 0; i < vertices.size(); i++) {
+            if (vertices.get(i) != otherShape.vertices.get(i)) {
                 return false;
             }
         }
 
         // Check that the edges are the same
-        for (int i = 0; i < mEdgesAdjacencyList.size(); i++) {
+        for (int i = 0; i < edgesAdjacencyList.size(); i++) {
 
-            assert (otherShape.mEdgesAdjacencyList.containsKey(i) == true);
-            if (mEdgesAdjacencyList.get(i) != otherShape.mEdgesAdjacencyList.get(i)) {
+            assert (otherShape.edgesAdjacencyList.containsKey(i) == true);
+            if (edgesAdjacencyList.get(i) != otherShape.edgesAdjacencyList.get(i)) {
                 return false;
             }
         }
@@ -243,7 +243,7 @@ public class ConvexMeshShape extends CollisionShape {
         unitDirection.normalize();
 
         // Add the margin to the support point and return it
-        return supportPoint.add(unitDirection.multiply(mMargin));
+        return supportPoint.add(unitDirection.multiply(margin));
     }
 
     // Return a local support point in a given direction without the object margin.
@@ -258,26 +258,26 @@ public class ConvexMeshShape extends CollisionShape {
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
 
         // If the edges information is used to speed up the collision detection
-        if (mIsEdgesInformationUsed) {
+        if (isEdgesInformationUsed) {
 
-            assert (mEdgesAdjacencyList.size() == mVertices.size());
+            assert (edgesAdjacencyList.size() == vertices.size());
 
-            int maxVertex = mCachedSupportVertex;
-            float maxDotProduct = direction.dot(mVertices.get(maxVertex));
+            int maxVertex = cachedSupportVertex;
+            float maxDotProduct = direction.dot(vertices.get(maxVertex));
             boolean isOptimal;
 
             // Perform hill-climbing (local search)
             do {
                 isOptimal = true;
 
-                assert (mEdgesAdjacencyList.get(maxVertex).size() > 0);
+                assert (edgesAdjacencyList.get(maxVertex).size() > 0);
 
                 // For all neighbors of the current vertex
-                Iterator it = mEdgesAdjacencyList.get(maxVertex).iterator();
+                Iterator it = edgesAdjacencyList.get(maxVertex).iterator();
                 while (it.hasNext()) {
                     int i = (int) it.next();
                     // Compute the dot product
-                    float dotProduct = direction.dot(mVertices.get(i));
+                    float dotProduct = direction.dot(vertices.get(i));
 
                     // If the current vertex is a better vertex (larger dot product)
                     if (dotProduct > maxDotProduct) {
@@ -290,10 +290,10 @@ public class ConvexMeshShape extends CollisionShape {
             } while (!isOptimal);
 
             // Cache the support vertex
-            mCachedSupportVertex = maxVertex;
+            cachedSupportVertex = maxVertex;
 
             // Return the support vertex
-            return supportPoint.set(mVertices.get(maxVertex));
+            return supportPoint.set(vertices.get(maxVertex));
         }
 
         // If the edges information is not used
@@ -301,10 +301,10 @@ public class ConvexMeshShape extends CollisionShape {
         int indexMaxDotProduct = 0;
 
         // For each vertex of the mesh
-        for (int i = 0; i < mVertices.size(); i++) {
+        for (int i = 0; i < vertices.size(); i++) {
 
             // Compute the dot product of the current vertex
-            float dotProduct = direction.dot(mVertices.get(i));
+            float dotProduct = direction.dot(vertices.get(i));
 
             // If the current dot product is larger than the maximum one
             if (dotProduct > maxDotProduct) {
@@ -316,7 +316,7 @@ public class ConvexMeshShape extends CollisionShape {
         assert (maxDotProduct >= 0.0f);
 
         // Return the vertex with the largest dot product in the support direction
-        return supportPoint.set(mVertices.get(indexMaxDotProduct));
+        return supportPoint.set(vertices.get(indexMaxDotProduct));
     }
 
     // Return the local inertia tensor of the collision shape.
@@ -325,7 +325,7 @@ public class ConvexMeshShape extends CollisionShape {
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
-        Vector3 realExtent = new Vector3(mMaxBounds).subtract(mMinBounds).multiply(0.5f);
+        Vector3 realExtent = new Vector3(maxBounds).subtract(minBounds).multiply(0.5f);
         assert (realExtent.getX() > 0 && realExtent.getY() > 0 && realExtent.getZ() > 0);
         float xSquare = realExtent.getX() * realExtent.getX();
         float ySquare = realExtent.getY() * realExtent.getY();
@@ -338,8 +338,8 @@ public class ConvexMeshShape extends CollisionShape {
     // Return the local bounds of the shape in x, y and z directions
     @Override
     public void getLocalBounds(Vector3 min, Vector3 max) {
-        min.set(mMinBounds);
-        max.set(mMaxBounds);
+        min.set(minBounds);
+        max.set(maxBounds);
     }
 
     @Override

@@ -20,10 +20,10 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class ConeShape extends CollisionShape {
 
     // Half height of the cone
-    private final float mHalfHeight;
+    private final float halfHeight;
 
     // Radius of the base
-    private final float mRadius;
+    private final float radius;
 
     // sine of the semi angle at the apex point
     private final float mSinTheta;
@@ -33,36 +33,36 @@ public class ConeShape extends CollisionShape {
         super(CollisionShapeType.CONE, margin);
         assert (height > 0.0f);
         assert (radius > 0.0f);
-        mHalfHeight = height * 0.5f;
-        mRadius = radius;
+        halfHeight = height * 0.5f;
+        this.radius = radius;
 
         // Compute the sine of the semi-angle at the apex point
-        mSinTheta = mRadius / (Mathematics.Sqrt(mRadius * mRadius + height * height));
+        mSinTheta = radius / (Mathematics.Sqrt(radius * radius + height * height));
     }
 
     // Copy-constructor
     public ConeShape(ConeShape shape) {
         super(shape);
-        mHalfHeight = shape.mHalfHeight;
-        mRadius = shape.mRadius;
+        halfHeight = shape.halfHeight;
+        radius = shape.radius;
         mSinTheta = shape.mSinTheta;
     }
 
     // Return the radius
     public float getRadius() {
-        return mRadius;
+        return radius;
     }
 
     // Return the height
     public float getHeight() {
-        return mHalfHeight + mHalfHeight;
+        return halfHeight + halfHeight;
     }
 
     // Test equality between two cone shapes
     @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         ConeShape otherShape = (ConeShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
+        return (radius == otherShape.radius && halfHeight == otherShape.halfHeight);
     }
 
     // Return a local support point in a given direction with the object margin
@@ -78,7 +78,7 @@ public class ConeShape extends CollisionShape {
             unitDirection.set(direction).normalize();
         }
 
-        return supportPoint.add(unitDirection.multiply(mMargin));
+        return supportPoint.add(unitDirection.multiply(margin));
     }
 
     // Return a local support point in a given direction without the object margin
@@ -89,14 +89,14 @@ public class ConeShape extends CollisionShape {
         float sinThetaTimesLengthV = mSinTheta * v.length();
 
         if (v.getY() > sinThetaTimesLengthV) {
-            supportPoint.set(0.0f, mHalfHeight, 0.0f);
+            supportPoint.set(0.0f, halfHeight, 0.0f);
         } else {
             float projectedLength = Mathematics.Sqrt(v.getX() * v.getX() + v.getZ() * v.getZ());
             if (projectedLength > Defaults.MACHINE_EPSILON) {
-                float d = mRadius / projectedLength;
-                supportPoint.set(v.getX() * d, -mHalfHeight, v.getZ() * d);
+                float d = radius / projectedLength;
+                supportPoint.set(v.getX() * d, -halfHeight, v.getZ() * d);
             } else {
-                supportPoint.set(0.0f, -mHalfHeight, 0.0f);
+                supportPoint.set(0.0f, -halfHeight, 0.0f);
             }
         }
 
@@ -106,8 +106,8 @@ public class ConeShape extends CollisionShape {
     // Return the local inertia tensor of the collision shape
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float rSquare = mRadius * mRadius;
-        float diagXZ = 0.15f * mass * (rSquare + mHalfHeight);
+        float rSquare = radius * radius;
+        float diagXZ = 0.15f * mass * (rSquare + halfHeight);
         tensor.set(diagXZ, 0.0f, 0.0f,
                 0.0f, 0.3f * mass * rSquare,
                 0.0f, 0.0f, 0.0f, diagXZ);
@@ -118,8 +118,8 @@ public class ConeShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.setX(mRadius + mMargin);
-        max.setY(mHalfHeight + mMargin);
+        max.setX(radius + margin);
+        max.setY(halfHeight + margin);
         max.setZ(max.getX());
 
         // Minimum bounds

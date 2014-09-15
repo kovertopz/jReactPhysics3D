@@ -15,24 +15,24 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class SphereShape extends CollisionShape {
 
     // Radius of the sphere
-    private final float mRadius;
+    private final float radius;
 
     // Constructor
     public SphereShape(float radius, float margin) {
         super(CollisionShapeType.SPHERE, radius + margin);
         assert (radius > 0.0f);
-        mRadius = radius;
+        this.radius = radius;
     }
 
     // Copy-constructor
     public SphereShape(SphereShape shape) {
         super(shape);
-        mRadius = shape.mRadius;
+        radius = shape.radius;
     }
 
     // Get the radius of the sphere
     public float getRadius() {
-        return mRadius;
+        return radius;
     }
 
     // Update the AABB of a body using its collision shape
@@ -40,7 +40,7 @@ public class SphereShape extends CollisionShape {
     public void updateAABB(AABB aabb, Transform transform) {
 
         // Get the local extents in x,y and z direction
-        Vector3 extents = new Vector3(mRadius, mRadius, mRadius);
+        Vector3 extents = new Vector3(radius, radius, radius);
 
         // Update the AABB with the new minimum and maximum coordinates
         aabb.setMin(new Vector3(transform.getPosition()).subtract(extents));
@@ -51,7 +51,7 @@ public class SphereShape extends CollisionShape {
     @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         SphereShape otherShape = (SphereShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius);
+        return (radius == otherShape.radius);
     }
 
     // Return a local support point in a given direction with the object margin
@@ -81,7 +81,7 @@ public class SphereShape extends CollisionShape {
     // Return the local inertia tensor of the sphere
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float diag = 0.4f * mass * mRadius * mRadius;
+        float diag = 0.4f * mass * radius * radius;
         tensor.set(diag, 0.0f, 0.0f,
                 0.0f, diag, 0.0f,
                 0.0f, 0.0f, diag);
@@ -93,12 +93,12 @@ public class SphereShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.setX(mRadius + mMargin);
+        max.setX(radius + margin);
         max.setY(max.getX());
         max.setZ(max.getX());
 
         // Minimum bounds
-        min.setX(-mRadius - mMargin);
+        min.setX(-radius - margin);
         min.setY(min.getX());
         min.setZ(min.getX());
     }

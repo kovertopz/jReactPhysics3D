@@ -19,42 +19,42 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class CylinderShape extends CollisionShape {
 
     // Half height of the cylinder
-    private final float mHalfHeight;
+    private final float halfHeight;
 
     // Radius of the base
-    private final float mRadius;
+    private final float radius;
 
     // Constructor
     public CylinderShape(float radius, float height, float margin) {
         super(CollisionShapeType.CYLINDER, margin);
         assert (height > 0.0f);
         assert (radius > 0.0f);
-        mHalfHeight = height * 0.5f;
-        mRadius = radius;
+        halfHeight = height * 0.5f;
+        this.radius = radius;
     }
 
     // Copy-constructor
     public CylinderShape(CylinderShape shape) {
         super(shape);
-        mHalfHeight = shape.mHalfHeight;
-        mRadius = shape.mRadius;
+        halfHeight = shape.halfHeight;
+        radius = shape.radius;
     }
 
     // Return the radius
     public float getRadius() {
-        return mRadius;
+        return radius;
     }
 
     // Return the height
     public float getHeight() {
-        return mHalfHeight + mHalfHeight;
+        return halfHeight + halfHeight;
     }
 
     // Test equality between two cylinder shapes
     @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         CylinderShape otherShape = (CylinderShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
+        return (radius == otherShape.radius && halfHeight == otherShape.halfHeight);
     }
 
     // Return a local support point in a given direction with the object margin
@@ -70,7 +70,7 @@ public class CylinderShape extends CollisionShape {
             unitDirection.set(direction).normalize();
         }
 
-        return supportPoint.add(unitDirection.multiply(mMargin));
+        return supportPoint.add(unitDirection.multiply(margin));
     }
 
     // Return a local support point in a given direction without the object margin
@@ -83,16 +83,16 @@ public class CylinderShape extends CollisionShape {
 
         if (lengthW > Defaults.MACHINE_EPSILON) {
             if (uDotv < 0.0f) {
-                supportPoint.setY(-mHalfHeight);
+                supportPoint.setY(-halfHeight);
             } else {
-                supportPoint.setY(mHalfHeight);
+                supportPoint.setY(halfHeight);
             }
-            supportPoint.add(w.multiply(mRadius / lengthW));
+            supportPoint.add(w.multiply(radius / lengthW));
         } else {
             if (uDotv < 0.0f) {
-                supportPoint.setY(-mHalfHeight);
+                supportPoint.setY(-halfHeight);
             } else {
-                supportPoint.setY(mHalfHeight);
+                supportPoint.setY(halfHeight);
             }
         }
 
@@ -102,10 +102,10 @@ public class CylinderShape extends CollisionShape {
     // Return the local inertia tensor of the cylinder
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
-        float height = 2.0f * mHalfHeight;
-        float diag = (1.0f / 12.0f) * mass * (3 * mRadius * mRadius + height * height);
+        float height = 2.0f * halfHeight;
+        float diag = (1.0f / 12.0f) * mass * (3 * radius * radius + height * height);
         tensor.set(diag, 0.0f, 0.0f,
-                0.0f, 0.5f * mass * mRadius * mRadius, 0.0f,
+                0.0f, 0.5f * mass * radius * radius, 0.0f,
                 0.0f, 0.0f, diag);
     }
 
@@ -114,8 +114,8 @@ public class CylinderShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.setX(mRadius + mMargin);
-        max.setY(mHalfHeight + mMargin);
+        max.setX(radius + margin);
+        max.setY(halfHeight + margin);
         max.setZ(max.getX());
 
         // Minimum bounds

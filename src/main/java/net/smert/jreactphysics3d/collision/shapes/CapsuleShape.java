@@ -16,10 +16,10 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class CapsuleShape extends CollisionShape {
 
     // Half height of the capsule (height = distance between the centers of the two spheres)
-    private final float mHalfHeight;
+    private final float halfHeight;
 
     // Radius of the two spheres of the capsule
-    private final float mRadius;
+    private final float radius;
 
     // Constructor
     public CapsuleShape(float radius, float height, float margin) {
@@ -28,32 +28,32 @@ public class CapsuleShape extends CollisionShape {
         super(CollisionShapeType.CAPSULE, radius + margin);
         assert (height > 0.0f);
         assert (radius > 0.0f);
-        mHalfHeight = height * 0.5f;
-        mRadius = radius;
+        halfHeight = height * 0.5f;
+        this.radius = radius;
     }
 
     // Copy-constructor
     public CapsuleShape(CapsuleShape shape) {
         super(shape);
-        mHalfHeight = shape.mHalfHeight;
-        mRadius = shape.mRadius;
+        halfHeight = shape.halfHeight;
+        radius = shape.radius;
     }
 
     // Get the radius of the capsule
     public float getRadius() {
-        return mRadius;
+        return radius;
     }
 
     // Return the height of the capsule
     public float getHeight() {
-        return mHalfHeight + mHalfHeight;
+        return halfHeight + halfHeight;
     }
 
     // Test equality between two capsule shapes
     @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         CapsuleShape otherShape = (CapsuleShape) otherCollisionShape;
-        return (mRadius == otherShape.mRadius && mHalfHeight == otherShape.mHalfHeight);
+        return (radius == otherShape.radius && halfHeight == otherShape.halfHeight);
     }
 
     // Return a local support point in a given direction with the object margin.
@@ -72,13 +72,13 @@ public class CapsuleShape extends CollisionShape {
             Vector3 unitDirection = new Vector3(direction).normalize();
 
             // Support point top sphere
-            Vector3 centerTopSphere = new Vector3(0.0f, mHalfHeight, 0.0f);
-            Vector3 topSpherePoint = new Vector3(centerTopSphere).add(unitDirection).multiply(mRadius + mMargin);
+            Vector3 centerTopSphere = new Vector3(0.0f, halfHeight, 0.0f);
+            Vector3 topSpherePoint = new Vector3(centerTopSphere).add(unitDirection).multiply(radius + margin);
             float dotProductTop = topSpherePoint.dot(direction);
 
             // Support point bottom sphere
-            Vector3 centerBottomSphere = new Vector3(0.0f, -mHalfHeight, 0.0f);
-            Vector3 bottomSpherePoint = new Vector3(centerBottomSphere).add(unitDirection).multiply(mRadius + mMargin);
+            Vector3 centerBottomSphere = new Vector3(0.0f, -halfHeight, 0.0f);
+            Vector3 bottomSpherePoint = new Vector3(centerBottomSphere).add(unitDirection).multiply(radius + margin);
             float dotProductBottom = bottomSpherePoint.dot(direction);
 
             // Return the point with the maximum dot product
@@ -91,7 +91,7 @@ public class CapsuleShape extends CollisionShape {
 
         // If the direction vector is the zero vector we return a point on the
         // boundary of the capsule
-        return supportPoint.set(0.0f, mRadius + mMargin, 0.0f);
+        return supportPoint.set(0.0f, radius + margin, 0.0f);
     }
 
     // Return a local support point in a given direction without the object margin.
@@ -103,11 +103,11 @@ public class CapsuleShape extends CollisionShape {
         if (direction.getY() > 0.0f) {
 
             // Return the top sphere center point
-            return supportPoint.set(0.0f, mHalfHeight, 0.0f);
+            return supportPoint.set(0.0f, halfHeight, 0.0f);
         }
 
         // Return the bottom sphere center point
-        return supportPoint.set(0.0f, -mHalfHeight, 0.0f);
+        return supportPoint.set(0.0f, -halfHeight, 0.0f);
     }
 
     // Return the local inertia tensor of the capsule
@@ -115,14 +115,14 @@ public class CapsuleShape extends CollisionShape {
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
 
         // The inertia tensor formula for a capsule can be found in : Game Engine Gems, Volume 1
-        float height = mHalfHeight + mHalfHeight;
-        float radiusSquare = mRadius * mRadius;
+        float height = halfHeight + halfHeight;
+        float radiusSquare = radius * radius;
         float heightSquare = height * height;
         float radiusSquareDouble = radiusSquare + radiusSquare;
-        float factor1 = 2.0f * mRadius / (4.0f * mRadius + 3.0f * height);
-        float factor2 = 3.0f * height / (4.0f * mRadius + 3.0f * height);
+        float factor1 = 2.0f * radius / (4.0f * radius + 3.0f * height);
+        float factor2 = 3.0f * height / (4.0f * radius + 3.0f * height);
         float sum1 = 0.4f * radiusSquareDouble;
-        float sum2 = 0.75f * height * mRadius + 0.5f * heightSquare;
+        float sum2 = 0.75f * height * radius + 0.5f * heightSquare;
         float sum3 = 0.25f * radiusSquare + 1.0f / 12.0f * heightSquare;
         float IxxAndzz = factor1 * mass * (sum1 + sum2) + factor2 * mass * sum3;
         float Iyy = factor1 * mass * sum1 + factor2 * mass * 0.25f * radiusSquareDouble;
@@ -137,8 +137,8 @@ public class CapsuleShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.setX(mRadius + mMargin);
-        max.setY(mHalfHeight + mRadius + mMargin);
+        max.setX(radius + margin);
+        max.setY(halfHeight + radius + margin);
         max.setZ(max.getX());
 
         // Minimum bounds

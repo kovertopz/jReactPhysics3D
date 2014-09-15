@@ -17,7 +17,7 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class BoxShape extends CollisionShape {
 
     // Extent sizes of the box in the x, y and z direction
-    private final Vector3 mExtent;
+    private final Vector3 extent;
 
     // Constructor
     public BoxShape(Vector3 extent, float margin) {
@@ -25,52 +25,52 @@ public class BoxShape extends CollisionShape {
         assert (extent.getX() > 0.0f && extent.getX() > margin);
         assert (extent.getY() > 0.0f && extent.getY() > margin);
         assert (extent.getZ() > 0.0f && extent.getZ() > margin);
-        mExtent = new Vector3(extent);
+        this.extent = new Vector3(extent);
     }
 
     // Copy-constructor
     public BoxShape(BoxShape shape) {
         super(shape);
-        mExtent = new Vector3(shape.mExtent);
+        extent = new Vector3(shape.extent);
     }
 
     // Return the extents of the box
     public Vector3 getExtent() {
-        return mExtent;
+        return extent;
     }
 
     // Test equality between two box shapes
     @Override
     public boolean isEqualTo(CollisionShape otherCollisionShape) {
         BoxShape otherShape = (BoxShape) otherCollisionShape;
-        return mExtent.equals(otherShape.mExtent);
+        return extent.equals(otherShape.extent);
     }
 
     // Return a local support point in a given direction with the object margin
     @Override
     public Vector3 getLocalSupportPointWithMargin(Vector3 direction, Vector3 supportPoint) {
         return supportPoint.set(
-                direction.getX() < 0.0f ? -mExtent.getX() - mMargin : mExtent.getX() + mMargin,
-                direction.getY() < 0.0f ? -mExtent.getY() - mMargin : mExtent.getY() + mMargin,
-                direction.getZ() < 0.0f ? -mExtent.getZ() - mMargin : mExtent.getZ() + mMargin);
+                direction.getX() < 0.0f ? -extent.getX() - margin : extent.getX() + margin,
+                direction.getY() < 0.0f ? -extent.getY() - margin : extent.getY() + margin,
+                direction.getZ() < 0.0f ? -extent.getZ() - margin : extent.getZ() + margin);
     }
 
     // Return a local support point in a given direction without the objec margin
     @Override
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
         return supportPoint.set(
-                direction.getX() < 0.0f ? -mExtent.getX() : mExtent.getX(),
-                direction.getY() < 0.0f ? -mExtent.getY() : mExtent.getY(),
-                direction.getZ() < 0.0f ? -mExtent.getZ() : mExtent.getZ());
+                direction.getX() < 0.0f ? -extent.getX() : extent.getX(),
+                direction.getY() < 0.0f ? -extent.getY() : extent.getY(),
+                direction.getZ() < 0.0f ? -extent.getZ() : extent.getZ());
     }
 
     // Return the local inertia tensor of the collision shape
     @Override
     public void computeLocalInertiaTensor(Matrix3x3 tensor, float mass) {
         float factor = (1.0f / 3.0f) * mass;
-        float xSquare = mExtent.getX() * mExtent.getX();
-        float ySquare = mExtent.getY() * mExtent.getY();
-        float zSquare = mExtent.getZ() * mExtent.getZ();
+        float xSquare = extent.getX() * extent.getX();
+        float ySquare = extent.getY() * extent.getY();
+        float zSquare = extent.getZ() * extent.getZ();
         tensor.set(factor * (ySquare + zSquare), 0.0f, 0.0f,
                 0.0f, factor * (xSquare + zSquare), 0.0f,
                 0.0f, 0.0f, factor * (xSquare + ySquare));
@@ -82,8 +82,8 @@ public class BoxShape extends CollisionShape {
     public void getLocalBounds(Vector3 min, Vector3 max) {
 
         // Maximum bounds
-        max.set(mExtent.getX(), mExtent.getY(), mExtent.getZ());
-        max.add(new Vector3(mMargin, mMargin, mMargin));
+        max.set(extent.getX(), extent.getY(), extent.getZ());
+        max.add(new Vector3(margin, margin, margin));
 
         // Minimum bounds
         min.set(-max.getX(), -max.getY(), -max.getZ());

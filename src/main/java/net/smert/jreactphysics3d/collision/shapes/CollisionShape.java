@@ -14,52 +14,52 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public abstract class CollisionShape {
 
     // Margin used for the GJK collision detection algorithm
-    protected float mMargin;
+    protected float margin;
 
     // Current number of similar created shapes
-    protected int mNbSimilarCreatedShapes;
+    protected int numSimilarCreatedShapes;
 
     // Type of the collision shape
-    protected final CollisionShapeType mType;
+    protected final CollisionShapeType type;
 
     // Constructor
     public CollisionShape(CollisionShapeType type, float margin) {
         assert (margin >= 0.0f);
-        mMargin = margin;
-        mNbSimilarCreatedShapes = 0;
-        mType = type;
+        this.margin = margin;
+        numSimilarCreatedShapes = 0;
+        this.type = type;
     }
 
     // Copy-constructor
     public CollisionShape(CollisionShape shape) {
-        mMargin = shape.mMargin;
-        mNbSimilarCreatedShapes = shape.mNbSimilarCreatedShapes;
-        mType = shape.mType;
+        margin = shape.margin;
+        numSimilarCreatedShapes = shape.numSimilarCreatedShapes;
+        type = shape.type;
     }
 
     // Return the current object margin
     public float getMargin() {
-        return mMargin;
+        return margin;
     }
 
     // Return the number of similar created shapes
-    public int getNbSimilarCreatedShapes() {
-        return mNbSimilarCreatedShapes;
+    public int getNumSimilarCreatedShapes() {
+        return numSimilarCreatedShapes;
     }
 
     // Decrement the number of similar allocated collision shapes
-    public void decrementNbSimilarCreatedShapes() {
-        mNbSimilarCreatedShapes--;
+    public void decrementNumSimilarCreatedShapes() {
+        numSimilarCreatedShapes--;
     }
 
     // Increment the number of similar allocated collision shapes
-    public void incrementNbSimilarCreatedShapes() {
-        mNbSimilarCreatedShapes++;
+    public void incrementNumSimilarCreatedShapes() {
+        numSimilarCreatedShapes++;
     }
 
     // Return the type of the collision shape
     public CollisionShapeType getType() {
-        return mType;
+        return type;
     }
 
     // Update the AABB of a body using its collision shape
@@ -110,9 +110,9 @@ public abstract class CollisionShape {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 67 * hash + Float.floatToIntBits(this.mMargin);
-        hash = 67 * hash + this.mNbSimilarCreatedShapes;
-        hash = 67 * hash + Objects.hashCode(this.mType);
+        hash = 67 * hash + Float.floatToIntBits(margin);
+        hash = 67 * hash + numSimilarCreatedShapes;
+        hash = 67 * hash + Objects.hashCode(type);
         return hash;
     }
 
@@ -126,18 +126,18 @@ public abstract class CollisionShape {
             return false;
         }
         final CollisionShape other = (CollisionShape) obj;
-        if (this.mType == other.mType) {
+        if (type == other.type) {
             return false;
         }
-        if (Float.floatToIntBits(this.mMargin) != Float.floatToIntBits(other.mMargin)) {
+        if (Float.floatToIntBits(margin) != Float.floatToIntBits(other.margin)) {
             return false;
         }
-        return this.mNbSimilarCreatedShapes != other.mNbSimilarCreatedShapes;
+        return numSimilarCreatedShapes != other.numSimilarCreatedShapes;
     }
 
     @Override
     public String toString() {
-        return "";
+        return "{type=" + type + " margin=" + margin + "}";
     }
 
 }

@@ -29,6 +29,11 @@ public class AABB {
         mMinCoordinates = minCoordinates;
     }
 
+    // Return the center point of the AABB in world coordinates
+    public Vector3 getCenter() {
+        return new Vector3(mMinCoordinates).add(mMaxCoordinates).multiply(0.5f);
+    }
+
     // Return the maximum coordinates of the AABB
     public Vector3 getMax() {
         return mMaxCoordinates;
@@ -47,11 +52,6 @@ public class AABB {
     // Set the minimum coordinates of the AABB
     public void setMin(Vector3 min) {
         mMinCoordinates.set(min);
-    }
-
-    // Return the center point of the AABB in world coordinates
-    public Vector3 getCenter() {
-        return new Vector3(mMinCoordinates).add(mMaxCoordinates).multiply(0.5f);
     }
 
     // Return true if the current AABB is overlapping with the AABB in argument.
