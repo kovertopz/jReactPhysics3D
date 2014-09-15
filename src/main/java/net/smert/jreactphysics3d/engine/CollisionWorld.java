@@ -22,39 +22,32 @@ import net.smert.jreactphysics3d.mathematics.Transform;
  */
 public class CollisionWorld {
 
-    // Reference to the collision detection
-    protected CollisionDetection mCollisionDetection;
+    // Current body ID
+    protected int currentBodyID;
 
-    // All the bodies (rigid and soft) of the world
-    protected Set<CollisionBody> mBodies;
+    // Reference to the collision detection
+    protected CollisionDetection collisionDetection;
 
     // All the collision shapes of the world
-    protected List<CollisionShape> mCollisionShapes;
-
-    // Broad-phase overlapping pairs of bodies
-    protected Map<BodyIndexPair, OverlappingPair> mOverlappingPairs;
-
-    // Current body ID
-    protected int mCurrentBodyID;
+    protected List<CollisionShape> collisionShapes;
 
     // List of free ID for rigid bodies
-    protected List<Integer> mFreeBodiesIDs;
+    protected List<Integer> freeBodiesIDs;
 
-    // Return the next available body ID
-    protected int computeNextAvailableBodyID() {
+    // Broad-phase overlapping pairs of bodies
+    protected Map<BodyIndexPair, OverlappingPair> overlappingPairs;
 
-        // Compute the body ID
-        int bodyID;
-        if (!mFreeBodiesIDs.isEmpty()) {
-            int lastIndex = mFreeBodiesIDs.size() - 1;
-            bodyID = mFreeBodiesIDs.get(lastIndex);
-            mFreeBodiesIDs.remove(lastIndex);
-        } else {
-            bodyID = mCurrentBodyID;
-            mCurrentBodyID++;
-        }
+    // All the bodies (rigid and soft) of the world
+    protected Set<CollisionBody> bodies;
 
-        return bodyID;
+    // Constructor
+    public CollisionWorld() {
+        currentBodyID = 0;
+        collisionDetection = new CollisionDetection(this);
+        collisionShapes = new ArrayList<>();
+        freeBodiesIDs = new ArrayList<>();
+        overlappingPairs = new HashMap<>();
+        bodies = new HashSet<>();
     }
 
     // Create a new collision shape.
@@ -66,7 +59,7 @@ public class CollisionWorld {
     protected CollisionShape createCollisionShape(CollisionShape collisionShape) {
 
         // Check if there is already a similar collision shape in the world
-        for (CollisionShape it : mCollisionShapes) {
+        for (CollisionShape it : collisionShapes) {
 
             if (collisionShape.equals(it)) {
 
@@ -82,12 +75,29 @@ public class CollisionWorld {
         // A similar collision shape does not already exist in the world, so we create a
         // new one and add it to the world
         CollisionShape newCollisionShape = collisionShape.clone();
-        mCollisionShapes.add(newCollisionShape);
+        collisionShapes.add(newCollisionShape);
 
         newCollisionShape.incrementNumSimilarCreatedShapes();
 
         // Return a pointer to the new collision shape
         return newCollisionShape;
+    }
+
+    // Return the next available body ID
+    protected int computeNextAvailableBodyID() {
+
+        // Compute the body ID
+        int bodyID;
+        if (!freeBodiesIDs.isEmpty()) {
+            int lastIndex = freeBodiesIDs.size() - 1;
+            bodyID = freeBodiesIDs.get(lastIndex);
+            freeBodiesIDs.remove(lastIndex);
+        } else {
+            bodyID = currentBodyID;
+            currentBodyID++;
+        }
+
+        return bodyID;
     }
 
     // Remove a collision shape.
@@ -105,23 +115,12 @@ public class CollisionWorld {
         if (collisionShape.getNumSimilarCreatedShapes() == 0) {
 
             // Remove the shape from the set of shapes in the world
-            mCollisionShapes.remove(collisionShape);
+            collisionShapes.remove(collisionShape);
 
             // Compute the size (in bytes) of the collision shape
             // Call the destructor of the collision shape
             // Deallocate the memory used by the collision shape
         }
-    }
-
-    // Constructor
-    public CollisionWorld() {
-        mCollisionDetection = new CollisionDetection(this);
-        mCurrentBodyID = 0;
-
-        mBodies = new HashSet<>();
-        mCollisionShapes = new ArrayList<>();
-        mFreeBodiesIDs = new ArrayList<>();
-        mOverlappingPairs = new HashMap<>();
     }
 
     // Create a collision body and add it to the world
@@ -139,10 +138,10 @@ public class CollisionWorld {
         assert (collisionBody != null);
 
         // Add the collision body to the world
-        mBodies.add(collisionBody);
+        bodies.add(collisionBody);
 
         // Add the collision body to the collision detection
-        mCollisionDetection.addBody(collisionBody);
+        collisionDetection.addBody(collisionBody);
 
         // Return the pointer to the rigid body
         return collisionBody;
@@ -152,21 +151,21 @@ public class CollisionWorld {
     public void destroyCollisionBody(CollisionBody collisionBody) {
 
         // Remove the body from the collision detection
-        mCollisionDetection.removeBody(collisionBody);
+        collisionDetection.removeBody(collisionBody);
 
         // Add the body ID to the list of free IDs
-        mFreeBodiesIDs.add(collisionBody.getBodyID());
+        freeBodiesIDs.add(collisionBody.getBodyID());
 
         // Call the destructor of the collision body
         // Remove the collision body from the list of bodies
-        mBodies.remove(collisionBody);
+        bodies.remove(collisionBody);
 
         // Free the object from the memory allocator
     }
 
     // Return an iterator to the beginning of the bodies of the physics world
     public Set<CollisionBody> getBodies() {
-        return mBodies;
+        return bodies;
     }
 
     // Notify the world about a new broad-phase overlapping pair

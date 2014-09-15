@@ -798,7 +798,7 @@ public class DynamicsWorld extends CollisionWorld {
         if (!jointInfo.isCollisionEnabled) {
 
             // Add the pair of bodies in the set of body pairs that cannot collide with each other
-            mCollisionDetection.addNoCollisionPair(jointInfo.body1, jointInfo.body2);
+            collisionDetection.addNoCollisionPair(jointInfo.body1, jointInfo.body2);
         }
 
         // Add the joint into the world
@@ -829,11 +829,11 @@ public class DynamicsWorld extends CollisionWorld {
         assert (rigidBody != null);
 
         // Add the rigid body to the physics world
-        mBodies.add(rigidBody);
+        bodies.add(rigidBody);
         rigidBodies.add(rigidBody);
 
         // Add the rigid body to the collision detection
-        mCollisionDetection.addBody(rigidBody);
+        collisionDetection.addBody(rigidBody);
 
         // Return the pointer to the rigid body
         return rigidBody;
@@ -848,7 +848,7 @@ public class DynamicsWorld extends CollisionWorld {
         if (!joint.isCollisionEnabled()) {
 
             // Remove the pair of bodies from the set of body pairs that cannot collide with each other
-            mCollisionDetection.removeNoCollisionPair(joint.getBody1(), joint.getBody2());
+            collisionDetection.removeNoCollisionPair(joint.getBody1(), joint.getBody2());
         }
 
         // Wake up the two bodies of the joint
@@ -870,10 +870,10 @@ public class DynamicsWorld extends CollisionWorld {
     public void destroyRigidBody(RigidBody rigidBody) {
 
         // Remove the body from the collision detection
-        mCollisionDetection.removeBody(rigidBody);
+        collisionDetection.removeBody(rigidBody);
 
         // Add the body ID to the list of free IDs
-        mFreeBodiesIDs.add(rigidBody.getBodyID());
+        freeBodiesIDs.add(rigidBody.getBodyID());
 
         // Remove the collision shape from the world
         removeCollisionShape(rigidBody.getCollisionShape());
@@ -889,7 +889,7 @@ public class DynamicsWorld extends CollisionWorld {
         // Call the destructor of the rigid body
 
         // Remove the rigid body from the list of rigid bodies
-        mBodies.remove(rigidBody);
+        bodies.remove(rigidBody);
         rigidBodies.remove(rigidBody);
 
         // Free the object from the memory allocator
@@ -1083,7 +1083,7 @@ public class DynamicsWorld extends CollisionWorld {
             resetContactManifoldListsOfBodies();
 
             // Compute the collision detection
-            mCollisionDetection.computeCollisionDetection();
+            collisionDetection.computeCollisionDetection();
 
             // Compute the islands (separate groups of bodies with constraints between each others)
             computeIslands();
@@ -1132,7 +1132,7 @@ public class DynamicsWorld extends CollisionWorld {
         OverlappingPair newPair = new OverlappingPair(addedPair.getBody1(), addedPair.getBody2());
         assert (newPair != null);
 
-        OverlappingPair check = mOverlappingPairs.put(indexPair, newPair);
+        OverlappingPair check = overlappingPairs.put(indexPair, newPair);
 
         assert (check == null);
     }
@@ -1147,7 +1147,7 @@ public class DynamicsWorld extends CollisionWorld {
 
         // Get the corresponding overlapping pair
         BodyIndexPair indexPair = broadPhasePair.newBodiesIndexPair();
-        OverlappingPair overlappingPair = mOverlappingPairs.get(indexPair);
+        OverlappingPair overlappingPair = overlappingPairs.get(indexPair);
         assert (overlappingPair != null);
 
         // If it is the first contact since the pair are overlapping
@@ -1184,7 +1184,7 @@ public class DynamicsWorld extends CollisionWorld {
         BodyIndexPair indexPair = removedPair.newBodiesIndexPair();
 
         // Remove the overlapping pair from the memory allocator
-        mOverlappingPairs.remove(indexPair);
+        overlappingPairs.remove(indexPair);
     }
 
     @Override
@@ -1195,7 +1195,7 @@ public class DynamicsWorld extends CollisionWorld {
         BodyIndexPair indexPair = pair.newBodiesIndexPair();
 
         // Get the corresponding overlapping pair
-        OverlappingPair overlappingPair = mOverlappingPairs.get(indexPair);
+        OverlappingPair overlappingPair = overlappingPairs.get(indexPair);
 
         // Update the contact cache of the overlapping pair
         overlappingPair.update();
