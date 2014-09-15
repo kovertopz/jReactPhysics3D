@@ -7,6 +7,7 @@ import net.smert.jreactphysics3d.common.openglframework.Shader;
 import net.smert.jreactphysics3d.common.openglframework.maths.Matrix3;
 import net.smert.jreactphysics3d.common.openglframework.maths.Matrix4;
 import net.smert.jreactphysics3d.common.openglframework.maths.Vector3;
+import net.smert.jreactphysics3d.common.openglframework.maths.Vector4;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -62,6 +63,8 @@ public class VisualContactPoint extends Object3D {
     // Render the sphere at the correct position and with the correct orientation
     public void render(Shader shader, Matrix4 worldToCameraMatrix) {
 
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+
         // Bind the shader
         shader.bind();
 
@@ -74,6 +77,10 @@ public class VisualContactPoint extends Object3D {
         Matrix3 normalMatrix
                 = localToCameraMatrix.getUpperLeft3x3Matrix().getInverse().getTranspose();
         shader.setMatrix3x3Uniform("normalMatrix", normalMatrix);
+
+        // Set the vertex color
+        Vector4 color = new Vector4(1, 1, 0, 1);
+        shader.setVector4Uniform("vertexColor", color);
 
         GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
         //GL11.glEnableClientState(GL11.GL_NORMAL_ARRAY);
@@ -100,6 +107,8 @@ public class VisualContactPoint extends Object3D {
 
         // Unbind the shader
         shader.unbind();
+
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
     }
 
 }
