@@ -26,7 +26,7 @@ public class ConeShape extends CollisionShape {
     private final float radius;
 
     // sine of the semi angle at the apex point
-    private final float mSinTheta;
+    private final float sinTheta;
 
     // Constructor
     public ConeShape(float radius, float height, float margin) {
@@ -37,7 +37,7 @@ public class ConeShape extends CollisionShape {
         this.radius = radius;
 
         // Compute the sine of the semi-angle at the apex point
-        mSinTheta = radius / (Mathematics.Sqrt(radius * radius + height * height));
+        sinTheta = radius / (Mathematics.Sqrt(radius * radius + height * height));
     }
 
     // Copy-constructor
@@ -45,7 +45,7 @@ public class ConeShape extends CollisionShape {
         super(shape);
         halfHeight = shape.halfHeight;
         radius = shape.radius;
-        mSinTheta = shape.mSinTheta;
+        sinTheta = shape.sinTheta;
     }
 
     // Return the radius
@@ -86,7 +86,7 @@ public class ConeShape extends CollisionShape {
     public Vector3 getLocalSupportPointWithoutMargin(Vector3 direction, Vector3 supportPoint) {
 
         Vector3 v = direction;
-        float sinThetaTimesLengthV = mSinTheta * v.length();
+        float sinThetaTimesLengthV = sinTheta * v.length();
 
         if (v.getY() > sinThetaTimesLengthV) {
             supportPoint.set(0.0f, halfHeight, 0.0f);
