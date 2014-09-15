@@ -1,6 +1,5 @@
 package net.smert.jreactphysics3d.collision;
 
-import net.smert.jreactphysics3d.body.BodyIndexPair;
 import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.mathematics.Vector3;
 

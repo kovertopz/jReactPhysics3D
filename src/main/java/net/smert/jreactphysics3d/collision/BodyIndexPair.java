@@ -1,4 +1,4 @@
-package net.smert.jreactphysics3d.body;
+package net.smert.jreactphysics3d.collision;
 
 /**
  * typedef std::pair<bodyindex, bodyindex> bodyindexpair;
@@ -7,8 +7,8 @@ package net.smert.jreactphysics3d.body;
  */
 public class BodyIndexPair {
 
-    private int first;
-    private int second;
+    private final int first;
+    private final int second;
 
     public BodyIndexPair(int first, int second) {
         this.first = first;
@@ -43,10 +43,7 @@ public class BodyIndexPair {
         if (this.first != other.first) {
             return false;
         }
-        if (this.second != other.second) {
-            return false;
-        }
-        return true;
+        return this.second == other.second;
     }
 
 }

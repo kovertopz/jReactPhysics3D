@@ -1,7 +1,7 @@
 package net.smert.jreactphysics3d.collision.broadphase;
 
 import java.util.Objects;
-import net.smert.jreactphysics3d.body.BodyIndexPair;
+import net.smert.jreactphysics3d.collision.BodyIndexPair;
 import net.smert.jreactphysics3d.body.CollisionBody;
 
 /**

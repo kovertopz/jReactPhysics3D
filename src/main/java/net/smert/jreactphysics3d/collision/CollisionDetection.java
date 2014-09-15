@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import net.smert.jreactphysics3d.body.BodyIndexPair;
 import net.smert.jreactphysics3d.body.CollisionBody;
 import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.collision.broadphase.BodyPair;
