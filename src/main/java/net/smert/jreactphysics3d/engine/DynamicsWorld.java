@@ -1144,7 +1144,7 @@ public class DynamicsWorld extends CollisionWorld {
     public void notifyAddedOverlappingPair(BroadPhasePair addedPair) {
 
         // Get the pair of body index
-        BodyIndexPair indexPair = addedPair.getBodiesIndexPair();
+        BodyIndexPair indexPair = addedPair.newBodiesIndexPair();
 
         // Add the pair into the set of overlapping pairs (if not there yet)
         OverlappingPair newPair = new OverlappingPair(addedPair.getBody1(), addedPair.getBody2());
@@ -1160,7 +1160,7 @@ public class DynamicsWorld extends CollisionWorld {
     public void notifyRemovedOverlappingPair(BroadPhasePair removedPair) {
 
         // Get the pair of body index
-        BodyIndexPair indexPair = removedPair.getBodiesIndexPair();
+        BodyIndexPair indexPair = removedPair.newBodiesIndexPair();
 
         // Remove the overlapping pair from the memory allocator
         mOverlappingPairs.remove(indexPair);
@@ -1175,7 +1175,7 @@ public class DynamicsWorld extends CollisionWorld {
         assert (contact != null);
 
         // Get the corresponding overlapping pair
-        BodyIndexPair indexPair = broadPhasePair.getBodiesIndexPair();
+        BodyIndexPair indexPair = broadPhasePair.newBodiesIndexPair();
         OverlappingPair overlappingPair = mOverlappingPairs.get(indexPair);
         assert (overlappingPair != null);
 
@@ -1210,7 +1210,7 @@ public class DynamicsWorld extends CollisionWorld {
     public void updateOverlappingPair(BroadPhasePair pair) {
 
         // Get the pair of body index
-        BodyIndexPair indexPair = pair.getBodiesIndexPair();
+        BodyIndexPair indexPair = pair.newBodiesIndexPair();
 
         // Get the corresponding overlapping pair
         OverlappingPair overlappingPair = mOverlappingPairs.get(indexPair);

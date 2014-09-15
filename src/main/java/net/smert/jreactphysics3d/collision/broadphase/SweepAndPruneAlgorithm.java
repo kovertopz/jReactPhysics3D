@@ -18,41 +18,46 @@ import net.smert.jreactphysics3d.collision.shapes.AABB;
 public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
     // Invalid array index
-    protected static final int INVALID_INDEX = Integer.MAX_VALUE;
+    protected final static int INVALID_INDEX = Integer.MAX_VALUE;
 
     // Number of sentinel end-points in the array of a given axis
-    protected static final int NB_SENTINELS = 2;
-
-    // Array that contains all the AABB boxes of the broad-phase
-    protected BoxAABB[] mBoxes;
-
-    // Array of end-points on the three axis
-    protected EndPoint[][] mEndPoints = {null, null, null};
+    protected final static int NUM_SENTINELS = 2;
 
     // Number of AABB boxes in the broad-phase
-    protected int mNbBoxes;
+    protected int numBoxes;
 
     // Max number of boxes in the boxes array
-    protected int mNbMaxBoxes;
+    protected int numMaxBoxes;
 
     // Indices that are not used by any boxes
-    protected ArrayList<Integer> mFreeBoxIndices;
+    protected final ArrayList<Integer> freeBoxIndices;
+
+    // Array that contains all the AABB boxes of the broad-phase
+    protected BoxAABB[] boxes;
+
+    // Array of end-points on the three axis
+    protected final EndPoint[][] endPoints = {null, null, null};
 
     // Map a body pointer to a box index
-    protected Map<CollisionBody, Integer> mMapBodyToBoxIndex;
+    protected final Map<CollisionBody, Integer> mapBodyToBoxIndex;
 
-    // Add an overlapping pair of AABBS
-    protected void addPair(CollisionBody body1, CollisionBody body2) {
-        // TODO: remove unused method
+    // Constructor
+    public SweepAndPruneAlgorithm(CollisionDetection collisionDetection) {
+        super(collisionDetection);
+        numBoxes = 0;
+        numMaxBoxes = 0;
+        boxes = null;
+        freeBoxIndices = new ArrayList<>();
+        mapBodyToBoxIndex = new HashMap<>();
     }
 
     // Resize the boxes and end-points arrays when it is full
     protected void resizeArrays() {
 
         // New number of boxes in the array
-        int newNbMaxBoxes = mNbMaxBoxes > 0 ? 2 * mNbMaxBoxes : 100;
-        int nbEndPoints = mNbBoxes * 2 + NB_SENTINELS;
-        int newNbEndPoints = newNbMaxBoxes * 2 + NB_SENTINELS;
+        int newNbMaxBoxes = numMaxBoxes > 0 ? 2 * numMaxBoxes : 100;
+        int nbEndPoints = numBoxes * 2 + NUM_SENTINELS;
+        int newNbEndPoints = newNbMaxBoxes * 2 + NUM_SENTINELS;
 
         // Allocate memory for the new boxes and end-points arrays
         BoxAABB[] newBoxesArray = new BoxAABB[newNbMaxBoxes];
@@ -66,13 +71,13 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         assert (newEndPointsZArray != null);
 
         // If the arrays were not empty before
-        if (mNbBoxes > 0) {
+        if (numBoxes > 0) {
 
             // Copy the data from the old arrays into the new one
-            System.arraycopy(mBoxes, 0, newBoxesArray, 0, mNbBoxes);
-            System.arraycopy(mEndPoints[0], 0, newEndPointsXArray, 0, nbEndPoints);
-            System.arraycopy(mEndPoints[1], 0, newEndPointsYArray, 0, nbEndPoints);
-            System.arraycopy(mEndPoints[2], 0, newEndPointsZArray, 0, nbEndPoints);
+            System.arraycopy(boxes, 0, newBoxesArray, 0, numBoxes);
+            System.arraycopy(endPoints[0], 0, newEndPointsXArray, 0, nbEndPoints);
+            System.arraycopy(endPoints[1], 0, newEndPointsYArray, 0, nbEndPoints);
+            System.arraycopy(endPoints[2], 0, newEndPointsZArray, 0, nbEndPoints);
         } else {   // If the arrays were empty
 
             // Add the limits endpoints (sentinels) into the array
@@ -94,49 +99,49 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
         // Delete the old arrays
         // Assign the pointer to the new arrays
-        mBoxes = newBoxesArray;
-        mEndPoints[0] = newEndPointsXArray;
-        mEndPoints[1] = newEndPointsYArray;
-        mEndPoints[2] = newEndPointsZArray;
+        boxes = newBoxesArray;
+        endPoints[0] = newEndPointsXArray;
+        endPoints[1] = newEndPointsYArray;
+        endPoints[2] = newEndPointsZArray;
 
-        mNbMaxBoxes = newNbMaxBoxes;
+        numMaxBoxes = newNbMaxBoxes;
     }
 
     // Shrink the boxes and end-points arrays when too much memory is allocated
     protected void shrinkArrays() {
 
         // New number of boxes and end-points in the array
-        int nextPowerOf2 = PairManager.ComputeNextPowerOfTwo((mNbBoxes - 1) / 100);
-        int newNbMaxBoxes = (mNbBoxes > 100) ? nextPowerOf2 * 100 : 100;
-        int nbEndPoints = mNbBoxes * 2 + NB_SENTINELS;
-        int newNbEndPoints = newNbMaxBoxes * 2 + NB_SENTINELS;
+        int nextPowerOf2 = PairManager.ComputeNextPowerOfTwo((numBoxes - 1) / 100);
+        int newNbMaxBoxes = (numBoxes > 100) ? nextPowerOf2 * 100 : 100;
+        int nbEndPoints = numBoxes * 2 + NUM_SENTINELS;
+        int newNbEndPoints = newNbMaxBoxes * 2 + NUM_SENTINELS;
 
-        assert (newNbMaxBoxes < mNbMaxBoxes);
+        assert (newNbMaxBoxes < numMaxBoxes);
 
         // Sort the list of the free boxes indices in ascending order
-        Collections.sort(mFreeBoxIndices);
+        Collections.sort(freeBoxIndices);
 
         // Reorganize the boxes inside the boxes array so that all the boxes are at the
         // beginning of the array
         Map<CollisionBody, Integer> newMapBodyToBoxIndex = new HashMap<>();
-        for (Map.Entry it : mMapBodyToBoxIndex.entrySet()) {
+        for (Map.Entry it : mapBodyToBoxIndex.entrySet()) {
 
             CollisionBody body = (CollisionBody) it.getKey();
             int boxIndex = (int) it.getValue();
 
             // If the box index is outside the range of the current number of boxes
-            if (boxIndex >= mNbBoxes) {
+            if (boxIndex >= numBoxes) {
 
-                assert (!mFreeBoxIndices.isEmpty());
+                assert (!freeBoxIndices.isEmpty());
 
                 // Get a new box index for that body (from the list of free box indices)
-                int newBoxIndex = mFreeBoxIndices.get(0);
-                mFreeBoxIndices.remove(0);
-                assert (newBoxIndex < mNbBoxes);
+                int newBoxIndex = freeBoxIndices.get(0);
+                freeBoxIndices.remove(0);
+                assert (newBoxIndex < numBoxes);
 
                 // Copy the box to its new location in the boxes array
-                BoxAABB oldBox = mBoxes[boxIndex];
-                BoxAABB newBox = mBoxes[newBoxIndex];
+                BoxAABB oldBox = boxes[boxIndex];
+                BoxAABB newBox = boxes[newBoxIndex];
                 assert (oldBox.body.getBodyID() == body.getBodyID());
                 newBox.body = oldBox.body;
                 for (int axis = 0; axis < 3; axis++) {
@@ -146,8 +151,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                     newBox.max[axis] = oldBox.max[axis];
 
                     // Update the box index of the end-points
-                    EndPoint minimumEndPoint = mEndPoints[axis][newBox.min[axis]];
-                    EndPoint maximumEndPoint = mEndPoints[axis][newBox.max[axis]];
+                    EndPoint minimumEndPoint = endPoints[axis][newBox.min[axis]];
+                    EndPoint maximumEndPoint = endPoints[axis][newBox.max[axis]];
                     assert (minimumEndPoint.boxID == boxIndex);
                     assert (maximumEndPoint.boxID == boxIndex);
                     minimumEndPoint.boxID = newBoxIndex;
@@ -160,9 +165,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
             }
         }
 
-        assert (newMapBodyToBoxIndex.size() == mMapBodyToBoxIndex.size());
-        mMapBodyToBoxIndex.clear();
-        mMapBodyToBoxIndex.putAll(newMapBodyToBoxIndex);
+        assert (newMapBodyToBoxIndex.size() == mapBodyToBoxIndex.size());
+        mapBodyToBoxIndex.clear();
+        mapBodyToBoxIndex.putAll(newMapBodyToBoxIndex);
 
         // Allocate memory for the new boxes and end-points arrays
         BoxAABB[] newBoxesArray = new BoxAABB[newNbMaxBoxes];
@@ -176,19 +181,19 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         assert (newEndPointsZArray != null);
 
         // Copy the data from the old arrays into the new one
-        System.arraycopy(mBoxes, 0, newBoxesArray, 0, mNbBoxes);
-        System.arraycopy(mEndPoints[0], 0, newEndPointsXArray, 0, nbEndPoints);
-        System.arraycopy(mEndPoints[1], 0, newEndPointsYArray, 0, nbEndPoints);
-        System.arraycopy(mEndPoints[2], 0, newEndPointsZArray, 0, nbEndPoints);
+        System.arraycopy(boxes, 0, newBoxesArray, 0, numBoxes);
+        System.arraycopy(endPoints[0], 0, newEndPointsXArray, 0, nbEndPoints);
+        System.arraycopy(endPoints[1], 0, newEndPointsYArray, 0, nbEndPoints);
+        System.arraycopy(endPoints[2], 0, newEndPointsZArray, 0, nbEndPoints);
 
         // Delete the old arrays
         // Assign the pointer to the new arrays
-        mBoxes = newBoxesArray;
-        mEndPoints[0] = newEndPointsXArray;
-        mEndPoints[1] = newEndPointsYArray;
-        mEndPoints[2] = newEndPointsZArray;
+        boxes = newBoxesArray;
+        endPoints[0] = newEndPointsXArray;
+        endPoints[1] = newEndPointsYArray;
+        endPoints[2] = newEndPointsZArray;
 
-        mNbMaxBoxes = newNbMaxBoxes;
+        numMaxBoxes = newNbMaxBoxes;
     }
 
     // Check for 1D box intersection between two boxes that are sorted on the given axis.
@@ -218,8 +223,8 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         assert (aabbInt.max[2] < Utils.encodeFloatIntoInteger(Float.MAX_VALUE));
 
         // Get the corresponding box
-        int boxIndex = mMapBodyToBoxIndex.get(body);
-        BoxAABB box = mBoxes[boxIndex];
+        int boxIndex = mapBodyToBoxIndex.get(body);
+        BoxAABB box = boxes[boxIndex];
 
         // Current axis
         for (int axis = 0; axis < 3; axis++) {
@@ -229,7 +234,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
             int otherAxis2 = (1 << otherAxis1) & 3;
 
             // Get the starting end-point of the current axis
-            EndPoint[] startEndPointsCurrentAxis = mEndPoints[axis];
+            EndPoint[] startEndPointsCurrentAxis = endPoints[axis];
 
             // -------- Update the minimum end-point ------------//
             EndPoint currentMinEndPoint = startEndPointsCurrentAxis[box.min[axis]];
@@ -251,7 +256,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 int savedEndPointIndex = indexEndPoint;
 
                 while ((currentMinEndPoint = startEndPointsCurrentAxis[--currentMinEndPointIndex]).value > limit) {
-                    BoxAABB id1 = mBoxes[currentMinEndPoint.boxID];
+                    BoxAABB id1 = boxes[currentMinEndPoint.boxID];
                     boolean isMin = currentMinEndPoint.isMin;
 
                     // If it's a maximum end-point
@@ -265,7 +270,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                                     && testIntersect1DSortedAABBs(id1, aabbInt, startEndPointsCurrentAxis, axis)) {
 
                                 // Add an overlapping pair to the pair manager
-                                mPairManager.addPair(body, id1.body);
+                                pairManager.addPair(body, id1.body);
                             }
                         }
 
@@ -280,9 +285,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 // Update the current minimum endpoint that we are moving
                 if (savedEndPointIndex != indexEndPoint) {
                     if (savedEndPoint.isMin) {
-                        mBoxes[savedEndPoint.boxID].min[axis] = indexEndPoint;
+                        boxes[savedEndPoint.boxID].min[axis] = indexEndPoint;
                     } else {
-                        mBoxes[savedEndPoint.boxID].max[axis] = indexEndPoint;
+                        boxes[savedEndPoint.boxID].max[axis] = indexEndPoint;
                     }
 
                     startEndPointsCurrentAxis[indexEndPoint] = savedEndPoint;
@@ -300,7 +305,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 // end-point and the new position of the minimum end-point
                 while ((currentMinEndPoint = startEndPointsCurrentAxis[++currentMinEndPointIndex]).value < limit) {
 
-                    BoxAABB id1 = mBoxes[currentMinEndPoint.boxID];
+                    BoxAABB id1 = boxes[currentMinEndPoint.boxID];
                     boolean isMin = currentMinEndPoint.isMin;
 
                     // If it's a maximum end-point
@@ -312,7 +317,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                             if (testIntersect2D(box, id1, otherAxis1, otherAxis2)) {
 
                                 // Remove the pair from the pair manager
-                                mPairManager.removePair(body.getBodyID(), id1.body.getBodyID());
+                                pairManager.removePair(body.getBodyID(), id1.body.getBodyID());
                             }
                         }
 
@@ -327,9 +332,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 // Update the current minimum endpoint that we are moving
                 if (savedEndPointIndex != indexEndPoint) {
                     if (savedEndPoint.isMin) {
-                        mBoxes[savedEndPoint.boxID].min[axis] = indexEndPoint;
+                        boxes[savedEndPoint.boxID].min[axis] = indexEndPoint;
                     } else {
-                        mBoxes[savedEndPoint.boxID].max[axis] = indexEndPoint;
+                        boxes[savedEndPoint.boxID].max[axis] = indexEndPoint;
                     }
 
                     startEndPointsCurrentAxis[indexEndPoint] = savedEndPoint;
@@ -359,7 +364,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 while ((currentMaxEndPoint = startEndPointsCurrentAxis[++currentMaxEndPointIndex]).value < limit) {
 
                     // Get the next end-point
-                    BoxAABB id1 = mBoxes[currentMaxEndPoint.boxID];
+                    BoxAABB id1 = boxes[currentMaxEndPoint.boxID];
                     boolean isMin = currentMaxEndPoint.isMin;
 
                     // If it's a maximum end-point
@@ -373,7 +378,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                                     && testIntersect1DSortedAABBs(id1, aabbInt, startEndPointsCurrentAxis, axis)) {
 
                                 // Add an overlapping pair to the pair manager
-                                mPairManager.addPair(body, id1.body);
+                                pairManager.addPair(body, id1.body);
                             }
                         }
 
@@ -388,9 +393,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 // Update the current minimum endpoint that we are moving
                 if (savedEndPointIndex != indexEndPoint) {
                     if (savedEndPoint.isMin) {
-                        mBoxes[savedEndPoint.boxID].min[axis] = indexEndPoint;
+                        boxes[savedEndPoint.boxID].min[axis] = indexEndPoint;
                     } else {
-                        mBoxes[savedEndPoint.boxID].max[axis] = indexEndPoint;
+                        boxes[savedEndPoint.boxID].max[axis] = indexEndPoint;
                     }
 
                     startEndPointsCurrentAxis[indexEndPoint] = savedEndPoint;
@@ -406,7 +411,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 // For each end-point between the current position of the maximum
                 // end-point and the new position of the maximum end-point
                 while ((currentMaxEndPoint = startEndPointsCurrentAxis[--currentMaxEndPointIndex]).value > limit) {
-                    BoxAABB id1 = mBoxes[currentMaxEndPoint.boxID];
+                    BoxAABB id1 = boxes[currentMaxEndPoint.boxID];
                     boolean isMin = currentMaxEndPoint.isMin;
 
                     // If it's a minimum end-point
@@ -418,7 +423,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                             if (testIntersect2D(box, id1, otherAxis1, otherAxis2)) {
 
                                 // Remove the pair from the pair manager
-                                mPairManager.removePair(body.getBodyID(), id1.body.getBodyID());
+                                pairManager.removePair(body.getBodyID(), id1.body.getBodyID());
                             }
                         }
 
@@ -433,27 +438,15 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 // Update the current minimum endpoint that we are moving
                 if (savedEndPointIndex != indexEndPoint) {
                     if (savedEndPoint.isMin) {
-                        mBoxes[savedEndPoint.boxID].min[axis] = indexEndPoint;
+                        boxes[savedEndPoint.boxID].min[axis] = indexEndPoint;
                     } else {
-                        mBoxes[savedEndPoint.boxID].max[axis] = indexEndPoint;
+                        boxes[savedEndPoint.boxID].max[axis] = indexEndPoint;
                     }
 
                     startEndPointsCurrentAxis[indexEndPoint] = savedEndPoint;
                 }
             }
         }
-    }
-
-    // Constructor
-    public SweepAndPruneAlgorithm(CollisionDetection collisionDetection) {
-        super(collisionDetection);
-
-        mBoxes = null;
-        mNbBoxes = 0;
-        mNbMaxBoxes = 0;
-
-        mFreeBoxIndices = new ArrayList<>();
-        mMapBodyToBoxIndex = new HashMap<>();
     }
 
     // Notify the broad-phase about a new object in the world
@@ -473,59 +466,59 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         // If the index of the first free box is valid (means that
         // there is a bucket in the middle of the array that doesn't
         // contain a box anymore because it has been removed)
-        if (!mFreeBoxIndices.isEmpty()) {
-            int lastIndex = mFreeBoxIndices.size() - 1;
-            boxIndex = mFreeBoxIndices.get(lastIndex);
-            mFreeBoxIndices.remove(lastIndex);
+        if (!freeBoxIndices.isEmpty()) {
+            int lastIndex = freeBoxIndices.size() - 1;
+            boxIndex = freeBoxIndices.get(lastIndex);
+            freeBoxIndices.remove(lastIndex);
         } else {
             // If the array boxes and end-points arrays are full
-            if (mNbBoxes == mNbMaxBoxes) {
+            if (numBoxes == numMaxBoxes) {
                 // Resize the arrays to make them larger
                 resizeArrays();
             }
 
-            boxIndex = mNbBoxes;
+            boxIndex = numBoxes;
         }
 
         // Move the maximum limit end-point two elements further
         // at the end-points array in all three axis
-        int indexLimitEndPoint = 2 * mNbBoxes + NB_SENTINELS - 1;
+        int indexLimitEndPoint = 2 * numBoxes + NUM_SENTINELS - 1;
         for (int axis = 0; axis < 3; axis++) {
-            EndPoint maxLimitEndPoint = mEndPoints[axis][indexLimitEndPoint];
-            assert (mEndPoints[axis][0].boxID == INVALID_INDEX && mEndPoints[axis][0].isMin);
+            EndPoint maxLimitEndPoint = endPoints[axis][indexLimitEndPoint];
+            assert (endPoints[axis][0].boxID == INVALID_INDEX && endPoints[axis][0].isMin);
             assert (maxLimitEndPoint.boxID == INVALID_INDEX && !maxLimitEndPoint.isMin);
-            if (mEndPoints[axis][indexLimitEndPoint + 2] == null) {
-                mEndPoints[axis][indexLimitEndPoint + 2] = new EndPoint();
+            if (endPoints[axis][indexLimitEndPoint + 2] == null) {
+                endPoints[axis][indexLimitEndPoint + 2] = new EndPoint();
             }
-            EndPoint newMaxLimitEndPoint = mEndPoints[axis][indexLimitEndPoint + 2];
+            EndPoint newMaxLimitEndPoint = endPoints[axis][indexLimitEndPoint + 2];
             newMaxLimitEndPoint.setValues(maxLimitEndPoint.boxID, maxLimitEndPoint.isMin,
                     maxLimitEndPoint.value);
         }
 
         // Create a new box
-        if (mBoxes[boxIndex] == null) {
-            mBoxes[boxIndex] = new BoxAABB();
+        if (boxes[boxIndex] == null) {
+            boxes[boxIndex] = new BoxAABB();
         }
-        BoxAABB box = mBoxes[boxIndex];
+        BoxAABB box = boxes[boxIndex];
         box.body = body;
         long maxEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 1;
         long minEndPointValue = Utils.encodeFloatIntoInteger(Float.MAX_VALUE) - 2;
         for (int axis = 0; axis < 3; axis++) {
             box.min[axis] = indexLimitEndPoint;
             box.max[axis] = indexLimitEndPoint + 1;
-            EndPoint minimumEndPoint = mEndPoints[axis][box.min[axis]];
+            EndPoint minimumEndPoint = endPoints[axis][box.min[axis]];
             minimumEndPoint.setValues(boxIndex, true, minEndPointValue);
-            if (mEndPoints[axis][box.max[axis]] == null) {
-                mEndPoints[axis][box.max[axis]] = new EndPoint();
+            if (endPoints[axis][box.max[axis]] == null) {
+                endPoints[axis][box.max[axis]] = new EndPoint();
             }
-            EndPoint maximumEndPoint = mEndPoints[axis][box.max[axis]];
+            EndPoint maximumEndPoint = endPoints[axis][box.max[axis]];
             maximumEndPoint.setValues(boxIndex, false, maxEndPointValue);
         }
 
         // Add the body pointer to box index mapping
-        mMapBodyToBoxIndex.put(body, boxIndex);
+        mapBodyToBoxIndex.put(body, boxIndex);
 
-        mNbBoxes++;
+        numBoxes++;
 
         // Call the update method to put the end-points of the new AABB at the
         // correct position in the array. This will also create the overlapping
@@ -538,7 +531,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     @Override
     public void removeObject(CollisionBody body) {
 
-        assert (mNbBoxes > 0);
+        assert (numBoxes > 0);
 
         // Call the update method with an AABB that is very far away
         // in order to remove all overlapping pairs from the pair manager
@@ -548,32 +541,32 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         updateObjectIntegerAABB(body, aabbInt);
 
         // Get the corresponding box
-        int boxIndex = mMapBodyToBoxIndex.get(body);
+        int boxIndex = mapBodyToBoxIndex.get(body);
 
         // Remove the end-points of the box by moving the maximum end-points two elements back in
         // the end-points array
-        int indexLimitEndPoint = 2 * mNbBoxes + NB_SENTINELS - 1;
+        int indexLimitEndPoint = 2 * numBoxes + NUM_SENTINELS - 1;
         for (int axis = 0; axis < 3; axis++) {
-            EndPoint maxLimitEndPoint = mEndPoints[axis][indexLimitEndPoint];
-            assert (mEndPoints[axis][0].boxID == INVALID_INDEX && mEndPoints[axis][0].isMin);
+            EndPoint maxLimitEndPoint = endPoints[axis][indexLimitEndPoint];
+            assert (endPoints[axis][0].boxID == INVALID_INDEX && endPoints[axis][0].isMin);
             assert (maxLimitEndPoint.boxID == INVALID_INDEX && !maxLimitEndPoint.isMin);
-            EndPoint newMaxLimitEndPoint = mEndPoints[axis][indexLimitEndPoint - 2];
-            assert (mEndPoints[axis][indexLimitEndPoint - 1].boxID == boxIndex);
-            assert (!mEndPoints[axis][indexLimitEndPoint - 1].isMin);
+            EndPoint newMaxLimitEndPoint = endPoints[axis][indexLimitEndPoint - 2];
+            assert (endPoints[axis][indexLimitEndPoint - 1].boxID == boxIndex);
+            assert (!endPoints[axis][indexLimitEndPoint - 1].isMin);
             assert (newMaxLimitEndPoint.boxID == boxIndex);
             assert (newMaxLimitEndPoint.isMin);
             newMaxLimitEndPoint.setValues(maxLimitEndPoint.boxID, maxLimitEndPoint.isMin, maxLimitEndPoint.value);
         }
 
         // Add the box index into the list of free indices
-        mFreeBoxIndices.add(boxIndex);
+        freeBoxIndices.add(boxIndex);
 
-        mMapBodyToBoxIndex.remove(body);
-        mNbBoxes--;
+        mapBodyToBoxIndex.remove(body);
+        numBoxes--;
 
         // Check if we need to shrink the allocated memory
-        int nextPowerOf2 = PairManager.ComputeNextPowerOfTwo((mNbBoxes - 1) / 100);
-        if (nextPowerOf2 * 100 < mNbMaxBoxes) {
+        int nextPowerOf2 = PairManager.ComputeNextPowerOfTwo((numBoxes - 1) / 100);
+        if (nextPowerOf2 * 100 < numMaxBoxes) {
             shrinkArrays();
         }
     }

@@ -26,11 +26,6 @@ public class BroadPhasePair {
         previousSeparatingAxis = new Vector3(1.0f, 1.0f, 1.0f);
     }
 
-    // Return the pair of bodies index
-    public BodyIndexPair getBodiesIndexPair() {
-        return ComputeBodiesIndexPair(body1, body2);
-    }
-
     public CollisionBody getBody1() {
         return body1;
     }
@@ -41,6 +36,11 @@ public class BroadPhasePair {
 
     public Vector3 getPreviousSeparatingAxis() {
         return previousSeparatingAxis;
+    }
+
+    // Return the pair of bodies index
+    public BodyIndexPair newBodiesIndexPair() {
+        return ComputeBodiesIndexPair(body1, body2);
     }
 
     // Return the pair of bodies index

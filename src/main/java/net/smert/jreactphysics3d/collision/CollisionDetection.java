@@ -90,7 +90,7 @@ public class CollisionDetection {
             world.updateOverlappingPair(pair);
 
             // Check if the two bodies are allowed to collide, otherwise, we do not test for collision
-            if (noCollisionPairs.contains(pair.getBodiesIndexPair()) == true) {
+            if (noCollisionPairs.contains(pair.newBodiesIndexPair()) == true) {
                 continue;
             }
 
@@ -168,7 +168,7 @@ public class CollisionDetection {
     public void broadPhaseNotifyAddedOverlappingPair(BodyPair addedPair) {
 
         // Get the pair of body index
-        BodyIndexPair indexPair = addedPair.getBodiesIndexPair();
+        BodyIndexPair indexPair = addedPair.newBodiesIndexPair();
 
         // Create the corresponding broad-phase pair object
         BroadPhasePair broadPhasePair = new BroadPhasePair(addedPair.getBody1(), addedPair.getBody2());
@@ -187,7 +187,7 @@ public class CollisionDetection {
     public void broadPhaseNotifyRemovedOverlappingPair(BodyPair removedPair) {
 
         // Get the pair of body index
-        BodyIndexPair indexPair = removedPair.getBodiesIndexPair();
+        BodyIndexPair indexPair = removedPair.newBodiesIndexPair();
 
         // Get the broad-phase pair
         BroadPhasePair broadPhasePair = overlappingPairs.get(indexPair);

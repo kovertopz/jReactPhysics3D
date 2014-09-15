@@ -15,13 +15,12 @@ import net.smert.jreactphysics3d.collision.shapes.AABB;
 public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
 
     // All bodies of the world
-    protected Set<CollisionBody> mBodies;
+    protected Set<CollisionBody> bodies;
 
     // Constructor
     public NoBroadPhaseAlgorithm(CollisionDetection collisionDetection) {
         super(collisionDetection);
-
-        mBodies = new HashSet<>();
+        bodies = new HashSet<>();
     }
 
     // Notify the broad-phase about a new object in the world
@@ -29,14 +28,14 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
     public void addObject(CollisionBody body, AABB aabb) {
 
         // For each body that is already in the world
-        for (CollisionBody it : mBodies) {
+        for (CollisionBody it : bodies) {
 
             // Add an overlapping pair with the new body
-            mPairManager.addPair(it, body);
+            pairManager.addPair(it, body);
         }
 
         // Add the new body into the list of bodies
-        mBodies.add(body);
+        bodies.add(body);
     }
 
     // Notify the broad-phase about an object that has been removed from the world
@@ -44,17 +43,17 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
     public void removeObject(CollisionBody body) {
 
         // For each body that is in the world
-        for (CollisionBody it : mBodies) {
+        for (CollisionBody it : bodies) {
 
             if (it.getBodyID() != body.getBodyID()) {
 
                 // Remove the overlapping pair with the new body
-                mPairManager.removePair(it.getBodyID(), body.getBodyID());
+                pairManager.removePair(it.getBodyID(), body.getBodyID());
             }
         }
 
         // Remove the body from the broad-phase
-        mBodies.remove(body);
+        bodies.remove(body);
     }
 
     // Notify the broad-phase that the AABB of an object has changed

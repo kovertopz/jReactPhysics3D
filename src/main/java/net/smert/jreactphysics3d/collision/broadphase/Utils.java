@@ -16,10 +16,11 @@ public class Utils {
     public static long encodeFloatIntoInteger(float number) {
         long intNumber = (long) Float.floatToIntBits(number) & 0xFFFFFFFFl;
 
-        // If it's a negative number
         if ((intNumber & 0x80000000l) == 0x80000000l) {
+            // If it's a negative number
             intNumber = ~intNumber & 0xFFFFFFFFl;
-        } else {     // If it is a positive number
+        } else {
+            // If it's a positive number
             intNumber |= 0x80000000l;
         }
 

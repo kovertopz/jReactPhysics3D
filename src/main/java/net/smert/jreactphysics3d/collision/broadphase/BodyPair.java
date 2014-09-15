@@ -17,8 +17,16 @@ public class BodyPair {
     // Pointer to the second body
     private CollisionBody body2;
 
+    public CollisionBody getBody1() {
+        return body1;
+    }
+
+    public CollisionBody getBody2() {
+        return body2;
+    }
+
     // Return the pair of bodies index
-    public BodyIndexPair getBodiesIndexPair() {
+    public BodyIndexPair newBodiesIndexPair() {
 
         // TODO: Cache object?
         // Construct the pair of body index
@@ -27,14 +35,6 @@ public class BodyPair {
                 : new BodyIndexPair(body2.getBodyID(), body1.getBodyID());
         assert (indexPair.getFirst() != indexPair.getSecond());
         return indexPair;
-    }
-
-    public CollisionBody getBody1() {
-        return body1;
-    }
-
-    public CollisionBody getBody2() {
-        return body2;
     }
 
     public void setBody1(CollisionBody body1) {
