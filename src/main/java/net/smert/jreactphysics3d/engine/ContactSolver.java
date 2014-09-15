@@ -56,7 +56,7 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  * We are using the accumulated impulse technique that is also described in the slides from Erin Catto.
  *
  * We are also using warm starting. The idea is to warm start the solver at the beginning of each step by applying the
- * last impulstes for the constraints that we already existing at the previous step. This allows the iterative solver to
+ * last impulses for the constraints that we already existing at the previous step. This allows the iterative solver to
  * converge faster towards the solution.
  *
  * For contact constraints, we are also using split impulses so that the position correction that uses Baumgarte
@@ -73,28 +73,41 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class ContactSolver {
 
     // Beta value for the penetration depth position correction without split impulses
-    private static final float BETA = 0.2f;
+    private final static float BETA = 0.2f;
 
     // Beta value for the penetration depth position correction with split impulses
-    private static final float BETA_SPLIT_IMPULSE = 0.2f;
+    private final static float BETA_SPLIT_IMPULSE = 0.2f;
 
     // Slop distance (allowed penetration distance between bodies)
-    private static final float SLOP = 0.01f;
+    private final static float SLOP = 0.01f;
 
-    // Split linear velocities for the position contact solver (split impulse)
-    private Vector3[] mSplitLinearVelocities;
+    // True if we solve 3 friction constraints at the contact manifold center only
+    // instead of 2 friction constraints at each contact point
+    private boolean isSolveFrictionAtContactManifoldCenterActive;
 
-    // Split angular velocities for the position contact solver (split impulse)
-    private Vector3[] mSplitAngularVelocities;
+    // True if the split impulse position correction is active
+    private boolean isSplitImpulseActive;
+
+    // True if the warm starting of the solver is active
+    private boolean isWarmStartingActive;
 
     // Current time step
-    private float mTimeStep;
-
-    // Contact constraints
-    private ContactManifoldSolver[] mContactConstraints;
+    private float timeStep;
 
     // Number of contact constraints
-    private int mNbContactManifolds;
+    private int numContactManifolds;
+
+    // Contact constraints
+    private ContactManifoldSolver[] contactConstraints;
+
+    // Reference to the map of rigid body to their index in the constrained velocities array
+    private final Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
+
+    // Split angular velocities for the position contact solver (split impulse)
+    private Vector3[] splitAngularVelocities;
+
+    // Split linear velocities for the position contact solver (split impulse)
+    private Vector3[] splitLinearVelocities;
 
     // Array of linear velocities
     private Vector3[] mLinearVelocities;
@@ -102,33 +115,73 @@ public class ContactSolver {
     // Array of angular velocities
     private Vector3[] mAngularVelocities;
 
-    // Reference to the map of rigid body to their index in the constrained velocities array
-    private final Map<RigidBody, Integer> mMapBodyToConstrainedVelocityIndex;
+    // Constructor
+    public ContactSolver(Map<RigidBody, Integer> mapBodyToVelocityIndex) {
+        isSolveFrictionAtContactManifoldCenterActive = true;
+        isSplitImpulseActive = true;
+        isWarmStartingActive = true;
+        contactConstraints = null;
+        mMapBodyToConstrainedVelocityIndex = mapBodyToVelocityIndex;
+        splitAngularVelocities = null;
+        splitLinearVelocities = null;
+        mAngularVelocities = null;
+        mLinearVelocities = null;
+    }
 
-    // True if the warm starting of the solver is active
-    private final boolean mIsWarmStartingActive;
+    // Apply an impulse to the two bodies of a constraint
+    private void applyImpulse(Impulse impulse, ContactManifoldSolver manifold) {
 
-    // True if the split impulse position correction is active
-    private boolean mIsSplitImpulseActive;
+        Vector3 velocity = new Vector3();
 
-    // True if we solve 3 friction constraints at the contact manifold center only
-    // instead of 2 friction constraints at each contact point
-    private boolean mIsSolveFrictionAtContactManifoldCenterActive;
+        // Update the velocities of the bodies by applying the impulse P
+        if (manifold.isBody1Moving) {
+            velocity.set(impulse.getLinearImpulseBody1()).multiply(manifold.massInverseBody1);
+            mLinearVelocities[manifold.indexBody1].add(velocity);
+            velocity.set(manifold.inverseInertiaTensorBody1.multiply(impulse.getAngularImpulseBody1(), new Vector3()));
+            mAngularVelocities[manifold.indexBody1].add(velocity);
+        }
+        if (manifold.isBody2Moving) {
+            velocity.set(impulse.getLinearImpulseBody2()).multiply(manifold.massInverseBody2);
+            mLinearVelocities[manifold.indexBody2].add(velocity);
+            velocity.set(manifold.inverseInertiaTensorBody2.multiply(impulse.getAngularImpulseBody2(), new Vector3()));
+            mAngularVelocities[manifold.indexBody2].add(velocity);
+        }
+    }
+
+    // Apply an impulse to the two bodies of a constraint
+    private void applySplitImpulse(Impulse impulse, ContactManifoldSolver manifold) {
+
+        Vector3 velocity = new Vector3();
+
+        // Update the velocities of the bodies by applying the impulse P
+        if (manifold.isBody1Moving) {
+            velocity.set(impulse.getLinearImpulseBody1()).multiply(manifold.massInverseBody1);
+            splitLinearVelocities[manifold.indexBody1].add(velocity);
+            velocity.set(manifold.inverseInertiaTensorBody1.multiply(impulse.getAngularImpulseBody1(), new Vector3()));
+            splitAngularVelocities[manifold.indexBody1].add(velocity);
+        }
+        if (manifold.isBody2Moving) {
+            velocity.set(impulse.getLinearImpulseBody2()).multiply(manifold.massInverseBody2);
+            splitLinearVelocities[manifold.indexBody2].add(velocity);
+            velocity.set(manifold.inverseInertiaTensorBody2.multiply(impulse.getAngularImpulseBody2(), new Vector3()));
+            splitAngularVelocities[manifold.indexBody2].add(velocity);
+        }
+    }
 
     // Initialize the contact constraints before solving the system
     private void initializeContactConstraints() {
 
         // For each contact constraint
-        for (int c = 0; c < mNbContactManifolds; c++) {
+        for (int c = 0; c < numContactManifolds; c++) {
 
-            final ContactManifoldSolver manifold = mContactConstraints[c];
+            final ContactManifoldSolver manifold = contactConstraints[c];
 
             // Get the inertia tensors of both bodies
             final Matrix3x3 I1 = manifold.inverseInertiaTensorBody1;
             final Matrix3x3 I2 = manifold.inverseInertiaTensorBody2;
 
             // If we solve the friction constraints at the center of the contact manifold
-            if (mIsSolveFrictionAtContactManifoldCenterActive) {
+            if (isSolveFrictionAtContactManifoldCenterActive) {
                 manifold.normal.zero();
             }
 
@@ -145,8 +198,10 @@ public class ContactSolver {
                 ContactPoint externalContact = contactPoint.externalContact;
 
                 // Compute the velocity difference
-                Vector3 deltaV = new Vector3(
-                        new Vector3(new Vector3(v2).add(new Vector3(w2).cross(contactPoint.r2))).subtract(v1)).subtract(new Vector3(w1).cross(contactPoint.r1));
+                Vector3 deltaV = new Vector3(new Vector3(new Vector3(v2)
+                        .add(new Vector3(w2).cross(contactPoint.r2)))
+                        .subtract(v1))
+                        .subtract(new Vector3(w1).cross(contactPoint.r1));
 
                 contactPoint.r1CrossN.set(new Vector3(contactPoint.r1).cross(contactPoint.normal));
                 contactPoint.r2CrossN.set(new Vector3(contactPoint.r2).cross(contactPoint.normal));
@@ -164,7 +219,7 @@ public class ContactSolver {
                 contactPoint.inversePenetrationMass = massPenetration > 0.0f ? (1.0f / massPenetration) : 0.0f;
 
                 // If we do not solve the friction constraints at the center of the contact manifold
-                if (!mIsSolveFrictionAtContactManifoldCenterActive) {
+                if (!isSolveFrictionAtContactManifoldCenterActive) {
 
                     // Compute the friction vectors
                     computeFrictionVectors(deltaV, contactPoint);
@@ -205,7 +260,7 @@ public class ContactSolver {
                 }
 
                 // If the warm starting of the contact solver is active
-                if (mIsWarmStartingActive) {
+                if (isWarmStartingActive) {
 
                     // Get the cached accumulated impulses from the previous step
                     contactPoint.penetrationImpulse = externalContact.getPenetrationImpulse();
@@ -217,13 +272,13 @@ public class ContactSolver {
                 contactPoint.penetrationSplitImpulse = 0.0f;
 
                 // If we solve the friction constraints at the center of the contact manifold
-                if (mIsSolveFrictionAtContactManifoldCenterActive) {
+                if (isSolveFrictionAtContactManifoldCenterActive) {
                     manifold.normal.add(contactPoint.normal);
                 }
             }
 
             // If we solve the friction constraints at the center of the contact manifold
-            if (mIsSolveFrictionAtContactManifoldCenterActive) {
+            if (isSolveFrictionAtContactManifoldCenterActive) {
 
                 manifold.normal.normalize();
 
@@ -262,56 +317,22 @@ public class ContactSolver {
         }
     }
 
-    // Apply an impulse to the two bodies of a constraint
-    private void applyImpulse(Impulse impulse, ContactManifoldSolver manifold) {
-
-        // Update the velocities of the bodies by applying the impulse P
-        if (manifold.isBody1Moving) {
-            mLinearVelocities[manifold.indexBody1].add(
-                    new Vector3(impulse.getLinearImpulseBody1()).multiply(manifold.massInverseBody1));
-            mAngularVelocities[manifold.indexBody1].add(
-                    manifold.inverseInertiaTensorBody1.multiply(impulse.getAngularImpulseBody1(), new Vector3()));
-        }
-        if (manifold.isBody2Moving) {
-            mLinearVelocities[manifold.indexBody2].add(
-                    new Vector3(impulse.getLinearImpulseBody2()).multiply(manifold.massInverseBody2));
-            mAngularVelocities[manifold.indexBody2].add(
-                    manifold.inverseInertiaTensorBody2.multiply(impulse.getAngularImpulseBody2(), new Vector3()));
-        }
+    // Compute the first friction constraint impulse
+    private Impulse computeFriction1Impulse(float deltaLambda, ContactPointSolver contactPoint) {
+        return new Impulse(
+                new Vector3(new Vector3(contactPoint.frictionVector1).invert()).multiply(deltaLambda),
+                new Vector3(new Vector3(contactPoint.r1CrossT1).invert()).multiply(deltaLambda),
+                new Vector3(contactPoint.frictionVector1).multiply(deltaLambda),
+                new Vector3(contactPoint.r2CrossT1).multiply(deltaLambda));
     }
 
-    // Apply an impulse to the two bodies of a constraint
-    private void applySplitImpulse(Impulse impulse, ContactManifoldSolver manifold) {
-
-        // Update the velocities of the bodies by applying the impulse P
-        if (manifold.isBody1Moving) {
-            mSplitLinearVelocities[manifold.indexBody1].add(
-                    new Vector3(impulse.getLinearImpulseBody1()).multiply(manifold.massInverseBody1));
-            mSplitAngularVelocities[manifold.indexBody1].add(
-                    manifold.inverseInertiaTensorBody1.multiply(impulse.getAngularImpulseBody1(), new Vector3()));
-        }
-        if (manifold.isBody2Moving) {
-            mSplitLinearVelocities[manifold.indexBody2].add(
-                    new Vector3(impulse.getLinearImpulseBody2()).multiply(manifold.massInverseBody2));
-            mSplitAngularVelocities[manifold.indexBody2].add(
-                    manifold.inverseInertiaTensorBody2.multiply(impulse.getAngularImpulseBody2(), new Vector3()));
-        }
-    }
-
-    // Compute the collision restitution factor from the restitution factor of each body
-    private float computeMixedRestitutionFactor(RigidBody body1, RigidBody body2) {
-        float restitution1 = body1.getMaterial().getBounciness();
-        float restitution2 = body2.getMaterial().getBounciness();
-
-        // Return the largest restitution factor
-        return (restitution1 > restitution2) ? restitution1 : restitution2;
-    }
-
-    // Compute the mixed friction coefficient from the friction coefficient of each body
-    private float computeMixedFrictionCoefficient(RigidBody body1, RigidBody body2) {
-        // Use the geometric mean to compute the mixed friction coefficient
-        return Mathematics.Sqrt(body1.getMaterial().getFrictionCoefficient()
-                * body2.getMaterial().getFrictionCoefficient());
+    // Compute the second friction constraint impulse
+    private Impulse computeFriction2Impulse(float deltaLambda, ContactPointSolver contactPoint) {
+        return new Impulse(
+                new Vector3(new Vector3(contactPoint.frictionVector2).invert()).multiply(deltaLambda),
+                new Vector3(new Vector3(contactPoint.r1CrossT2).invert()).multiply(deltaLambda),
+                new Vector3(contactPoint.frictionVector2).multiply(deltaLambda),
+                new Vector3(contactPoint.r2CrossT2).multiply(deltaLambda));
     }
 
     // Compute the two unit orthogonal vectors "t1" and "t2" that span the tangential friction plane
@@ -370,6 +391,22 @@ public class ContactSolver {
         contactPoint.frictionVector2.set(new Vector3(contactPoint.normal).cross(contactPoint.frictionVector1).normalize());
     }
 
+    // Compute the mixed friction coefficient from the friction coefficient of each body
+    private float computeMixedFrictionCoefficient(RigidBody body1, RigidBody body2) {
+        // Use the geometric mean to compute the mixed friction coefficient
+        return Mathematics.Sqrt(body1.getMaterial().getFrictionCoefficient()
+                * body2.getMaterial().getFrictionCoefficient());
+    }
+
+    // Compute the collision restitution factor from the restitution factor of each body
+    private float computeMixedRestitutionFactor(RigidBody body1, RigidBody body2) {
+        float restitution1 = body1.getMaterial().getBounciness();
+        float restitution2 = body2.getMaterial().getBounciness();
+
+        // Return the largest restitution factor
+        return (restitution1 > restitution2) ? restitution1 : restitution2;
+    }
+
     // Compute a penetration constraint impulse
     private Impulse computePenetrationImpulse(float deltaLambda, ContactPointSolver contactPoint) {
         return new Impulse(
@@ -379,67 +416,13 @@ public class ContactSolver {
                 new Vector3(contactPoint.r2CrossN).multiply(deltaLambda));
     }
 
-    // Compute the first friction constraint impulse
-    private Impulse computeFriction1Impulse(float deltaLambda, ContactPointSolver contactPoint) {
-        return new Impulse(
-                new Vector3(new Vector3(contactPoint.frictionVector1).invert()).multiply(deltaLambda),
-                new Vector3(new Vector3(contactPoint.r1CrossT1).invert()).multiply(deltaLambda),
-                new Vector3(contactPoint.frictionVector1).multiply(deltaLambda),
-                new Vector3(contactPoint.r2CrossT1).multiply(deltaLambda));
-    }
+    // Clean up the constraint solver
+    public void cleanup() {
 
-    // Compute the second friction constraint impulse
-    private Impulse computeFriction2Impulse(float deltaLambda, ContactPointSolver contactPoint) {
-        return new Impulse(
-                new Vector3(new Vector3(contactPoint.frictionVector2).invert()).multiply(deltaLambda),
-                new Vector3(new Vector3(contactPoint.r1CrossT2).invert()).multiply(deltaLambda),
-                new Vector3(contactPoint.frictionVector2).multiply(deltaLambda),
-                new Vector3(contactPoint.r2CrossT2).multiply(deltaLambda));
-    }
-
-    // Constructor
-    public ContactSolver(Map<RigidBody, Integer> mapBodyToVelocityIndex) {
-        mSplitLinearVelocities = null;
-        mSplitAngularVelocities = null;
-        mContactConstraints = null;
-        mLinearVelocities = null;
-        mAngularVelocities = null;
-        mMapBodyToConstrainedVelocityIndex = mapBodyToVelocityIndex;
-        mIsWarmStartingActive = true;
-        mIsSplitImpulseActive = true;
-        mIsSolveFrictionAtContactManifoldCenterActive = true;
-    }
-
-    // Set the split velocities arrays
-    public void setSplitVelocitiesArrays(Vector3[] splitLinearVelocities, Vector3[] splitAngularVelocities) {
-        assert (splitLinearVelocities != null);
-        assert (splitAngularVelocities != null);
-        mSplitLinearVelocities = splitLinearVelocities;
-        mSplitAngularVelocities = splitAngularVelocities;
-    }
-
-    // Set the constrained velocities arrays
-    public void setConstrainedVelocitiesArrays(Vector3[] constrainedLinearVelocities, Vector3[] constrainedAngularVelocities) {
-        assert (constrainedLinearVelocities != null);
-        assert (constrainedAngularVelocities != null);
-        mLinearVelocities = constrainedLinearVelocities;
-        mAngularVelocities = constrainedAngularVelocities;
-    }
-
-    // Return true if the split impulses position correction technique is used for contacts
-    public boolean isSplitImpulseActive() {
-        return mIsSplitImpulseActive;
-    }
-
-    // Activate or Deactivate the split impulses for contacts
-    public void setIsSplitImpulseActive(boolean isActive) {
-        mIsSplitImpulseActive = isActive;
-    }
-
-    // Activate or deactivate the solving of friction constraints at the center of
-    // the contact manifold instead of solving them at each contact point
-    public void setIsSolveFrictionAtContactManifoldCenterActive(boolean isActive) {
-        mIsSolveFrictionAtContactManifoldCenterActive = isActive;
+        if (contactConstraints != null) {
+            //delete[] mContactConstraints;
+            contactConstraints = null;
+        }
     }
 
     // Initialize the constraint solver for a given island
@@ -450,25 +433,25 @@ public class ContactSolver {
         assert (island != null);
         assert (island.getNumBodies() > 0);
         assert (island.getNumContactManifolds() > 0);
-        assert (mSplitLinearVelocities != null);
-        assert (mSplitAngularVelocities != null);
+        assert (splitLinearVelocities != null);
+        assert (splitAngularVelocities != null);
 
         // Set the current time step
-        mTimeStep = dt;
+        timeStep = dt;
 
-        mNbContactManifolds = island.getNumContactManifolds();
+        numContactManifolds = island.getNumContactManifolds();
 
-        mContactConstraints = new ContactManifoldSolver[mNbContactManifolds];
-        assert (mContactConstraints != null);
+        contactConstraints = new ContactManifoldSolver[numContactManifolds];
+        assert (contactConstraints != null);
 
         // For each contact manifold of the island
         ContactManifold[] contactManifolds = island.getContactManifolds();
-        for (int i = 0; i < mNbContactManifolds; i++) {
+        for (int i = 0; i < numContactManifolds; i++) {
 
             ContactManifold externalManifold = contactManifolds[i];
 
             ContactManifoldSolver internalManifold = new ContactManifoldSolver();
-            mContactConstraints[i] = internalManifold;
+            contactConstraints[i] = internalManifold;
 
             assert (externalManifold.getNumContactPoints() > 0);
 
@@ -496,7 +479,7 @@ public class ContactSolver {
             internalManifold.externalContactManifold = externalManifold;
 
             // If we solve the friction constraints at the center of the contact manifold
-            if (mIsSolveFrictionAtContactManifoldCenterActive) {
+            if (isSolveFrictionAtContactManifoldCenterActive) {
                 internalManifold.frictionPointBody1.zero();
                 internalManifold.frictionPointBody2.zero();
             }
@@ -529,14 +512,14 @@ public class ContactSolver {
                 contactPoint.friction2Impulse = 0.0f;
 
                 // If we solve the friction constraints at the center of the contact manifold
-                if (mIsSolveFrictionAtContactManifoldCenterActive) {
+                if (isSolveFrictionAtContactManifoldCenterActive) {
                     internalManifold.frictionPointBody1.add(p1);
                     internalManifold.frictionPointBody2.add(p2);
                 }
             }
 
             // If we solve the friction constraints at the center of the contact manifold
-            if (mIsSolveFrictionAtContactManifoldCenterActive) {
+            if (isSolveFrictionAtContactManifoldCenterActive) {
 
                 internalManifold.frictionPointBody1.divide(internalManifold.nbContacts);
                 internalManifold.frictionPointBody2.divide(internalManifold.nbContacts);
@@ -546,7 +529,7 @@ public class ContactSolver {
                 internalManifold.oldFrictionVector2.set(new Vector3(externalManifold.getFrictionVector2()));
 
                 // If warm starting is active
-                if (mIsWarmStartingActive) {
+                if (isWarmStartingActive) {
 
                     // Initialize the accumulated impulses with the previous step accumulated impulses
                     internalManifold.friction1Impulse = externalManifold.getFrictionImpulse1();
@@ -566,148 +549,36 @@ public class ContactSolver {
         initializeContactConstraints();
     }
 
-    // Warm start the solver.
-    // For each constraint, we apply the previous impulse (from the previous step)
-    // at the beginning. With this technique, we will converge faster towards
-    // the solution of the linear system
-    public void warmStart() {
+    // Return true if the split impulses position correction technique is used for contacts
+    public boolean isSplitImpulseActive() {
+        return isSplitImpulseActive;
+    }
 
-        // Check that warm starting is active
-        if (!mIsWarmStartingActive) {
-            return;
-        }
+    // Activate or Deactivate the split impulses for contacts
+    public void setIsSplitImpulseActive(boolean isActive) {
+        isSplitImpulseActive = isActive;
+    }
 
-        // For each constraint
-        for (int c = 0; c < mNbContactManifolds; c++) {
+    // Activate or deactivate the solving of friction constraints at the center of
+    // the contact manifold instead of solving them at each contact point
+    public void setIsSolveFrictionAtContactManifoldCenterActive(boolean isActive) {
+        isSolveFrictionAtContactManifoldCenterActive = isActive;
+    }
 
-            ContactManifoldSolver contactManifold = mContactConstraints[c];
+    // Set the constrained velocities arrays
+    public void setConstrainedVelocitiesArrays(Vector3[] constrainedLinearVelocities, Vector3[] constrainedAngularVelocities) {
+        assert (constrainedLinearVelocities != null);
+        assert (constrainedAngularVelocities != null);
+        mLinearVelocities = constrainedLinearVelocities;
+        mAngularVelocities = constrainedAngularVelocities;
+    }
 
-            boolean atLeastOneRestingContactPoint = false;
-
-            for (int i = 0; i < contactManifold.nbContacts; i++) {
-
-                ContactPointSolver contactPoint = contactManifold.contacts[i];
-
-                // If it is not a new contact (this contact was already existing at last time step)
-                if (contactPoint.isRestingContact) {
-
-                    atLeastOneRestingContactPoint = true;
-
-                    /**
-                     * --------- Penetration ---------
-                     */
-                    // Compute the impulse P = J^T * lambda
-                    Impulse impulsePenetration = computePenetrationImpulse(contactPoint.penetrationImpulse, contactPoint);
-
-                    // Apply the impulse to the bodies of the constraint
-                    applyImpulse(impulsePenetration, contactManifold);
-
-                    // If we do not solve the friction constraints at the center of the contact manifold
-                    if (!mIsSolveFrictionAtContactManifoldCenterActive) {
-
-                        // Project the old friction impulses (with old friction vectors) into
-                        // the new friction vectors to get the new friction impulses
-                        Vector3 oldFrictionImpulse = new Vector3(
-                                new Vector3(contactPoint.oldFrictionVector1).multiply(contactPoint.friction1Impulse)).add(
-                                        new Vector3(contactPoint.oldFrictionVector2).multiply(contactPoint.friction2Impulse));
-                        contactPoint.friction1Impulse = oldFrictionImpulse.dot(contactPoint.frictionVector1);
-                        contactPoint.friction2Impulse = oldFrictionImpulse.dot(contactPoint.frictionVector2);
-
-                        /**
-                         * --------- Friction 1 ---------
-                         */
-                        // Compute the impulse P = J^T * lambda
-                        Impulse impulseFriction1 = computeFriction1Impulse(contactPoint.friction1Impulse, contactPoint);
-
-                        // Apply the impulses to the bodies of the constraint
-                        applyImpulse(impulseFriction1, contactManifold);
-
-                        /**
-                         * --------- Friction 2 ---------
-                         */
-                        // Compute the impulse P=J^T * lambda
-                        Impulse impulseFriction2 = computeFriction2Impulse(contactPoint.friction2Impulse, contactPoint);
-
-                        // Apply the impulses to the bodies of the constraint
-                        applyImpulse(impulseFriction2, contactManifold);
-                    }
-                } else {  // If it is a new contact point
-
-                    // Initialize the accumulated impulses to zero
-                    contactPoint.penetrationImpulse = 0.0f;
-                    contactPoint.friction1Impulse = 0.0f;
-                    contactPoint.friction2Impulse = 0.0f;
-                }
-            }
-
-            // If we solve the friction constraints at the center of the contact manifold and there is
-            // at least one resting contact point in the contact manifold
-            if (mIsSolveFrictionAtContactManifoldCenterActive && atLeastOneRestingContactPoint) {
-
-                // Project the old friction impulses (with old friction vectors) into the new friction
-                // vectors to get the new friction impulses
-                Vector3 oldFrictionImpulse = new Vector3(
-                        new Vector3(contactManifold.oldFrictionVector1).multiply(contactManifold.friction1Impulse)).add(
-                                new Vector3(contactManifold.oldFrictionVector2).multiply(contactManifold.friction2Impulse));
-                contactManifold.friction1Impulse = oldFrictionImpulse.dot(contactManifold.frictionVector1);
-                contactManifold.friction2Impulse = oldFrictionImpulse.dot(contactManifold.frictionVector2);
-
-                /**
-                 * ------ First friction constraint at the center of the contact manifold ------
-                 */
-                // Compute the impulse P = J^T * lambda
-                Vector3 linearImpulseBody1 = new Vector3(
-                        new Vector3(contactManifold.frictionVector1).invert()).multiply(contactManifold.friction1Impulse);
-                Vector3 angularImpulseBody1 = new Vector3(
-                        new Vector3(contactManifold.r1CrossT1).invert()).multiply(contactManifold.friction1Impulse);
-                Vector3 linearImpulseBody2 = new Vector3(
-                        contactManifold.frictionVector1).multiply(contactManifold.friction1Impulse);
-                Vector3 angularImpulseBody2 = new Vector3(
-                        contactManifold.r2CrossT1).multiply(contactManifold.friction1Impulse);
-                Impulse impulseFriction1 = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
-
-                // Apply the impulses to the bodies of the constraint
-                applyImpulse(impulseFriction1, contactManifold);
-
-                /**
-                 * ------ Second friction constraint at the center of the contact manifold -----
-                 */
-                // Compute the impulse P = J^T * lambda
-                linearImpulseBody1 = new Vector3(
-                        new Vector3(contactManifold.frictionVector2).invert()).multiply(contactManifold.friction2Impulse);
-                angularImpulseBody1 = new Vector3(
-                        new Vector3(contactManifold.r1CrossT2).invert()).multiply(contactManifold.friction2Impulse);
-                linearImpulseBody2 = new Vector3(
-                        contactManifold.frictionVector2).multiply(contactManifold.friction2Impulse);
-                angularImpulseBody2 = new Vector3(
-                        contactManifold.r2CrossT2).multiply(contactManifold.friction2Impulse);
-                Impulse impulseFriction2 = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
-
-                // Apply the impulses to the bodies of the constraint
-                applyImpulse(impulseFriction2, contactManifold);
-
-                /**
-                 * ------ Twist friction constraint at the center of the contact manifold ------
-                 */
-                // Compute the impulse P = J^T * lambda
-                linearImpulseBody1 = new Vector3();
-                angularImpulseBody1 = new Vector3(
-                        new Vector3(contactManifold.normal).invert()).multiply(contactManifold.frictionTwistImpulse);
-                linearImpulseBody2 = new Vector3();
-                angularImpulseBody2 = new Vector3(
-                        contactManifold.normal).multiply(contactManifold.frictionTwistImpulse);
-                Impulse impulseTwistFriction = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
-
-                // Apply the impulses to the bodies of the constraint
-                applyImpulse(impulseTwistFriction, contactManifold);
-            } else {  // If it is a new contact manifold
-
-                // Initialize the accumulated impulses to zero
-                contactManifold.friction1Impulse = 0.0f;
-                contactManifold.friction2Impulse = 0.0f;
-                contactManifold.frictionTwistImpulse = 0.0f;
-            }
-        }
+    // Set the split velocities arrays
+    public void setSplitVelocitiesArrays(Vector3[] splitLinearVelocities, Vector3[] splitAngularVelocities) {
+        assert (splitLinearVelocities != null);
+        assert (splitAngularVelocities != null);
+        this.splitLinearVelocities = splitLinearVelocities;
+        this.splitAngularVelocities = splitAngularVelocities;
     }
 
     // Solve the contacts
@@ -719,9 +590,9 @@ public class ContactSolver {
         float lambdaTemp;
 
         // For each contact manifold
-        for (int c = 0; c < mNbContactManifolds; c++) {
+        for (int c = 0; c < numContactManifolds; c++) {
 
-            ContactManifoldSolver contactManifold = mContactConstraints[c];
+            ContactManifoldSolver contactManifold = contactConstraints[c];
 
             float sumPenetrationImpulse = 0.0f;
 
@@ -745,16 +616,16 @@ public class ContactSolver {
                 float Jv = deltaVDotN;
 
                 // Compute the bias "b" of the constraint
-                float beta = mIsSplitImpulseActive ? BETA_SPLIT_IMPULSE : BETA;
+                float beta = isSplitImpulseActive ? BETA_SPLIT_IMPULSE : BETA;
                 float biasPenetrationDepth = 0.0f;
                 if (contactPoint.penetrationDepth > SLOP) {
-                    biasPenetrationDepth = -(beta / mTimeStep)
+                    biasPenetrationDepth = -(beta / timeStep)
                             * Math.max(0.0f, contactPoint.penetrationDepth - SLOP);
                 }
                 float b = biasPenetrationDepth + contactPoint.restitutionBias;
 
                 // Compute the Lagrange multiplier lambda
-                if (mIsSplitImpulseActive) {
+                if (isSplitImpulseActive) {
                     deltaLambda = -(Jv + contactPoint.restitutionBias) * contactPoint.inversePenetrationMass;
                 } else {
                     deltaLambda = -(Jv + b) * contactPoint.inversePenetrationMass;
@@ -772,13 +643,13 @@ public class ContactSolver {
                 sumPenetrationImpulse += contactPoint.penetrationImpulse;
 
                 // If the split impulse position correction is active
-                if (mIsSplitImpulseActive) {
+                if (isSplitImpulseActive) {
 
                     // Split impulse (position correction)
-                    Vector3 v1Split = mSplitLinearVelocities[contactManifold.indexBody1];
-                    Vector3 w1Split = mSplitAngularVelocities[contactManifold.indexBody1];
-                    Vector3 v2Split = mSplitLinearVelocities[contactManifold.indexBody2];
-                    Vector3 w2Split = mSplitAngularVelocities[contactManifold.indexBody2];
+                    Vector3 v1Split = splitLinearVelocities[contactManifold.indexBody1];
+                    Vector3 w1Split = splitAngularVelocities[contactManifold.indexBody1];
+                    Vector3 v2Split = splitLinearVelocities[contactManifold.indexBody2];
+                    Vector3 w2Split = splitAngularVelocities[contactManifold.indexBody2];
                     Vector3 deltaVSplit = new Vector3(
                             new Vector3(new Vector3(v2Split).add(new Vector3(w2Split).cross(contactPoint.r2))).subtract(v1Split)).subtract(new Vector3(w1Split).cross(contactPoint.r1));
                     float JvSplit = deltaVSplit.dot(contactPoint.normal);
@@ -794,7 +665,7 @@ public class ContactSolver {
                 }
 
                 // If we do not solve the friction constraints at the center of the contact manifold
-                if (!mIsSolveFrictionAtContactManifoldCenterActive) {
+                if (!isSolveFrictionAtContactManifoldCenterActive) {
 
                     /**
                      * --------- Friction 1 ---------
@@ -845,7 +716,7 @@ public class ContactSolver {
             }
 
             // If we solve the friction constraints at the center of the contact manifold
-            if (mIsSolveFrictionAtContactManifoldCenterActive) {
+            if (isSolveFrictionAtContactManifoldCenterActive) {
 
                 /**
                  * ------ First friction constraint at the center of the contact manifol ------
@@ -940,9 +811,9 @@ public class ContactSolver {
     public void storeImpulses() {
 
         // For each contact manifold
-        for (int c = 0; c < mNbContactManifolds; c++) {
+        for (int c = 0; c < numContactManifolds; c++) {
 
-            ContactManifoldSolver manifold = mContactConstraints[c];
+            ContactManifoldSolver manifold = contactConstraints[c];
 
             for (int i = 0; i < manifold.nbContacts; i++) {
 
@@ -964,12 +835,147 @@ public class ContactSolver {
         }
     }
 
-    // Clean up the constraint solver
-    public void cleanup() {
+    // Warm start the solver.
+    // For each constraint, we apply the previous impulse (from the previous step)
+    // at the beginning. With this technique, we will converge faster towards
+    // the solution of the linear system
+    public void warmStart() {
 
-        if (mContactConstraints != null) {
-            //delete[] mContactConstraints;
-            mContactConstraints = null;
+        // Check that warm starting is active
+        if (!isWarmStartingActive) {
+            return;
+        }
+
+        // For each constraint
+        for (int c = 0; c < numContactManifolds; c++) {
+
+            ContactManifoldSolver contactManifold = contactConstraints[c];
+
+            boolean atLeastOneRestingContactPoint = false;
+
+            for (int i = 0; i < contactManifold.nbContacts; i++) {
+
+                ContactPointSolver contactPoint = contactManifold.contacts[i];
+
+                // If it is not a new contact (this contact was already existing at last time step)
+                if (contactPoint.isRestingContact) {
+
+                    atLeastOneRestingContactPoint = true;
+
+                    /**
+                     * --------- Penetration ---------
+                     */
+                    // Compute the impulse P = J^T * lambda
+                    Impulse impulsePenetration = computePenetrationImpulse(contactPoint.penetrationImpulse, contactPoint);
+
+                    // Apply the impulse to the bodies of the constraint
+                    applyImpulse(impulsePenetration, contactManifold);
+
+                    // If we do not solve the friction constraints at the center of the contact manifold
+                    if (!isSolveFrictionAtContactManifoldCenterActive) {
+
+                        // Project the old friction impulses (with old friction vectors) into
+                        // the new friction vectors to get the new friction impulses
+                        Vector3 oldFrictionImpulse = new Vector3(
+                                new Vector3(contactPoint.oldFrictionVector1).multiply(contactPoint.friction1Impulse)).add(
+                                        new Vector3(contactPoint.oldFrictionVector2).multiply(contactPoint.friction2Impulse));
+                        contactPoint.friction1Impulse = oldFrictionImpulse.dot(contactPoint.frictionVector1);
+                        contactPoint.friction2Impulse = oldFrictionImpulse.dot(contactPoint.frictionVector2);
+
+                        /**
+                         * --------- Friction 1 ---------
+                         */
+                        // Compute the impulse P = J^T * lambda
+                        Impulse impulseFriction1 = computeFriction1Impulse(contactPoint.friction1Impulse, contactPoint);
+
+                        // Apply the impulses to the bodies of the constraint
+                        applyImpulse(impulseFriction1, contactManifold);
+
+                        /**
+                         * --------- Friction 2 ---------
+                         */
+                        // Compute the impulse P=J^T * lambda
+                        Impulse impulseFriction2 = computeFriction2Impulse(contactPoint.friction2Impulse, contactPoint);
+
+                        // Apply the impulses to the bodies of the constraint
+                        applyImpulse(impulseFriction2, contactManifold);
+                    }
+                } else {  // If it is a new contact point
+
+                    // Initialize the accumulated impulses to zero
+                    contactPoint.penetrationImpulse = 0.0f;
+                    contactPoint.friction1Impulse = 0.0f;
+                    contactPoint.friction2Impulse = 0.0f;
+                }
+            }
+
+            // If we solve the friction constraints at the center of the contact manifold and there is
+            // at least one resting contact point in the contact manifold
+            if (isSolveFrictionAtContactManifoldCenterActive && atLeastOneRestingContactPoint) {
+
+                // Project the old friction impulses (with old friction vectors) into the new friction
+                // vectors to get the new friction impulses
+                Vector3 oldFrictionImpulse = new Vector3(
+                        new Vector3(contactManifold.oldFrictionVector1).multiply(contactManifold.friction1Impulse)).add(
+                                new Vector3(contactManifold.oldFrictionVector2).multiply(contactManifold.friction2Impulse));
+                contactManifold.friction1Impulse = oldFrictionImpulse.dot(contactManifold.frictionVector1);
+                contactManifold.friction2Impulse = oldFrictionImpulse.dot(contactManifold.frictionVector2);
+
+                /**
+                 * ------ First friction constraint at the center of the contact manifold ------
+                 */
+                // Compute the impulse P = J^T * lambda
+                Vector3 linearImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.frictionVector1).invert()).multiply(contactManifold.friction1Impulse);
+                Vector3 angularImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.r1CrossT1).invert()).multiply(contactManifold.friction1Impulse);
+                Vector3 linearImpulseBody2 = new Vector3(
+                        contactManifold.frictionVector1).multiply(contactManifold.friction1Impulse);
+                Vector3 angularImpulseBody2 = new Vector3(
+                        contactManifold.r2CrossT1).multiply(contactManifold.friction1Impulse);
+                Impulse impulseFriction1 = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
+
+                // Apply the impulses to the bodies of the constraint
+                applyImpulse(impulseFriction1, contactManifold);
+
+                /**
+                 * ------ Second friction constraint at the center of the contact manifold -----
+                 */
+                // Compute the impulse P = J^T * lambda
+                linearImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.frictionVector2).invert()).multiply(contactManifold.friction2Impulse);
+                angularImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.r1CrossT2).invert()).multiply(contactManifold.friction2Impulse);
+                linearImpulseBody2 = new Vector3(
+                        contactManifold.frictionVector2).multiply(contactManifold.friction2Impulse);
+                angularImpulseBody2 = new Vector3(
+                        contactManifold.r2CrossT2).multiply(contactManifold.friction2Impulse);
+                Impulse impulseFriction2 = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
+
+                // Apply the impulses to the bodies of the constraint
+                applyImpulse(impulseFriction2, contactManifold);
+
+                /**
+                 * ------ Twist friction constraint at the center of the contact manifold ------
+                 */
+                // Compute the impulse P = J^T * lambda
+                linearImpulseBody1 = new Vector3();
+                angularImpulseBody1 = new Vector3(
+                        new Vector3(contactManifold.normal).invert()).multiply(contactManifold.frictionTwistImpulse);
+                linearImpulseBody2 = new Vector3();
+                angularImpulseBody2 = new Vector3(
+                        contactManifold.normal).multiply(contactManifold.frictionTwistImpulse);
+                Impulse impulseTwistFriction = new Impulse(linearImpulseBody1, angularImpulseBody1, linearImpulseBody2, angularImpulseBody2);
+
+                // Apply the impulses to the bodies of the constraint
+                applyImpulse(impulseTwistFriction, contactManifold);
+            } else {  // If it is a new contact manifold
+
+                // Initialize the accumulated impulses to zero
+                contactManifold.friction1Impulse = 0.0f;
+                contactManifold.friction2Impulse = 0.0f;
+                contactManifold.frictionTwistImpulse = 0.0f;
+            }
         }
     }
 
