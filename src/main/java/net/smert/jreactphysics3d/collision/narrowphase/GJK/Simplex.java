@@ -364,7 +364,7 @@ public class Simplex {
 
     // Return the points of the simplex
     public int getSimplex(Vector3[] suppPointsA, Vector3[] suppPointsB, Vector3[] points) {
-        int nbVertices = 0;
+        int numVertices = 0;
 
         // For each four point in the possible simplex
         for (int i = 0, bit = 0x1; i < 4; i++, bit <<= 1) {
@@ -373,16 +373,16 @@ public class Simplex {
             if (overlap(mBitsCurrentSimplex, bit)) {
 
                 // Store the points
-                suppPointsA[nbVertices] = new Vector3(this.mSuppPointsA[nbVertices]);
-                suppPointsB[nbVertices] = new Vector3(this.mSuppPointsB[nbVertices]);
-                points[nbVertices] = new Vector3(this.mPoints[nbVertices]);
+                suppPointsA[numVertices] = new Vector3(this.mSuppPointsA[numVertices]);
+                suppPointsB[numVertices] = new Vector3(this.mSuppPointsB[numVertices]);
+                points[numVertices] = new Vector3(this.mPoints[numVertices]);
 
-                nbVertices++;
+                numVertices++;
             }
         }
 
         // Return the number of points in the simplex
-        return nbVertices;
+        return numVertices;
     }
 
     // Return true if the set is affinely dependent.

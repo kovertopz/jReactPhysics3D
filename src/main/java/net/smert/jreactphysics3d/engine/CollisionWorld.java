@@ -71,7 +71,7 @@ public class CollisionWorld {
             if (collisionShape.equals(it)) {
 
                 // Increment the number of similar created shapes
-                it.incrementNbSimilarCreatedShapes();
+                it.incrementNumSimilarCreatedShapes();
 
                 // A similar collision shape already exists in the world, so we do not
                 // create a new one but we simply return a pointer to the existing one
@@ -84,7 +84,7 @@ public class CollisionWorld {
         CollisionShape newCollisionShape = collisionShape.clone();
         mCollisionShapes.add(newCollisionShape);
 
-        newCollisionShape.incrementNbSimilarCreatedShapes();
+        newCollisionShape.incrementNumSimilarCreatedShapes();
 
         // Return a pointer to the new collision shape
         return newCollisionShape;
@@ -96,13 +96,13 @@ public class CollisionWorld {
     // the memory associated with the collision shape.
     protected void removeCollisionShape(CollisionShape collisionShape) {
 
-        assert (collisionShape.getNbSimilarCreatedShapes() != 0);
+        assert (collisionShape.getNumSimilarCreatedShapes() != 0);
 
         // Decrement the number of bodies using the same collision shape
-        collisionShape.decrementNbSimilarCreatedShapes();
+        collisionShape.decrementNumSimilarCreatedShapes();
 
         // If no other body is using the collision shape in the world
-        if (collisionShape.getNbSimilarCreatedShapes() == 0) {
+        if (collisionShape.getNumSimilarCreatedShapes() == 0) {
 
             // Remove the shape from the set of shapes in the world
             mCollisionShapes.remove(collisionShape);

@@ -43,10 +43,10 @@ public class Defaults {
     public static final float RESTITUTION_VELOCITY_THRESHOLD = 1.0f;
 
     // Number of iterations when solving the velocity constraints of the Sequential Impulse technique
-    public static final int DEFAULT_VELOCITY_SOLVER_NB_ITERATIONS = 10;
+    public static final int DEFAULT_VELOCITY_SOLVER_NUM_ITERATIONS = 10;
 
     // Number of iterations when solving the position constraints of the Sequential Impulse technique
-    public static final int DEFAULT_POSITION_SOLVER_NB_ITERATIONS = 5;
+    public static final int DEFAULT_POSITION_SOLVER_NUM_ITERATIONS = 5;
 
     // Time (in seconds) that a body must stay still to be considered sleeping
     public static final float DEFAULT_TIME_BEFORE_SLEEP = 1.0f;

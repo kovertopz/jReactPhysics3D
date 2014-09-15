@@ -55,15 +55,15 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
     protected void resizeArrays() {
 
         // New number of boxes in the array
-        int newNbMaxBoxes = numMaxBoxes > 0 ? 2 * numMaxBoxes : 100;
-        int nbEndPoints = numBoxes * 2 + NUM_SENTINELS;
-        int newNbEndPoints = newNbMaxBoxes * 2 + NUM_SENTINELS;
+        int newNumMaxBoxes = numMaxBoxes > 0 ? 2 * numMaxBoxes : 100;
+        int numEndPoints = numBoxes * 2 + NUM_SENTINELS;
+        int newNumEndPoints = newNumMaxBoxes * 2 + NUM_SENTINELS;
 
         // Allocate memory for the new boxes and end-points arrays
-        BoxAABB[] newBoxesArray = new BoxAABB[newNbMaxBoxes];
-        EndPoint[] newEndPointsXArray = new EndPoint[newNbEndPoints];
-        EndPoint[] newEndPointsYArray = new EndPoint[newNbEndPoints];
-        EndPoint[] newEndPointsZArray = new EndPoint[newNbEndPoints];
+        BoxAABB[] newBoxesArray = new BoxAABB[newNumMaxBoxes];
+        EndPoint[] newEndPointsXArray = new EndPoint[newNumEndPoints];
+        EndPoint[] newEndPointsYArray = new EndPoint[newNumEndPoints];
+        EndPoint[] newEndPointsZArray = new EndPoint[newNumEndPoints];
 
         assert (newBoxesArray != null);
         assert (newEndPointsXArray != null);
@@ -75,9 +75,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
             // Copy the data from the old arrays into the new one
             System.arraycopy(boxes, 0, newBoxesArray, 0, numBoxes);
-            System.arraycopy(endPoints[0], 0, newEndPointsXArray, 0, nbEndPoints);
-            System.arraycopy(endPoints[1], 0, newEndPointsYArray, 0, nbEndPoints);
-            System.arraycopy(endPoints[2], 0, newEndPointsZArray, 0, nbEndPoints);
+            System.arraycopy(endPoints[0], 0, newEndPointsXArray, 0, numEndPoints);
+            System.arraycopy(endPoints[1], 0, newEndPointsYArray, 0, numEndPoints);
+            System.arraycopy(endPoints[2], 0, newEndPointsZArray, 0, numEndPoints);
         } else {   // If the arrays were empty
 
             // Add the limits endpoints (sentinels) into the array
@@ -104,7 +104,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         endPoints[1] = newEndPointsYArray;
         endPoints[2] = newEndPointsZArray;
 
-        numMaxBoxes = newNbMaxBoxes;
+        numMaxBoxes = newNumMaxBoxes;
     }
 
     // Shrink the boxes and end-points arrays when too much memory is allocated
@@ -112,11 +112,11 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
         // New number of boxes and end-points in the array
         int nextPowerOf2 = PairManager.ComputeNextPowerOfTwo((numBoxes - 1) / 100);
-        int newNbMaxBoxes = (numBoxes > 100) ? nextPowerOf2 * 100 : 100;
-        int nbEndPoints = numBoxes * 2 + NUM_SENTINELS;
-        int newNbEndPoints = newNbMaxBoxes * 2 + NUM_SENTINELS;
+        int newNumMaxBoxes = (numBoxes > 100) ? nextPowerOf2 * 100 : 100;
+        int numEndPoints = numBoxes * 2 + NUM_SENTINELS;
+        int newNumEndPoints = newNumMaxBoxes * 2 + NUM_SENTINELS;
 
-        assert (newNbMaxBoxes < numMaxBoxes);
+        assert (newNumMaxBoxes < numMaxBoxes);
 
         // Sort the list of the free boxes indices in ascending order
         Collections.sort(freeBoxIndices);
@@ -170,10 +170,10 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         mapBodyToBoxIndex.putAll(newMapBodyToBoxIndex);
 
         // Allocate memory for the new boxes and end-points arrays
-        BoxAABB[] newBoxesArray = new BoxAABB[newNbMaxBoxes];
-        EndPoint[] newEndPointsXArray = new EndPoint[newNbEndPoints];
-        EndPoint[] newEndPointsYArray = new EndPoint[newNbEndPoints];
-        EndPoint[] newEndPointsZArray = new EndPoint[newNbEndPoints];
+        BoxAABB[] newBoxesArray = new BoxAABB[newNumMaxBoxes];
+        EndPoint[] newEndPointsXArray = new EndPoint[newNumEndPoints];
+        EndPoint[] newEndPointsYArray = new EndPoint[newNumEndPoints];
+        EndPoint[] newEndPointsZArray = new EndPoint[newNumEndPoints];
 
         assert (newBoxesArray != null);
         assert (newEndPointsXArray != null);
@@ -182,9 +182,9 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
 
         // Copy the data from the old arrays into the new one
         System.arraycopy(boxes, 0, newBoxesArray, 0, numBoxes);
-        System.arraycopy(endPoints[0], 0, newEndPointsXArray, 0, nbEndPoints);
-        System.arraycopy(endPoints[1], 0, newEndPointsYArray, 0, nbEndPoints);
-        System.arraycopy(endPoints[2], 0, newEndPointsZArray, 0, nbEndPoints);
+        System.arraycopy(endPoints[0], 0, newEndPointsXArray, 0, numEndPoints);
+        System.arraycopy(endPoints[1], 0, newEndPointsYArray, 0, numEndPoints);
+        System.arraycopy(endPoints[2], 0, newEndPointsZArray, 0, numEndPoints);
 
         // Delete the old arrays
         // Assign the pointer to the new arrays
@@ -193,7 +193,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
         endPoints[1] = newEndPointsYArray;
         endPoints[2] = newEndPointsZArray;
 
-        numMaxBoxes = newNbMaxBoxes;
+        numMaxBoxes = newNumMaxBoxes;
     }
 
     // Check for 1D box intersection between two boxes that are sorted on the given axis.

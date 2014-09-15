@@ -722,8 +722,8 @@ public class DynamicsWorld extends CollisionWorld {
         mConstrainedAngularVelocities = null;
         mContactSolver = new ContactSolver(mMapBodyToConstrainedVelocityIndex);
         mConstraintSolver = new ConstraintSolver(mConstrainedPositions, mConstrainedOrientations, mMapBodyToConstrainedVelocityIndex);
-        mNbVelocitySolverIterations = Defaults.DEFAULT_VELOCITY_SOLVER_NB_ITERATIONS;
-        mNbPositionSolverIterations = Defaults.DEFAULT_POSITION_SOLVER_NB_ITERATIONS;
+        mNbVelocitySolverIterations = Defaults.DEFAULT_VELOCITY_SOLVER_NUM_ITERATIONS;
+        mNbPositionSolverIterations = Defaults.DEFAULT_POSITION_SOLVER_NUM_ITERATIONS;
         mIsSleepingEnabled = Defaults.SPLEEPING_ENABLED;
         mSplitLinearVelocities = null;
         mSplitAngularVelocities = null;

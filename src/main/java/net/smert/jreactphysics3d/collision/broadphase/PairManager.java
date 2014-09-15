@@ -236,13 +236,13 @@ public class PairManager {
     private void shrinkMemory() {
 
         // Check if the allocated memory can be reduced
-        int correctNbElementsHashTable = ComputeNextPowerOfTwo(numOverlappingPairs);
-        if (numElementsHashTable == correctNbElementsHashTable) {
+        int correctNumElementsHashTable = ComputeNextPowerOfTwo(numOverlappingPairs);
+        if (numElementsHashTable == correctNumElementsHashTable) {
             return;
         }
 
         // Reduce the allocated memory
-        numElementsHashTable = correctNbElementsHashTable;
+        numElementsHashTable = correctNumElementsHashTable;
         hashMask = numElementsHashTable - 1;
         reallocatePairs();
     }
