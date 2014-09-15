@@ -131,8 +131,8 @@ public class ConstraintSolver {
         assert (mLinearVelocities != null);
         assert (mAngularVelocities != null);
         assert (island != null);
-        assert (island.getNbBodies() > 0);
-        assert (island.getNbJoints() > 0);
+        assert (island.getNumBodies() > 0);
+        assert (island.getNumJoints() > 0);
 
         // Set the current time step
         mTimeStep = dt;
@@ -143,7 +143,7 @@ public class ConstraintSolver {
 
         // For each joint of the island
         Joint[] joints = island.getJoints();
-        for (int i = 0; i < island.getNbJoints(); i++) {
+        for (int i = 0; i < island.getNumJoints(); i++) {
 
             // Initialize the constraint before solving it
             joints[i].initBeforeSolve(mConstraintSolverData);
@@ -161,11 +161,11 @@ public class ConstraintSolver {
         Profiler.StartProfilingBlock("ConstraintSolver::solveVelocityConstraints()");
 
         assert (island != null);
-        assert (island.getNbJoints() > 0);
+        assert (island.getNumJoints() > 0);
 
         // For each joint of the island
         Joint[] joints = island.getJoints();
-        for (int i = 0; i < island.getNbJoints(); i++) {
+        for (int i = 0; i < island.getNumJoints(); i++) {
 
             // Solve the constraint
             joints[i].solveVelocityConstraint(mConstraintSolverData);
@@ -178,11 +178,11 @@ public class ConstraintSolver {
         Profiler.StartProfilingBlock("ConstraintSolver::solvePositionConstraints()");
 
         assert (island != null);
-        assert (island.getNbJoints() > 0);
+        assert (island.getNumJoints() > 0);
 
         // For each joint of the island
         Joint[] joints = island.getJoints();
-        for (int i = 0; i < island.getNbJoints(); i++) {
+        for (int i = 0; i < island.getNumJoints(); i++) {
 
             // Solve the constraint
             joints[i].solvePositionConstraint(mConstraintSolverData);

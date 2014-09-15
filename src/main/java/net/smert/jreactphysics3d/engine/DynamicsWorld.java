@@ -138,7 +138,7 @@ public class DynamicsWorld extends CollisionWorld {
             RigidBody[] bodies = mIslands[i].getBodies();
 
             // For each body of the island
-            for (int b = 0; b < mIslands[i].getNbBodies(); b++) {
+            for (int b = 0; b < mIslands[i].getNumBodies(); b++) {
 
                 // If the body is allowed to move
                 if (bodies[b].isMotionEnabled()) {
@@ -283,7 +283,7 @@ public class DynamicsWorld extends CollisionWorld {
             RigidBody[] bodies = mIslands[i].getBodies();
 
             // For each body of the island
-            for (int b = 0; b < mIslands[i].getNbBodies(); b++) {
+            for (int b = 0; b < mIslands[i].getNumBodies(); b++) {
 
                 // Insert the body into the map of constrained velocities
                 int indexBody = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
@@ -361,8 +361,8 @@ public class DynamicsWorld extends CollisionWorld {
         for (int islandIndex = 0; islandIndex < mNbIslands; islandIndex++) {
 
             // Check if there are contacts and constraints to solve
-            boolean isConstraintsToSolve = mIslands[islandIndex].getNbJoints() > 0;
-            boolean isContactsToSolve = mIslands[islandIndex].getNbContactManifolds() > 0;
+            boolean isConstraintsToSolve = mIslands[islandIndex].getNumJoints() > 0;
+            boolean isContactsToSolve = mIslands[islandIndex].getNumContactManifolds() > 0;
             if (!isConstraintsToSolve && !isContactsToSolve) {
                 continue;
             }
@@ -427,7 +427,7 @@ public class DynamicsWorld extends CollisionWorld {
 
             // For each body of the island
             RigidBody[] bodies = mIslands[islandIndex].getBodies();
-            for (int b = 0; b < mIslands[islandIndex].getNbBodies(); b++) {
+            for (int b = 0; b < mIslands[islandIndex].getNumBodies(); b++) {
 
                 int index = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
 
@@ -446,7 +446,7 @@ public class DynamicsWorld extends CollisionWorld {
             }
 
             // ---------- Update the position/orientation of the rigid bodies ---------- //
-            for (int b = 0; b < mIslands[islandIndex].getNbBodies(); b++) {
+            for (int b = 0; b < mIslands[islandIndex].getNumBodies(); b++) {
 
                 int index = mMapBodyToConstrainedVelocityIndex.get(bodies[b]);
 
@@ -636,7 +636,7 @@ public class DynamicsWorld extends CollisionWorld {
 
             // Reset the isAlreadyIsland variable of the static bodies so that they
             // can also be included in the other islands
-            for (int i = 0; i < mIslands[mNbIslands].getNbBodies(); i++) {
+            for (int i = 0; i < mIslands[mNbIslands].getNumBodies(); i++) {
 
                 if (!mIslands[mNbIslands].getBodies()[i].isMotionEnabled()) {
                     mIslands[mNbIslands].getBodies()[i].setIsAlreadyInIsland(false);
@@ -667,7 +667,7 @@ public class DynamicsWorld extends CollisionWorld {
 
             // For each body of the island
             RigidBody[] bodies = mIslands[i].getBodies();
-            for (int b = 0; b < mIslands[i].getNbBodies(); b++) {
+            for (int b = 0; b < mIslands[i].getNumBodies(); b++) {
 
                 // Skip static bodies
                 if (!bodies[b].isMotionEnabled()) {
@@ -698,7 +698,7 @@ public class DynamicsWorld extends CollisionWorld {
             if (minSleepTime >= mTimeBeforeSleep) {
 
                 // Put all the bodies of the island to sleep
-                for (int b = 0; b < mIslands[i].getNbBodies(); b++) {
+                for (int b = 0; b < mIslands[i].getNumBodies(); b++) {
                     bodies[b].setIsSleeping(true);
                 }
             }

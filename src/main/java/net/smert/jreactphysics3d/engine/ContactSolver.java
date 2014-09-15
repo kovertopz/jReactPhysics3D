@@ -448,21 +448,21 @@ public class ContactSolver {
         Profiler.StartProfilingBlock("ContactSolver::initializeForIsland()");
 
         assert (island != null);
-        assert (island.getNbBodies() > 0);
-        assert (island.getNbContactManifolds() > 0);
+        assert (island.getNumBodies() > 0);
+        assert (island.getNumContactManifolds() > 0);
         assert (mSplitLinearVelocities != null);
         assert (mSplitAngularVelocities != null);
 
         // Set the current time step
         mTimeStep = dt;
 
-        mNbContactManifolds = island.getNbContactManifolds();
+        mNbContactManifolds = island.getNumContactManifolds();
 
         mContactConstraints = new ContactManifoldSolver[mNbContactManifolds];
         assert (mContactConstraints != null);
 
         // For each contact manifold of the island
-        ContactManifold[] contactManifolds = island.getContactManifold();
+        ContactManifold[] contactManifolds = island.getContactManifolds();
         for (int i = 0; i < mNbContactManifolds; i++) {
 
             ContactManifold externalManifold = contactManifolds[i];
