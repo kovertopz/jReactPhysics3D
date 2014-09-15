@@ -291,13 +291,12 @@ public class RigidBody extends CollisionBody {
     // where R is the rotation matrix (and R^T its transpose) of
     // the current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorWorld() {
-        Matrix3x3 rotation = new Matrix3x3();
-        mTransform.getOrientation().getMatrix(rotation);
+        // TODO: Rename to new
+        Matrix3x3 rotation = mTransform.getOrientation().getMatrix(new Matrix3x3());
         Matrix3x3 transpose = new Matrix3x3(rotation).transpose();
 
-        // TODO: Optimize
         // Compute and return the inertia tensor in world coordinates
-        return new Matrix3x3(new Matrix3x3(rotation).multiply(mInertiaTensorLocal)).multiply(transpose);
+        return new Matrix3x3(rotation).multiply(mInertiaTensorLocal).multiply(transpose);
     }
 
     // Get the inverse of the inertia tensor
@@ -312,13 +311,12 @@ public class RigidBody extends CollisionBody {
     // where R is the rotation matrix (and R^T its transpose) of the
     // current orientation quaternion of the body
     public Matrix3x3 getInertiaTensorInverseWorld() {
-        Matrix3x3 rotation = new Matrix3x3();
-        mTransform.getOrientation().getMatrix(rotation);
+        // TODO: Rename to new
+        Matrix3x3 rotation = mTransform.getOrientation().getMatrix(new Matrix3x3());
         Matrix3x3 transpose = new Matrix3x3(rotation).transpose();
 
-        // TODO: Optimize
         // Compute and return the inertia tensor in world coordinates
-        return new Matrix3x3(new Matrix3x3(rotation).multiply(mInertiaTensorLocalInverse)).multiply(transpose);
+        return new Matrix3x3(rotation).multiply(mInertiaTensorLocalInverse).multiply(transpose);
     }
 
     // Set the variable to know whether or not the body is sleeping
