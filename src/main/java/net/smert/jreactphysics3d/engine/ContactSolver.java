@@ -192,7 +192,7 @@ public class ContactSolver {
             Vector3 w2 = mAngularVelocities[manifold.indexBody2];
 
             // For each contact point constraint
-            for (int i = 0; i < manifold.nbContacts; i++) {
+            for (int i = 0; i < manifold.numContacts; i++) {
 
                 ContactPointSolver contactPoint = manifold.contacts[i];
                 ContactPoint externalContact = contactPoint.externalContact;
@@ -473,7 +473,7 @@ public class ContactSolver {
             internalManifold.isBody2Moving = body2.isMotionEnabled();
             internalManifold.massInverseBody1 = body1.getMassInverse();
             internalManifold.massInverseBody2 = body2.getMassInverse();
-            internalManifold.nbContacts = externalManifold.getNumContactPoints();
+            internalManifold.numContacts = externalManifold.getNumContactPoints();
             internalManifold.restitutionFactor = computeMixedRestitutionFactor(body1, body2);
             internalManifold.frictionCoefficient = computeMixedFrictionCoefficient(body1, body2);
             internalManifold.externalContactManifold = externalManifold;
@@ -521,8 +521,8 @@ public class ContactSolver {
             // If we solve the friction constraints at the center of the contact manifold
             if (isSolveFrictionAtContactManifoldCenterActive) {
 
-                internalManifold.frictionPointBody1.divide(internalManifold.nbContacts);
-                internalManifold.frictionPointBody2.divide(internalManifold.nbContacts);
+                internalManifold.frictionPointBody1.divide(internalManifold.numContacts);
+                internalManifold.frictionPointBody2.divide(internalManifold.numContacts);
                 internalManifold.r1Friction.set(new Vector3(internalManifold.frictionPointBody1).subtract(x1));
                 internalManifold.r2Friction.set(new Vector3(internalManifold.frictionPointBody2).subtract(x2));
                 internalManifold.oldFrictionVector1.set(new Vector3(externalManifold.getFrictionVector1()));
@@ -602,7 +602,7 @@ public class ContactSolver {
             Vector3 v2 = mLinearVelocities[contactManifold.indexBody2];
             Vector3 w2 = mAngularVelocities[contactManifold.indexBody2];
 
-            for (int i = 0; i < contactManifold.nbContacts; i++) {
+            for (int i = 0; i < contactManifold.numContacts; i++) {
 
                 ContactPointSolver contactPoint = contactManifold.contacts[i];
 
@@ -815,7 +815,7 @@ public class ContactSolver {
 
             ContactManifoldSolver manifold = contactConstraints[c];
 
-            for (int i = 0; i < manifold.nbContacts; i++) {
+            for (int i = 0; i < manifold.numContacts; i++) {
 
                 ContactPointSolver contactPoint = manifold.contacts[i];
 
@@ -853,7 +853,7 @@ public class ContactSolver {
 
             boolean atLeastOneRestingContactPoint = false;
 
-            for (int i = 0; i < contactManifold.nbContacts; i++) {
+            for (int i = 0; i < contactManifold.numContacts; i++) {
 
                 ContactPointSolver contactPoint = contactManifold.contacts[i];
 
