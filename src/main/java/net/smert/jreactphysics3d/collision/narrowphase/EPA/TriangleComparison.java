@@ -13,10 +13,10 @@ public class TriangleComparison implements Comparator<TriangleEPA> {
 
     @Override
     public int compare(TriangleEPA face1, TriangleEPA face2) {
-        if (face1.getDistSquare() == face2.getDistSquare()) {
+        if (face1.getDistanceSquare() == face2.getDistanceSquare()) {
             return 0;
         }
-        return face1.getDistSquare() > face2.getDistSquare() ? 1 : -1;
+        return face1.getDistanceSquare() > face2.getDistanceSquare() ? 1 : -1;
     }
 
 }

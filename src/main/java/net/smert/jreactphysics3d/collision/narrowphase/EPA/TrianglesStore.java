@@ -11,35 +11,42 @@ public class TrianglesStore {
 
     private static final int MAX_TRIANGLES = 200;     // Maximum number of triangles
 
-    // Triangles
-    private TriangleEPA[] mTriangles = new TriangleEPA[MAX_TRIANGLES];
-
     // Number of triangles
-    private int mNbTriangles;
+    private int numTriangles;
+
+    // Triangles
+    private final TriangleEPA[] triangles;
 
     // Constructor
     public TrianglesStore() {
-        mNbTriangles = 0;
+        numTriangles = 0;
+        triangles = new TriangleEPA[MAX_TRIANGLES];
     }
 
     // Clear all the storage
     public void clear() {
-        mNbTriangles = 0;
+        numTriangles = 0;
     }
 
     // Return the number of triangles
-    public int getNbTriangles() {
-        return mNbTriangles;
+    public int getNumTriangles() {
+        return numTriangles;
     }
 
-    public void setNbTriangles(int backup) {
-        mNbTriangles = backup;
+    public void setNumTriangles(int backup) {
+        numTriangles = backup;
+    }
+
+    // Access operator
+    public TriangleEPA get(int i) {
+        assert (i >= 0 && i < triangles.length);
+        return triangles[i];
     }
 
     // Return the last triangle
     public TriangleEPA last() {
-        assert (mNbTriangles > 0);
-        return mTriangles[mNbTriangles - 1];
+        assert (numTriangles > 0);
+        return triangles[numTriangles - 1];
     }
 
     // Create a new triangle
@@ -47,24 +54,19 @@ public class TrianglesStore {
         TriangleEPA newTriangle = null;
 
         // If we have not reached the maximum number of triangles
-        if (mNbTriangles != MAX_TRIANGLES) {
+        if (numTriangles != MAX_TRIANGLES) {
             newTriangle = new TriangleEPA(v0, v1, v2);
-            mTriangles[mNbTriangles] = newTriangle;
-            mNbTriangles++;
+            triangles[numTriangles] = newTriangle;
+            numTriangles++;
             if (!newTriangle.computeClosestPoint(vertices)) {
-                mNbTriangles--;
+                numTriangles--;
                 newTriangle = null;
-                mTriangles[mNbTriangles] = null;
+                triangles[numTriangles] = null;
             }
         }
 
         // Return the new triangle
         return newTriangle;
-    }
-
-    // Access operator
-    public TriangleEPA operatorSquareBrackets(int i) {
-        return mTriangles[i];
     }
 
 }

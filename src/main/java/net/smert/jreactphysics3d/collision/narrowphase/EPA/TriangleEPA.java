@@ -9,29 +9,29 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class TriangleEPA {
 
-    // Indices of the vertices y_i of the triangle
-    private final int[] mIndicesVertices = new int[3];
-
-    // Three adjacent edges of the triangle (edges of other triangles)
-    final EdgeEPA[] mAdjacentEdges = new EdgeEPA[3];
-
     // True if the triangle face is visible from the new support point
-    private boolean mIsObsolete;
+    private boolean isObsolete;
 
     // Determinant
-    private float mDet;
-
-    // Point v closest to the origin on the affine hull of the triangle
-    private Vector3 mClosestPoint;
-
-    // Lambda1 value such that v = lambda0 * y_0 + lambda1 * y_1 + lambda2 * y_2
-    private float mLambda1;
-
-    // Lambda1 value such that v = lambda0 * y_0 + lambda1 * y_1 + lambda2 * y_2
-    private float mLambda2;
+    private float determinant;
 
     // Square distance of the point closest point v to the origin
-    private float mDistSquare;
+    private float distanceSquare;
+
+    // Lambda1 value such that v = lambda0 * y_0 + lambda1 * y_1 + lambda2 * y_2
+    private float lambda1;
+
+    // Lambda1 value such that v = lambda0 * y_0 + lambda1 * y_1 + lambda2 * y_2
+    private float lambda2;
+
+    // Indices of the vertices y_i of the triangle
+    private final int[] indicesVertices = new int[3];
+
+    // Three adjacent edges of the triangle (edges of other triangles)
+    private final EdgeEPA[] adjacentEdges = new EdgeEPA[3];
+
+    // Point v closest to the origin on the affine hull of the triangle
+    private final Vector3 closestPoint;
 
     // Constructor
     public TriangleEPA() {
@@ -40,102 +40,58 @@ public class TriangleEPA {
 
     // Constructor
     public TriangleEPA(int indexVertex1, int indexVertex2, int indexVertex3) {
-        mIsObsolete = false;
-        mIndicesVertices[0] = indexVertex1;
-        mIndicesVertices[1] = indexVertex2;
-        mIndicesVertices[2] = indexVertex3;
-    }
-
-    // Return an edge of the triangle
-    public EdgeEPA getAdjacentEdge(int index) {
-        assert (index >= 0 && index < 3);
-        return mAdjacentEdges[index];
-    }
-
-    // Set an adjacent edge of the triangle
-    public void setAdjacentEdge(int index, EdgeEPA edge) {
-        assert (index >= 0 && index < 3);
-        mAdjacentEdges[index] = edge;
-    }
-
-    // Return the square distance  of the closest point to origin
-    public float getDistSquare() {
-        return mDistSquare;
-    }
-
-    // Set the isObsolete value
-    public void setIsObsolete(boolean isObsolete) {
-        mIsObsolete = isObsolete;
-    }
-
-    // Return true if the triangle face is obsolete
-    public boolean getIsObsolete() {
-        return mIsObsolete;
-    }
-
-    // Return the point closest to the origin
-    public Vector3 getClosestPoint() {
-        return mClosestPoint;
-    }
-
-    // Return true if the closest point on affine hull is inside the triangle
-    public boolean isClosestPointInternalToTriangle() {
-        return (mLambda1 >= 0.0f && mLambda2 >= 0.0f && (mLambda1 + mLambda2) <= mDet);
-    }
-
-    // Return true if the triangle is visible from a given vertex
-    public boolean isVisibleFromVertex(Vector3[] vertices, int index) {
-        Vector3 closestToVert = new Vector3(vertices[index]).subtract(mClosestPoint);
-        return (mClosestPoint.dot(closestToVert) > 0.0f);
-    }
-
-    // Compute the point of an object closest to the origin
-    public Vector3 computeClosestPointOfObject(Vector3[] supportPointsOfObject) {
-        Vector3 p0 = supportPointsOfObject[mIndicesVertices[0]];
-        return new Vector3(p0).add(new Vector3(
-                new Vector3(
-                        new Vector3(new Vector3(supportPointsOfObject[mIndicesVertices[1]]).subtract(p0)).multiply(mLambda1)).add(
-                        new Vector3(new Vector3(supportPointsOfObject[mIndicesVertices[2]]).subtract(p0)).multiply(mLambda2))).multiply(1.0f / mDet));
-    }
-
-    // Access operator
-    public int operatorSquareBrackets(int i) {
-        assert (i >= 0 && i < 3);
-        return mIndicesVertices[i];
+        isObsolete = false;
+        determinant = 0.0f;
+        distanceSquare = 0.0f;
+        lambda1 = 0.0f;
+        lambda2 = 0.0f;
+        indicesVertices[0] = indexVertex1;
+        indicesVertices[1] = indexVertex2;
+        indicesVertices[2] = indexVertex3;
+        closestPoint = new Vector3();
     }
 
     // Compute the point v closest to the origin of this triangle
     public boolean computeClosestPoint(Vector3[] vertices) {
-        Vector3 p0 = vertices[mIndicesVertices[0]];
 
-        Vector3 v1 = new Vector3(vertices[mIndicesVertices[1]]).subtract(p0);
-        Vector3 v2 = new Vector3(vertices[mIndicesVertices[2]]).subtract(p0);
-        float v1Dotv1 = v1.dot(v1);
-        float v1Dotv2 = v1.dot(v2);
-        float v2Dotv2 = v2.dot(v2);
-        float p0Dotv1 = p0.dot(v1);
-        float p0Dotv2 = p0.dot(v2);
+        Vector3 p0 = new Vector3(vertices[indicesVertices[0]]);
+        Vector3 p1 = new Vector3(vertices[indicesVertices[1]]).subtract(p0);
+        Vector3 p2 = new Vector3(vertices[indicesVertices[2]]).subtract(p0);
+
+        float p0DotP1 = p0.dot(p1);
+        float p0DotP2 = p0.dot(p2);
+        float p1DotP1 = p1.dot(p1);
+        float p1DotP2 = p1.dot(p2);
+        float p2DotP2 = p2.dot(p2);
 
         // Compute determinant
-        mDet = v1Dotv1 * v2Dotv2 - v1Dotv2 * v1Dotv2;
+        determinant = p1DotP1 * p2DotP2 - p1DotP2 * p1DotP2;
 
         // Compute lambda values
-        mLambda1 = p0Dotv2 * v1Dotv2 - p0Dotv1 * v2Dotv2;
-        mLambda2 = p0Dotv1 * v1Dotv2 - p0Dotv2 * v1Dotv1;
+        lambda1 = p0DotP2 * p1DotP2 - p0DotP1 * p2DotP2;
+        lambda2 = p0DotP1 * p1DotP2 - p0DotP2 * p1DotP1;
 
         // If the determinant is positive
-        if (mDet > 0.0f) {
+        if (determinant > 0.0f) {
             // Compute the closest point v
-            mClosestPoint = new Vector3(p0).add(new Vector3(
-                    new Vector3(new Vector3(v1).multiply(mLambda1)).add(new Vector3(v2).multiply(mLambda2))).multiply(1.0f / mDet));
+            p1.multiply(lambda1).add(p2.multiply(lambda2)).multiply(1.0f / determinant);
+            closestPoint.set(p0).add(p1);
 
             // Compute the square distance of closest point to the origin
-            mDistSquare = mClosestPoint.dot(mClosestPoint);
+            distanceSquare = closestPoint.dot(closestPoint);
 
             return true;
         }
 
         return false;
+    }
+
+    // Compute the point of an object closest to the origin
+    public Vector3 computeClosestPointOfObject(Vector3[] supportPointsOfObject) {
+        Vector3 p0 = new Vector3(supportPointsOfObject[indicesVertices[0]]);
+        Vector3 p1 = new Vector3(supportPointsOfObject[indicesVertices[1]]).subtract(p0).multiply(lambda1);
+        Vector3 p2 = new Vector3(supportPointsOfObject[indicesVertices[2]]).subtract(p0).multiply(lambda2);
+        return p0.add(p1.add(p2).multiply(1.0f / determinant));
     }
 
     // Execute the recursive silhouette algorithm from this triangle face.
@@ -151,27 +107,25 @@ public class TriangleEPA {
     // obselete and will not be considered as being a candidate face in the future.
     public boolean computeSilhouette(Vector3[] vertices, int indexNewVertex, TrianglesStore triangleStore) {
 
-        int first = triangleStore.getNbTriangles();
+        int first = triangleStore.getNumTriangles();
 
         // Mark the current triangle as obsolete because it
         setIsObsolete(true);
 
         // Execute recursively the silhouette algorithm for the adjacent edges of neighboring
         // triangles of the current triangle
-        boolean result = mAdjacentEdges[0].computeSilhouette(vertices, indexNewVertex, triangleStore)
-                && mAdjacentEdges[1].computeSilhouette(vertices, indexNewVertex, triangleStore)
-                && mAdjacentEdges[2].computeSilhouette(vertices, indexNewVertex, triangleStore);
+        boolean result = adjacentEdges[0].computeSilhouette(vertices, indexNewVertex, triangleStore)
+                && adjacentEdges[1].computeSilhouette(vertices, indexNewVertex, triangleStore)
+                && adjacentEdges[2].computeSilhouette(vertices, indexNewVertex, triangleStore);
 
         if (result) {
-            int i, j;
 
             // For each triangle face that contains the new vertex and an edge of the silhouette
-            for (i = first, j = triangleStore.getNbTriangles() - 1;
-                    i != triangleStore.getNbTriangles(); j = i++) {
-                TriangleEPA triangle = triangleStore.operatorSquareBrackets(i);
+            for (int i = first, j = triangleStore.getNumTriangles() - 1; i != triangleStore.getNumTriangles(); j = i++) {
+                TriangleEPA triangle = triangleStore.get(i);
                 Utils.halfLink(triangle.getAdjacentEdge(1), new EdgeEPA(triangle, 1));
 
-                if (!Utils.link(new EdgeEPA(triangle, 0), new EdgeEPA(triangleStore.operatorSquareBrackets(j), 2))) {
+                if (!Utils.link(new EdgeEPA(triangle, 0), new EdgeEPA(triangleStore.get(j), 2))) {
                     return false;
                 }
             }
@@ -179,6 +133,55 @@ public class TriangleEPA {
         }
 
         return result;
+    }
+
+    // Return true if the triangle face is obsolete
+    public boolean getIsObsolete() {
+        return isObsolete;
+    }
+
+    // Set the isObsolete value
+    public void setIsObsolete(boolean isObsolete) {
+        this.isObsolete = isObsolete;
+    }
+
+    // Return the square distance of the closest point to origin
+    public float getDistanceSquare() {
+        return distanceSquare;
+    }
+
+    // Access operator
+    public int getIndexVertex(int index) {
+        assert (index >= 0 && index < 3);
+        return indicesVertices[index];
+    }
+
+    // Return an edge of the triangle
+    public EdgeEPA getAdjacentEdge(int index) {
+        assert (index >= 0 && index < 3);
+        return adjacentEdges[index];
+    }
+
+    // Set an adjacent edge of the triangle
+    public void setAdjacentEdge(int index, EdgeEPA edge) {
+        assert (index >= 0 && index < 3);
+        adjacentEdges[index] = edge;
+    }
+
+    // Return the point closest to the origin
+    public Vector3 getClosestPoint() {
+        return closestPoint;
+    }
+
+    // Return true if the closest point on affine hull is inside the triangle
+    public boolean isClosestPointInternalToTriangle() {
+        return (lambda1 >= 0.0f && lambda2 >= 0.0f && (lambda1 + lambda2) <= determinant);
+    }
+
+    // Return true if the triangle is visible from a given vertex
+    public boolean isVisibleFromVertex(Vector3[] vertices, int index) {
+        Vector3 closestToVert = new Vector3(vertices[index]).subtract(closestPoint);
+        return (closestPoint.dot(closestToVert) > 0.0f);
     }
 
 }
