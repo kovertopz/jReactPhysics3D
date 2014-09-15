@@ -15,7 +15,7 @@ import net.smert.jreactphysics3d.mathematics.Transform;
 public abstract class NarrowPhaseAlgorithm {
 
     // Overlapping pair of the bodies currently tested for collision
-    protected BroadPhasePair mCurrentOverlappingPair;
+    protected BroadPhasePair currentOverlappingPair;
 
     // Constructor
     public NarrowPhaseAlgorithm() {
@@ -23,7 +23,7 @@ public abstract class NarrowPhaseAlgorithm {
 
     // Set the current overlapping pair of bodies
     public void setCurrentOverlappingPair(BroadPhasePair overlappingPair) {
-        mCurrentOverlappingPair = overlappingPair;
+        currentOverlappingPair = overlappingPair;
     }
 
     // Return true and compute a contact info if the two bounding volume collide

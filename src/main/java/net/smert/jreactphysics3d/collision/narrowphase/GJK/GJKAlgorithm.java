@@ -204,7 +204,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
         rotateToBody2.set(tempRotation2.transpose()).multiply(tempRotation1);
 
         // Get the previous point (last cached separating axis)
-        direction.set(mCurrentOverlappingPair.getPreviousSeparatingAxis());
+        direction.set(currentOverlappingPair.getPreviousSeparatingAxis());
 
         // Initialize the upper bound for the square distance
         distanceSquare = Defaults.DECIMAL_LARGEST;
@@ -236,7 +236,7 @@ public class GJKAlgorithm extends NarrowPhaseAlgorithm {
                     && (directionDotMinkDiff * directionDotMinkDiff > distanceSquare * marginSquare)) {
 
                 // Cache the current separating axis for frame coherence
-                mCurrentOverlappingPair.getPreviousSeparatingAxis().set(direction);
+                currentOverlappingPair.getPreviousSeparatingAxis().set(direction);
 
                 // No intersection, we return false
                 return false;
