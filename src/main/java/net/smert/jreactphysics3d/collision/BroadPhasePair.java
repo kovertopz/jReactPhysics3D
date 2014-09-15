@@ -47,9 +47,9 @@ public class BroadPhasePair {
     public static BodyIndexPair ComputeBodiesIndexPair(CollisionBody body1, CollisionBody body2) {
 
         // Construct the pair of body index
-        BodyIndexPair indexPair = body1.getID() < body2.getID()
-                ? new BodyIndexPair(body1.getID(), body2.getID())
-                : new BodyIndexPair(body2.getID(), body1.getID());
+        BodyIndexPair indexPair = body1.getBodyID() < body2.getBodyID()
+                ? new BodyIndexPair(body1.getBodyID(), body2.getBodyID())
+                : new BodyIndexPair(body2.getBodyID(), body1.getBodyID());
         assert (indexPair.getFirst() != indexPair.getSecond());
         return indexPair;
     }

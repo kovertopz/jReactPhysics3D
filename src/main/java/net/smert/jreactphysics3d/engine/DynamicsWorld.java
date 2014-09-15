@@ -588,7 +588,7 @@ public class DynamicsWorld extends CollisionWorld {
                     // Get the other body of the contact manifold
                     RigidBody body1 = (RigidBody) (contactManifold.getBody1());
                     RigidBody body2 = (RigidBody) (contactManifold.getBody2());
-                    RigidBody otherBody = (body1.getID() == bodyToVisit.getID()) ? body2 : body1;
+                    RigidBody otherBody = (body1.getBodyID() == bodyToVisit.getBodyID()) ? body2 : body1;
 
                     // Check if the other body has already been added to the island
                     if (otherBody.isAlreadyInIsland()) {
@@ -620,7 +620,7 @@ public class DynamicsWorld extends CollisionWorld {
                     // Get the other body of the contact manifold
                     RigidBody body1 = (RigidBody) (joint.getBody1());
                     RigidBody body2 = (RigidBody) (joint.getBody2());
-                    RigidBody otherBody = (body1.getID() == bodyToVisit.getID()) ? body2 : body1;
+                    RigidBody otherBody = (body1.getBodyID() == bodyToVisit.getBodyID()) ? body2 : body1;
 
                     // Check if the other body has already been added to the island
                     if (otherBody.isAlreadyInIsland()) {
@@ -975,7 +975,7 @@ public class DynamicsWorld extends CollisionWorld {
         mCollisionDetection.removeBody(rigidBody);
 
         // Add the body ID to the list of free IDs
-        mFreeBodiesIDs.add(rigidBody.getID());
+        mFreeBodiesIDs.add(rigidBody.getBodyID());
 
         // Remove the collision shape from the world
         removeCollisionShape(rigidBody.getCollisionShape());

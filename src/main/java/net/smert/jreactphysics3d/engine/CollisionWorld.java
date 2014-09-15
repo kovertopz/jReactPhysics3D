@@ -155,7 +155,7 @@ public class CollisionWorld {
         mCollisionDetection.removeBody(collisionBody);
 
         // Add the body ID to the list of free IDs
-        mFreeBodiesIDs.add(collisionBody.getID());
+        mFreeBodiesIDs.add(collisionBody.getBodyID());
 
         // Call the destructor of the collision body
         // Remove the collision body from the list of bodies

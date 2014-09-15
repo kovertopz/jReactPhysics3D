@@ -82,7 +82,7 @@ public class PairManager {
 
     // Return true if pair1 and pair2 are the same
     private boolean isDifferentPair(BodyPair pair1, int pair2ID1, int pair2ID2) {
-        return (pair2ID1 != pair1.getBody1().getID() || pair2ID2 != pair1.getBody2().getID());
+        return (pair2ID1 != pair1.getBody1().getBodyID() || pair2ID2 != pair1.getBody2().getBodyID());
     }
 
     // Look for a pair in the set of overlapping pairs
@@ -131,8 +131,8 @@ public class PairManager {
 
         // Recompute the hash table with the new hash values
         for (int i = 0; i < mNbOverlappingPairs; i++) {
-            int newHashValue = computeHashBodies(mOverlappingPairs[i].getBody1().getID(),
-                    mOverlappingPairs[i].getBody2().getID()) & mHashMask;
+            int newHashValue = computeHashBodies(mOverlappingPairs[i].getBody1().getBodyID(),
+                    mOverlappingPairs[i].getBody2().getBodyID()) & mHashMask;
             newOffsetNextPair[i] = mHashTable[newHashValue];
             mHashTable[newHashValue] = i;
         }
@@ -184,8 +184,8 @@ public class PairManager {
             // now free because of the pair we want to remove
             // Get the last pair
             BodyPair lastPair = mOverlappingPairs[indexLastPair];
-            int lastPairHashValue = computeHashBodies(lastPair.getBody1().getID(),
-                    lastPair.getBody2().getID()) & mHashMask;
+            int lastPairHashValue = computeHashBodies(lastPair.getBody1().getBodyID(),
+                    lastPair.getBody2().getBodyID()) & mHashMask;
 
             // Compute the initial offset of the last pair
             offset = mHashTable[lastPairHashValue];
@@ -298,7 +298,7 @@ public class PairManager {
 
         // Sort the bodies to have the body with smallest ID first
         // If the ID of body1 is larger than the ID of body 2
-        if (body1.getID() > body2.getID()) {
+        if (body1.getBodyID() > body2.getBodyID()) {
 
             // Swap the two bodies pointers
             CollisionBody temp = body2;
@@ -307,8 +307,8 @@ public class PairManager {
         }
 
         // Get the bodies IDs
-        int id1 = body1.getID();
-        int id2 = body2.getID();
+        int id1 = body1.getBodyID();
+        int id2 = body2.getBodyID();
 
         // Compute the hash value of the two bodies
         int hashValue = computeHashBodies(id1, id2) & mHashMask;
@@ -378,8 +378,8 @@ public class PairManager {
             return false;
         }
 
-        assert (pair.getBody1().getID() == id1);
-        assert (pair.getBody2().getID() == id2);
+        assert (pair.getBody1().getBodyID() == id1);
+        assert (pair.getBody2().getBodyID() == id2);
 
         // Notify the collision detection about this removed overlapping pair
         mCollisionDetection.broadPhaseNotifyRemovedOverlappingPair(pair);

@@ -46,10 +46,10 @@ public class NoBroadPhaseAlgorithm extends BroadPhaseAlgorithm {
         // For each body that is in the world
         for (CollisionBody it : mBodies) {
 
-            if (it.getID() != body.getID()) {
+            if (it.getBodyID() != body.getBodyID()) {
 
                 // Remove the overlapping pair with the new body
-                mPairManager.removePair(it.getID(), body.getID());
+                mPairManager.removePair(it.getBodyID(), body.getBodyID());
             }
         }
 

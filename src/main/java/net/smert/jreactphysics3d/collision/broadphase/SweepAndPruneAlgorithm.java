@@ -137,7 +137,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                 // Copy the box to its new location in the boxes array
                 BoxAABB oldBox = mBoxes[boxIndex];
                 BoxAABB newBox = mBoxes[newBoxIndex];
-                assert (oldBox.body.getID() == body.getID());
+                assert (oldBox.body.getBodyID() == body.getBodyID());
                 newBox.body = oldBox.body;
                 for (int axis = 0; axis < 3; axis++) {
 
@@ -312,7 +312,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                             if (testIntersect2D(box, id1, otherAxis1, otherAxis2)) {
 
                                 // Remove the pair from the pair manager
-                                mPairManager.removePair(body.getID(), id1.body.getID());
+                                mPairManager.removePair(body.getBodyID(), id1.body.getBodyID());
                             }
                         }
 
@@ -418,7 +418,7 @@ public class SweepAndPruneAlgorithm extends BroadPhaseAlgorithm {
                             if (testIntersect2D(box, id1, otherAxis1, otherAxis2)) {
 
                                 // Remove the pair from the pair manager
-                                mPairManager.removePair(body.getID(), id1.body.getID());
+                                mPairManager.removePair(body.getBodyID(), id1.body.getBodyID());
                             }
                         }
 
