@@ -196,7 +196,7 @@ public class ContactManifold {
     }
 
     // Return the number of contact points in the manifold
-    public int getNbContactPoints() {
+    public int getNumContactPoints() {
         return mNbContactPoints;
     }
 

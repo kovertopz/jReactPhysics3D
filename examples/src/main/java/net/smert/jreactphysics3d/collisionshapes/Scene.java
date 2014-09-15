@@ -351,7 +351,7 @@ public class Scene {
             // Generate the new visual contact points
             List< ContactManifold> manifolds = mDynamicsWorld.getContactManifolds();
             for (ContactManifold it : manifolds) {
-                for (int i = 0; i < it.getNbContactPoints(); i++) {
+                for (int i = 0; i < it.getNumContactPoints(); i++) {
                     ContactPoint point = it.getContactPoint(i);
 
                     net.smert.jreactphysics3d.mathematics.Vector3 pos = point.getWorldPointOnBody1();

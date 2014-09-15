@@ -470,7 +470,7 @@ public class ContactSolver {
             ContactManifoldSolver internalManifold = new ContactManifoldSolver();
             mContactConstraints[i] = internalManifold;
 
-            assert (externalManifold.getNbContactPoints() > 0);
+            assert (externalManifold.getNumContactPoints() > 0);
 
             // Get the two bodies of the contact
             RigidBody body1 = externalManifold.getContactPoint(0).getBody1();
@@ -490,7 +490,7 @@ public class ContactSolver {
             internalManifold.isBody2Moving = body2.isMotionEnabled();
             internalManifold.massInverseBody1 = body1.getMassInverse();
             internalManifold.massInverseBody2 = body2.getMassInverse();
-            internalManifold.nbContacts = externalManifold.getNbContactPoints();
+            internalManifold.nbContacts = externalManifold.getNumContactPoints();
             internalManifold.restitutionFactor = computeMixedRestitutionFactor(body1, body2);
             internalManifold.frictionCoefficient = computeMixedFrictionCoefficient(body1, body2);
             internalManifold.externalContactManifold = externalManifold;
@@ -502,7 +502,7 @@ public class ContactSolver {
             }
 
             // For each  contact point of the contact manifold
-            for (int c = 0; c < externalManifold.getNbContactPoints(); c++) {
+            for (int c = 0; c < externalManifold.getNumContactPoints(); c++) {
                 if (internalManifold.contacts[c] == null) {
                     internalManifold.contacts[c] = new ContactPointSolver();
                 }

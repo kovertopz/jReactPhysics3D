@@ -1180,7 +1180,7 @@ public class DynamicsWorld extends CollisionWorld {
         assert (overlappingPair != null);
 
         // If it is the first contact since the pair are overlapping
-        if (overlappingPair.getNbContactPoints() == 0) {
+        if (overlappingPair.getNumContactPoints() == 0) {
 
             // Trigger a callback event
             if (mEventListener != null) {

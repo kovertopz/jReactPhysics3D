@@ -14,63 +14,63 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class OverlappingPair {
 
     // Pointer to the first body of the contact
-    private CollisionBody mBody1;
+    private final CollisionBody body1;
 
     // Pointer to the second body of the contact
-    private CollisionBody mBody2;
+    private final CollisionBody body2;
 
     // Persistent contact manifold
-    private ContactManifold mContactManifold;
+    private final ContactManifold contactManifold;
 
     // Cached previous separating axis
-    private Vector3 mCachedSeparatingAxis;
+    private final Vector3 cachedSeparatingAxis;
 
     // Constructor
     public OverlappingPair(CollisionBody body1, CollisionBody body2) {
-        mBody1 = body1;
-        mBody2 = body2;
-        mContactManifold = new ContactManifold(body1, body2);
-        mCachedSeparatingAxis = new Vector3(1.0f, 1.0f, 1.0f);
-    }
-
-    // Return the pointer to first body
-    public CollisionBody getBody1() {
-        return mBody1;
-    }
-
-    // Return the pointer to second body
-    public CollisionBody getBody2() {
-        return mBody2;
+        this.body1 = body1;
+        this.body2 = body2;
+        contactManifold = new ContactManifold(body1, body2);
+        cachedSeparatingAxis = new Vector3(1.0f, 1.0f, 1.0f);
     }
 
     // Add a contact to the contact manifold
     public void addContact(ContactPoint contact) {
-        mContactManifold.addContactPoint(contact);
+        contactManifold.addContactPoint(contact);
     }
 
-    // Update the contact manifold
-    public void update() {
-        mContactManifold.update(mBody1.getTransform(), mBody2.getTransform());
+    // Return the pointer to first body
+    public CollisionBody getBody1() {
+        return body1;
     }
 
-    // Return the cached separating axis
-    public Vector3 getCachedSeparatingAxis() {
-        return mCachedSeparatingAxis;
-    }
-
-    // Set the cached separating axis
-    public void setCachedSeparatingAxis(Vector3 axis) {
-        mCachedSeparatingAxis = axis;
-    }
-
-    // Return the number of contact points in the contact manifold
-    public int getNbContactPoints() {
-        return mContactManifold.getNbContactPoints();
+    // Return the pointer to second body
+    public CollisionBody getBody2() {
+        return body2;
     }
 
     // Return the contact manifold
     public ContactManifold getContactManifold() {
-        return mContactManifold;
+        return contactManifold;
+    }
+
+    // Return the number of contact points in the contact manifold
+    public int getNumContactPoints() {
+        return contactManifold.getNumContactPoints();
+    }
+
+    // Return the cached separating axis
+    public Vector3 getCachedSeparatingAxis() {
+        return cachedSeparatingAxis;
+    }
+
+    // Set the cached separating axis
+    public void setCachedSeparatingAxis(Vector3 axis) {
+        cachedSeparatingAxis.set(axis);
+    }
+
+    // Update the contact manifold
+    public void update() {
+        contactManifold.update(body1.getTransform(), body2.getTransform());
     }
 
 }
