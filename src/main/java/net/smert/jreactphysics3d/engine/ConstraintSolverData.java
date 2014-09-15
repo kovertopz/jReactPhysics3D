@@ -13,8 +13,21 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public class ConstraintSolverData {
 
+    // True if warm starting of the solver is active
+    public boolean isWarmStartingActive;
+
     // Current time step of the simulation
     public float timeStep;
+
+    // Reference to the bodies orientations
+    public final List<Quaternion> orientations;
+
+    // Reference to the bodies positions
+    public final List<Vector3> positions;
+
+    // Reference to the map that associates rigid body to their index
+    // in the constrained velocities array
+    public final Map<RigidBody, Integer> mapBodyToConstrainedVelocityIndex;
 
     // Array with the bodies linear velocities
     public Vector3[] linearVelocities;
@@ -22,27 +35,14 @@ public class ConstraintSolverData {
     // Array with the bodies angular velocities
     public Vector3[] angularVelocities;
 
-    // Reference to the bodies positions
-    public List<Vector3> positions;
-
-    // Reference to the bodies orientations
-    public List<Quaternion> orientations;
-
-    // Reference to the map that associates rigid body to their index
-    // in the constrained velocities array
-    public Map<RigidBody, Integer> mapBodyToConstrainedVelocityIndex;
-
-    // True if warm starting of the solver is active
-    public boolean isWarmStartingActive;
-
     // Constructor
     public ConstraintSolverData(List<Vector3> refPositions, List<Quaternion> refOrientations,
             Map<RigidBody, Integer> refMapBodyToConstrainedVelocityIndex) {
+        orientations = refOrientations;
+        positions = refPositions;
+        mapBodyToConstrainedVelocityIndex = refMapBodyToConstrainedVelocityIndex;
         linearVelocities = null;
         angularVelocities = null;
-        positions = refPositions;
-        orientations = refOrientations;
-        mapBodyToConstrainedVelocityIndex = refMapBodyToConstrainedVelocityIndex;
     }
 
 }
