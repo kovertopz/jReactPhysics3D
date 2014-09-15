@@ -45,10 +45,7 @@ public class SphereVsSphereAlgorithm extends NarrowPhaseAlgorithm {
             float penetrationDepth = sumRadius - Mathematics.Sqrt(squaredDistanceBetweenCenters);
 
             // Create the contact info object
-            contactInfo.normal.set(vectorBetweenCenters.normalize());
-            contactInfo.penetrationDepth = penetrationDepth;
-            contactInfo.localPoint1.set(intersectionOnBody1);
-            contactInfo.localPoint2.set(intersectionOnBody2);
+            contactInfo.setCollisionData(vectorBetweenCenters.normalize(), penetrationDepth, intersectionOnBody1, intersectionOnBody2);
 
             return true;
         }

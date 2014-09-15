@@ -12,22 +12,22 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
 public class ContactPointInfo {
 
     // Penetration depth of the contact
-    public float penetrationDepth;
+    private float penetrationDepth;
 
     // First rigid body of the constraint
-    public RigidBody body1;
+    private RigidBody body1;
 
     // Second rigid body of the constraint
-    public RigidBody body2;
+    private RigidBody body2;
 
     // Normal vector the the collision contact in world space
-    public final Vector3 normal;
+    private final Vector3 normal;
 
     // Contact point of body 1 in local space of body 1
-    public final Vector3 localPoint1;
+    private final Vector3 localPoint1;
 
     // Contact point of body 2 in local space of body 2
-    public final Vector3 localPoint2;
+    private final Vector3 localPoint2;
 
     // Constructor
     public ContactPointInfo() {
@@ -35,6 +35,45 @@ public class ContactPointInfo {
         this.penetrationDepth = 0.0f;
         this.localPoint1 = new Vector3();
         this.localPoint2 = new Vector3();
+    }
+
+    public float getPenetrationDepth() {
+        return penetrationDepth;
+    }
+
+    public RigidBody getBody1() {
+        return body1;
+    }
+
+    public void setBody1(RigidBody body1) {
+        this.body1 = body1;
+    }
+
+    public RigidBody getBody2() {
+        return body2;
+    }
+
+    public void setBody2(RigidBody body2) {
+        this.body2 = body2;
+    }
+
+    public Vector3 getNormal() {
+        return normal;
+    }
+
+    public Vector3 getLocalPoint1() {
+        return localPoint1;
+    }
+
+    public Vector3 getLocalPoint2() {
+        return localPoint2;
+    }
+
+    public void setCollisionData(Vector3 normal, float penetrationDepth, Vector3 localPoint1, Vector3 localPoint2) {
+        this.normal.set(normal);
+        this.penetrationDepth = penetrationDepth;
+        this.localPoint1.set(localPoint1);
+        this.localPoint2.set(localPoint2);
     }
 
 }

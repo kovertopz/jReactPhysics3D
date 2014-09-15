@@ -115,10 +115,10 @@ public class CollisionDetection {
                 assert (contactInfo != null);
 
                 // Set the bodies of the contact
-                contactInfo.body1 = (RigidBody) body1;
-                contactInfo.body2 = (RigidBody) body2;
-                assert (contactInfo.body1 != null);
-                assert (contactInfo.body2 != null);
+                contactInfo.setBody1((RigidBody) body1);
+                contactInfo.setBody2((RigidBody) body2);
+                assert (contactInfo.getBody1() != null);
+                assert (contactInfo.getBody2() != null);
 
                 // Notify the world about the new narrow-phase contact
                 mWorld.notifyNewContact(pair, contactInfo);

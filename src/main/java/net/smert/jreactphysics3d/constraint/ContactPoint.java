@@ -51,14 +51,14 @@ public class ContactPoint {
 
     // Constructor
     public ContactPoint(ContactPointInfo contactInfo) {
-        mBody1 = contactInfo.body1;
-        mBody2 = contactInfo.body2;
-        mNormal = new Vector3(contactInfo.normal);
-        mPenetrationDepth = contactInfo.penetrationDepth;
-        mLocalPointOnBody1 = new Vector3(contactInfo.localPoint1);
-        mLocalPointOnBody2 = new Vector3(contactInfo.localPoint2);
-        mWorldPointOnBody1 = contactInfo.body1.getTransform().multiply(contactInfo.localPoint1, new Vector3());
-        mWorldPointOnBody2 = contactInfo.body2.getTransform().multiply(contactInfo.localPoint2, new Vector3());
+        mBody1 = contactInfo.getBody1();
+        mBody2 = contactInfo.getBody2();
+        mNormal = contactInfo.getNormal();
+        mPenetrationDepth = contactInfo.getPenetrationDepth();
+        mLocalPointOnBody1 = contactInfo.getLocalPoint1();
+        mLocalPointOnBody2 = contactInfo.getLocalPoint2();
+        mWorldPointOnBody1 = contactInfo.getBody1().getTransform().multiply(mLocalPointOnBody1, new Vector3());
+        mWorldPointOnBody2 = contactInfo.getBody2().getTransform().multiply(mLocalPointOnBody2, new Vector3());
         mIsRestingContact = false;
 
         mFrictionVectors[0] = new Vector3();

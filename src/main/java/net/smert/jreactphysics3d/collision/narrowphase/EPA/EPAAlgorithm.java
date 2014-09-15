@@ -99,7 +99,7 @@ public class EPAAlgorithm {
     public boolean computePenetrationDepthAndContactPoints(Simplex simplex,
             CollisionShape collisionShape1, Transform transform1,
             CollisionShape collisionShape2, Transform transform2,
-            Vector3 v, ContactPointInfo contactInfo) {
+            Vector3 direction, ContactPointInfo contactInfo) {
 
         final Matrix3x3 tempRotation1 = new Matrix3x3();
         final Matrix3x3 tempRotation2 = new Matrix3x3();
@@ -404,18 +404,15 @@ public class EPAAlgorithm {
 
         // Compute the contact info
         transform1.getOrientation().getMatrix(tempRotation1);
-        v = tempRotation1.multiply(triangle.getClosestPoint(), new Vector3());
+        direction = tempRotation1.multiply(triangle.getClosestPoint(), new Vector3());
         Vector3 pALocal = triangle.computeClosestPointOfObject(suppPointsA);
         Vector3 pBLocal = new Transform(body2Tobody1).inverse().multiply(triangle.computeClosestPointOfObject(suppPointsB), new Vector3());
-        Vector3 normal = new Vector3(v).normalize();
-        float penetrationDepth = v.length();
+        Vector3 normal = new Vector3(direction).normalize();
+        float penetrationDepth = direction.length();
         assert (penetrationDepth > 0.0f);
 
         // Create the contact info object
-        contactInfo.normal.set(normal);
-        contactInfo.penetrationDepth = penetrationDepth;
-        contactInfo.localPoint1.set(pALocal);
-        contactInfo.localPoint2.set(pBLocal);
+        contactInfo.setCollisionData(normal, penetrationDepth, pALocal, pBLocal);
 
         return true;
     }
