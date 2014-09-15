@@ -79,7 +79,6 @@ public class ContactManifoldSolver {
     // Second friction direction at contact manifold center
     public final Vector3 frictionVector2 = new Vector3();
 
-    // - Variables used when friction constraints are apply at the center of the manifold-//
     // Average normal vector of the contact manifold
     public final Vector3 normal = new Vector3();
 
