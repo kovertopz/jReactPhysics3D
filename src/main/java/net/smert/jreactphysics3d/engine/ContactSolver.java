@@ -268,15 +268,15 @@ public class ContactSolver {
         // Update the velocities of the bodies by applying the impulse P
         if (manifold.isBody1Moving) {
             mLinearVelocities[manifold.indexBody1].add(
-                    new Vector3(impulse.linearImpulseBody1).multiply(manifold.massInverseBody1));
+                    new Vector3(impulse.getLinearImpulseBody1()).multiply(manifold.massInverseBody1));
             mAngularVelocities[manifold.indexBody1].add(
-                    manifold.inverseInertiaTensorBody1.multiply(impulse.angularImpulseBody1, new Vector3()));
+                    manifold.inverseInertiaTensorBody1.multiply(impulse.getAngularImpulseBody1(), new Vector3()));
         }
         if (manifold.isBody2Moving) {
             mLinearVelocities[manifold.indexBody2].add(
-                    new Vector3(impulse.linearImpulseBody2).multiply(manifold.massInverseBody2));
+                    new Vector3(impulse.getLinearImpulseBody2()).multiply(manifold.massInverseBody2));
             mAngularVelocities[manifold.indexBody2].add(
-                    manifold.inverseInertiaTensorBody2.multiply(impulse.angularImpulseBody2, new Vector3()));
+                    manifold.inverseInertiaTensorBody2.multiply(impulse.getAngularImpulseBody2(), new Vector3()));
         }
     }
 
@@ -286,15 +286,15 @@ public class ContactSolver {
         // Update the velocities of the bodies by applying the impulse P
         if (manifold.isBody1Moving) {
             mSplitLinearVelocities[manifold.indexBody1].add(
-                    new Vector3(impulse.linearImpulseBody1).multiply(manifold.massInverseBody1));
+                    new Vector3(impulse.getLinearImpulseBody1()).multiply(manifold.massInverseBody1));
             mSplitAngularVelocities[manifold.indexBody1].add(
-                    manifold.inverseInertiaTensorBody1.multiply(impulse.angularImpulseBody1, new Vector3()));
+                    manifold.inverseInertiaTensorBody1.multiply(impulse.getAngularImpulseBody1(), new Vector3()));
         }
         if (manifold.isBody2Moving) {
             mSplitLinearVelocities[manifold.indexBody2].add(
-                    new Vector3(impulse.linearImpulseBody2).multiply(manifold.massInverseBody2));
+                    new Vector3(impulse.getLinearImpulseBody2()).multiply(manifold.massInverseBody2));
             mSplitAngularVelocities[manifold.indexBody2].add(
-                    manifold.inverseInertiaTensorBody2.multiply(impulse.angularImpulseBody2, new Vector3()));
+                    manifold.inverseInertiaTensorBody2.multiply(impulse.getAngularImpulseBody2(), new Vector3()));
         }
     }
 
