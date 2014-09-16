@@ -1,7 +1,7 @@
 jReactPhysics3D
 ===============
 
-Java port of the [ReactPhysics3D][ReactPhysics3D] C++ library by [Daniel Chappuis][OriginalAuthor].
+3D physics engine written in Java. This is a port of the [ReactPhysics3D][ReactPhysics3D] C++ library by [Daniel Chappuis][OriginalAuthor].
 
 [ReactPhysics3D]: https://code.google.com/p/reactphysics3d/
 [OriginalAuthor]: http://www.danielchappuis.ch/
@@ -26,4 +26,5 @@ ReactPhysics3D has the following features :
 - Unit tests
 
 Website : https://code.google.com/p/reactphysics3d/
+Github  : https://github.com/DanielChappuis/reactphysics3d
 Author  : Daniel Chappuis
