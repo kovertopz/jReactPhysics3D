@@ -22,7 +22,7 @@ public abstract class Body {
     // Elapsed time since the body velocity was bellow the sleep velocity
     protected float sleepTime;
 
-    // ID of the body
+    // Unique ID of the body
     protected int bodyID;
 
     // Constructor
