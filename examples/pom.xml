@@ -20,6 +20,9 @@
     <properties>
         <junit.version>4.11</junit.version>
         <lwjgl.version>2.9.1</lwjgl.version>
+        <mavencompiler.version>2.5.1</mavencompiler.version>
+        <mavendependency.version>2.8</mavendependency.version>
+        <mavenjar.version>2.5</mavenjar.version>
         <mavennatives.version>0.0.7</mavennatives.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
@@ -33,9 +36,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.mavennatives</groupId>
-            <artifactId>maven-nativedependencies-plugin</artifactId>
-            <version>${mavennatives.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jReactPhysics3D-OpenGLFramework</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.lwjgl.lwjgl</groupId>
@@ -58,6 +61,49 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mavencompiler.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${mavendependency.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <excludeArtifactIds>junit, hamcrest-core</excludeArtifactIds>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${mavenjar.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>net.smert.jreactphysics3d.examples.Main</mainClass>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>com.googlecode.mavennatives</groupId>
                 <artifactId>maven-nativedependencies-plugin</artifactId>
