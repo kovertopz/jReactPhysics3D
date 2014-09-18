@@ -1,3 +1,4 @@
 /examples/target/
+/examples/framework.log.*
 /framework/target/
 /target/
