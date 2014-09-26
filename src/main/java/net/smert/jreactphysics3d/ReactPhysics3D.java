@@ -32,3 +32,8 @@ package net.smert.jreactphysics3d;
 * http://code.google.com/p/reactphysics3d/                                      *
 * Daniel Chappuis                                                               *
 ********************************************************************************/
+
+/**
+ * All files are to be considered modified from the source versions. This project
+ * is a port of C++ code into Java.
+ */

@@ -6,6 +6,7 @@
     <groupId>net.smert</groupId>
     <artifactId>jReactPhysics3D</artifactId>
     <version>0.4.0</version>
+    <inceptionYear>2014</inceptionYear>
     <packaging>jar</packaging>
 
     <developers>
@@ -19,6 +20,8 @@
 
     <properties>
         <junit.version>4.11</junit.version>
+        <licensemaven.version>2.6</licensemaven.version>
+        <mavencompiler.version>2.5.1</mavencompiler.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,5 +35,51 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mavencompiler.version}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${licensemaven.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>LICENSE.txt</exclude>
+                        <exclude>nbactions.xml</exclude>
+                        <exclude>pom.xml</exclude>
+                        <exclude>README.md</exclude>
+                        <exclude>VERSION</exclude>
+                        <exclude>examples/**</exclude>
+                        <exclude>framework/**</exclude>
+                        <exclude>src/main/resources/**</exclude>
+                        <exclude>src/test/resources/**</exclude>
+                    </excludes>
+                    <header>HEADER.txt</header>
+                    <keywords>
+                        <keyword>Copyright (c) 2010-2013 Daniel Chappuis</keyword>
+                    </keywords>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

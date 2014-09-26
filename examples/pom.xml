@@ -6,6 +6,7 @@
     <groupId>net.smert</groupId>
     <artifactId>jReactPhysics3D-Examples</artifactId>
     <version>0.4.0</version>
+    <inceptionYear>2014</inceptionYear>
     <packaging>jar</packaging>
 
     <developers>
@@ -19,6 +20,7 @@
 
     <properties>
         <junit.version>4.11</junit.version>
+        <licensemaven.version>2.6</licensemaven.version>
         <lwjgl.version>2.9.1</lwjgl.version>
         <mavencompiler.version>2.5.1</mavencompiler.version>
         <mavendependency.version>2.8</mavendependency.version>
@@ -111,10 +113,46 @@
             </plugin>
 
             <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>${licensemaven.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>APACHE-2.txt</exclude>
+                        <exclude>LICENSE.txt</exclude>
+                        <exclude>nbactions.xml</exclude>
+                        <exclude>pom.xml</exclude>
+                        <exclude>src/main/java/net/smert/jreactphysics3d/collisionshapes/**</exclude>
+                        <exclude>src/main/java/net/smert/jreactphysics3d/common/**</exclude>
+                        <exclude>src/main/java/net/smert/jreactphysics3d/examples/collisionshapes/**</exclude>
+                        <exclude>src/main/java/net/smert/jreactphysics3d/examples/meshreader/**</exclude>
+                        <exclude>src/main/resources/**</exclude>
+                        <exclude>src/test/resources/**</exclude>
+                    </excludes>
+                    <header>HEADER.txt</header>
+                    <keywords>
+                        <keyword>Licensed under the Apache License</keyword>
+                    </keywords>
+                    <properties>
+                        <owner>Jason Sorensen</owner>
+                        <email>sorensenj@smert.net</email>
+                    </properties>
+                    <useDefaultExcludes>true</useDefaultExcludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>com.googlecode.mavennatives</groupId>
                 <artifactId>maven-nativedependencies-plugin</artifactId>
                 <version>${mavennatives.version}</version>
-
                 <executions>
                     <execution>
                         <id>unpacknatives</id>
