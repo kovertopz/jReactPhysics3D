@@ -125,7 +125,6 @@
                         <exclude>src/main/java/net/smert/jreactphysics3d/collisionshapes/**</exclude>
                         <exclude>src/main/java/net/smert/jreactphysics3d/common/**</exclude>
                         <exclude>src/main/java/net/smert/jreactphysics3d/examples/collisionshapes/**</exclude>
-                        <exclude>src/main/java/net/smert/jreactphysics3d/examples/meshreader/**</exclude>
                         <exclude>src/main/resources/**</exclude>
                         <exclude>src/test/resources/**</exclude>
                     </excludes>
