@@ -42,8 +42,8 @@ public class Quaternion {
     }
 
     // Constructor with the component w and the vector v=(x y z)
-    public Quaternion(Vector3 v, float w) {
-        set(v, w);
+    public Quaternion(Vector3 vector, float w) {
+        set(vector, w);
     }
 
     // Scalar product between two quaternions
@@ -229,10 +229,10 @@ public class Quaternion {
         return this;
     }
 
-    public final Quaternion set(Vector3 v, float w) {
-        x = v.x;
-        y = v.y;
-        z = v.z;
+    public final Quaternion set(Vector3 vector, float w) {
+        x = vector.x;
+        y = vector.y;
+        z = vector.z;
         this.w = w;
         return this;
     }
