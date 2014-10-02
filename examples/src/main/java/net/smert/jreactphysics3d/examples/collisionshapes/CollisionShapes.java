@@ -260,6 +260,7 @@ public class CollisionShapes extends Screen {
         for (GameObject gameObjectShape : gameObjectShapes) {
             gameObjectShape.destroy();
         }
+        VisualContactPoint.Destroy();
         Fw.input.removeInputProcessor(cameraController);
         Fw.input.releaseMouseCursor();
     }

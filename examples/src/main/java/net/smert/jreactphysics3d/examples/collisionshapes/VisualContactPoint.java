@@ -32,12 +32,12 @@ public class VisualContactPoint extends GameObject {
         getWorldTransform().getPosition().set(position);
         getWorldTransform().multiply(getScalingTransform());
 
-        createStaticData();
+        CreateStaticData();
         setMesh(staticMesh); // Attach mesh to game object
         setRenderable(staticRenderable); // Attach to game object
     }
 
-    public static void createStaticData() {
+    public static void CreateStaticData() {
         if (initialized) {
             return;
         }
@@ -58,6 +58,15 @@ public class VisualContactPoint extends GameObject {
 
         // Only do this once
         initialized = true;
+    }
+
+    public static void Destroy() {
+        if (!initialized) {
+            return;
+        }
+        staticRenderable.destroy();
+        staticRenderable = null;
+        initialized = false;
     }
 
 }
