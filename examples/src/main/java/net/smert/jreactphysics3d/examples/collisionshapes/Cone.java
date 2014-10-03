@@ -2,7 +2,6 @@ package net.smert.jreactphysics3d.examples.collisionshapes;
 
 import java.io.IOException;
 import net.smert.jreactphysics3d.collision.shapes.ConeShape;
-import net.smert.jreactphysics3d.collision.shapes.SphereShape;
 import net.smert.jreactphysics3d.engine.DynamicsWorld;
 import net.smert.jreactphysics3d.framework.Fw;
 import net.smert.jreactphysics3d.framework.math.Transform4f;
