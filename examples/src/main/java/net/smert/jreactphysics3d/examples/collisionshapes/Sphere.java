@@ -32,7 +32,7 @@ public class Sphere extends AbstractGameObjectShape {
             Mesh mesh = GL.mf.createMesh();
             setMesh(mesh); // Attach mesh to game object
             Fw.graphics.loadMesh("primitives/uvsphere.obj", mesh);
-            mesh.getSegment(0).setAllColors(0.8f, 0.8f, 0.8f, 1.0f);
+            mesh.setAllColors(0.8f, 0.8f, 0.8f, 1.0f);
             mesh.updateBooleansFromSegment();
 
             // Renderable
