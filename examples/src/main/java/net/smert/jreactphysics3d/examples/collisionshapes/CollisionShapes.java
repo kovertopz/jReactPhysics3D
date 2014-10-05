@@ -29,6 +29,7 @@ import net.smert.jreactphysics3d.framework.opengl.GL;
 import net.smert.jreactphysics3d.framework.opengl.camera.LegacyCamera;
 import net.smert.jreactphysics3d.framework.opengl.camera.LegacyCameraController;
 import net.smert.jreactphysics3d.framework.opengl.constants.GetString;
+import net.smert.jreactphysics3d.framework.opengl.constants.Light;
 import net.smert.jreactphysics3d.framework.utils.FpsTimer;
 import net.smert.jreactphysics3d.framework.utils.MemoryUsage;
 import net.smert.jreactphysics3d.mathematics.Vector3;
@@ -64,6 +65,7 @@ public class CollisionShapes extends Screen {
     private static final Vector3f FLOOR_SIZE = new Vector3f(50.0f, 0.5f, 50.0f);
 
     private DynamicsWorld dynamicsWorld;
+    private FloatBuffer lightFloatBuffer;
     private FloatBuffer transformWorldFloatBuffer;
     private FpsTimer fpsTimer;
     private LegacyCamera camera;
@@ -284,7 +286,8 @@ public class CollisionShapes extends Screen {
         dynamicsWorld = new DynamicsWorld(gravity, timeStep);
         dynamicsWorld.start();
 
-        // Float buffer for matrices
+        // Float buffer for light and matrices
+        lightFloatBuffer = GL.bufferHelper.createFloatBuffer(4);
         transformWorldFloatBuffer = GL.bufferHelper.createFloatBuffer(16);
 
         // Memory usage
@@ -304,6 +307,9 @@ public class CollisionShapes extends Screen {
         GL.o1.setDepthFuncLess();
         GL.o1.enableDepthMask();
         GL.o1.setClearDepth(1.0f);
+        GL.o1.enableLight0();
+        GL.o1.enableLighting();
+        GL.o1.enableColorMaterial();
         GL.o1.setSmoothLighting(true);
         GL.o1.clear();
 
@@ -312,6 +318,13 @@ public class CollisionShapes extends Screen {
                 (float) Fw.config.getCurrentWidth() / (float) Fw.config.getCurrentHeight(),
                 0.05f, 512.0f);
         GL.o1.setModelViewIdentity();
+
+        // Light position
+        lightFloatBuffer.put(0.0f);
+        lightFloatBuffer.put(15.0f);
+        lightFloatBuffer.put(0.0f);
+        lightFloatBuffer.put(1.0f);
+        lightFloatBuffer.flip();
 
         log.info("OpenGL version: " + GL.o1.getString(GetString.VERSION));
 
@@ -346,6 +359,8 @@ public class CollisionShapes extends Screen {
             GL.o1.setModelViewIdentity();
 
             camera.updateOpenGL();
+
+            GL.o1.light(Light.LIGHT0, Light.POSITION, lightFloatBuffer);
 
             // Render directly
             for (AbstractGameObjectShape gameObjectShape : gameObjectShapes) {
