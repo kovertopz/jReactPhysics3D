@@ -307,9 +307,9 @@ public class CollisionShapes extends Screen {
         GL.o1.setDepthFuncLess();
         GL.o1.enableDepthMask();
         GL.o1.setClearDepth(1.0f);
+        GL.o1.enableColorMaterial();
         GL.o1.enableLight0();
         GL.o1.enableLighting();
-        GL.o1.enableColorMaterial();
         GL.o1.setSmoothLighting(true);
         GL.o1.clear();
 
