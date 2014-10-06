@@ -284,70 +284,70 @@ public class EPAAlgorithm {
                 // We have removed the wrong vertex
                 numVertices = 3;
             }
-            case 3: {
-                // The GJK algorithm returned a triangle that contains the origin.
-                // We need two new vertices to obtain a hexahedron. The two new vertices
-                // are the support points in the "dir1" and "-dir1" direction where "dir1" is the
-                // normal of the triangle.
-
-                // Compute the normal of the triangle
-                Vector3 v1 = new Vector3(minkDiffs[1]).subtract(minkDiffs[0]);
-                Vector3 v2 = new Vector3(minkDiffs[2]).subtract(minkDiffs[0]);
-                Vector3 dir1 = new Vector3(v1).cross(v2);
-                Vector3 dir2 = new Vector3(dir1).invert();
-                Vector3 dir3;
-
-                // Compute the two new vertices to obtain a hexahedron
-                supportAs[3] = collisionShape1.getLocalSupportPointWithMargin(dir1, new Vector3());
-                dir3 = rotateToBody2.multiply(dir2, new Vector3());
-                supportBs[3] = collisionShape2.getLocalSupportPointWithMargin(dir3, new Vector3());
-                supportBs[3] = body2ToBody1.multiply(supportBs[3], new Vector3());
-                minkDiffs[3] = new Vector3(supportAs[3]).subtract(supportBs[3]);
-
-                supportAs[4] = collisionShape1.getLocalSupportPointWithMargin(dir2, new Vector3());
-                dir3 = rotateToBody2.multiply(dir1, new Vector3());
-                supportBs[4] = collisionShape2.getLocalSupportPointWithMargin(dir3, new Vector3());
-                supportBs[4] = body2ToBody1.multiply(supportBs[4], new Vector3());
-                minkDiffs[4] = new Vector3(supportAs[4]).subtract(supportBs[4]);
-
-                // Construct the triangle faces
-                TriangleEPA face0 = triangleStore.newTriangle(minkDiffs, 0, 1, 3);
-                TriangleEPA face1 = triangleStore.newTriangle(minkDiffs, 1, 2, 3);
-                TriangleEPA face2 = triangleStore.newTriangle(minkDiffs, 2, 0, 3);
-                TriangleEPA face3 = triangleStore.newTriangle(minkDiffs, 0, 2, 4);
-                TriangleEPA face4 = triangleStore.newTriangle(minkDiffs, 2, 1, 4);
-                TriangleEPA face5 = triangleStore.newTriangle(minkDiffs, 1, 0, 4);
-
-                // If the polytope hasn't been correctly constructed
-                if (!((face0 != null) && (face1 != null) && (face2 != null) && (face3 != null)
-                        && (face4 != null) && (face5 != null)
-                        && face0.getDistanceSquare() > 0.0f && face1.getDistanceSquare() > 0.0f
-                        && face2.getDistanceSquare() > 0.0f && face3.getDistanceSquare() > 0.0f
-                        && face4.getDistanceSquare() > 0.0f && face5.getDistanceSquare() > 0.0f)) {
-                    return false;
-                }
-
-                // Associate the edges of neighbouring faces
-                Utils.link(new EdgeEPA(face0, 1), new EdgeEPA(face1, 2));
-                Utils.link(new EdgeEPA(face1, 1), new EdgeEPA(face2, 2));
-                Utils.link(new EdgeEPA(face2, 1), new EdgeEPA(face0, 2));
-                Utils.link(new EdgeEPA(face0, 0), new EdgeEPA(face5, 0));
-                Utils.link(new EdgeEPA(face1, 0), new EdgeEPA(face4, 0));
-                Utils.link(new EdgeEPA(face2, 0), new EdgeEPA(face3, 0));
-                Utils.link(new EdgeEPA(face3, 1), new EdgeEPA(face4, 2));
-                Utils.link(new EdgeEPA(face4, 1), new EdgeEPA(face5, 2));
-                Utils.link(new EdgeEPA(face5, 1), new EdgeEPA(face3, 2));
-
-                // Add the candidate faces in the heap
-                addFaceCandidate(face0, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
-                addFaceCandidate(face1, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
-                addFaceCandidate(face2, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
-                addFaceCandidate(face3, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
-                addFaceCandidate(face4, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
-                addFaceCandidate(face5, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
-
-                numVertices = 5;
-            }
+//            case 3: {
+//                // The GJK algorithm returned a triangle that contains the origin.
+//                // We need two new vertices to obtain a hexahedron. The two new vertices
+//                // are the support points in the "dir1" and "-dir1" direction where "dir1" is the
+//                // normal of the triangle.
+//
+//                // Compute the normal of the triangle
+//                Vector3 v1 = new Vector3(minkDiffs[1]).subtract(minkDiffs[0]);
+//                Vector3 v2 = new Vector3(minkDiffs[2]).subtract(minkDiffs[0]);
+//                Vector3 dir1 = new Vector3(v1).cross(v2);
+//                Vector3 dir2 = new Vector3(dir1).invert();
+//                Vector3 dir3;
+//
+//                // Compute the two new vertices to obtain a hexahedron
+//                supportAs[3] = collisionShape1.getLocalSupportPointWithMargin(dir1, new Vector3());
+//                dir3 = rotateToBody2.multiply(dir2, new Vector3());
+//                supportBs[3] = collisionShape2.getLocalSupportPointWithMargin(dir3, new Vector3());
+//                supportBs[3] = body2ToBody1.multiply(supportBs[3], new Vector3());
+//                minkDiffs[3] = new Vector3(supportAs[3]).subtract(supportBs[3]);
+//
+//                supportAs[4] = collisionShape1.getLocalSupportPointWithMargin(dir2, new Vector3());
+//                dir3 = rotateToBody2.multiply(dir1, new Vector3());
+//                supportBs[4] = collisionShape2.getLocalSupportPointWithMargin(dir3, new Vector3());
+//                supportBs[4] = body2ToBody1.multiply(supportBs[4], new Vector3());
+//                minkDiffs[4] = new Vector3(supportAs[4]).subtract(supportBs[4]);
+//
+//                // Construct the triangle faces
+//                TriangleEPA face0 = triangleStore.newTriangle(minkDiffs, 0, 1, 3);
+//                TriangleEPA face1 = triangleStore.newTriangle(minkDiffs, 1, 2, 3);
+//                TriangleEPA face2 = triangleStore.newTriangle(minkDiffs, 2, 0, 3);
+//                TriangleEPA face3 = triangleStore.newTriangle(minkDiffs, 0, 2, 4);
+//                TriangleEPA face4 = triangleStore.newTriangle(minkDiffs, 2, 1, 4);
+//                TriangleEPA face5 = triangleStore.newTriangle(minkDiffs, 1, 0, 4);
+//
+//                // If the polytope hasn't been correctly constructed
+//                if (!((face0 != null) && (face1 != null) && (face2 != null) && (face3 != null)
+//                        && (face4 != null) && (face5 != null)
+//                        && face0.getDistanceSquare() > 0.0f && face1.getDistanceSquare() > 0.0f
+//                        && face2.getDistanceSquare() > 0.0f && face3.getDistanceSquare() > 0.0f
+//                        && face4.getDistanceSquare() > 0.0f && face5.getDistanceSquare() > 0.0f)) {
+//                    return false;
+//                }
+//
+//                // Associate the edges of neighbouring faces
+//                Utils.link(new EdgeEPA(face0, 1), new EdgeEPA(face1, 2));
+//                Utils.link(new EdgeEPA(face1, 1), new EdgeEPA(face2, 2));
+//                Utils.link(new EdgeEPA(face2, 1), new EdgeEPA(face0, 2));
+//                Utils.link(new EdgeEPA(face0, 0), new EdgeEPA(face5, 0));
+//                Utils.link(new EdgeEPA(face1, 0), new EdgeEPA(face4, 0));
+//                Utils.link(new EdgeEPA(face2, 0), new EdgeEPA(face3, 0));
+//                Utils.link(new EdgeEPA(face3, 1), new EdgeEPA(face4, 2));
+//                Utils.link(new EdgeEPA(face4, 1), new EdgeEPA(face5, 2));
+//                Utils.link(new EdgeEPA(face5, 1), new EdgeEPA(face3, 2));
+//
+//                // Add the candidate faces in the heap
+//                addFaceCandidate(face0, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
+//                addFaceCandidate(face1, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
+//                addFaceCandidate(face2, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
+//                addFaceCandidate(face3, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
+//                addFaceCandidate(face4, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
+//                addFaceCandidate(face5, triangleHeap, numTriangles, Defaults.DECIMAL_LARGEST);
+//
+//                numVertices = 5;
+//            }
             break;
         }
 
