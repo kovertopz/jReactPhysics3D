@@ -68,6 +68,9 @@
                     <keywords>
                         <keyword>Copyright (c) 2010-2013 Daniel Chappuis</keyword>
                     </keywords>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
                     <useDefaultExcludes>true</useDefaultExcludes>
                 </configuration>
                 <executions>
