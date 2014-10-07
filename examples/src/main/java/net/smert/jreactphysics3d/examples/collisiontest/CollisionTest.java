@@ -1,20 +1,33 @@
-/**
- * Copyright 2014 Jason Sorensen (sorensenj@smert.net)
+/*
+ * ReactPhysics3D physics library, http://code.google.com/p/reactphysics3d/
+ * Copyright (c) 2010-2013 Daniel Chappuis
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from the
+ * use of this software.
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * 1. The origin of this software must not be misrepresented; you must not claim
+ *    that you wrote the original software. If you use this software in a
+ *    product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ *
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ *
+ * 3. This notice may not be removed or altered from any source distribution.
+ *
+ * This file has been modified during the port to Java and differ from the source versions.
  */
 package net.smert.jreactphysics3d.examples.collisiontest;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.constraint.ContactPoint;
 import net.smert.jreactphysics3d.engine.ContactManifold;
 import net.smert.jreactphysics3d.engine.DynamicsWorld;
@@ -109,15 +122,16 @@ public class CollisionTest extends Screen {
         if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM9) == true) {
             direction.setZ(1.0f);
         }
+        RigidBody rigidBody = (RigidBody) cylinderMoveable.getRigidBody();
         if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM1) == true) {
-            cylinderMoveable.getRigidBody().applyTorque(new Vector3(0.5f, 0.0f, 0.0f));
+            rigidBody.applyTorque(new Vector3(0.5f, 0.0f, 0.0f));
         }
         if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM3) == true) {
-            cylinderMoveable.getRigidBody().applyTorque(new Vector3(-0.5f, 0.0f, 0.0f));
+            rigidBody.applyTorque(new Vector3(-0.5f, 0.0f, 0.0f));
         }
         if (direction.magnitudeSquared() > 0) {
             direction.normalize();
-            cylinderMoveable.getRigidBody().applyForceToCenter(new Vector3(direction.getX(), direction.getY(), direction.getZ()));
+            rigidBody.applyForceToCenter(new Vector3(direction.getX(), direction.getY(), direction.getZ()));
         }
         cameraController.update();
     }
@@ -163,15 +177,18 @@ public class CollisionTest extends Screen {
 
         // Add spheres
         Material material;
+        RigidBody rigidBody;
         Box floor;
         floor = new Box(new Vector3f(), new Vector3f(40.0f, 0.5f, 40.0f), FLOOR_MASS, dynamicsWorld);
-        floor.getRigidBody().setIsMotionEnabled(false);
-        material = floor.getRigidBody().getMaterial();
+        rigidBody = (RigidBody) floor.getRigidBody();
+        rigidBody.setIsMotionEnabled(false);
+        material = rigidBody.getMaterial();
         material.setBounciness(0.2f);
         gameObjectShapes.add(floor);
         cylinderMoveable = new Cylinder(new Vector3f(0.0f, 3.0f, 0.0f), CYLINDER_HEIGHT, CYLINDER_RADIUS, CYLINDER_MASS, dynamicsWorld);
-        cylinderMoveable.getRigidBody().setIsMotionEnabled(true);
-        material = cylinderMoveable.getRigidBody().getMaterial();
+        rigidBody = (RigidBody) cylinderMoveable.getRigidBody();
+        rigidBody.setIsMotionEnabled(true);
+        material = rigidBody.getMaterial();
         material.setBounciness(0.2f);
         gameObjectShapes.add(cylinderMoveable);
 

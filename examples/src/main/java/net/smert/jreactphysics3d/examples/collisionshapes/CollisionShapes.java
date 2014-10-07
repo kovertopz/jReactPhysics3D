@@ -1,20 +1,33 @@
-/**
- * Copyright 2014 Jason Sorensen (sorensenj@smert.net)
+/*
+ * ReactPhysics3D physics library, http://code.google.com/p/reactphysics3d/
+ * Copyright (c) 2010-2013 Daniel Chappuis
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+ * This software is provided 'as-is', without any express or implied warranty.
+ * In no event will the authors be held liable for any damages arising from the
+ * use of this software.
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
- * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * 1. The origin of this software must not be misrepresented; you must not claim
+ *    that you wrote the original software. If you use this software in a
+ *    product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ *
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ *
+ * 3. This notice may not be removed or altered from any source distribution.
+ *
+ * This file has been modified during the port to Java and differ from the source versions.
  */
 package net.smert.jreactphysics3d.examples.collisionshapes;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.constraint.ContactPoint;
 import net.smert.jreactphysics3d.engine.ContactManifold;
 import net.smert.jreactphysics3d.engine.DynamicsWorld;
@@ -96,10 +109,11 @@ public class CollisionShapes extends Screen {
             Box box = new Box(position, BOX_SIZE, BOX_MASS, dynamicsWorld);
 
             // The box is a moving rigid body
-            box.getRigidBody().setIsMotionEnabled(true);
+            RigidBody rigidBody = (RigidBody) box.getRigidBody();
+            rigidBody.setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
-            Material material = box.getRigidBody().getMaterial();
+            Material material = rigidBody.getMaterial();
             material.setBounciness(0.2f);
 
             // Add the box to the list of game objects in the scene
@@ -124,10 +138,11 @@ public class CollisionShapes extends Screen {
             Capsule capsule = new Capsule(position, CAPSULE_HEIGHT, CAPSULE_RADIUS, CAPSULE_MASS, dynamicsWorld);
 
             // The cylinder is a moving rigid body
-            capsule.getRigidBody().setIsMotionEnabled(true);
+            RigidBody rigidBody = (RigidBody) capsule.getRigidBody();
+            rigidBody.setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
-            Material material = capsule.getRigidBody().getMaterial();
+            Material material = rigidBody.getMaterial();
             material.setBounciness(0.2f);
 
             // Add the capsule to the list of game objects in the scene
@@ -152,10 +167,11 @@ public class CollisionShapes extends Screen {
             Cone cone = new Cone(position, CONE_HEIGHT, CONE_RADIUS, CONE_MASS, dynamicsWorld);
 
             // The cone is a moving rigid body
-            cone.getRigidBody().setIsMotionEnabled(true);
+            RigidBody rigidBody = (RigidBody) cone.getRigidBody();
+            rigidBody.setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
-            Material material = cone.getRigidBody().getMaterial();
+            Material material = rigidBody.getMaterial();
             material.setBounciness(0.2f);
 
             // Add the cone to the list of game objects in the scene
@@ -180,10 +196,11 @@ public class CollisionShapes extends Screen {
             Cylinder cylinder = new Cylinder(position, CYLINDER_HEIGHT, CYLINDER_RADIUS, CYLINDER_MASS, dynamicsWorld);
 
             // The cylinder is a moving rigid body
-            cylinder.getRigidBody().setIsMotionEnabled(true);
+            RigidBody rigidBody = (RigidBody) cylinder.getRigidBody();
+            rigidBody.setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
-            Material material = cylinder.getRigidBody().getMaterial();
+            Material material = rigidBody.getMaterial();
             material.setBounciness(0.2f);
 
             // Add the cylinder to the list of game objects in the scene
@@ -198,10 +215,11 @@ public class CollisionShapes extends Screen {
         Box floor = new Box(floorPosition, FLOOR_SIZE, FLOOR_MASS, dynamicsWorld);
 
         // The floor must be a non-moving rigid body
-        floor.getRigidBody().setIsMotionEnabled(false);
+        RigidBody rigidBody = (RigidBody) floor.getRigidBody();
+        rigidBody.setIsMotionEnabled(false);
 
         // Change the material properties of the rigid body
-        Material material = floor.getRigidBody().getMaterial();
+        Material material = rigidBody.getMaterial();
         material.setBounciness(0.2f);
 
         // Add the floor to the list of game objects in the scene
@@ -225,10 +243,11 @@ public class CollisionShapes extends Screen {
             Sphere sphere = new Sphere(position, SPHERE_RADIUS, SPHERE_MASS, dynamicsWorld);
 
             // The sphere is a moving rigid body
-            sphere.getRigidBody().setIsMotionEnabled(true);
+            RigidBody rigidBody = (RigidBody) sphere.getRigidBody();
+            rigidBody.setIsMotionEnabled(true);
 
             // Change the material properties of the rigid body
-            Material material = sphere.getRigidBody().getMaterial();
+            Material material = rigidBody.getMaterial();
             material.setBounciness(0.2f);
 
             // Add the sphere to the list of game objects in the scene
