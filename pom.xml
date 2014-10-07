@@ -60,7 +60,6 @@
                         <exclude>README.md</exclude>
                         <exclude>VERSION</exclude>
                         <exclude>examples/**</exclude>
-                        <exclude>framework/**</exclude>
                         <exclude>src/main/resources/**</exclude>
                         <exclude>src/test/resources/**</exclude>
                     </excludes>
