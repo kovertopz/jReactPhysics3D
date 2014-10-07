@@ -18,11 +18,25 @@
         </developer>
     </developers>
 
+    <licenses>
+        <license>
+            <name>zlib/libpng License</name>
+            <url>http://opensource.org/licenses/Zlib</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/kovertopz/jReactPhysics3D.git</connection>
+        <developerConnection>scm:git:git@github.com:kovertopz/jReactPhysics3D.git</developerConnection>
+        <url>https://github.com/kovertopz/jReactPhysics3D</url>
+    </scm>
+
     <properties>
         <junit.version>4.11</junit.version>
         <licensemaven.version>2.6</licensemaven.version>
         <lwjgl.version>2.9.1</lwjgl.version>
         <mavencompiler.version>2.5.1</mavencompiler.version>
+        <mavenjavadoc.version>2.10.1</mavenjavadoc.version>
         <mavennatives.version>0.0.7</mavennatives.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
@@ -125,5 +139,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${mavenjavadoc.version}</version>
+                <configuration>
+                    <author>false</author>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>
