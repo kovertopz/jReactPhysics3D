@@ -1,13 +1,13 @@
-The jReactPhysics3D-Examples source code is mostly licensed under the 'Apache
-License Version 2.0', however it contains other licensed material as well.
+The jReactPhysics3D source code is mostly licensed under the 'zlib License',
+however it contains other licensed material as well.
 
-L.1) The jReactPhysics3D-Examples source tree contains code from the ReactPhysics3D
+L.1) The jReactPhysics3D source tree contains code from the ReactPhysics3D
      physics library which is covered by the 'zLib License'. These files
      have been modified during the port to Java and differ from the source
      versions.
 
     Files:
-      src/main/java/net/smert/jreactphysics3d/examples/collisionshapes/*
+      examples/*
 
     ReactPhysics3D physics library, http://code.google.com/p/reactphysics3d/
     Copyright (c) 2010-2013 Daniel Chappuis

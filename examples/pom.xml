@@ -23,8 +23,6 @@
         <licensemaven.version>2.6</licensemaven.version>
         <lwjgl.version>2.9.1</lwjgl.version>
         <mavencompiler.version>2.5.1</mavencompiler.version>
-        <mavendependency.version>2.8</mavendependency.version>
-        <mavenjar.version>2.5</mavenjar.version>
         <mavennatives.version>0.0.7</mavennatives.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
@@ -35,12 +33,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jReactPhysics3D</artifactId>
+            <artifactId>Framework-GL</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jReactPhysics3D-OpenGLFramework</artifactId>
+            <artifactId>jReactPhysics3D</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -80,62 +78,24 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>${mavendependency.version}</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <excludeArtifactIds>junit, hamcrest-core</excludeArtifactIds>
-                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${mavenjar.version}</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>net.smert.jreactphysics3d.examples.Main</mainClass>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>${licensemaven.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>APACHE-2.txt</exclude>
                         <exclude>LICENSE.txt</exclude>
                         <exclude>nbactions.xml</exclude>
                         <exclude>pom.xml</exclude>
-                        <exclude>src/main/java/net/smert/jreactphysics3d/collisionshapes/**</exclude>
-                        <exclude>src/main/java/net/smert/jreactphysics3d/common/**</exclude>
-                        <exclude>src/main/java/net/smert/jreactphysics3d/examples/collisionshapes/**</exclude>
                         <exclude>src/main/resources/**</exclude>
                         <exclude>src/test/resources/**</exclude>
                     </excludes>
                     <header>HEADER.txt</header>
                     <keywords>
-                        <keyword>Licensed under the Apache License</keyword>
+                        <keyword>Copyright (c) 2010-2013 Daniel Chappuis</keyword>
                     </keywords>
-                    <properties>
-                        <owner>Jason Sorensen</owner>
-                        <email>sorensenj@smert.net</email>
-                    </properties>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
                     <useDefaultExcludes>true</useDefaultExcludes>
                 </configuration>
                 <executions>
