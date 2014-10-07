@@ -28,7 +28,7 @@ package net.smert.jreactphysics3d.examples.collisiontest;
  *
  * @author Jason Sorensen <sorensenj@smert.net>
  */
-public class Configuration extends net.smert.jreactphysics3d.framework.Configuration {
+public class Configuration extends net.smert.frameworkgl.Configuration {
 
     public Configuration(String[] args) {
         super(args);

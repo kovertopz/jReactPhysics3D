@@ -24,7 +24,7 @@
  */
 package net.smert.jreactphysics3d.examples.collisiontest;
 
-import net.smert.jreactphysics3d.framework.BootStrap;
+import net.smert.frameworkgl.BootStrap;
 
 /**
  *

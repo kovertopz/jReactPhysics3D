@@ -24,11 +24,11 @@
  */
 package net.smert.jreactphysics3d.examples.collisionshapes;
 
+import net.smert.frameworkgl.GameObject;
+import net.smert.frameworkgl.math.Vector3f;
 import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;
 import net.smert.jreactphysics3d.engine.DynamicsWorld;
-import net.smert.jreactphysics3d.framework.GameObject;
-import net.smert.jreactphysics3d.framework.math.Vector3f;
 import net.smert.jreactphysics3d.mathematics.Matrix3x3;
 import net.smert.jreactphysics3d.mathematics.Quaternion;
 import net.smert.jreactphysics3d.mathematics.Transform;

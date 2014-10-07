@@ -25,14 +25,14 @@
 package net.smert.jreactphysics3d.examples.collisionshapes;
 
 import java.io.IOException;
+import net.smert.frameworkgl.Fw;
+import net.smert.frameworkgl.math.Transform4f;
+import net.smert.frameworkgl.math.Vector3f;
+import net.smert.frameworkgl.opengl.GL;
+import net.smert.frameworkgl.opengl.mesh.Mesh;
+import net.smert.frameworkgl.opengl.renderable.AbstractRenderable;
 import net.smert.jreactphysics3d.collision.shapes.SphereShape;
 import net.smert.jreactphysics3d.engine.DynamicsWorld;
-import net.smert.jreactphysics3d.framework.Fw;
-import net.smert.jreactphysics3d.framework.math.Transform4f;
-import net.smert.jreactphysics3d.framework.math.Vector3f;
-import net.smert.jreactphysics3d.framework.opengl.GL;
-import net.smert.jreactphysics3d.framework.opengl.mesh.Mesh;
-import net.smert.jreactphysics3d.framework.opengl.renderable.AbstractRenderable;
 
 /**
  *
