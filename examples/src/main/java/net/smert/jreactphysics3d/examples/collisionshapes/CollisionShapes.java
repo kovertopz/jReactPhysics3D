@@ -330,6 +330,7 @@ public class CollisionShapes extends Screen {
         GL.o1.enableLight0();
         GL.o1.enableLighting();
         GL.o1.setSmoothLighting(true);
+        GL.o1.enableNormalize();
         GL.o1.clear();
 
         GL.o1.setProjectionPerspective(
