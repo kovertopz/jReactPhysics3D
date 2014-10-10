@@ -25,6 +25,6 @@ ReactPhysics3D has the following features :
 - Examples
 - Unit tests
 
-Website : https://code.google.com/p/reactphysics3d/
-Github  : https://github.com/DanielChappuis/reactphysics3d
+Website : https://code.google.com/p/reactphysics3d/  
+Github  : https://github.com/DanielChappuis/reactphysics3d  
 Author  : Daniel Chappuis
