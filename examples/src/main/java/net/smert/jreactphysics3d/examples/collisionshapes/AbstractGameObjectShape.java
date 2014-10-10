@@ -24,7 +24,7 @@
  */
 package net.smert.jreactphysics3d.examples.collisionshapes;
 
-import net.smert.frameworkgl.GameObject;
+import net.smert.frameworkgl.gameobjects.GameObject;
 import net.smert.frameworkgl.math.Vector3f;
 import net.smert.jreactphysics3d.body.RigidBody;
 import net.smert.jreactphysics3d.collision.shapes.CollisionShape;

@@ -55,7 +55,7 @@ public class Box extends AbstractGameObjectShape {
 
         try {
             // Mesh
-            Mesh mesh = GL.mf.createMesh();
+            Mesh mesh = GL.meshFactory.createMesh();
             setMesh(mesh); // Attach mesh to game object
             Fw.graphics.loadMesh("primitives/cube.obj", mesh);
             mesh.setAllColors(0.3f, 0.3f, 0.3f, 1.0f);

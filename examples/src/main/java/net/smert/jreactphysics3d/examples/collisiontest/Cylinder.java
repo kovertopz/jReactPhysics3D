@@ -53,7 +53,7 @@ public class Cylinder extends AbstractGameObjectShape {
 
         try {
             // Mesh
-            Mesh mesh = GL.mf.createMesh();
+            Mesh mesh = GL.meshFactory.createMesh();
             setMesh(mesh); // Attach mesh to game object
             Fw.graphics.loadMesh("primitives/cylinder.obj", mesh);
             mesh.setAllColors(0.8f, 0.8f, 0.8f, 1.0f);

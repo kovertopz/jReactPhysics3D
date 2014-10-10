@@ -26,7 +26,7 @@ package net.smert.jreactphysics3d.examples.collisionshapes;
 
 import java.io.IOException;
 import net.smert.frameworkgl.Fw;
-import net.smert.frameworkgl.GameObject;
+import net.smert.frameworkgl.gameobjects.GameObject;
 import net.smert.frameworkgl.math.Transform4f;
 import net.smert.frameworkgl.math.Vector3f;
 import net.smert.frameworkgl.opengl.GL;
@@ -68,7 +68,7 @@ public class VisualContactPoint extends GameObject {
 
         try {
             // Mesh
-            staticMesh = GL.mf.createMesh();
+            staticMesh = GL.meshFactory.createMesh();
             Fw.graphics.loadMesh("primitives/cone.obj", staticMesh);
             staticMesh.setAllColors(1.0f, 1.0f, 0.0f, 1.0f);
             staticMesh.updateBooleansFromSegment();

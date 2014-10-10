@@ -28,7 +28,7 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import net.smert.frameworkgl.Fw;
-import net.smert.frameworkgl.GameObject;
+import net.smert.frameworkgl.gameobjects.GameObject;
 import net.smert.frameworkgl.Screen;
 import net.smert.frameworkgl.helpers.Keyboard;
 import net.smert.frameworkgl.math.Vector3f;
@@ -155,9 +155,10 @@ public class CollisionTest extends Screen {
         fpsTimer = new FpsTimer();
 
         // Setup camera and controller
-        camera = new LegacyCamera();
+        camera = GL.cameraFactory.createLegacyCamera();
         camera.setPosition(0.0f, 1.0f, 5.0f);
-        cameraController = new LegacyCameraController(camera);
+        cameraController = GL.cameraFactory.createLegacyCameraController();
+        cameraController.setCamera(camera);
 
         // Time step and gravity for the physics simulation
         float timeStep = 1.0f / 60.0f;
