@@ -386,13 +386,13 @@ public class CollisionShapes extends Screen {
             // Render directly
             for (AbstractGameObjectShape gameObjectShape : gameObjectShapes) {
                 gameObjectShape.updateTransform();
-                Fw.graphics.render(gameObjectShape, transformWorldFloatBuffer);
+                Fw.graphics.getLegacyRenderer().render(gameObjectShape, transformWorldFloatBuffer);
             }
 
             // Render contact points
             GL.o1.disableDepthTest();
             for (GameObject visualContactPoint : visualContactPoints) {
-                Fw.graphics.render(visualContactPoint, transformWorldFloatBuffer);
+                Fw.graphics.getLegacyRenderer().render(visualContactPoint, transformWorldFloatBuffer);
             }
             GL.o1.enableDepthTest();
         }

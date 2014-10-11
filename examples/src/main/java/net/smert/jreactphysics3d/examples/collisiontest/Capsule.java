@@ -60,7 +60,7 @@ public class Capsule extends AbstractGameObjectShape {
             mesh.updateBooleansFromSegment();
 
             // Renderable
-            AbstractRenderable renderable = Fw.graphics.createVertexBufferObjectRenderable();
+            AbstractRenderable renderable = Fw.graphics.getLegacyRenderer().createVertexBufferObjectRenderable();
             renderable.create(mesh);
             setRenderable(renderable); // Attach to game object
         } catch (IOException ex) {
