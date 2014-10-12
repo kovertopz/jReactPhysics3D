@@ -60,7 +60,7 @@ public class Cone extends AbstractGameObjectShape {
             mesh.updateBooleansFromSegment();
 
             // Renderable
-            AbstractRenderable renderable = Fw.graphics.getLegacyRenderer().createVertexBufferObjectRenderable();
+            AbstractRenderable renderable = GL.legacyRenderer.createVertexBufferObjectRenderable();
             renderable.create(mesh);
             setRenderable(renderable); // Attach to game object
         } catch (IOException ex) {
