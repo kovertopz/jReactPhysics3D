@@ -72,7 +72,6 @@ public class CollisionTest extends Screen {
 
     private DynamicsWorld dynamicsWorld;
     private FloatBuffer lightFloatBuffer;
-    private FloatBuffer transformWorldFloatBuffer;
     private FpsTimer fpsTimer;
     private LegacyCamera camera;
     private LegacyCameraController cameraController;
@@ -171,7 +170,6 @@ public class CollisionTest extends Screen {
 
         // Float buffer for light and matrices
         lightFloatBuffer = GL.bufferHelper.createFloatBuffer(4);
-        transformWorldFloatBuffer = GL.bufferHelper.createFloatBuffer(16);
 
         // Memory usage
         memoryUsage = new MemoryUsage();
@@ -258,13 +256,13 @@ public class CollisionTest extends Screen {
             // Render directly
             for (AbstractGameObjectShape gameObjectShape : gameObjectShapes) {
                 gameObjectShape.updateTransform();
-                GL.legacyRenderer.render(gameObjectShape, transformWorldFloatBuffer);
+                GL.legacyRenderer.render(gameObjectShape);
             }
 
             // Render contact points
             GL.o1.disableDepthTest();
             for (GameObject visualContactPoint : visualContactPoints) {
-                GL.legacyRenderer.render(visualContactPoint, transformWorldFloatBuffer);
+                GL.legacyRenderer.render(visualContactPoint);
             }
             GL.o1.enableDepthTest();
         }
