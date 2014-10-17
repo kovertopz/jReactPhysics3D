@@ -62,7 +62,7 @@ public class Box extends AbstractGameObjectShape {
             mesh.updateBooleansFromSegment();
 
             // Renderable
-            AbstractRenderable renderable = GL.legacyRenderer.createVertexBufferObjectRenderable();
+            AbstractRenderable renderable = GL.renderer1.createInterleavedRenderable();
             renderable.create(mesh);
             setRenderable(renderable); // Attach to game object
         } catch (IOException ex) {

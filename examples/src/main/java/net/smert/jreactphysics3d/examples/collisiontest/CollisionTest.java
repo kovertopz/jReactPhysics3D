@@ -256,13 +256,13 @@ public class CollisionTest extends Screen {
             // Render directly
             for (AbstractGameObjectShape gameObjectShape : gameObjectShapes) {
                 gameObjectShape.updateTransform();
-                GL.legacyRenderer.render(gameObjectShape);
+                GL.renderer1.render(gameObjectShape);
             }
 
             // Render contact points
             GL.o1.disableDepthTest();
             for (GameObject visualContactPoint : visualContactPoints) {
-                GL.legacyRenderer.render(visualContactPoint);
+                GL.renderer1.render(visualContactPoint);
             }
             GL.o1.enableDepthTest();
         }
