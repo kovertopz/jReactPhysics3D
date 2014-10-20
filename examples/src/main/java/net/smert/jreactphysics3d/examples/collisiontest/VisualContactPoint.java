@@ -71,7 +71,7 @@ public class VisualContactPoint extends GameObject {
             staticMesh = GL.meshFactory.createMesh();
             Fw.graphics.loadMesh("primitives/cone.obj", staticMesh);
             staticMesh.setAllColors(1.0f, 1.0f, 0.0f, 1.0f);
-            staticMesh.updateBooleansFromSegment();
+            staticMesh.updateHasBooleansFromSegment();
 
             // Renderable
             staticRenderable = GL.renderer1.createInterleavedRenderable();

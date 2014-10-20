@@ -59,7 +59,7 @@ public class Box extends AbstractGameObjectShape {
             setMesh(mesh); // Attach mesh to game object
             Fw.graphics.loadMesh("primitives/cube.obj", mesh);
             mesh.setAllColors(0.3f, 0.3f, 0.3f, 1.0f);
-            mesh.updateBooleansFromSegment();
+            mesh.updateHasBooleansFromSegment();
 
             // Renderable
             AbstractRenderable renderable = GL.renderer1.createInterleavedRenderable();

@@ -57,7 +57,7 @@ public class Capsule extends AbstractGameObjectShape {
             setMesh(mesh); // Attach mesh to game object
             Fw.graphics.loadMesh("primitives/capsule.obj", mesh);
             mesh.setAllColors(0.8f, 0.8f, 0.8f, 1.0f);
-            mesh.updateBooleansFromSegment();
+            mesh.updateHasBooleansFromSegment();
 
             // Renderable
             AbstractRenderable renderable = GL.renderer1.createInterleavedRenderable();
