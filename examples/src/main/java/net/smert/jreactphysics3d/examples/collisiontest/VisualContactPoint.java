@@ -74,7 +74,7 @@ public class VisualContactPoint extends GameObject {
             staticMesh.updateHasBooleansFromSegment();
 
             // Renderable
-            staticRenderable = GL.renderer1.createInterleavedRenderable();
+            staticRenderable = Fw.graphics.createInterleavedRenderable();
             staticRenderable.create(staticMesh);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
