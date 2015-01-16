@@ -69,7 +69,8 @@
                 <configuration>
                     <excludes>
                         <exclude>LICENSE.txt</exclude>
-                        <exclude>nbactions.xml</exclude>
+                        <exclude>nbactions*.xml</exclude>
+                        <exclude>nb-configuration.xml</exclude>
                         <exclude>pom.xml</exclude>
                         <exclude>README.md</exclude>
                         <exclude>VERSION</exclude>

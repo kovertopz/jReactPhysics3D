@@ -34,7 +34,7 @@
     <properties>
         <junit.version>4.11</junit.version>
         <licensemaven.version>2.6</licensemaven.version>
-        <lwjgl.version>2.9.1</lwjgl.version>
+        <lwjgl.version>2.9.2</lwjgl.version>
         <mavencompiler.version>2.5.1</mavencompiler.version>
         <mavenjavadoc.version>2.10.1</mavenjavadoc.version>
         <mavennatives.version>0.0.7</mavennatives.version>
@@ -98,7 +98,8 @@
                 <configuration>
                     <excludes>
                         <exclude>LICENSE.txt</exclude>
-                        <exclude>nbactions.xml</exclude>
+                        <exclude>nbactions*.xml</exclude>
+                        <exclude>nb-configuration.xml</exclude>
                         <exclude>pom.xml</exclude>
                         <exclude>src/main/resources/**</exclude>
                         <exclude>src/test/resources/**</exclude>
