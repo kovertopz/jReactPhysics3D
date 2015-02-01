@@ -40,10 +40,13 @@ import net.smert.jreactphysics3d.mathematics.Vector3;
  */
 public abstract class AbstractGameObjectShape extends GameObject {
 
+    private CollisionShape collisionShape;
+    private RigidBody rigidBody;
+
     protected void createRigidBody(
             CollisionShape collisionShape, Vector3f position, float mass, DynamicsWorld dynamicsWorld) {
 
-        setCollisionShape(collisionShape); // Attach to game object
+        this.collisionShape = collisionShape;
 
         Matrix3x3 inertiaTensor = new Matrix3x3();
         collisionShape.computeLocalInertiaTensor(inertiaTensor, mass);
@@ -52,14 +55,20 @@ public abstract class AbstractGameObjectShape extends GameObject {
         Vector3 initPosition = new Vector3(position.getX(), position.getY(), position.getZ());
         Transform transform = new Transform(initPosition, initOrientation);
 
-        RigidBody rigidBody = dynamicsWorld.createRigidBody(transform, mass, inertiaTensor, collisionShape);
-        setRigidBody(rigidBody); // Attach to game object
+        rigidBody = dynamicsWorld.createRigidBody(transform, mass, inertiaTensor, collisionShape);
+    }
+
+    public CollisionShape getCollisionShape() {
+        return collisionShape;
+    }
+
+    public RigidBody getRigidBody() {
+        return rigidBody;
     }
 
     public void updateTransform() {
 
         // Get the interpolated transform of the rigid body
-        RigidBody rigidBody = (RigidBody) getRigidBody();
         Transform transform = rigidBody.getInterpolatedTransform(new Transform());
 
         // Compute the transform used for rendering the box
