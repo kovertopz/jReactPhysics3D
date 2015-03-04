@@ -34,7 +34,7 @@
     <properties>
         <junit.version>4.11</junit.version>
         <licensemaven.version>2.6</licensemaven.version>
-        <lwjgl.version>2.9.2</lwjgl.version>
+        <lwjgl.version>2.9.3</lwjgl.version>
         <mavencompiler.version>2.5.1</mavencompiler.version>
         <mavenjavadoc.version>2.10.1</mavenjavadoc.version>
         <mavennatives.version>0.0.7</mavennatives.version>
