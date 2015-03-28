@@ -24,7 +24,7 @@
  */
 package net.smert.jreactphysics3d.examples.collisionshapes;
 
-import net.smert.frameworkgl.BootStrap;
+import net.smert.frameworkgl.Bootstrap;
 
 /**
  *
@@ -36,7 +36,7 @@ public class Demo {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        BootStrap boot = new BootStrap();
+        Bootstrap boot = new Bootstrap();
         boot.start(Configuration.class, CollisionShapes.class, args);
     }
 
