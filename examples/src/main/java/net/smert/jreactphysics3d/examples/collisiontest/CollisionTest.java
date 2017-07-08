@@ -103,29 +103,29 @@ public class CollisionTest extends Screen {
             Fw.app.stopRunning();
         }
         Vector3f direction = new Vector3f();
-        if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM8) == true) {
+        if (Fw.input.isKeyDown(Keyboard.NUM0) == true) {
             direction.setY(1.0f);
         }
-        if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM2) == true) {
+        if (Fw.input.isKeyDown(Keyboard.NUM2) == true) {
             direction.setY(-1.0f);
         }
-        if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM4) == true) {
+        if (Fw.input.isKeyDown(Keyboard.NUM4) == true) {
             direction.setX(-1.0f);
         }
-        if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM6) == true) {
+        if (Fw.input.isKeyDown(Keyboard.NUM6) == true) {
             direction.setX(1.0f);
         }
-        if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM7) == true) {
+        if (Fw.input.isKeyDown(Keyboard.NUM7) == true) {
             direction.setZ(-1.0f);
         }
-        if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM9) == true) {
+        if (Fw.input.isKeyDown(Keyboard.NUM9) == true) {
             direction.setZ(1.0f);
         }
         RigidBody rigidBody = (RigidBody) cylinderMoveable.getRigidBody();
-        if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM1) == true) {
+        if (Fw.input.isKeyDown(Keyboard.NUM1) == true) {
             rigidBody.applyTorque(new Vector3(0.5f, 0.0f, 0.0f));
         }
-        if (Fw.input.isKeyDown(Keyboard.NUMPAD_NUM3) == true) {
+        if (Fw.input.isKeyDown(Keyboard.NUM3) == true) {
             rigidBody.applyTorque(new Vector3(-0.5f, 0.0f, 0.0f));
         }
         if (direction.magnitudeSquared() > 0) {
